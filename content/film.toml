@@ -54,6 +54,9 @@ fonts = [
 [review]
 # The reviewer prompt: a str.format template that each round fills for each edition.
 prompt = "content/review/prompt.md"
+# The listening plan's analyst readings: context readings of Chinese words and the part of speech
+# of each English heteronym occurrence, keyed by segment and offset in the script.
+readings = "content/review/readings.json"
 # The verifier's floor: the overall score and every dimension at least this.
 overall_minimum = 90
 dimension_minimum = 90

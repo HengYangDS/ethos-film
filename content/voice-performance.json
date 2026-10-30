@@ -1,0 +1,1826 @@
+{
+  "pronunciation": {
+    "schema_version": 1,
+    "status": "planned-not-listened",
+    "control_boundary": "Dictionary and occurrence targets are acceptance criteria. Native Qwen Base does not consume IPA or SSML. The normalization below carries the spoken forms the previous ETHOS film adopted after heard errors; no further normalization is proposed without an actually heard error.",
+    "sources": [
+      {
+        "id": "cmudict",
+        "url": "https://raw.githubusercontent.com/cmusphinx/cmudict/74790861f652b15e4ac49015a90074ad62a27690/cmudict.dict",
+        "sha256": "81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22",
+        "bytes": 3618488
+      },
+      {
+        "id": "macos-dictionary",
+        "provider": "Installed public macOS DictionaryServices exact whole-word lookup",
+        "families": [
+          "The Standard Dictionary of Contemporary Chinese",
+          "Simplified Chinese-English"
+        ],
+        "qualification": "First returned single-character sense is not a universal reading."
+      },
+      {
+        "id": "contextual-composition",
+        "qualification": "Explicitly inferred compound recognition; not a dictionary headword."
+      },
+      {
+        "id": "previous-film-normalization",
+        "provider": "ethos-introduction-film content/voice-performance.json",
+        "qualification": "Spoken forms the previous ETHOS film adopted for the same narrator family; 行情 as 航情 follows a direct user correction recorded there."
+      }
+    ],
+    "languages": {
+      "Chinese": {
+        "language": "Chinese",
+        "normalization": [
+          {
+            "display": "行情",
+            "spoken": "航情",
+            "kind": "homophone",
+            "reading": "háng qíng",
+            "source": "previous-film-normalization"
+          },
+          {
+            "display": "ETHOS",
+            "spoken": "Eethos",
+            "kind": "english-name",
+            "source": "previous-film-normalization"
+          },
+          {
+            "display": "OpenSpec",
+            "spoken": "Open Spec",
+            "kind": "english-name",
+            "source": "previous-film-normalization"
+          },
+          {
+            "display": "TransitionPlan",
+            "spoken": "Transition Plan",
+            "kind": "english-name",
+            "source": "previous-film-normalization"
+          }
+        ],
+        "targets": [
+          {
+            "term": "行情",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "hángqíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "执行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhíxíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "运行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yùnxíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "行动",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xíngdòng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "进行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jìnxíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "放行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fàngxíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "平行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "píngxíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "重新",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chóngxīn",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "重复",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chóngfù",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "长期",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chángqī",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "还是",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "háishi",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "为了",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "wèile",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "作为",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zuòwéi",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "为止",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "wéizhǐ",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "为什么",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "wèishénme",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "变更",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "biàngēng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "调整",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "tiáozhěng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "协调",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xiétiáo",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "处理",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chǔlǐ",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "参与",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "cānyù",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "要求",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yāoqiú",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "应该",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yīnggāi",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "背景",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "bèijǐng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "转交",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhuǎnjiāo",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "载体",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zàitǐ",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "模型",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "móxíng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "负担",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fùdān",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "尽量",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jǐnliàng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "积累",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jīlěi",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "衡量",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "héngliáng",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          },
+          {
+            "term": "悄悄",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "qiāoqiāo",
+            "source": "macos-dictionary",
+            "status": "planned-not-listened"
+          }
+        ],
+        "sandhi": "Natural Mandarin connected-speech tone sandhi and weak grammatical syllables; never force isolated citation tones.",
+        "embedded_english_targets": [
+          "ETHOS",
+          "AI",
+          "Agent",
+          "OpenSpec",
+          "Git",
+          "Work Lane",
+          "Lease",
+          "Commitment",
+          "Facts",
+          "TransitionPlan",
+          "Attestation",
+          "compare-and-swap",
+          "ethos status",
+          "dev",
+          "main",
+          "GitLab",
+          "GitHub",
+          "Model Promotion"
+        ],
+        "target_scope": "Every Chinese segment; the embedded English names are spoken as English words inside the Chinese clauses."
+      },
+      "English": {
+        "language": "English",
+        "normalization": [
+          {
+            "display": "ETHOS",
+            "spoken": "Ethos",
+            "kind": "english-name",
+            "source": "previous-film-normalization"
+          },
+          {
+            "display": "OpenSpec",
+            "spoken": "Open Spec",
+            "kind": "english-name",
+            "source": "previous-film-normalization"
+          },
+          {
+            "display": "TransitionPlan",
+            "spoken": "Transition Plan",
+            "kind": "english-name",
+            "source": "previous-film-normalization"
+          }
+        ],
+        "targets": [
+          {
+            "term": "ETHOS",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "IY1",
+                "TH",
+                "AA0",
+                "S"
+              ],
+              "syllable_count": 2,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                2
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "Git",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "G",
+                "IH1",
+                "T"
+              ],
+              "syllable_count": 1,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "agents",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "EY1",
+                "JH",
+                "AH0",
+                "N",
+                "T",
+                "S"
+              ],
+              "syllable_count": 2,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                2
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "Lease",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "L",
+                "IY1",
+                "S"
+              ],
+              "syllable_count": 1,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "Commitment",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "K",
+                "AH0",
+                "M",
+                "IH1",
+                "T",
+                "M",
+                "AH0",
+                "N",
+                "T"
+              ],
+              "syllable_count": 3,
+              "primary_syllable": 2,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                1,
+                3
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "Facts",
+            "kind": "lexical",
+            "lexical_stress": [
+              {
+                "arpabet": [
+                  "F",
+                  "AE1",
+                  "K",
+                  "T",
+                  "S"
+                ],
+                "syllable_count": 1,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              {
+                "arpabet": [
+                  "F",
+                  "AE1",
+                  "K",
+                  "S"
+                ],
+                "syllable_count": 1,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            ],
+            "source": "cmudict"
+          },
+          {
+            "term": "kernel",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "K",
+                "ER1",
+                "N",
+                "AH0",
+                "L"
+              ],
+              "syllable_count": 2,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                2
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "governance",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "G",
+                "AH1",
+                "V",
+                "ER0",
+                "N",
+                "AH0",
+                "N",
+                "S"
+              ],
+              "syllable_count": 3,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                2,
+                3
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "obligation",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "AA2",
+                "B",
+                "L",
+                "AH0",
+                "G",
+                "EY1",
+                "SH",
+                "AH0",
+                "N"
+              ],
+              "syllable_count": 4,
+              "primary_syllable": 3,
+              "secondary_syllables": [
+                1
+              ],
+              "weak_syllables": [
+                2,
+                4
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "disposition",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "D",
+                "IH2",
+                "S",
+                "P",
+                "AH0",
+                "Z",
+                "IH1",
+                "SH",
+                "AH0",
+                "N"
+              ],
+              "syllable_count": 4,
+              "primary_syllable": 3,
+              "secondary_syllables": [
+                1
+              ],
+              "weak_syllables": [
+                2,
+                4
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "hypothesis",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "HH",
+                "AY0",
+                "P",
+                "AA1",
+                "TH",
+                "AH0",
+                "S",
+                "AH0",
+                "S"
+              ],
+              "syllable_count": 4,
+              "primary_syllable": 2,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                1,
+                3,
+                4
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "divergence",
+            "kind": "lexical",
+            "lexical_stress": [
+              {
+                "arpabet": [
+                  "D",
+                  "AY0",
+                  "V",
+                  "ER1",
+                  "JH",
+                  "AH0",
+                  "N",
+                  "S"
+                ],
+                "syllable_count": 3,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1,
+                  3
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              {
+                "arpabet": [
+                  "D",
+                  "IH0",
+                  "V",
+                  "ER1",
+                  "JH",
+                  "AH0",
+                  "N",
+                  "S"
+                ],
+                "syllable_count": 3,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1,
+                  3
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            ],
+            "source": "cmudict"
+          },
+          {
+            "term": "repository",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "R",
+                "IY0",
+                "P",
+                "AA1",
+                "Z",
+                "AH0",
+                "T",
+                "AO2",
+                "R",
+                "IY0"
+              ],
+              "syllable_count": 5,
+              "primary_syllable": 2,
+              "secondary_syllables": [
+                4
+              ],
+              "weak_syllables": [
+                1,
+                3,
+                5
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "integration",
+            "kind": "lexical",
+            "lexical_stress": [
+              {
+                "arpabet": [
+                  "IH2",
+                  "N",
+                  "T",
+                  "AH0",
+                  "G",
+                  "R",
+                  "EY1",
+                  "SH",
+                  "AH0",
+                  "N"
+                ],
+                "syllable_count": 4,
+                "primary_syllable": 3,
+                "secondary_syllables": [
+                  1
+                ],
+                "weak_syllables": [
+                  2,
+                  4
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              {
+                "arpabet": [
+                  "IH2",
+                  "N",
+                  "AH0",
+                  "G",
+                  "R",
+                  "EY1",
+                  "SH",
+                  "AH0",
+                  "N"
+                ],
+                "syllable_count": 4,
+                "primary_syllable": 3,
+                "secondary_syllables": [
+                  1
+                ],
+                "weak_syllables": [
+                  2,
+                  4
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            ],
+            "source": "cmudict"
+          },
+          {
+            "term": "authority",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "AH0",
+                "TH",
+                "AO1",
+                "R",
+                "AH0",
+                "T",
+                "IY0"
+              ],
+              "syllable_count": 4,
+              "primary_syllable": 2,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                1,
+                3,
+                4
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "generation",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "JH",
+                "EH2",
+                "N",
+                "ER0",
+                "EY1",
+                "SH",
+                "AH0",
+                "N"
+              ],
+              "syllable_count": 4,
+              "primary_syllable": 3,
+              "secondary_syllables": [
+                1
+              ],
+              "weak_syllables": [
+                2,
+                4
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "expiry",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "EH2",
+                "K",
+                "S",
+                "P",
+                "AY1",
+                "R",
+                "IY0"
+              ],
+              "syllable_count": 3,
+              "primary_syllable": 2,
+              "secondary_syllables": [
+                1
+              ],
+              "weak_syllables": [
+                3
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "stewardship",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "S",
+                "T",
+                "UW1",
+                "ER0",
+                "D",
+                "SH",
+                "IH2",
+                "P"
+              ],
+              "syllable_count": 3,
+              "primary_syllable": 1,
+              "secondary_syllables": [
+                3
+              ],
+              "weak_syllables": [
+                2
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "superseded",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "S",
+                "UW2",
+                "P",
+                "ER0",
+                "S",
+                "IY1",
+                "D",
+                "IH0",
+                "D"
+              ],
+              "syllable_count": 4,
+              "primary_syllable": 3,
+              "secondary_syllables": [
+                1
+              ],
+              "weak_syllables": [
+                2,
+                4
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "reconciled",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "R",
+                "EH1",
+                "K",
+                "AH0",
+                "N",
+                "S",
+                "AY2",
+                "L",
+                "D"
+              ],
+              "syllable_count": 3,
+              "primary_syllable": 1,
+              "secondary_syllables": [
+                3
+              ],
+              "weak_syllables": [
+                2
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "alias",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "EY1",
+                "L",
+                "IY0",
+                "AH0",
+                "S"
+              ],
+              "syllable_count": 3,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                2,
+                3
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "Promotion",
+            "kind": "lexical",
+            "lexical_stress": [
+              {
+                "arpabet": [
+                  "P",
+                  "R",
+                  "AH0",
+                  "M",
+                  "OW1",
+                  "SH",
+                  "AH0",
+                  "N"
+                ],
+                "syllable_count": 3,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1,
+                  3
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              {
+                "arpabet": [
+                  "P",
+                  "ER0",
+                  "M",
+                  "OW1",
+                  "SH",
+                  "AH0",
+                  "N"
+                ],
+                "syllable_count": 3,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1,
+                  3
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            ],
+            "source": "cmudict"
+          },
+          {
+            "term": "compile",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "K",
+                "AH0",
+                "M",
+                "P",
+                "AY1",
+                "L"
+              ],
+              "syllable_count": 2,
+              "primary_syllable": 2,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                1
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "minutes",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "M",
+                "IH1",
+                "N",
+                "AH0",
+                "T",
+                "S"
+              ],
+              "syllable_count": 2,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                2
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "leads",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "L",
+                "IY1",
+                "D",
+                "Z"
+              ],
+              "syllable_count": 1,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "produced",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "P",
+                "R",
+                "AH0",
+                "D",
+                "UW1",
+                "S",
+                "T"
+              ],
+              "syllable_count": 2,
+              "primary_syllable": 2,
+              "secondary_syllables": [],
+              "weak_syllables": [
+                1
+              ],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "used",
+            "kind": "lexical",
+            "lexical_stress": {
+              "arpabet": [
+                "Y",
+                "UW1",
+                "Z",
+                "D"
+              ],
+              "syllable_count": 1,
+              "primary_syllable": 1,
+              "secondary_syllables": [],
+              "weak_syllables": [],
+              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "separately",
+            "kind": "lexical",
+            "lexical_stress": [
+              {
+                "arpabet": [
+                  "S",
+                  "EH1",
+                  "P",
+                  "ER0",
+                  "AH0",
+                  "T",
+                  "L",
+                  "IY0"
+                ],
+                "syllable_count": 4,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2,
+                  3,
+                  4
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              {
+                "arpabet": [
+                  "S",
+                  "EH1",
+                  "P",
+                  "R",
+                  "AH0",
+                  "T",
+                  "L",
+                  "IY0"
+                ],
+                "syllable_count": 3,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2,
+                  3
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            ],
+            "source": "cmudict"
+          },
+          {
+            "term": "AI",
+            "kind": "letter-name",
+            "target_reading": "A /eɪ/ + I /aɪ/, not an ordinary word",
+            "source": "standard English letter names",
+            "lexical_stress": {}
+          },
+          {
+            "term": "Attestation",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "attestations",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "isomorphic",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "verifier",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "deterministically",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "counterexamples",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "worktree",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "GitLab",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "OpenSpec",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "TransitionPlan",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "compare-and-swap",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "code-hosting",
+            "kind": "contextual-compound",
+            "lexical_stress": {
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
+            },
+            "source": "contextual-composition"
+          },
+          {
+            "term": "record",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "R",
+                  "EH1",
+                  "K",
+                  "ER0",
+                  "D"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": [
+                {
+                  "arpabet": [
+                    "R",
+                    "AH0",
+                    "K",
+                    "AO1",
+                    "R",
+                    "D"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                },
+                {
+                  "arpabet": [
+                    "R",
+                    "IH0",
+                    "K",
+                    "AO1",
+                    "R",
+                    "D"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                }
+              ]
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "records",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "R",
+                  "EH1",
+                  "K",
+                  "ER0",
+                  "D",
+                  "Z"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": [
+                {
+                  "arpabet": [
+                    "R",
+                    "AH0",
+                    "K",
+                    "AO1",
+                    "R",
+                    "D",
+                    "Z"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                },
+                {
+                  "arpabet": [
+                    "R",
+                    "IH0",
+                    "K",
+                    "AO1",
+                    "R",
+                    "D",
+                    "Z"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                }
+              ]
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "use",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "Y",
+                  "UW1",
+                  "S"
+                ],
+                "syllable_count": 1,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": {
+                "arpabet": [
+                  "Y",
+                  "UW1",
+                  "Z"
+                ],
+                "syllable_count": 1,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "read",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "present": {
+                "arpabet": [
+                  "R",
+                  "IY1",
+                  "D"
+                ],
+                "syllable_count": 1,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "past": {
+                "arpabet": [
+                  "R",
+                  "EH1",
+                  "D"
+                ],
+                "syllable_count": 1,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "separate",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "adjective": [
+                {
+                  "arpabet": [
+                    "S",
+                    "EH1",
+                    "P",
+                    "ER0",
+                    "IH0",
+                    "T"
+                  ],
+                  "syllable_count": 3,
+                  "primary_syllable": 1,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    2,
+                    3
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                },
+                {
+                  "arpabet": [
+                    "S",
+                    "EH1",
+                    "P",
+                    "R",
+                    "AH0",
+                    "T"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 1,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    2
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                }
+              ],
+              "verb": {
+                "arpabet": [
+                  "S",
+                  "EH1",
+                  "P",
+                  "ER0",
+                  "EY2",
+                  "T"
+                ],
+                "syllable_count": 3,
+                "primary_syllable": 1,
+                "secondary_syllables": [
+                  3
+                ],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "progress",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "P",
+                  "R",
+                  "AA1",
+                  "G",
+                  "R",
+                  "EH2",
+                  "S"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [
+                  2
+                ],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": [
+                {
+                  "arpabet": [
+                    "P",
+                    "R",
+                    "AH0",
+                    "G",
+                    "R",
+                    "EH1",
+                    "S"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                },
+                {
+                  "arpabet": [
+                    "P",
+                    "R",
+                    "OW0",
+                    "G",
+                    "R",
+                    "EH1",
+                    "S"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                }
+              ]
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "object",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "AA1",
+                  "B",
+                  "JH",
+                  "EH0",
+                  "K",
+                  "T"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": {
+                "arpabet": [
+                  "AH0",
+                  "B",
+                  "JH",
+                  "EH1",
+                  "K",
+                  "T"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "project",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "P",
+                  "R",
+                  "AA1",
+                  "JH",
+                  "EH0",
+                  "K",
+                  "T"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": {
+                "arpabet": [
+                  "P",
+                  "R",
+                  "AH0",
+                  "JH",
+                  "EH1",
+                  "K",
+                  "T"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "conflicts",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": [
+                {
+                  "arpabet": [
+                    "K",
+                    "AA1",
+                    "N",
+                    "F",
+                    "L",
+                    "IH0",
+                    "K",
+                    "T",
+                    "S"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 1,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    2
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                },
+                {
+                  "arpabet": [
+                    "K",
+                    "AA1",
+                    "N",
+                    "F",
+                    "L",
+                    "IH0",
+                    "K",
+                    "S"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 1,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    2
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                }
+              ],
+              "verb": [
+                {
+                  "arpabet": [
+                    "K",
+                    "AH0",
+                    "N",
+                    "F",
+                    "L",
+                    "IH1",
+                    "K",
+                    "T",
+                    "S"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                },
+                {
+                  "arpabet": [
+                    "K",
+                    "AH0",
+                    "N",
+                    "F",
+                    "L",
+                    "IH1",
+                    "K",
+                    "S"
+                  ],
+                  "syllable_count": 2,
+                  "primary_syllable": 2,
+                  "secondary_syllables": [],
+                  "weak_syllables": [
+                    1
+                  ],
+                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+                }
+              ]
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "combine",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "verb": {
+                "arpabet": [
+                  "K",
+                  "AH0",
+                  "M",
+                  "B",
+                  "AY1",
+                  "N"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "noun": {
+                "arpabet": [
+                  "K",
+                  "AA1",
+                  "M",
+                  "B",
+                  "AY0",
+                  "N"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "updates",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "verb": {
+                "arpabet": [
+                  "AH0",
+                  "P",
+                  "D",
+                  "EY1",
+                  "T",
+                  "S"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "noun": {
+                "arpabet": [
+                  "AH1",
+                  "P",
+                  "D",
+                  "EY2",
+                  "T",
+                  "S"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [
+                  2
+                ],
+                "weak_syllables": [],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          },
+          {
+            "term": "subject",
+            "kind": "contextual-homograph",
+            "lexical_stress": {
+              "noun": {
+                "arpabet": [
+                  "S",
+                  "AH1",
+                  "B",
+                  "JH",
+                  "IH0",
+                  "K",
+                  "T"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 1,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  2
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              },
+              "verb": {
+                "arpabet": [
+                  "S",
+                  "AH0",
+                  "B",
+                  "JH",
+                  "EH1",
+                  "K",
+                  "T"
+                ],
+                "syllable_count": 2,
+                "primary_syllable": 2,
+                "secondary_syllables": [],
+                "weak_syllables": [
+                  1
+                ],
+                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
+              }
+            },
+            "source": "cmudict"
+          }
+        ]
+      }
+    },
+    "acceptance": [
+      "Listen to every listed occurrence in its complete clause and a short waveform window, including the connected lead-in and natural phrase tail.",
+      "Bind actual script and spoken-text hashes, selected reference, generated WAV hash, exact time window, target, observation, listener/modality and decision.",
+      "ASR spelling, alignment, F0, dictionary targets and model praise alone cannot certify pronunciation or natural flow.",
+      "Qualify raw complete paragraphs, assembled within-chapter joins and chapter boundaries separately. No isolated-word splice or forced overall speed.",
+      "Full-film bilingual listening remains required after a pilot; targets are not a claim that all words were heard."
+    ],
+    "occurrence_plan": {
+      "count": 0,
+      "entries": []
+    }
+  }
+}

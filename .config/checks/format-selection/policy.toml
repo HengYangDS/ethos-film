@@ -18,6 +18,7 @@ paths = [
   "content/index.html",
   "content/player.html",
   "content/source-manifest.json",
+  "content/voice-performance.json",
   "content/voice-reference.json",
 ]
 format_owner = "immutable-carrier"
