@@ -1,0 +1,6 @@
+profile_id = "ethos-film"
+
+[openspec]
+material_paths = [
+    "**",
+]
