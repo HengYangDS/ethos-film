@@ -9,6 +9,7 @@ import filmkit
 import filmkit.film as film
 import filmkit.repository as repository
 from filmkit.production import CODES, Edition
+from filmkit.review.listening_plan import listening_plan
 
 # Han characters and CJK or full-width punctuation.
 CHINESE = re.compile(r"[\u3000-\u303f\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff00-\uffef]")
@@ -36,6 +37,12 @@ def test_each_narration_mirror_holds_its_script_segments():
         segments = repository.read(Edition(code).script)["segments"]
         mirror = (repository.ROOT / Edition(code).mirror).read_text()
         assert mirror == "\n\n".join(segment["text"] for segment in segments) + "\n"
+
+
+def test_the_listening_plan_derives_from_the_current_scripts(tmp_path):
+    # The readings key each English heteronym by its offset, so an edit that moves one refuses.
+    derived = listening_plan(tmp_path / "listening-plan.json")
+    assert all(derived["occurrences"][code] for code in CODES)
 
 
 def test_each_edition_has_its_own_player():
