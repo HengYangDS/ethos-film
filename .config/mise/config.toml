@@ -1,0 +1,120 @@
+min_version = "2026.10.14"
+
+[settings]
+locked = true
+
+# The repository's common verbs; the npm scripts and the frozen uv environment they call own the commands.
+[tasks.bootstrap]
+description = "Prepare the frozen Python environment and the locked npm packages"
+run = ["uv sync --python 3.12 --frozen --group dev", "npm ci --include=dev"]
+depends_post = ["check:dependencies"]
+
+[tasks."check:dependencies"]
+description = "Verify that the lock is current and the installed dependency graphs match the frozen inputs"
+run = [
+  "uv lock --python 3.12 --check --offline",
+  "uv sync --python 3.12 --frozen --check --offline --group dev",
+  "uv run --python 3.12 --frozen --offline --no-sync --group dev uv pip check",
+  "npm ls --all --include=dev",
+]
+
+[tasks.check]
+description = "Check the Markdown formatting without writing"
+depends = ["check:dependencies"]
+run = ["npm run format:markdown:check"]
+
+[tasks.fix]
+description = "Apply the Markdown formatter to the files it owns"
+run = "npm run format:markdown"
+
+# The film pipeline: each stage runs the filmkit engine's commands for both editions from the
+# repository root, and film:build runs every stage in order. Only film:supply reaches the network; HF_ENDPOINT
+# names a Hugging Face mirror where the hub is unreachable.
+[tasks."film:supply"]
+description = "Install the pinned browser build and speech models below build/runtime/tool-cache"
+run = "uv run --python 3.12 --frozen --offline python -m filmkit.supply"
+
+[tasks."film:narrate"]
+description = "Narrate both editions from their casts' seeds, then align and transcribe them"
+run = [
+  "uv run --python 3.12 --frozen --offline python -m filmkit.narration.narrate --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.narration.narrate --language en",
+]
+
+[tasks."film:sound"]
+description = "Select each edition's recordings, assemble its soundtrack and write its captions"
+run = [
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce select --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce assemble --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce refresh-captions --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce select --language en",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce assemble --language en",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce refresh-captions --language en",
+]
+
+[tasks."film:picture"]
+description = "Stage each edition's picture, check its geometry and its cover in the browser, render it with the locked renderer and validate it"
+run = [
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce stage-picture --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.tools geometry-check build/runtime/work/final-delivery-zh-uhd build/evidence/editions/zh/picture-geometry.json 2",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.tools player-check cover build/runtime/work/final-delivery-zh-uhd assets/cover/ethos-cover.png build/runtime/work/cover-zh.png",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce render-picture --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce validate-picture --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce stage-picture --language en",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.tools geometry-check build/runtime/work/final-delivery-en-uhd build/evidence/editions/en/picture-geometry.json 2",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.tools player-check cover build/runtime/work/final-delivery-en-uhd assets/cover/ethos-cover-en.png build/runtime/work/cover-en.png",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce render-picture --language en",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce validate-picture --language en",
+]
+
+[tasks."film:package"]
+description = "Package each edition's viewing members and both of its films"
+run = [
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce package-metadata --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce package-film --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce package-metadata --language en",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce package-film --language en",
+]
+
+[tasks."film:verify"]
+description = "Verify both editions' films and every input they bind; a rebuild carries no review"
+run = "uv run --python 3.12 --frozen --offline python -m filmkit.delivery.verification --technical-only --language all"
+
+[tasks."film:build"]
+description = "Build and verify both editions from the tracked sources and the supplied inputs"
+run = [
+  { task = "film:narrate" },
+  { task = "film:sound" },
+  { task = "film:picture" },
+  { task = "film:package" },
+  { task = "film:verify" },
+]
+
+[tasks."film:deliver"]
+description = "Deliver the reviewed editions to the film's Documents folder with rsync and read them back"
+run = [
+  "uv run --python 3.12 --frozen --offline python -m filmkit.delivery.verification --language all",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.delivery.documents_folder",
+]
+
+[tasks."film:compare"]
+description = "Compare the build with the published release in build/artifacts/release under the reproduction standard"
+run = "uv run --python 3.12 --frozen --offline python -m filmkit.delivery.reproduction"
+
+# The ETHOS gates resolve these only from this lock, never from PATH: Node for the picture checks,
+# Python and uv for the suite. Python stays on the 3.12 line that production selects.
+[tools]
+node = "26.12.1"
+python = "3.12.16"
+uv = "0.13.5"
+
+# The ETHOS release declaration as published with v0.2.0-alpha.21.
+[tools."http:ethos"]
+version = "0.2.0-alpha.21"
+
+[tools."http:ethos".platforms]
+linux-arm64 = { url = "https://github.com/HengYangDS/ethos/releases/download/v0.2.0-alpha.21/ethos-0.2.0-alpha.21-linux-arm64.tar.gz", checksum = "sha256:3d6d679064291800e005e93d055a876aaaadc63f9dba6a20629239c32990a350", bin_path = "ethos/bin" }
+linux-x64 = { url = "https://github.com/HengYangDS/ethos/releases/download/v0.2.0-alpha.21/ethos-0.2.0-alpha.21-linux-x64.tar.gz", checksum = "sha256:aa8bb94b5f16bd12bc0a12b96a3008f146877d0039d81b28cec28d5355fcd873", bin_path = "ethos/bin" }
+macos-arm64 = { url = "https://github.com/HengYangDS/ethos/releases/download/v0.2.0-alpha.21/ethos-0.2.0-alpha.21-macos-arm64.tar.gz", checksum = "sha256:0be57d6e2fae6f8af70c07c6d1449c1ef4741a11ee1d0e2600c7f2551ac4418b", bin_path = "ethos/bin" }
+windows-arm64 = { url = "https://github.com/HengYangDS/ethos/releases/download/v0.2.0-alpha.21/ethos-0.2.0-alpha.21-windows-arm64.tar.gz", checksum = "sha256:432fc27b07d6b1bd9545907be72ded593ecb83b49f000d9bf3c3360d0b1c719f", bin_path = "ethos/bin" }
+windows-x64 = { url = "https://github.com/HengYangDS/ethos/releases/download/v0.2.0-alpha.21/ethos-0.2.0-alpha.21-windows-x64.tar.gz", checksum = "sha256:f4e8ec759eddc20191ca34242b10e1c40992b364f0ccadf07beb82bd12dd6c70", bin_path = "ethos/bin" }
