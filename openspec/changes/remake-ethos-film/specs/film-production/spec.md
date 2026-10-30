@@ -60,7 +60,7 @@ Each edition's runtime SHALL be fitted with the engine's designed pauses. Speech
 #### Scenario: Speech that does not fit refuses
 
 - **WHEN** an edition's recorded speech and its designed pauses cannot fill exactly 900 seconds within the declared pause limits
-- **THEN** the assembly refuses before output, and the text is shortened and adopted again
+- **THEN** the assembly refuses before output, and the text or the declared pause policy changes before the next assembly
 
 ### Requirement: Both editions speak with one narrator
 

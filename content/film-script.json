@@ -77,24 +77,24 @@
     "assembly_mode": "native-speech-designed-pauses",
     "pacing_profile": "Ear-first copy spoken at the voice's native rate from the clear reference derived from the unmodified identity root. Speech is never time-stretched or pitch-shifted. No native pause inside a thought outlasts the declared inner cap, and each one lasts at least the floor of its punctuation, so a sentence end inside a thought is heard as a longer break than a clause mark and a clause mark as a longer one than a comma; a long run of speech takes a breath at the comma nearest its middle. Designed quiet separates complete thoughts and paragraphs, longer after longer ones, each thought boundary outlasts the longest pause inside its thought by at least a fifth, and the coda settles on its own longer pause after every thought; the remaining runtime opens the picture between paragraphs and chapters within declared bounds.",
     "designed_pauses": {
-      "thought": 0.46,
-      "question": 0.8,
+      "thought": 0.9,
+      "question": 1.2,
       "opening": 2.0,
-      "paragraph": 1.2,
+      "paragraph": 2.0,
       "chapter": 2.5,
       "closing": 1.7
     },
     "thought_pause_range": [
       0.41,
-      1.0
+      1.4
     ],
     "thought_boundary_ratio": 1.2,
     "thought_boundary_margin_seconds": 0.04,
     "thought_level_tolerance_db": 0.75,
     "chapter_level_tolerance_db": 0.3,
     "paragraph_pause_range": [
-      1.2,
-      2.7
+      2.0,
+      3.0
     ],
     "designed_pause_limits": {
       "opening": 9.0,

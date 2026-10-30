@@ -37,7 +37,9 @@ The text is adopted before any synthesis. An independent sentence-by-sentence re
 
 ### Runtime
 
-Each edition is exactly 900 seconds. The fifth draft holds 4142 Han characters and 2452 English words. Its scratch narration with the casts below measured 730 seconds of Chinese and 745 seconds of English speech, which leaves 170 and 155 seconds for the ten chapter openings, the 3 seconds of credits and the thought, sentence and paragraph pauses. The runtime is fitted with the engine's designed pauses: speech is never time-stretched, sentence pauses are not shortened below their floor, and no necessary punctuation is removed. If the speech does not fit, the text is shortened and adopted again.
+Each edition is exactly 900 seconds. The fifth draft holds 4142 Han characters and 2452 English words. Its narration with the casts below measures 730 seconds of Chinese and 745 seconds of English speech; once the engine shapes the pauses inside each thought, about 721 and 678 seconds of voice remain. The rest of the runtime is designed quiet: the pauses between thoughts, the paragraph and chapter gaps, the closing pause and 3 seconds of credits. The runtime is fitted with the engine's designed pauses: speech is never time-stretched, pauses inside a thought keep their floors, and no necessary punctuation is removed.
+
+The pause policy starts from the values the DDWG films qualified, which suit speech that nearly fills its runtime. Here they would leave runtime that no declared gap may take, so each edition lengthens its statement, question and paragraph pauses and their ranges, and English, which speaks faster, keeps native pauses inside a thought up to 0.4 seconds. Thoughts are then separated by about 0.9 seconds in Chinese and 1.1 seconds in English, paragraphs by about 3 and 5 seconds, and chapters by about 7.5 and 8.5 seconds, which the picture uses. The user's listening judges the pace: a pace that is too slow changes the pause policy or, by the user's decision, the runtime, never the voice; speech that is too long shortens the text, which is adopted again.
 
 ### Narrator
 
@@ -86,7 +88,7 @@ Code is MIT, the film content (script, narration, picture, covers and captions) 
 ## Risks / Trade-offs
 
 - [The ETHOS documents change after the pin] → The manifest names one commit; a later change reaches the film only through a new adopted text.
-- [The speech does not fit 900 seconds] → The text is shortened and adopted again; the pauses and the voice are never forced.
+- [The speech and the declared pauses do not fill 900 seconds exactly] → Speech that is too long shortens the text, which is adopted again; speech that is too short lengthens the declared pauses within the engine's bounds. The voice is never forced, and the user's listening judges the pace.
 - [The `filmkit` release is not reachable at its tag] → The lock cannot be final and the film waits; a local path source is not used, because the published repository must build from public sources.
 - [The voice misreads a name] → The pronunciation contract and an audition of each named term precede full narration.
 - [A copied primitive diverges from the DDWG one] → The copy names its source commit; the gates check the result, not the copy.
