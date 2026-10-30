@@ -154,7 +154,8 @@
       "title": "Two examples",
       "language": "English",
       "source_sections": [
-        "product-design-contract:Recursive Domain Feedback"
+        "product-design-contract:Recursive Domain Feedback",
+        "product-design-contract:Product"
       ],
       "utterance_groups": [
         "Take two familiar pieces of work. One improves a market-data pipeline: the data must be complete, and running the same batch twice must not leave duplicate records. ",
@@ -292,7 +293,8 @@
         "product-design-contract:Semantic Kernel",
         "product-design-contract:OpenSpec Acceptance And Closeout",
         "glossary:Facts",
-        "glossary:Attestation"
+        "glossary:Attestation",
+        "README:opening"
       ],
       "utterance_groups": [
         "This path rests on a small trust kernel. ",
@@ -317,7 +319,9 @@
         "product-design-contract:First-Hour UX",
         "product-design-contract:Invariants",
         "glossary:Exact CAS",
-        "glossary:Continuation"
+        "glossary:Continuation",
+        "glossary:TransitionPlan",
+        "glossary:Facts"
       ],
       "utterance_groups": [
         "A plan does not take effect on its own. Git points at versions through names called references. ",
@@ -340,7 +344,8 @@
       "language": "English",
       "source_sections": [
         "product-design-contract:Evidence Planes And Completion Claims",
-        "product-design-contract:Binding Taxonomy"
+        "product-design-contract:Binding Taxonomy",
+        "product-design-contract:Product"
       ],
       "utterance_groups": [
         "Verification has to name its object too: which commit, with exactly what code, against which requirement, by which verifier, under which conditions. ",
@@ -370,10 +375,10 @@
         "ETHOS protects only two branches: dev, which holds accepted work, and main, which carries releases. ",
         "Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. ",
         "A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. ",
-        "Continuous integration, the service that runs checks on every push, runs on its own and only watches: it holds no lease and no authority."
+        "Continuous integration, the service that runs checks on every push, runs on its own and observes without holding a lease or any authority."
       ],
-      "text": "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. ETHOS protects only two branches: dev, which holds accepted work, and main, which carries releases. Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. Continuous integration, the service that runs checks on every push, runs on its own and only watches: it holds no lease and no authority.",
-      "spoken_text": "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. Ethos protects only two branches: dev, which holds accepted work, and main, which carries releases. Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. Continuous integration, the service that runs checks on every push, runs on its own and only watches: it holds no lease and no authority."
+      "text": "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. ETHOS protects only two branches: dev, which holds accepted work, and main, which carries releases. Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. Continuous integration, the service that runs checks on every push, runs on its own and observes without holding a lease or any authority.",
+      "spoken_text": "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. Ethos protects only two branches: dev, which holds accepted work, and main, which carries releases. Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. Continuous integration, the service that runs checks on every push, runs on its own and observes without holding a lease or any authority."
     },
     {
       "id": "12",
@@ -385,7 +390,9 @@
       "source_sections": [
         "product-design-contract:Local Object Authority And Remote Projection",
         "product-design-contract:OpenSpec Acceptance And Closeout",
-        "release-and-publication:Release And Publication"
+        "release-and-publication:Release And Publication",
+        "product-design-contract:Product",
+        "product-design-contract:Evidence Planes And Completion Claims"
       ],
       "utterance_groups": [
         "Accepting code, cutting a release and putting it in users' hands are three separate steps. ",
@@ -453,7 +460,8 @@
         "product-design-contract:Model Promotion",
         "product-design-contract:Invalid-State Taxonomy",
         "kernel-model:Semantic Kernel",
-        "glossary:Model Promotion"
+        "glossary:Model Promotion",
+        "product-design-contract:Recursive Domain Feedback"
       ],
       "utterance_groups": [
         "Sometimes a new situation simply cannot be reconciled with the current model. Model here means those concepts and structures, not a statistical model. ",

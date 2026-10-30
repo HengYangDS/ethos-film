@@ -160,7 +160,8 @@
       "title": "两个例子",
       "language": "Chinese",
       "source_sections": [
-        "product-design-contract:Recursive Domain Feedback"
+        "product-design-contract:Recursive Domain Feedback",
+        "product-design-contract:Product"
       ],
       "utterance_groups": [
         "先看两件大家都熟悉的工作。一件是改进一条行情数据管线，要求数据完整，同一批数据重新跑一遍，也不能多出重复的记录。",
@@ -298,7 +299,8 @@
         "product-design-contract:Semantic Kernel",
         "product-design-contract:OpenSpec Acceptance And Closeout",
         "glossary:Facts",
-        "glossary:Attestation"
+        "glossary:Attestation",
+        "README:opening"
       ],
       "utterance_groups": [
         "这套做法靠一个很小的信任内核来支撑。",
@@ -323,7 +325,9 @@
         "product-design-contract:First-Hour UX",
         "product-design-contract:Invariants",
         "glossary:Exact CAS",
-        "glossary:Continuation"
+        "glossary:Continuation",
+        "glossary:TransitionPlan",
+        "glossary:Facts"
       ],
       "utterance_groups": [
         "计划不会自己生效。Git 用一个个名字指向各个版本，这些名字叫引用。",
@@ -346,7 +350,8 @@
       "language": "Chinese",
       "source_sections": [
         "product-design-contract:Evidence Planes And Completion Claims",
-        "product-design-contract:Binding Taxonomy"
+        "product-design-contract:Binding Taxonomy",
+        "product-design-contract:Product"
       ],
       "utterance_groups": [
         "检验的时候，也要说清楚查的是什么：哪一次提交里的哪一份代码，依据的是哪一项要求，用的是哪个检验程序，在什么条件下通过。",
@@ -376,10 +381,10 @@
         "ETHOS 只保护两个分支：dev 存放已经接受的改动，main 用来发布。",
         "对这两个分支没有写入权限的人，可以通过合并请求提出改动；维护者重新核对之后，可以接受审阅过的那次提交。",
         "一项改动还没被接受，就用之前已经信任的规则来判断它。修改规则的提案，不能自己给自己盖章。",
-        "每次推送代码，持续集成服务都会自动跑一遍检查。它独立运行，只管观察，不持有租约，也没有决定权。"
+        "每次推送代码，持续集成服务都会自动跑一遍检查。它独立运行，观察结果，但不持有租约，也没有决定权。"
       ],
-      "text": "审阅不用等所有证明都跑完。它看的是一个具体的对象，以及这次带进来的那几次提交。几条通道的改动，可以先合到本地一条专门做集成的分支上，这叫候选分支。也可以把某一次提交单独拿出来，交给审阅者看。ETHOS 只保护两个分支：dev 存放已经接受的改动，main 用来发布。对这两个分支没有写入权限的人，可以通过合并请求提出改动；维护者重新核对之后，可以接受审阅过的那次提交。一项改动还没被接受，就用之前已经信任的规则来判断它。修改规则的提案，不能自己给自己盖章。每次推送代码，持续集成服务都会自动跑一遍检查。它独立运行，只管观察，不持有租约，也没有决定权。",
-      "spoken_text": "审阅不用等所有证明都跑完。它看的是一个具体的对象，以及这次带进来的那几次提交。几条通道的改动，可以先合到本地一条专门做集成的分支上，这叫候选分支。也可以把某一次提交单独拿出来，交给审阅者看。Eethos 只保护两个分支：dev 存放已经接受的改动，main 用来发布。对这两个分支没有写入权限的人，可以通过合并请求提出改动；维护者重新核对之后，可以接受审阅过的那次提交。一项改动还没被接受，就用之前已经信任的规则来判断它。修改规则的提案，不能自己给自己盖章。每次推送代码，持续集成服务都会自动跑一遍检查。它独立运行，只管观察，不持有租约，也没有决定权。"
+      "text": "审阅不用等所有证明都跑完。它看的是一个具体的对象，以及这次带进来的那几次提交。几条通道的改动，可以先合到本地一条专门做集成的分支上，这叫候选分支。也可以把某一次提交单独拿出来，交给审阅者看。ETHOS 只保护两个分支：dev 存放已经接受的改动，main 用来发布。对这两个分支没有写入权限的人，可以通过合并请求提出改动；维护者重新核对之后，可以接受审阅过的那次提交。一项改动还没被接受，就用之前已经信任的规则来判断它。修改规则的提案，不能自己给自己盖章。每次推送代码，持续集成服务都会自动跑一遍检查。它独立运行，观察结果，但不持有租约，也没有决定权。",
+      "spoken_text": "审阅不用等所有证明都跑完。它看的是一个具体的对象，以及这次带进来的那几次提交。几条通道的改动，可以先合到本地一条专门做集成的分支上，这叫候选分支。也可以把某一次提交单独拿出来，交给审阅者看。Eethos 只保护两个分支：dev 存放已经接受的改动，main 用来发布。对这两个分支没有写入权限的人，可以通过合并请求提出改动；维护者重新核对之后，可以接受审阅过的那次提交。一项改动还没被接受，就用之前已经信任的规则来判断它。修改规则的提案，不能自己给自己盖章。每次推送代码，持续集成服务都会自动跑一遍检查。它独立运行，观察结果，但不持有租约，也没有决定权。"
     },
     {
       "id": "12",
@@ -391,7 +396,9 @@
       "source_sections": [
         "product-design-contract:Local Object Authority And Remote Projection",
         "product-design-contract:OpenSpec Acceptance And Closeout",
-        "release-and-publication:Release And Publication"
+        "release-and-publication:Release And Publication",
+        "product-design-contract:Product",
+        "product-design-contract:Evidence Planes And Completion Claims"
       ],
       "utterance_groups": [
         "代码被接受，做成发布版本，再真正交到使用者手里，这是三个不同的步骤。",
@@ -458,7 +465,8 @@
         "product-design-contract:Model Promotion",
         "product-design-contract:Invalid-State Taxonomy",
         "kernel-model:Semantic Kernel",
-        "glossary:Model Promotion"
+        "glossary:Model Promotion",
+        "product-design-contract:Recursive Domain Feedback"
       ],
       "utterance_groups": [
         "有时候，新的情况跟现有的模型怎么也对不上。这里说的模型，就是前面讲的概念和结构，不是统计模型。",
