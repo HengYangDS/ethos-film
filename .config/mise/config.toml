@@ -19,9 +19,12 @@ run = [
 ]
 
 [tasks.check]
-description = "Check the Markdown formatting without writing"
+description = "Run the Python tests and check the Markdown formatting without writing"
 depends = ["check:dependencies"]
-run = ["npm run format:markdown:check"]
+run = [
+  "npm run format:markdown:check",
+  "uv run --python 3.12 --frozen --offline --group dev python -m pytest -q tests",
+]
 
 [tasks.fix]
 description = "Apply the Markdown formatter to the files it owns"

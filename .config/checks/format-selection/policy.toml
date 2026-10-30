@@ -1,0 +1,40 @@
+# Sources whose SHA-256 the film's build records bind and that film-media checks against a
+# build's receipts: the reference recordings and fonts, the scripts and casts, the source
+# manifest and the player and entry pages. A new production changes them together, through a
+# full render and review.
+[[ownership]]
+id = "film-media-bound-sources"
+paths = [
+  "assets/audio/en/narration-reference.wav",
+  "assets/audio/narration-reference-clear.wav",
+  "assets/fonts/ibm-plex-sans-bold.ttf",
+  "assets/fonts/ibm-plex-sans-regular.ttf",
+  "assets/fonts/noto-sans-cjk-sc-subset-bold.otf",
+  "assets/fonts/noto-sans-cjk-sc-subset-regular.otf",
+  "content/en/film-script.json",
+  "content/en/player.html",
+  "content/en/voice-reference.json",
+  "content/film-script.json",
+  "content/index.html",
+  "content/player.html",
+  "content/source-manifest.json",
+  "content/voice-reference.json",
+]
+format_owner = "immutable-carrier"
+format_command = "not-applicable:film-media-bound"
+format_check = "ethos prove --full --execute --json"
+validation_owner = "native-behavior"
+validation_command = "ethos prove --full --execute --json"
+mutation_policy = "forbidden"
+
+# Narration texts that film-media compares with the script: each must equal its edition's
+# segment texts joined by one blank line, so a Markdown formatter must not rewrite them.
+[[ownership]]
+id = "film-media-bound-narration"
+paths = ["content/en/narration.md", "content/narration.md"]
+format_owner = "immutable-carrier"
+format_command = "not-applicable:film-media-bound"
+format_check = "ethos prove --full --execute --json"
+validation_owner = "native-behavior"
+validation_command = "ethos prove --full --execute --json"
+mutation_policy = "forbidden"

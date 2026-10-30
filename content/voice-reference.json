@@ -1,0 +1,71 @@
+{
+  "reference_text": "我们以证据连接人的判断与智能体的行动。规范保存正式接受的意图，证据记录实际发生的事。看清关系，决定下一步；条件改变，就重新判断。",
+  "reference_text_sha256": "56bb01f22625ec420f058a31c72813b0507f659a969eb8f7ee2183bb501143f3",
+  "reference_mode": "icl",
+  "narration_language": "Chinese",
+  "full_narration_seed": 4677,
+  "full_narration_temperature": 0.46,
+  "full_narration_max_tokens": 1900,
+  "model": "mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16",
+  "revision": "a6eb4f68e4b056f1215157bb696209bc82a6db48",
+  "reference_language": "Chinese",
+  "reference_audio": "assets/audio/narration-reference-clear.wav",
+  "reference_sha256": "7ff6347ed4231943944ef27bfc708cfcf796619b3988b2b99bc21be71ae338da",
+  "scope": "Clear in-context reference derived from the approved synthetic narrator identity root, which stays unchanged. Its speaker embedding alone spoke reference text b; that rendition, with every inner silence capped at 0.12 s, spoke reference text a in context; this rendition, with every inner silence capped at 0.12 s, is the reference. Voiced audio is native model output: never time-stretched, pitch-shifted or recast. Pronunciation and listening quality are qualified separately from this input binding.",
+  "derivation": {
+    "identity_root": {
+      "path": "assets/audio/narration-reference.wav",
+      "sha256": "a355801a8b16ca11925457678516329c04c4f2b2a66e76ef60457eea4872aa25",
+      "reference_text_sha256": "bed9b794bdb7e67dbf1060aebcbfa0e159c78334e1a6bf6b4d251626b66bcb05"
+    },
+    "steps": [
+      {
+        "mode": "speaker-embedding",
+        "text": "一份数据做完了，可下一位用它的人，能靠它做判断吗？他们需要知道每个数字是什么意思，对应哪个时间，依据从哪里来，能用在什么地方。",
+        "seed": 86770,
+        "temperature": 0.46,
+        "top_k": 50,
+        "top_p": 0.9,
+        "repetition_penalty": 1.05,
+        "max_tokens": 1900
+      },
+      {
+        "mode": "icl",
+        "text": "我们以证据连接人的判断与智能体的行动。规范保存正式接受的意图，证据记录实际发生的事。看清关系，决定下一步；条件改变，就重新判断。",
+        "prompt_text": "一份数据做完了，可下一位用它的人，能靠它做判断吗？他们需要知道每个数字是什么意思，对应哪个时间，依据从哪里来，能用在什么地方。",
+        "seed": 55847,
+        "temperature": 0.46,
+        "icl_repetition_penalty": 1.05,
+        "max_tokens": 1900
+      }
+    ],
+    "silence_treatment": "After each step, edges trimmed to 0.1 s and every inner run below -45 dBFS longer than 0.12 s shortened from its middle with 10 ms raised-cosine joins; voiced audio unchanged.",
+    "objective_comparison": {
+      "speaker_embedding_cosine_to_root": 0.9911,
+      "trial": "Six narration thoughts, three takes each, same take seeds as the current method",
+      "current_method": {
+        "cpp": 0.096,
+        "pitch_hz": 173.7,
+        "semitone_sd": 2.67,
+        "capped_pace_units_per_s": 5.629,
+        "articulation_units_per_s": 6.372,
+        "natural_endings": "4/18"
+      },
+      "derived_reference": {
+        "cpp": 0.163,
+        "pitch_hz": 175.7,
+        "semitone_sd": 2.8,
+        "capped_pace_units_per_s": 5.84,
+        "articulation_units_per_s": 6.049,
+        "natural_endings": "9/18"
+      }
+    },
+    "reason": "The approved root is breathy and in-context cloning copies its voice quality; the derived reference keeps the narrator's identity and pitch while reducing breathiness."
+  },
+  "icl_repetition_penalty": 1.05,
+  "performance_recording": {
+    "receipt": "build/evidence/editions/zh/ear-first/narration-receipt.json",
+    "alignment": "build/evidence/editions/zh/ear-first/alignment.json"
+  },
+  "retakes": {}
+}

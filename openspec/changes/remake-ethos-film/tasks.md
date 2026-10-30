@@ -9,7 +9,7 @@
 ## 2. Script
 
 - [ ] 2.1 Check every part's `source_sections` against the cited documents at the pinned commit; verify that each named section exists and states the part's claims.
-- [ ] 2.2 Write both editions' scripts from the text the user adopted, with chapters, segments, thought groups, release metadata and the pause policy, and add the declaration, the players, the entry page, the review prompt and the font subsets cut from the scripts; verify that the engine loads the declaration and that each edition's text equals the adopted text.
+- [x] 2.2 Write both editions' scripts from the text the user adopted, with chapters, segments, thought groups, release metadata and the pause policy, and add the declaration, the players, the entry page, the review prompt and the font subsets cut from the scripts; verify that the engine loads the declaration and that each edition's text equals the adopted text.
 - [ ] 2.3 Pass the independent sentence-by-sentence text review at 90 or more in fidelity, first-hearing clarity and idiom, with no material finding; verify that the review record binds both scripts' SHA-256.
 - [ ] 2.4 Write the pronunciation contract and the review readings, and audition every named term; verify that the listening plan derives from them and that each audition is heard in its declared spoken form.
 

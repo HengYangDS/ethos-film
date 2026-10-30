@@ -1,0 +1,539 @@
+{
+  "title": "ETHOS · Evidence-grounded Trust",
+  "author": "Yang HENG",
+  "release": {
+    "year": 2026,
+    "collection": "ETHOS · Evidence-grounded Trust",
+    "genre": "Education",
+    "description": "ETHOS introduction film; English; 2D; narration only",
+    "comment": "English introduction film; illustrative examples; planned capabilities stated as design",
+    "synopsis": "A 15-minute introduction to ETHOS: how people and agents working on a project keep their understanding of the problem joined to the answers that code, data and real use give back. It covers intent written into a Change, one owner for each obligation, Work Lanes and Leases, the trust kernel and separate evidence, review, release, real use, feedback and Model Promotion, and finally adoption, handoff and exit. The market-data pipeline and the stock-selection study are illustrative; planned capabilities are described as design.",
+    "keywords": [
+      "ETHOS",
+      "human-agent collaboration",
+      "OpenSpec",
+      "Work Lanes",
+      "trust kernel",
+      "evidence"
+    ],
+    "tracks": {
+      "picture": "Picture",
+      "narration": "English narration"
+    }
+  },
+  "language": "English",
+  "duration": 900,
+  "fps": 60,
+  "source": "content/source-manifest.json",
+  "chapters": [
+    {
+      "id": "two-lines",
+      "title": "Two lines"
+    },
+    {
+      "id": "intent",
+      "title": "Intent"
+    },
+    {
+      "id": "one-owner",
+      "title": "One owner for each obligation"
+    },
+    {
+      "id": "lanes",
+      "title": "Work Lanes and Leases"
+    },
+    {
+      "id": "kernel",
+      "title": "The trust kernel"
+    },
+    {
+      "id": "proof",
+      "title": "Proof"
+    },
+    {
+      "id": "review",
+      "title": "Review, integration and release"
+    },
+    {
+      "id": "real-use",
+      "title": "Real use"
+    },
+    {
+      "id": "feedback",
+      "title": "Feedback and Model Promotion"
+    },
+    {
+      "id": "adoption",
+      "title": "Adoption, handoff and exit"
+    }
+  ],
+  "credits_duration": 3,
+  "editorial_intent": {
+    "purpose": "Explain ETHOS to a first-time listener in natively authored spoken English: complete thoughts, two running illustrations, source conditions, modalities and actors preserved, planned capabilities stated as design, illustrative cases marked as illustrative."
+  },
+  "voice_performance": {
+    "performance_intent": "Selected neutral magnetic female narrator from the identity-root reference; clear, lively connected explanation; firm sentence endings; no theatrical delivery.",
+    "energy_curve": "Curious opening, purposeful explanatory body, firmer decisions, settled coda.",
+    "assembly_mode": "native-speech-designed-pauses",
+    "pacing_profile": "Ear-first copy spoken at the voice's native rate from the unmodified identity root. Speech is never time-stretched or pitch-shifted. No native pause inside a thought outlasts the declared inner cap. Designed quiet separates complete thoughts and paragraphs, longer after longer ones, each thought boundary outlasts the longest pause inside its thought by at least three fifths, and the coda settles on its own longer pause after every thought; the remaining runtime opens the picture between paragraphs and chapters within declared bounds.",
+    "designed_pauses": {
+      "thought": 0.59,
+      "question": 0.65,
+      "opening": 2.0,
+      "paragraph": 1.03,
+      "chapter": 2.0,
+      "closing": 1.5
+    },
+    "thought_pause_range": [
+      0.36,
+      1.0
+    ],
+    "thought_boundary_ratio": 1.62,
+    "thought_boundary_margin_seconds": 0.09,
+    "thought_level_tolerance_db": 0.75,
+    "chapter_level_tolerance_db": 0.3,
+    "paragraph_pause_range": [
+      1.0,
+      1.85
+    ],
+    "designed_pause_limits": {
+      "opening": 9.0,
+      "paragraph": 5.5,
+      "chapter": 9.0
+    },
+    "designed_pause_weights": {
+      "opening": 2.0,
+      "paragraph": 1.0,
+      "chapter": 2.5
+    },
+    "tail_guard_seconds": 0.3,
+    "provider_notes": {
+      "native": "Identity-root ICL reference and fixed seed; natural punctuation only; no instruction tokens, pitch or tempo transform, or music."
+    },
+    "coda_thought_pause_seconds": 0.9,
+    "inner_pause_cap_seconds": 0.28,
+    "inner_pause_caps_seconds": {
+      ",": 0.12
+    }
+  },
+  "caption_timing": {
+    "tail_seconds": 0.25,
+    "short_cue_lead_seconds": 0.1,
+    "hold_mode": "full-interval"
+  },
+  "pronunciation_contract": "content/voice-performance.json",
+  "timing_state": "Unrecorded ear-first script; timing is derived after narration.",
+  "segments": [
+    {
+      "id": "01",
+      "chapter": "two-lines",
+      "chapter_index": 0,
+      "chapter_title": "Two lines",
+      "title": "When the two lines drift apart",
+      "language": "English",
+      "source_sections": [
+        "README:opening",
+        "product-design-contract:Product"
+      ],
+      "utterance_groups": [
+        "Every project moves along two lines at once. ",
+        "One is our understanding of the problem: what we are trying to solve, and what would count as solving it. The other is the answer that code, data and real use keep giving back. ",
+        "Understanding changes, tools are replaced, and people and AI agents take turns carrying the work. When the two lines drift apart, effort stops adding up, and whoever picks the work up next has to start by guessing. ",
+        "ETHOS stands for Evidence-grounded Trust for Human-Agent Operational Stewardship. ",
+        "It does not promise more governance. It promises three things: accepted intent is not lost, uncertainty is stated so that someone can act on it, and mistakes can be recovered from. ",
+        "That is what ETHOS aims for, and its own documents say that the whole promise cannot yet be counted as delivered."
+      ],
+      "text": "Every project moves along two lines at once. One is our understanding of the problem: what we are trying to solve, and what would count as solving it. The other is the answer that code, data and real use keep giving back. Understanding changes, tools are replaced, and people and AI agents take turns carrying the work. When the two lines drift apart, effort stops adding up, and whoever picks the work up next has to start by guessing. ETHOS stands for Evidence-grounded Trust for Human-Agent Operational Stewardship. It does not promise more governance. It promises three things: accepted intent is not lost, uncertainty is stated so that someone can act on it, and mistakes can be recovered from. That is what ETHOS aims for, and its own documents say that the whole promise cannot yet be counted as delivered.",
+      "spoken_text": "Every project moves along two lines at once. One is our understanding of the problem: what we are trying to solve, and what would count as solving it. The other is the answer that code, data and real use keep giving back. Understanding changes, tools are replaced, and people and AI agents take turns carrying the work. When the two lines drift apart, effort stops adding up, and whoever picks the work up next has to start by guessing. Ethos stands for Evidence-grounded Trust for Human-Agent Operational Stewardship. It does not promise more governance. It promises three things: accepted intent is not lost, uncertainty is stated so that someone can act on it, and mistakes can be recovered from. That is what Ethos aims for, and its own documents say that the whole promise cannot yet be counted as delivered."
+    },
+    {
+      "id": "02",
+      "chapter": "two-lines",
+      "chapter_index": 0,
+      "chapter_title": "Two lines",
+      "title": "Two examples",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Recursive Domain Feedback"
+      ],
+      "utterance_groups": [
+        "Take two familiar pieces of work. One improves a market-data pipeline: the data must be complete, and running the same batch twice must not leave duplicate records. ",
+        "The other studies a stock-selection signal: was every piece of information the backtest uses actually available at the moment of each decision, and does the result survive a different period? ",
+        "Both can use the same tools, yet they succeed by entirely different standards, and those standards belong to the project. ",
+        "ETHOS does not decide what good data or a valid signal is. It organizes intent, collaboration, verification and revision in the service of the project's own standards. ",
+        "These two examples carry the rest of the film; they only illustrate the ideas, and are not measured results."
+      ],
+      "text": "Take two familiar pieces of work. One improves a market-data pipeline: the data must be complete, and running the same batch twice must not leave duplicate records. The other studies a stock-selection signal: was every piece of information the backtest uses actually available at the moment of each decision, and does the result survive a different period? Both can use the same tools, yet they succeed by entirely different standards, and those standards belong to the project. ETHOS does not decide what good data or a valid signal is. It organizes intent, collaboration, verification and revision in the service of the project's own standards. These two examples carry the rest of the film; they only illustrate the ideas, and are not measured results.",
+      "spoken_text": "Take two familiar pieces of work. One improves a market-data pipeline: the data must be complete, and running the same batch twice must not leave duplicate records. The other studies a stock-selection signal: was every piece of information the backtest uses actually available at the moment of each decision, and does the result survive a different period? Both can use the same tools, yet they succeed by entirely different standards, and those standards belong to the project. Ethos does not decide what good data or a valid signal is. It organizes intent, collaboration, verification and revision in the service of the project's own standards. These two examples carry the rest of the film; they only illustrate the ideas, and are not measured results."
+    },
+    {
+      "id": "03",
+      "chapter": "intent",
+      "chapter_index": 1,
+      "chapter_title": "Intent",
+      "title": "Written into a Change",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Semantic Kernel",
+        "product-design-contract:OpenSpec Acceptance And Closeout",
+        "product-design-contract:Isomorphic Adopter Governance",
+        "product-design-contract:Recursive Domain Feedback"
+      ],
+      "utterance_groups": [
+        "Working together starts with saying what will change, and how we will know the change worked. ",
+        "A pipeline that must tolerate reruns needs more than the words \"more reliable\". It has to say which records count as the same record, which look-alike records must still be kept, and how we will verify that nothing is duplicated. ",
+        "A signal study needs its hypothesis written down, together with the result that would refute it. ",
+        "All of this goes into an official Change in the repository, written with OpenSpec, an existing specification tool: a proposal says why, specs state the required behavior and its acceptance scenarios, a design records the trade-offs, and a task list records progress. ETHOS reads it and compiles it. ",
+        "In the repository, accepted intent is kept in the Change and nowhere else. ",
+        "Research may push the intent to change, but a revised requirement has to be accepted again by whoever has the authority to decide."
+      ],
+      "text": "Working together starts with saying what will change, and how we will know the change worked. A pipeline that must tolerate reruns needs more than the words \"more reliable\". It has to say which records count as the same record, which look-alike records must still be kept, and how we will verify that nothing is duplicated. A signal study needs its hypothesis written down, together with the result that would refute it. All of this goes into an official Change in the repository, written with OpenSpec, an existing specification tool: a proposal says why, specs state the required behavior and its acceptance scenarios, a design records the trade-offs, and a task list records progress. ETHOS reads it and compiles it. In the repository, accepted intent is kept in the Change and nowhere else. Research may push the intent to change, but a revised requirement has to be accepted again by whoever has the authority to decide.",
+      "spoken_text": "Working together starts with saying what will change, and how we will know the change worked. A pipeline that must tolerate reruns needs more than the words \"more reliable\". It has to say which records count as the same record, which look-alike records must still be kept, and how we will verify that nothing is duplicated. A signal study needs its hypothesis written down, together with the result that would refute it. All of this goes into an official Change in the repository, written with Open Spec, an existing specification tool: a proposal says why, specs state the required behavior and its acceptance scenarios, a design records the trade-offs, and a task list records progress. Ethos reads it and compiles it. In the repository, accepted intent is kept in the Change and nowhere else. Research may push the intent to change, but a revised requirement has to be accepted again by whoever has the authority to decide."
+    },
+    {
+      "id": "04",
+      "chapter": "intent",
+      "chapter_index": 1,
+      "chapter_title": "Intent",
+      "title": "Understand, then compile",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Feedback Intent Preservation"
+      ],
+      "utterance_groups": [
+        "Understanding a requirement and turning it into checks are two different jobs. ",
+        "Understanding takes judgment. Every relevant constraint in the declared sources is kept, excluded by an authorized decision, or marked as unresolved. ",
+        "Examples and counterexamples both challenge the reading, including what is out of scope and where the exceptions lie. ",
+        "Only then does ETHOS compile the accepted meaning, deterministically, into acceptance and checks. ",
+        "The same inputs always compile to the same acceptance, but that cannot certify that anyone understood correctly. ",
+        "Transcripts, an agent's memory and summaries are leads, not authority, and repeating a request does not make it binding. ",
+        "Each obligation ends with exactly one disposition: accepted, superseded by a later instruction on the same subject, pending verification, or rejected with its reason."
+      ],
+      "text": "Understanding a requirement and turning it into checks are two different jobs. Understanding takes judgment. Every relevant constraint in the declared sources is kept, excluded by an authorized decision, or marked as unresolved. Examples and counterexamples both challenge the reading, including what is out of scope and where the exceptions lie. Only then does ETHOS compile the accepted meaning, deterministically, into acceptance and checks. The same inputs always compile to the same acceptance, but that cannot certify that anyone understood correctly. Transcripts, an agent's memory and summaries are leads, not authority, and repeating a request does not make it binding. Each obligation ends with exactly one disposition: accepted, superseded by a later instruction on the same subject, pending verification, or rejected with its reason.",
+      "spoken_text": "Understanding a requirement and turning it into checks are two different jobs. Understanding takes judgment. Every relevant constraint in the declared sources is kept, excluded by an authorized decision, or marked as unresolved. Examples and counterexamples both challenge the reading, including what is out of scope and where the exceptions lie. Only then does Ethos compile the accepted meaning, deterministically, into acceptance and checks. The same inputs always compile to the same acceptance, but that cannot certify that anyone understood correctly. Transcripts, an agent's memory and summaries are leads, not authority, and repeating a request does not make it binding. Each obligation ends with exactly one disposition: accepted, superseded by a later instruction on the same subject, pending verification, or rejected with its reason."
+    },
+    {
+      "id": "05",
+      "chapter": "one-owner",
+      "chapter_index": 2,
+      "chapter_title": "One owner for each obligation",
+      "title": "One definition, existing tools first",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Construction And Evolution Discipline",
+        "product-design-contract:Invariants"
+      ],
+      "utterance_groups": [
+        "Once a requirement is clear, it has to mean the same thing everywhere. ",
+        "How a duplicate record is recognized should be defined by the one module responsible for that meaning; the interfaces, tests and documentation follow from it, instead of each writing its own version. ",
+        "ETHOS calls this giving every obligation exactly one owner. ",
+        "The same restraint applies to tools. Official carriers such as OpenSpec and Git, the platform's native capabilities and mature tools do the supporting work first. ",
+        "Custom supporting code is written only where a real gap has been shown, its job is bounded, and its net benefit is clear. ",
+        "When a replacement is chosen, the path it replaces is removed with it, rather than both living on. ",
+        "ETHOS focuses its own code on one job: turning accepted intent and freshly observed facts into changes to the repository that can be verified."
+      ],
+      "text": "Once a requirement is clear, it has to mean the same thing everywhere. How a duplicate record is recognized should be defined by the one module responsible for that meaning; the interfaces, tests and documentation follow from it, instead of each writing its own version. ETHOS calls this giving every obligation exactly one owner. The same restraint applies to tools. Official carriers such as OpenSpec and Git, the platform's native capabilities and mature tools do the supporting work first. Custom supporting code is written only where a real gap has been shown, its job is bounded, and its net benefit is clear. When a replacement is chosen, the path it replaces is removed with it, rather than both living on. ETHOS focuses its own code on one job: turning accepted intent and freshly observed facts into changes to the repository that can be verified.",
+      "spoken_text": "Once a requirement is clear, it has to mean the same thing everywhere. How a duplicate record is recognized should be defined by the one module responsible for that meaning; the interfaces, tests and documentation follow from it, instead of each writing its own version. Ethos calls this giving every obligation exactly one owner. The same restraint applies to tools. Official carriers such as Open Spec and Git, the platform's native capabilities and mature tools do the supporting work first. Custom supporting code is written only where a real gap has been shown, its job is bounded, and its net benefit is clear. When a replacement is chosen, the path it replaces is removed with it, rather than both living on. Ethos focuses its own code on one job: turning accepted intent and freshly observed facts into changes to the repository that can be verified."
+    },
+    {
+      "id": "06",
+      "chapter": "lanes",
+      "chapter_index": 3,
+      "chapter_title": "Work Lanes and Leases",
+      "title": "Lanes and Leases",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Git-Native Repository Substrate",
+        "product-design-contract:Lane, Review, And Integration Roles",
+        "glossary:Work Lane",
+        "glossary:Lease"
+      ],
+      "utterance_groups": [
+        "A Change is often carried by several people and agents at once. Everyone needs to know who owns which part, what is still an experiment, and how the work is handed over. ",
+        "ETHOS organizes this with Work Lanes. Each lane has its own Git worktree, a separate working copy of the files, so people can change things separately, then review and combine. ",
+        "Who holds a lane right now is coordinated by an expiring Lease, which records only four things: the lane, its holder, its expiry time, and a generation number that tells one holding from the next. Everything else is observed afresh. ",
+        "Lanes can cooperate, combining several contributions; they can compete, with one result chosen, or none. ",
+        "Even when an exploration ends with only a negative result, the useful evidence is kept rather than deleted along with the lane."
+      ],
+      "text": "A Change is often carried by several people and agents at once. Everyone needs to know who owns which part, what is still an experiment, and how the work is handed over. ETHOS organizes this with Work Lanes. Each lane has its own Git worktree, a separate working copy of the files, so people can change things separately, then review and combine. Who holds a lane right now is coordinated by an expiring Lease, which records only four things: the lane, its holder, its expiry time, and a generation number that tells one holding from the next. Everything else is observed afresh. Lanes can cooperate, combining several contributions; they can compete, with one result chosen, or none. Even when an exploration ends with only a negative result, the useful evidence is kept rather than deleted along with the lane.",
+      "spoken_text": "A Change is often carried by several people and agents at once. Everyone needs to know who owns which part, what is still an experiment, and how the work is handed over. Ethos organizes this with Work Lanes. Each lane has its own Git worktree, a separate working copy of the files, so people can change things separately, then review and combine. Who holds a lane right now is coordinated by an expiring Lease, which records only four things: the lane, its holder, its expiry time, and a generation number that tells one holding from the next. Everything else is observed afresh. Lanes can cooperate, combining several contributions; they can compete, with one result chosen, or none. Even when an exploration ends with only a negative result, the useful evidence is kept rather than deleted along with the lane."
+    },
+    {
+      "id": "07",
+      "chapter": "lanes",
+      "chapter_index": 3,
+      "chapter_title": "Work Lanes and Leases",
+      "title": "The check before writing",
+      "language": "English",
+      "source_sections": [
+        "quickstart:Before a Tracked Write",
+        "product-design-contract:Git-Native Repository Substrate"
+      ],
+      "utterance_groups": [
+        "Holding a lane is not permission to edit a particular file at this moment. ",
+        "Before each change to a tracked file, the current state of that worktree and those exact files is checked again. This is a separate check before writing. ",
+        "If someone else's uncommitted work is there, if ownership is unclear, or if the state is not what was expected, the lane can read but not write until a fresh check admits the write. ",
+        "A check that passed a few minutes ago does not stand in for one now, and unrelated work carries on. ",
+        "One limit should be clear: this coordinates participants who follow the protocol. It is not isolation of the kind an operating system provides, and it cannot stop an uncooperative program running under the same account."
+      ],
+      "text": "Holding a lane is not permission to edit a particular file at this moment. Before each change to a tracked file, the current state of that worktree and those exact files is checked again. This is a separate check before writing. If someone else's uncommitted work is there, if ownership is unclear, or if the state is not what was expected, the lane can read but not write until a fresh check admits the write. A check that passed a few minutes ago does not stand in for one now, and unrelated work carries on. One limit should be clear: this coordinates participants who follow the protocol. It is not isolation of the kind an operating system provides, and it cannot stop an uncooperative program running under the same account.",
+      "spoken_text": "Holding a lane is not permission to edit a particular file at this moment. Before each change to a tracked file, the current state of that worktree and those exact files is checked again. This is a separate check before writing. If someone else's uncommitted work is there, if ownership is unclear, or if the state is not what was expected, the lane can read but not write until a fresh check admits the write. A check that passed a few minutes ago does not stand in for one now, and unrelated work carries on. One limit should be clear: this coordinates participants who follow the protocol. It is not isolation of the kind an operating system provides, and it cannot stop an uncooperative program running under the same account."
+    },
+    {
+      "id": "08",
+      "chapter": "kernel",
+      "chapter_index": 4,
+      "chapter_title": "The trust kernel",
+      "title": "The kernel in one sentence",
+      "language": "English",
+      "source_sections": [
+        "README:Kernel",
+        "kernel-model:Semantic Kernel",
+        "product-design-contract:Semantic Kernel",
+        "product-design-contract:OpenSpec Acceptance And Closeout",
+        "glossary:Facts",
+        "glossary:Attestation"
+      ],
+      "utterance_groups": [
+        "This path rests on a small trust kernel. ",
+        "What it does fits in one sentence: from accepted intent, freshly observed facts and earlier attestations, it compiles one plan, carries it out, and records new attestations. ",
+        "Accepted intent comes from the official Change, and the kernel compiles its acceptance into a transient value called the Commitment. The fresh observations are the Facts, and the compiled plan is the TransitionPlan. ",
+        "All three are temporary: they serve one decision and are then discarded. ",
+        "The only thing that persists is the Attestation, a record of what was observed, decided or done, which verifier produced it, and within which limits its conclusion holds."
+      ],
+      "text": "This path rests on a small trust kernel. What it does fits in one sentence: from accepted intent, freshly observed facts and earlier attestations, it compiles one plan, carries it out, and records new attestations. Accepted intent comes from the official Change, and the kernel compiles its acceptance into a transient value called the Commitment. The fresh observations are the Facts, and the compiled plan is the TransitionPlan. All three are temporary: they serve one decision and are then discarded. The only thing that persists is the Attestation, a record of what was observed, decided or done, which verifier produced it, and within which limits its conclusion holds.",
+      "spoken_text": "This path rests on a small trust kernel. What it does fits in one sentence: from accepted intent, freshly observed facts and earlier attestations, it compiles one plan, carries it out, and records new attestations. Accepted intent comes from the official Change, and the kernel compiles its acceptance into a transient value called the Commitment. The fresh observations are the Facts, and the compiled plan is the Transition Plan. All three are temporary: they serve one decision and are then discarded. The only thing that persists is the Attestation, a record of what was observed, decided or done, which verifier produced it, and within which limits its conclusion holds."
+    },
+    {
+      "id": "09",
+      "chapter": "kernel",
+      "chapter_index": 4,
+      "chapter_title": "The trust kernel",
+      "title": "Check, then write",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:OpenSpec Acceptance And Closeout",
+        "product-design-contract:Invalid-State Taxonomy",
+        "product-design-contract:First-Hour UX",
+        "product-design-contract:Invariants",
+        "glossary:Exact CAS",
+        "glossary:Continuation"
+      ],
+      "utterance_groups": [
+        "A plan does not take effect on its own. Git points at versions through names called references. ",
+        "At the moment a plan updates one, the kernel checks once more that the old value is the one it expected, and only then writes the new one, in one step that cannot be interrupted, called compare-and-swap. ",
+        "If the old value has changed, the plan is void and is compiled again from new facts. ",
+        "After the write, the result is read back to confirm what actually happened. ",
+        "The kernel stops when a required fact is unknown, when it is unclear who has the authority to decide, when something it relied on is out of date, or when inputs contradict each other. ",
+        "When it stops, it says what happened, why it stopped, what the evidence or the missing fact is, the one safe next action, and whether a person has to decide. ",
+        "In daily use you start with ethos status, see where things stand and what comes next, and only then act."
+      ],
+      "text": "A plan does not take effect on its own. Git points at versions through names called references. At the moment a plan updates one, the kernel checks once more that the old value is the one it expected, and only then writes the new one, in one step that cannot be interrupted, called compare-and-swap. If the old value has changed, the plan is void and is compiled again from new facts. After the write, the result is read back to confirm what actually happened. The kernel stops when a required fact is unknown, when it is unclear who has the authority to decide, when something it relied on is out of date, or when inputs contradict each other. When it stops, it says what happened, why it stopped, what the evidence or the missing fact is, the one safe next action, and whether a person has to decide. In daily use you start with ethos status, see where things stand and what comes next, and only then act.",
+      "spoken_text": "A plan does not take effect on its own. Git points at versions through names called references. At the moment a plan updates one, the kernel checks once more that the old value is the one it expected, and only then writes the new one, in one step that cannot be interrupted, called compare-and-swap. If the old value has changed, the plan is void and is compiled again from new facts. After the write, the result is read back to confirm what actually happened. The kernel stops when a required fact is unknown, when it is unclear who has the authority to decide, when something it relied on is out of date, or when inputs contradict each other. When it stops, it says what happened, why it stopped, what the evidence or the missing fact is, the one safe next action, and whether a person has to decide. In daily use you start with Ethos status, see where things stand and what comes next, and only then act."
+    },
+    {
+      "id": "10",
+      "chapter": "proof",
+      "chapter_index": 5,
+      "chapter_title": "Proof",
+      "title": "Separate evidence",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Evidence Planes And Completion Claims",
+        "product-design-contract:Binding Taxonomy"
+      ],
+      "utterance_groups": [
+        "Verification has to name its object too: which commit, with exactly what code, against which requirement, by which verifier, under which conditions. ",
+        "A proof run locally, the automatic checks on GitLab and the automatic checks on GitHub are three separate sources of evidence. ",
+        "So are the author's identity, the commit's signature, the released files and the installed program. A pass on one never implies a pass on another. ",
+        "That is why a claim that something is done names exactly which of these were verified this time. ",
+        "If the local proof has passed but the results on the hosting platforms have not been read, the honest statement is that the local proof passed and the hosted results are not yet verified."
+      ],
+      "text": "Verification has to name its object too: which commit, with exactly what code, against which requirement, by which verifier, under which conditions. A proof run locally, the automatic checks on GitLab and the automatic checks on GitHub are three separate sources of evidence. So are the author's identity, the commit's signature, the released files and the installed program. A pass on one never implies a pass on another. That is why a claim that something is done names exactly which of these were verified this time. If the local proof has passed but the results on the hosting platforms have not been read, the honest statement is that the local proof passed and the hosted results are not yet verified.",
+      "spoken_text": "Verification has to name its object too: which commit, with exactly what code, against which requirement, by which verifier, under which conditions. A proof run locally, the automatic checks on GitLab and the automatic checks on GitHub are three separate sources of evidence. So are the author's identity, the commit's signature, the released files and the installed program. A pass on one never implies a pass on another. That is why a claim that something is done names exactly which of these were verified this time. If the local proof has passed but the results on the hosting platforms have not been read, the honest statement is that the local proof passed and the hosted results are not yet verified."
+    },
+    {
+      "id": "11",
+      "chapter": "review",
+      "chapter_index": 6,
+      "chapter_title": "Review, integration and release",
+      "title": "Review and integration",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Lane, Review, And Integration Roles",
+        "glossary:Candidate",
+        "glossary:Proposal Ref"
+      ],
+      "utterance_groups": [
+        "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. ",
+        "Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. ",
+        "ETHOS protects only two branches: dev, which holds accepted work, and main, which carries releases. ",
+        "Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. ",
+        "A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. ",
+        "Continuous integration, the service that runs checks on every push, runs on its own and only watches: it holds no lease and no authority."
+      ],
+      "text": "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. ETHOS protects only two branches: dev, which holds accepted work, and main, which carries releases. Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. Continuous integration, the service that runs checks on every push, runs on its own and only watches: it holds no lease and no authority.",
+      "spoken_text": "Review does not have to wait for every proof. It concerns one exact object and the commits it introduces. Lanes can combine their work on a candidate branch, a local branch kept for bringing work together. Or one exact commit can be put forward for review on its own. Ethos protects only two branches: dev, which holds accepted work, and main, which carries releases. Someone without write access to them proposes a change through a merge request, and a maintainer may then accept the reviewed commit after checking it again. A change that has not been accepted yet is judged by the rules already trusted before it; a proposal that changes the rules cannot approve itself. Continuous integration, the service that runs checks on every push, runs on its own and only watches: it holds no lease and no authority."
+    },
+    {
+      "id": "12",
+      "chapter": "review",
+      "chapter_index": 6,
+      "chapter_title": "Review, integration and release",
+      "title": "Release and delivery",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Local Object Authority And Remote Projection",
+        "product-design-contract:OpenSpec Acceptance And Closeout",
+        "release-and-publication:Release And Publication"
+      ],
+      "utterance_groups": [
+        "Accepting code, cutting a release and putting it in users' hands are three separate steps. ",
+        "For a release, every object is fixed in local Git first. GitLab and GitHub receive the same commit and the same tag; neither copies from the other, and neither platform may rebuild or re-sign them. ",
+        "A push that succeeds on one platform says nothing about the other. A platform that is behind within the declared window is pending; past that window, a difference counts as divergence. ",
+        "The official Change also keeps track of what is still owed: merged code does not mean delivery is finished. ",
+        "Someone still has to confirm where the version was deployed, and which version users are actually running."
+      ],
+      "text": "Accepting code, cutting a release and putting it in users' hands are three separate steps. For a release, every object is fixed in local Git first. GitLab and GitHub receive the same commit and the same tag; neither copies from the other, and neither platform may rebuild or re-sign them. A push that succeeds on one platform says nothing about the other. A platform that is behind within the declared window is pending; past that window, a difference counts as divergence. The official Change also keeps track of what is still owed: merged code does not mean delivery is finished. Someone still has to confirm where the version was deployed, and which version users are actually running.",
+      "spoken_text": "Accepting code, cutting a release and putting it in users' hands are three separate steps. For a release, every object is fixed in local Git first. GitLab and GitHub receive the same commit and the same tag; neither copies from the other, and neither platform may rebuild or re-sign them. A push that succeeds on one platform says nothing about the other. A platform that is behind within the declared window is pending; past that window, a difference counts as divergence. The official Change also keeps track of what is still owed: merged code does not mean delivery is finished. Someone still has to confirm where the version was deployed, and which version users are actually running."
+    },
+    {
+      "id": "13",
+      "chapter": "real-use",
+      "chapter_index": 7,
+      "chapter_title": "Real use",
+      "title": "Answered in real use",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Product",
+        "product-design-contract:Recursive Domain Feedback",
+        "terminal-governance-product-design:Remaining Dependencies And Delivery Order"
+      ],
+      "utterance_groups": [
+        "Now back to the pipeline and the signal. ",
+        "Suppose the checks pass and the version is deployed. Is any market data missing? After a rerun, are there extra records left behind? ",
+        "Those questions are answered in the real environment. ",
+        "Which version ran, in what environment, against which baseline, over what observation window: these decide what the result can show. ",
+        "A successful deployment and passing checks are only intermediate claims. ",
+        "The signal study keeps asking questions of the same kind: was the information really knowable at the time, does the result rest on one stretch of the sample, and where does uncertainty remain? ",
+        "A historical backtest cannot prove future trading returns. ",
+        "ETHOS is designed to connect these observations back to the original requirements and hypotheses, but never to substitute development metrics for the project's own measure of business success."
+      ],
+      "text": "Now back to the pipeline and the signal. Suppose the checks pass and the version is deployed. Is any market data missing? After a rerun, are there extra records left behind? Those questions are answered in the real environment. Which version ran, in what environment, against which baseline, over what observation window: these decide what the result can show. A successful deployment and passing checks are only intermediate claims. The signal study keeps asking questions of the same kind: was the information really knowable at the time, does the result rest on one stretch of the sample, and where does uncertainty remain? A historical backtest cannot prove future trading returns. ETHOS is designed to connect these observations back to the original requirements and hypotheses, but never to substitute development metrics for the project's own measure of business success.",
+      "spoken_text": "Now back to the pipeline and the signal. Suppose the checks pass and the version is deployed. Is any market data missing? After a rerun, are there extra records left behind? Those questions are answered in the real environment. Which version ran, in what environment, against which baseline, over what observation window: these decide what the result can show. A successful deployment and passing checks are only intermediate claims. The signal study keeps asking questions of the same kind: was the information really knowable at the time, does the result rest on one stretch of the sample, and where does uncertainty remain? A historical backtest cannot prove future trading returns. Ethos is designed to connect these observations back to the original requirements and hypotheses, but never to substitute development metrics for the project's own measure of business success."
+    },
+    {
+      "id": "14",
+      "chapter": "feedback",
+      "chapter_index": 8,
+      "chapter_title": "Feedback and Model Promotion",
+      "title": "Layers of feedback",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Recursive Domain Feedback"
+      ],
+      "utterance_groups": [
+        "Feedback is not always a single fix. It can correct how something is used, call for a different method, shake the concepts and structures the work uses to express meaning, or change how we understand the purpose itself. ",
+        "When evidence challenges an understanding at a higher level, the corrected meaning has to be recompiled through every layer that depends on it. ",
+        "Changing a goal or a standard has to be accepted again by whoever has the authority; quietly loosening a condition so that a result passes is not allowed. ",
+        "The feedback mechanism itself stays open to correction. Technical verification, delivery and business results each need their own evidence. ",
+        "One project's experience can suggest improvements to shared mechanisms, but that project's authority and private business context do not move with the suggestion."
+      ],
+      "text": "Feedback is not always a single fix. It can correct how something is used, call for a different method, shake the concepts and structures the work uses to express meaning, or change how we understand the purpose itself. When evidence challenges an understanding at a higher level, the corrected meaning has to be recompiled through every layer that depends on it. Changing a goal or a standard has to be accepted again by whoever has the authority; quietly loosening a condition so that a result passes is not allowed. The feedback mechanism itself stays open to correction. Technical verification, delivery and business results each need their own evidence. One project's experience can suggest improvements to shared mechanisms, but that project's authority and private business context do not move with the suggestion.",
+      "spoken_text": "Feedback is not always a single fix. It can correct how something is used, call for a different method, shake the concepts and structures the work uses to express meaning, or change how we understand the purpose itself. When evidence challenges an understanding at a higher level, the corrected meaning has to be recompiled through every layer that depends on it. Changing a goal or a standard has to be accepted again by whoever has the authority; quietly loosening a condition so that a result passes is not allowed. The feedback mechanism itself stays open to correction. Technical verification, delivery and business results each need their own evidence. One project's experience can suggest improvements to shared mechanisms, but that project's authority and private business context do not move with the suggestion."
+    },
+    {
+      "id": "15",
+      "chapter": "feedback",
+      "chapter_index": 8,
+      "chapter_title": "Feedback and Model Promotion",
+      "title": "Model Promotion",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Model Promotion",
+        "product-design-contract:Invalid-State Taxonomy",
+        "kernel-model:Semantic Kernel",
+        "glossary:Model Promotion"
+      ],
+      "utterance_groups": [
+        "Sometimes a new situation simply cannot be reconciled with the current model. Model here means those concepts and structures, not a statistical model. ",
+        "Two valid inputs may contradict each other, or the current model cannot represent the situation without losing information. ",
+        "By design, ETHOS then reports that Model Promotion is required, and every change to the repository that depends on that meaning stops until the work is done, while unrelated work continues. ",
+        "Model Promotion means keeping the conflicting cases and their evidence, finding the smallest part of the model that is affected, and changing it so that it can hold them. ",
+        "After that, the plans and views that depend on it are recompiled, the coverage is verified, and what is left of the old form is absorbed or removed. ",
+        "No exception, alias, fallback or compatibility shim is added to work around the problem, and no parallel source of truth is set up."
+      ],
+      "text": "Sometimes a new situation simply cannot be reconciled with the current model. Model here means those concepts and structures, not a statistical model. Two valid inputs may contradict each other, or the current model cannot represent the situation without losing information. By design, ETHOS then reports that Model Promotion is required, and every change to the repository that depends on that meaning stops until the work is done, while unrelated work continues. Model Promotion means keeping the conflicting cases and their evidence, finding the smallest part of the model that is affected, and changing it so that it can hold them. After that, the plans and views that depend on it are recompiled, the coverage is verified, and what is left of the old form is absorbed or removed. No exception, alias, fallback or compatibility shim is added to work around the problem, and no parallel source of truth is set up.",
+      "spoken_text": "Sometimes a new situation simply cannot be reconciled with the current model. Model here means those concepts and structures, not a statistical model. Two valid inputs may contradict each other, or the current model cannot represent the situation without losing information. By design, Ethos then reports that Model Promotion is required, and every change to the repository that depends on that meaning stops until the work is done, while unrelated work continues. Model Promotion means keeping the conflicting cases and their evidence, finding the smallest part of the model that is affected, and changing it so that it can hold them. After that, the plans and views that depend on it are recompiled, the coverage is verified, and what is left of the old form is absorbed or removed. No exception, alias, fallback or compatibility shim is added to work around the problem, and no parallel source of truth is set up."
+    },
+    {
+      "id": "16",
+      "chapter": "adoption",
+      "chapter_index": 9,
+      "chapter_title": "Adoption, handoff and exit",
+      "title": "Isomorphic governance",
+      "language": "English",
+      "source_sections": [
+        "README:Isomorphic Governance",
+        "README:First Hour",
+        "product-design-contract:Isomorphic Adopter Governance",
+        "product-design-contract:First-Hour UX",
+        "quickstart:Existing Repository"
+      ],
+      "utterance_groups": [
+        "ETHOS governs its own product repository with the same kernel and the same procedure it applies to the repositories that adopt it. That is what isomorphic governance means. ",
+        "The difference lies only in profiles and adapters: each repository declares its checks, values and depth of proof in its own profile, and adapters connect native tools such as Git, the code-hosting platform and continuous integration. ",
+        "This is not a copy of ETHOS planted somewhere else. Each repository keeps its own domain model, layout and platform habits, and ETHOS judges each change through the same evidence-bound loop. ",
+        "The first hour is deliberately small. In a repository, run ethos status to see the current facts, the gaps and the next action. ",
+        "For a repository not yet adopted, preview the adoption plan first; the preview changes nothing. Apply it only when it shows no conflicts and you know how to recover, because if applying it is interrupted, the change can be left half done."
+      ],
+      "text": "ETHOS governs its own product repository with the same kernel and the same procedure it applies to the repositories that adopt it. That is what isomorphic governance means. The difference lies only in profiles and adapters: each repository declares its checks, values and depth of proof in its own profile, and adapters connect native tools such as Git, the code-hosting platform and continuous integration. This is not a copy of ETHOS planted somewhere else. Each repository keeps its own domain model, layout and platform habits, and ETHOS judges each change through the same evidence-bound loop. The first hour is deliberately small. In a repository, run ethos status to see the current facts, the gaps and the next action. For a repository not yet adopted, preview the adoption plan first; the preview changes nothing. Apply it only when it shows no conflicts and you know how to recover, because if applying it is interrupted, the change can be left half done.",
+      "spoken_text": "Ethos governs its own product repository with the same kernel and the same procedure it applies to the repositories that adopt it. That is what isomorphic governance means. The difference lies only in profiles and adapters: each repository declares its checks, values and depth of proof in its own profile, and adapters connect native tools such as Git, the code-hosting platform and continuous integration. This is not a copy of Ethos planted somewhere else. Each repository keeps its own domain model, layout and platform habits, and Ethos judges each change through the same evidence-bound loop. The first hour is deliberately small. In a repository, run Ethos status to see the current facts, the gaps and the next action. For a repository not yet adopted, preview the adoption plan first; the preview changes nothing. Apply it only when it shows no conflicts and you know how to recover, because if applying it is interrupted, the change can be left half done."
+    },
+    {
+      "id": "17",
+      "chapter": "adoption",
+      "chapter_index": 9,
+      "chapter_title": "Adoption, handoff and exit",
+      "title": "Handoff and exit",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Product",
+        "product-design-contract:First-Hour UX",
+        "product-design-contract:Root Constraint",
+        "product-design-contract:Lane, Review, And Integration Roles",
+        "quickstart:Existing Repository"
+      ],
+      "utterance_groups": [
+        "A project can take on the structure it needs a little at a time, adjust it to its own work, and hand it over to another person or agent; by design, it can also leave altogether. ",
+        "Adoption is designed to be previewable, to give the same result when repeated, to change as little as it can, and to be reversible until ETHOS makes its first change under governance. ",
+        "A clean uninstall is designed to leave no hook scripts that run automatically, no generated file acting as a source of truth, and no second control system. ",
+        "Before a handoff or an exit, ownership, useful results and necessary evidence must pass to whoever is responsible, or be kept in a form that can be recovered. ",
+        "After that, a mechanism whose obligation is done should be retired, so that it does not become a new burden."
+      ],
+      "text": "A project can take on the structure it needs a little at a time, adjust it to its own work, and hand it over to another person or agent; by design, it can also leave altogether. Adoption is designed to be previewable, to give the same result when repeated, to change as little as it can, and to be reversible until ETHOS makes its first change under governance. A clean uninstall is designed to leave no hook scripts that run automatically, no generated file acting as a source of truth, and no second control system. Before a handoff or an exit, ownership, useful results and necessary evidence must pass to whoever is responsible, or be kept in a form that can be recovered. After that, a mechanism whose obligation is done should be retired, so that it does not become a new burden.",
+      "spoken_text": "A project can take on the structure it needs a little at a time, adjust it to its own work, and hand it over to another person or agent; by design, it can also leave altogether. Adoption is designed to be previewable, to give the same result when repeated, to change as little as it can, and to be reversible until Ethos makes its first change under governance. A clean uninstall is designed to leave no hook scripts that run automatically, no generated file acting as a source of truth, and no second control system. Before a handoff or an exit, ownership, useful results and necessary evidence must pass to whoever is responsible, or be kept in a form that can be recovered. After that, a mechanism whose obligation is done should be retired, so that it does not become a new burden."
+    },
+    {
+      "id": "18",
+      "chapter": "adoption",
+      "chapter_index": 9,
+      "chapter_title": "Adoption, handoff and exit",
+      "title": "Back to the two lines",
+      "language": "English",
+      "source_sections": [
+        "product-design-contract:Root Constraint",
+        "README:Human And Agent Discovery"
+      ],
+      "utterance_groups": [
+        "Back to the two lines we began with. Understanding points action in a direction, and real outcomes come back to correct the understanding. ",
+        "ETHOS keeps a few plain rules of judgment: keep meaning with the smallest model that is enough; distinguish only what changes action; keep authority separate from views, because seeing is not permission; and let a mechanism leave when its obligation is gone. ",
+        "Done this way, the pipeline would leave an improvement that can be verified, and the research would leave conditions the next study can question. ",
+        "When a new problem arrives, what was understood and what was learned are still a place to start. ",
+        "The project can keep going, and the method stays open to change."
+      ],
+      "text": "Back to the two lines we began with. Understanding points action in a direction, and real outcomes come back to correct the understanding. ETHOS keeps a few plain rules of judgment: keep meaning with the smallest model that is enough; distinguish only what changes action; keep authority separate from views, because seeing is not permission; and let a mechanism leave when its obligation is gone. Done this way, the pipeline would leave an improvement that can be verified, and the research would leave conditions the next study can question. When a new problem arrives, what was understood and what was learned are still a place to start. The project can keep going, and the method stays open to change.",
+      "spoken_text": "Back to the two lines we began with. Understanding points action in a direction, and real outcomes come back to correct the understanding. Ethos keeps a few plain rules of judgment: keep meaning with the smallest model that is enough; distinguish only what changes action; keep authority separate from views, because seeing is not permission; and let a mechanism leave when its obligation is gone. Done this way, the pipeline would leave an improvement that can be verified, and the research would leave conditions the next study can question. When a new problem arrives, what was understood and what was learned are still a place to start. The project can keep going, and the method stays open to change."
+    }
+  ]
+}
