@@ -67,5 +67,22 @@
     "receipt": "build/evidence/editions/zh/ear-first/narration-receipt.json",
     "alignment": "build/evidence/editions/zh/ear-first/alignment.json"
   },
-  "retakes": {}
+  "retakes": {
+    "08": {
+      "groups": {
+        "1": {
+          "seed": 131389,
+          "text_sha256": "9f4584f08dff5a8b339635230c983eab1dd070f3934d87d44fbac06413737033"
+        }
+      }
+    },
+    "09": {
+      "groups": {
+        "1": {
+          "seed": 139309,
+          "text_sha256": "1c444f1ef847c0b7dd468efe6bdb720f85ff2c48f42b5c34ec0c6edd559438ab"
+        }
+      }
+    }
+  }
 }

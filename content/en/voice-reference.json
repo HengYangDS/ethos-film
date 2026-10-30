@@ -18,5 +18,14 @@
     "receipt": "build/evidence/editions/en/ear-first/narration-receipt.json",
     "alignment": "build/evidence/editions/en/ear-first/alignment.json"
   },
-  "retakes": {}
+  "retakes": {
+    "02": {
+      "groups": {
+        "1": {
+          "seed": 163059,
+          "text_sha256": "4137380e1dddd07e2f69257c91bf43c0d6ed94d1b28bf0de30cbc28b14f7f1b3"
+        }
+      }
+    }
+  }
 }
