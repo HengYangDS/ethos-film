@@ -3,7 +3,7 @@
 ## 1. Repository and toolchain
 
 - [x] 1.1 Bind the toolchain: the Mise configuration and lock for Node 26.12.1, CPython 3.12.16, uv 0.13.5 and ETHOS `0.2.0-alpha.21` through its release's Mise declaration; `filmkit` 0.1.1 as a uv Git source at `v0.1.1`; the npm lock with HyperFrames 0.8.150, `puppeteer-core`, `@puppeteer/browsers` and `gsap`. Verify that `mise install --locked`, `uv sync --frozen` and `npm ci` succeed and that the installed `filmkit` reports 0.1.1.
-- [x] 1.2 Declare the gate registry, the portable gates and the check policies as `filmkit` declares them; verify that `ethos status` reports no gap and that the gate-exact Ruff, ESLint, Prettier and taplo accept the tree under both the shipped and the repository policies.
+- [x] 1.2 Declare the gate registry, the portable gates and the check policies as `filmkit` declares them; verify that `ethos status` reports no gap and that the gate-exact Ruff, ESLint, Prettier and Taplo accept the tree under both the shipped and the repository policies.
 - [x] 1.3 Record the ETHOS repository, the commit `v0.2.0-alpha.21` names and each cited document's SHA-256 in `content/source-manifest.json`; verify each digest against the document at that commit.
 
 ## 2. Script
