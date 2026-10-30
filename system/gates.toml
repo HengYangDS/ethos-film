@@ -1,0 +1,119 @@
+schema_version = 1
+id = "ethos-film-gate-registry"
+source_refs = ["system/gates.toml"]
+
+# The proof sets hold the portable gates that hosted CI also runs. The film gates need Apple
+# silicon, the supplied models, a rebuild and the published release; they run locally as a host
+# observation through `ethos prove --host --gate film-media --gate film-reproduction --execute`.
+[proof_sets]
+default = ["native-static", "native-behavior", "source-integrity"]
+full = ["native-static", "native-behavior", "source-integrity"]
+
+[[gates]]
+id = "native-static"
+kind = "lint"
+providers = ["ethos.adapters.gates.code_quality:static_report"]
+policy = "required"
+profile = "repository"
+toolchain = "ethos"
+asset_classes = ["python-code", "javascript-code"]
+dimensions = ["static-analysis"]
+execution_mode = "provider"
+evidence_class = "proof"
+trust_bearing = true
+tool_adapter = "ethos"
+writes_files = false
+network_policy = "offline"
+version_source = "product"
+
+[[gates]]
+id = "native-behavior"
+kind = "test"
+providers = ["ethos.adapters.gates.code_quality:behavior_report"]
+policy = "required"
+profile = "repository"
+toolchain = "ethos"
+asset_classes = ["python-code", "javascript-code"]
+dimensions = ["behavior", "coverage"]
+execution_mode = "provider"
+evidence_class = "proof"
+trust_bearing = true
+tool_adapter = "ethos"
+writes_files = false
+network_policy = "offline"
+version_source = "product"
+
+[[gates]]
+id = "film-media"
+kind = "asset"
+command = [
+  "uv",
+  "run",
+  "--python",
+  "3.12",
+  "--frozen",
+  "--offline",
+  "python",
+  "-m",
+  "filmkit.delivery.verification",
+  "--read-only",
+  "--technical-only",
+  "--language",
+  "all",
+]
+policy = "required"
+profile = "repository"
+toolchain = "uv-python"
+asset_classes = ["release-artifacts", "evidence"]
+dimensions = ["duration", "frames", "sound", "subtitles", "source-integrity", "picture-geometry"]
+execution_mode = "adapter"
+evidence_class = "proof"
+trust_bearing = true
+tool_adapter = "verify-ethos-film"
+writes_files = false
+network_policy = "offline"
+version_source = "locked-toolchain"
+
+[[gates]]
+id = "film-reproduction"
+kind = "asset"
+command = [
+  "uv",
+  "run",
+  "--python",
+  "3.12",
+  "--frozen",
+  "--offline",
+  "python",
+  "-m",
+  "filmkit.delivery.reproduction",
+  "--read-only",
+]
+policy = "required"
+profile = "repository"
+toolchain = "uv-python"
+asset_classes = ["release-artifacts", "evidence"]
+dimensions = ["frames", "sound", "subtitles", "picture-fidelity", "review-thresholds"]
+execution_mode = "adapter"
+evidence_class = "proof"
+trust_bearing = true
+tool_adapter = "compare-ethos-film"
+writes_files = false
+network_policy = "offline"
+version_source = "locked-toolchain"
+
+[[gates]]
+id = "source-integrity"
+kind = "integrity"
+providers = ["ethos.adapters.gates.provenance.observation:integrity_report"]
+policy = "required"
+profile = "repository"
+toolchain = "ethos"
+dimensions = ["source-integrity"]
+execution_mode = "provider"
+evidence_class = "proof"
+trust_bearing = true
+tool_adapter = "ethos"
+writes_files = false
+network_policy = "offline"
+version_source = "product"

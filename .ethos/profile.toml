@@ -1,6 +1,7 @@
 profile_id = "ethos-film"
 
 [openspec]
-material_paths = [
-    "**",
-]
+material_paths = ["**"]
+
+[proof]
+gate_registry = "system/gates.toml"
