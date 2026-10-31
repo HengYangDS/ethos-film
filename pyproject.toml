@@ -2,6 +2,8 @@
 name = "ethos-film"
 dynamic = ["version"]
 description = "Rebuild the ETHOS introduction films from their sources with the filmkit engine"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.12,<3.15"
 dependencies = ["filmkit"]
 
