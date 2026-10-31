@@ -274,11 +274,16 @@ scenes["12"] = function (s, t) {
       ok = ramp(t, acceptedAt - 0.15, 0.4),
       n = stageD * ramp(t, notDone - 0.15, 0.4);
     folderIcon(CX - W / 2, Y, W, H, { alpha: stageD, color: P.authority });
-    nameText(L("正式变更记下没完成的责任", "The Change tracks what is owed"), CX, Y - NAME_GAP + 4, {
-      valign: "bottom",
-      color: P.authority,
-      alpha: stageD,
-    });
+    nameText(
+      L("正式变更记下没完成的责任", "The Change tracks what is owed"),
+      CX,
+      Y - NAME_GAP + 4,
+      {
+        valign: "bottom",
+        color: P.authority,
+        alpha: stageD,
+      },
+    );
     rows.forEach((v, i) => {
       const y = Y + 92 + i * 88,
         rx = CX - W / 2 + 80;

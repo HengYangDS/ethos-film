@@ -2884,12 +2884,10 @@ scenes["05"] = function(s, t) {
       alpha: stageA * named(t, toolsSaid)
     });
   }
-  nameText(
-    L("辅助的工作先交给现成的", "Supporting work goes first to what exists"),
-    960,
-    800,
-    { valign: "top", alpha: (stageA + stageB) * named(t, support) }
-  );
+  nameText(L("辅助的工作先交给现成的", "Supporting work goes first to what exists"), 960, 800, {
+    valign: "top",
+    alpha: (stageA + stageB) * named(t, support)
+  });
   if (stageB > 0) {
     const conds = [gap, bounded, benefit], lead = 243 * (1 - soon(t, Math.min(customAt, gap) - 0.1, 0.6)), LX = 377 + lead, ys = [330, 430, 530, 650], ats = [official, platform, mature], custom = stageB * ramp(t, customAt - 0.15, 0.4);
     const opened = soon(t, Math.max(benefit, customAt) + 0.6, 0.5);
@@ -3647,7 +3645,14 @@ scenes["07"] = function(s, t) {
 };
 
 // picture/film/scenes/kernel/transition-plan.js
-function transientCard(x, y, w, h, name, note, { alpha = 1, inkAlpha = alpha, titleAlpha = inkAlpha, gone = 0, color = P.evidence, set = null } = {}) {
+function transientCard(x, y, w, h, name, note, {
+  alpha = 1,
+  inkAlpha = alpha,
+  titleAlpha = inkAlpha,
+  gone = 0,
+  color = P.evidence,
+  set = null
+} = {}) {
   if (alpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, {
     fill: P.row,
@@ -5184,11 +5189,16 @@ scenes["12"] = function(s, t) {
     const CX = 960, Y = 300, rows = en ? ["Code accepted", "Release published", "Deployed and in use"] : ["代码被接受", "版本发布", "部署并投入使用"], W = 128 + Math.max(...rows.map((v) => measure(v))) + 70, H = 340;
     const owed = ramp(t, stillOwed - 0.15, 0.4), ok = ramp(t, acceptedAt - 0.15, 0.4), n = stageD * ramp(t, notDone - 0.15, 0.4);
     folderIcon(CX - W / 2, Y, W, H, { alpha: stageD, color: P.authority });
-    nameText(L("正式变更记下没完成的责任", "The Change tracks what is owed"), CX, Y - NAME_GAP + 4, {
-      valign: "bottom",
-      color: P.authority,
-      alpha: stageD
-    });
+    nameText(
+      L("正式变更记下没完成的责任", "The Change tracks what is owed"),
+      CX,
+      Y - NAME_GAP + 4,
+      {
+        valign: "bottom",
+        color: P.authority,
+        alpha: stageD
+      }
+    );
     rows.forEach((v, i) => {
       const y = Y + 92 + i * 88, rx = CX - W / 2 + 80;
       if (i === 0) {

@@ -26,7 +26,14 @@ function transientCard(
   h,
   name,
   note,
-  { alpha = 1, inkAlpha = alpha, titleAlpha = inkAlpha, gone = 0, color = P.evidence, set = null } = {},
+  {
+    alpha = 1,
+    inkAlpha = alpha,
+    titleAlpha = inkAlpha,
+    gone = 0,
+    color = P.evidence,
+    set = null,
+  } = {},
 ) {
   if (alpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, {
@@ -110,7 +117,9 @@ scenes["08"] = function (s, t) {
   const factsCard = en ? cue(s, "", "The fresh observations") : cue(s, "刚观察到的事实叫", ""),
     planCard = en ? cue(s, "", "the compiled plan") : cue(s, "的计划叫", "");
   // English describes the Facts and the TransitionPlan before it names them.
-  const titleAts = en ? [comm, cue(s, "", "are the Facts"), cue(s, "", "is the TransitionPlan")] : null;
+  const titleAts = en
+    ? [comm, cue(s, "", "are the Facts"), cue(s, "", "is the TransitionPlan")]
+    : null;
   const stageA = stageOut(t, what),
     stageB = stageIn(t, what) * stageOut(t, fromChange),
     stageC = stageIn(t, fromChange) * stageOut(t, persist),

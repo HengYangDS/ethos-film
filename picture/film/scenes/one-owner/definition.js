@@ -3,7 +3,17 @@
 import { ctx } from "../../canvas.js";
 import { blend } from "../../drawing/colour.js";
 import { along, link, rounded } from "../../drawing/links.js";
-import { box, dot, flowDot, labelSize, line, measure, path, ring, stroke } from "../../drawing/strokes.js";
+import {
+  box,
+  dot,
+  flowDot,
+  labelSize,
+  line,
+  measure,
+  path,
+  ring,
+  stroke,
+} from "../../drawing/strokes.js";
 import { check, cross, documentIcon, lock } from "../../drawing/symbols.js";
 import { kernelIcon, repoIcon } from "../../drawing/workspace.js";
 import { clearOfTitle } from "../../framing/chapters.js";
@@ -187,12 +197,10 @@ scenes["05"] = function (s, t) {
   }
   // What supporting work goes to first is said under the rule and stays where it was said while the tools take the
   // stage, until a replacement is chosen.
-  nameText(
-    L("辅助的工作先交给现成的", "Supporting work goes first to what exists"),
-    960,
-    800,
-    { valign: "top", alpha: (stageA + stageB) * named(t, support) },
-  );
+  nameText(L("辅助的工作先交给现成的", "Supporting work goes first to what exists"), 960, 800, {
+    valign: "top",
+    alpha: (stageA + stageB) * named(t, support),
+  });
   // Tools follow the same rule along one rail that comes with the first of them: what already exists comes first, each
   // kind standing on the rail on its own words. Custom code is the last place on the rail, locked until a real gap, a bounded job and a
   // clear net benefit have each been shown; it stands on its words, before its conditions in English and after them in
