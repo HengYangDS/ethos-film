@@ -26,6 +26,98 @@
           "text_sha256": "4137380e1dddd07e2f69257c91bf43c0d6ed94d1b28bf0de30cbc28b14f7f1b3"
         }
       }
+    },
+    "04": {
+      "groups": {
+        "1": {
+          "seed": 91790,
+          "text_sha256": "a6f8bad4c11ab9a6af076b507ba7b3f0192480b07ed2a03c53f6ae2dad702115",
+          "run_on": {
+            "spoken_text": "Understanding takes judgment. Every relevant constraint in the declared sources is kept, excluded by an authorized decision, or marked as unresolved. ",
+            "cut_sample": 89040
+          }
+        },
+        "7": {
+          "seed": 178899,
+          "text_sha256": "159316d6ae8094aca1426a64abace970a086d368d93f36add9254fcae632c35b"
+        }
+      }
+    },
+    "05": {
+      "groups": {
+        "1": {
+          "seed": 139305,
+          "text_sha256": "01aaa44a8a008f1184b6fbfb0379fdeac19a6a145afc999672596757b4afca81",
+          "run_on": {
+            "spoken_text": "How a duplicate record is recognized should be defined by the one module responsible for that meaning; the interfaces, tests and documentation follow from it, instead of each keeping its own version. ",
+            "cut_sample": 83760
+          }
+        },
+        "6": {
+          "seed": 91791,
+          "text_sha256": "cccbfe21d9679e58202916e5df2d03b7cf3d7b4475f6cb95532568a0821de1d1",
+          "run_on": {
+            "spoken_text": "Ethos focuses its own code on one job: turning accepted intent and freshly observed facts into verifiable changes to the repository.",
+            "cut_sample": 133200
+          }
+        }
+      }
+    },
+    "07": {
+      "groups": {
+        "5": {
+          "seed": 155145,
+          "text_sha256": "f524ce30ffbd08d0f0d7a1794cae4527c0a7a0646533e3b207525db7292012b0"
+        }
+      }
+    },
+    "08": {
+      "groups": {
+        "3": {
+          "seed": 139308,
+          "text_sha256": "33d15947e625df4fc5de619e5be2a056daf30c0454871e0d005a6810912753e3",
+          "run_on": {
+            "spoken_text": "All three are temporary: they serve one decision and are then discarded. ",
+            "cut_sample": 271440
+          }
+        }
+      }
+    },
+    "09": {
+      "groups": {
+        "3": {
+          "seed": 99714,
+          "text_sha256": "4e285d3024d225a0eeb7cede89e595ba6fc60a39951630624b523127b03eb79a",
+          "run_on": {
+            "spoken_text": "After the write, the result is read back to confirm what actually happened. ",
+            "cut_sample": 128160
+          }
+        },
+        "7": {
+          "seed": 218499,
+          "text_sha256": "21441eabf74984ccb705352dfdcc7a7efeea99d8291f08a8d3775246f2a5a78e"
+        }
+      }
+    },
+    "12": {
+      "groups": {
+        "5": {
+          "seed": 155150,
+          "text_sha256": "cc60ffe7999b1d06345df1e49a058080a70ca1569c49d91233841c27e20ecdbb"
+        }
+      }
+    },
+    "18": {
+      "groups": {
+        "2": {
+          "seed": 91804,
+          "text_sha256": "2ba163ef7581bbe783524bcb369e0eba7236200afa87eeb9a4ab91b15c276cc2",
+          "run_on": {
+            "spoken_text": "Done this way, the pipeline would leave an improvement that can be verified, and the research would write down the conditions under which its conclusion holds, for the next study to question. ",
+            "cut_sample": 350160
+          }
+        }
+      }
     }
   }
 }

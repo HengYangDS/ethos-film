@@ -73,6 +73,22 @@
         "1": {
           "seed": 131389,
           "text_sha256": "9f4584f08dff5a8b339635230c983eab1dd070f3934d87d44fbac06413737033"
+        },
+        "2": {
+          "seed": 91794,
+          "text_sha256": "fd96d9be0f6ac1fcfc609f9cba91c4dbaad46d7a7609726be42f73feaf44757e",
+          "run_on": {
+            "spoken_text": "采纳的意图来自正式变更，内核把其中的验收条件编译成一个临时的值，叫 Commitment。刚观察到的事实叫 Facts，编译出来的计划叫 Transition Plan。",
+            "cut_sample": 240720
+          }
+        },
+        "5": {
+          "seed": 107632,
+          "text_sha256": "bf9543fa6dd355bd0e8014da9577a163517f1d7df8697609f43288c060dda806",
+          "run_on": {
+            "spoken_text": "计划不会自己生效。Git 用一个个名字指向各个版本，这些名字叫引用。",
+            "cut_sample": 284880
+          }
         }
       }
     },
@@ -81,6 +97,194 @@
         "1": {
           "seed": 139309,
           "text_sha256": "1c444f1ef847c0b7dd468efe6bdb720f85ff2c48f42b5c34ec0c6edd559438ab"
+        },
+        "6": {
+          "seed": 99714,
+          "text_sha256": "8977e5f9b91a8c329d1a077da7f86779c3527201f60f7cb7a746e36c22199494",
+          "run_on": {
+            "spoken_text": "平时用的时候，先运行 Eethos 的状态命令，看清现状和下一步，只做这一步，做完再看一次。",
+            "cut_sample": 203760
+          }
+        }
+      }
+    },
+    "01": {
+      "groups": {
+        "3": {
+          "seed": 139301,
+          "text_sha256": "de6ce23d99fda957d839885f31eb22d96ab896d8815becc84c4362da9eb24d0c",
+          "run_on": {
+            "spoken_text": "Eethos 就是针对这种情况设计的：人和 Agent 在同一个仓库里分工做事。这个名字取自几个英文词的首字母，合起来的意思是，人和 Agent 一起打理一项工作时，信任要建立在证据上。",
+            "cut_sample": 240960
+          }
+        }
+      }
+    },
+    "02": {
+      "groups": {
+        "4": {
+          "seed": 107626,
+          "text_sha256": "1b2635f38e16a5acc6a0fa7498d2cded719bcb17ea2c33b82355d46bc7656090",
+          "run_on": {
+            "spoken_text": "后面就拿这两个例子来讲。它们只是举例，不是实测的结果。",
+            "cut_sample": 270480
+          }
+        }
+      }
+    },
+    "03": {
+      "groups": {
+        "1": {
+          "seed": 91789,
+          "text_sha256": "48679052897dc9a82380e05b66a890d5c8221dd5f24d72874c6d32575ba2fa38",
+          "run_on": {
+            "spoken_text": "比如要求管线经得起重新运行，光写一句“更可靠”是不够的。还要写明哪些记录算同一条，哪些看着像重复、其实要留下，以及用什么办法检验确实没有重复。",
+            "cut_sample": 100560
+          }
+        },
+        "4": {
+          "seed": 123465,
+          "text_sha256": "769665faaa7416e38e6c47b5d971488024b21131da754a310f1831c3cd2a840c",
+          "run_on": {
+            "spoken_text": "Eethos 会读取这份正式变更，把它编译成验收条件。在仓库里，采纳了的意图只记在正式变更里，不在别的地方另记一份。",
+            "cut_sample": 319440
+          }
+        }
+      }
+    },
+    "05": {
+      "groups": {
+        "6": {
+          "seed": 99710,
+          "text_sha256": "f9b68b540d28cffa0263b9bbba5dabcedb085f9df919516debffade603ce74a2",
+          "run_on": {
+            "spoken_text": "Eethos 自己的代码集中做一件事，就是把采纳了的意图和刚观察到的事实，变成可以检验的仓库改动。",
+            "cut_sample": 121680
+          }
+        },
+        "7": {
+          "seed": 91791,
+          "text_sha256": "4eae88fce4fbb754a2e7e2dc7682743e478de548ad308ea67eef86806c70b33d",
+          "run_on": {
+            "spoken_text": "一项正式变更，常常有好几个人和 Agent 同时在推进。谁负责哪一块，哪些还只是尝试，工作怎么交接，大家心里都要有数。",
+            "cut_sample": 159600
+          }
+        }
+      }
+    },
+    "07": {
+      "groups": {
+        "5": {
+          "seed": 99712,
+          "text_sha256": "b4b6701683fb756e7a5962c6b57adc2eeaa07f3d62758b5e62874d80a2529cb8",
+          "run_on": {
+            "spoken_text": "这套做法靠一个很小的信任内核来支撑。",
+            "cut_sample": 206400
+          }
+        }
+      }
+    },
+    "10": {
+      "groups": {
+        "4": {
+          "seed": 107634,
+          "text_sha256": "586a877fe1ace0622b5744abbc97d1ff63385231e07beee9f03320ee760cde88",
+          "run_on": {
+            "spoken_text": "比如本地证明通过了，GitLab 和 GitHub 上的结果还没看，那如实的说法是：本地证明通过，两个平台上的结果还没有检验。",
+            "cut_sample": 96720
+          }
+        }
+      }
+    },
+    "11": {
+      "groups": {
+        "4": {
+          "seed": 99716,
+          "text_sha256": "ad9b502850c886d5db1a19360943740816ce0618c06aab4423da0e385718c3fc",
+          "run_on": {
+            "spoken_text": "一项改动还没被接受，就用之前已经信任的规则来判断它。修改规则的提案，不能自己给自己盖章。",
+            "cut_sample": 176880
+          }
+        }
+      }
+    },
+    "14": {
+      "groups": {
+        "2": {
+          "seed": 131395,
+          "text_sha256": "2724d4b007e55b8acac6b20cc31c1203bef1f2ebd4dba6265d91ab624d8012c4",
+          "run_on": {
+            "spoken_text": "改目标、改标准，都要由有权决定的人重新采纳。不能为了让结果通过检查，悄悄把条件放宽。",
+            "cut_sample": 137040
+          }
+        },
+        "4": {
+          "seed": 115557,
+          "text_sha256": "dc9d11c85bb325504a30a0dc732e0ecd00d3072ccec7de9c2ed2828d89ed82cf",
+          "run_on": {
+            "spoken_text": "一个项目的经验，可以拿来提议改进大家共用的机制；但这个项目的决定权和不公开的业务背景，不会跟着这条建议一起交出去。",
+            "cut_sample": 239040
+          }
+        }
+      }
+    },
+    "15": {
+      "groups": {
+        "1": {
+          "seed": 91801,
+          "text_sha256": "e55de24c3ee02c0a7161b64e77242edb82d51fdc12ff271e404997cebd67deb8",
+          "run_on": {
+            "spoken_text": "可能是两份都有效的输入互相矛盾，也可能是用现有的模型去表达，总要丢掉一些信息。",
+            "cut_sample": 168000
+          }
+        },
+        "3": {
+          "seed": 131396,
+          "text_sha256": "3e963cf5039656e6dfb25c015cdd78ea8e591d04e23f0e2f2b86d00c5844b95c",
+          "run_on": {
+            "spoken_text": "模型提升的做法是这样的：先留住那些互相冲突的情况和证据，找到模型里受影响的最小部分，把它改到能装下这些情况。",
+            "cut_sample": 245760
+          }
+        }
+      }
+    },
+    "16": {
+      "groups": {
+        "1": {
+          "seed": 99721,
+          "text_sha256": "a1a6cc0d7bdb5a094f4ec87eeb53fcbb9d84823e1a6b7e7e5cde4da3a92fde73",
+          "run_on": {
+            "spoken_text": "区别只在配置和适配器。每个仓库在自己的配置里，声明要做哪些检查、用哪些参数、证明做到多深。适配器负责连接原生工具，比如 Git、代码托管平台和持续集成。",
+            "cut_sample": 163920
+          }
+        }
+      }
+    },
+    "18": {
+      "groups": {
+        "2": {
+          "seed": 139318,
+          "text_sha256": "9f3d05645f45db48e6187661e3e7d8f604833814daad7fbd3fc9713029ec7ad5",
+          "run_on": {
+            "spoken_text": "三是视图只管展示，跟决定权分开，看得到，不等于有权去做。四是一个机制的责任结束了，就让它退场。",
+            "cut_sample": 185760
+          }
+        },
+        "4": {
+          "seed": 107642,
+          "text_sha256": "8bb2f1f50ee7199acc8109c028d3468e6ee3765b5fe80f153dcb04f7212a277a",
+          "run_on": {
+            "spoken_text": "新的问题出现时，已有的理解和学到的东西，仍然可以作为起点。",
+            "cut_sample": 158880
+          }
+        },
+        "5": {
+          "seed": 99723,
+          "text_sha256": "f8f1b90922d71631b0e4ee74a49d1673771f07b2a30244b602e86c8410fe4d2b",
+          "run_on": {
+            "spoken_text": "项目可以接着做下去，方法也始终可以修改。",
+            "cut_sample": 104400
+          }
         }
       }
     }
