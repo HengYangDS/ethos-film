@@ -278,8 +278,10 @@ scenes["14"] = function (s, t) {
       upto: 0.82,
       start: -Math.PI * 0.3,
     });
+    // The open outline ends in a quiet point small enough to be a detail of the ring, not a second mark beside the
+    // evidence travelling on it.
     const a = -Math.PI * 0.3 + Math.PI * 2 * 0.82;
-    dot(CX + R * Math.cos(a), CY + R * Math.sin(a), 8, { color: P.authority, alpha: stageD });
+    dot(CX + R * Math.cos(a), CY + R * Math.sin(a), 6, { color: P.authority, alpha: stageD });
     dot(
       CX + R * Math.cos(-Math.PI * 0.3 + q * Math.PI * 2 * 0.82),
       CY + R * Math.sin(-Math.PI * 0.3 + q * Math.PI * 2 * 0.82),

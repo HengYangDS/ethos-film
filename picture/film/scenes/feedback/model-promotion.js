@@ -134,7 +134,8 @@ scenes["15"] = function (s, t) {
     });
   }
   // Two causes. Two inputs, each sealed as valid when it is said, contradict each other; then the model takes up the
-  // situation on the right and can hold it only by losing part of it, the lost points falling away.
+  // situation on the right and can hold it only by losing part of it, the lost points falling away. The two inputs
+  // differ in size, so the one name beneath them names the pair, not a list of two documents.
   if (stageB > 0) {
     const LX = 480,
       RX = 1420,
@@ -146,9 +147,9 @@ scenes["15"] = function (s, t) {
       DX = LX + shift,
       lost = soon(t, loseAt, 0.8);
     documentIcon(DX - 305, Y - 110, 170, 220, { alpha: stageB, rows: 5, stroke: P.authority });
-    documentIcon(DX + 135, Y - 110, 170, 220, { alpha: stageB, rows: 5, stroke: P.authority });
+    documentIcon(DX + 146, Y - 82, 148, 192, { alpha: stageB, rows: 4, stroke: P.authority });
     seal(DX - 220, Y - 110, 26, { alpha: va });
-    seal(DX + 220, Y - 110, 26, { alpha: va });
+    seal(DX + 220, Y - 82, 26, { alpha: va });
     stroke(
       () => {
         ctx.moveTo(DX - 26, Y - 14);

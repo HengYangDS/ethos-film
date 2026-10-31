@@ -17,7 +17,7 @@ import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
-/* A forge: a rounded host with its name beneath, holding what it received. */
+/* A forge: a rounded host named inside its top, so it never stands empty, holding what it received below its name. */
 function forgeMark(
   x,
   y,
@@ -28,7 +28,7 @@ function forgeMark(
 ) {
   if (alpha < 0.01 && nameAlpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, { fill: P.row, stroke: color, alpha, radius: 14, width: 2.5 });
-  nameText(name, x, y + h / 2 + NAME_GAP, { valign: "top", alpha: nameAlpha, set });
+  nameText(name, x, y - h / 2 + 16, { valign: "top", alpha: nameAlpha, set });
 }
 scenes["12"] = function (s, t) {
   const [acceptAt, cutAt, handAt] = en
@@ -171,8 +171,8 @@ scenes["12"] = function (s, t) {
         flow: (q + i * 0.5) % 1,
         color: P.authority,
       });
-      commitDot(FX - 60, y, { alpha: sm, color: P.authority, r: 14 });
-      tagIcon(FX + 4, y, 92, 42, { alpha: sm });
+      commitDot(FX - 60, y + 24, { alpha: sm, color: P.authority, r: 14 });
+      tagIcon(FX + 4, y + 24, 92, 42, { alpha: sm });
     });
     nameText(L("同一次提交、同一个标签", "The same commit and tag"), 874, Y, {
       align: "left",

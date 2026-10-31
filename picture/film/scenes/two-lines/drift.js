@@ -63,6 +63,9 @@ scenes["01"] = function (s, t) {
         ["", "Stewardship"],
       ])
     : Array(5).fill(cue(s, "英文词的首字母", ""));
+  // Chinese names the five words as it says where the name comes from, before the initials have settled in their rings,
+  // so the thought never runs a second without a name.
+  const wordsAt = en ? initials : Array(5).fill(cue(s, "取自几个英文词", ""));
   const meaning = en ? null : cue(s, "信任要建立在证据上", "");
   // In Chinese the meaning is spoken word by word after the initials: each initial lights on the words it stands for.
   const lights = en
@@ -288,7 +291,7 @@ scenes["01"] = function (s, t) {
     });
     railNames(words, xs, LY + 66, {
       gap: NAME_GAP - 4,
-      alpha: (i) => stageB2 * (en ? listIn(t, initials, i) : named(t, initials[0])),
+      alpha: (i) => stageB2 * (en ? listIn(t, initials, i) : named(t, wordsAt[0])),
       set: "initials",
     });
     // The Chinese meaning is said in its own order: who works together and on what stand under the initials they give,

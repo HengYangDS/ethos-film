@@ -1388,6 +1388,7 @@ scenes["01"] = function(s, t) {
     ["", "Operational"],
     ["", "Stewardship"]
   ]) : Array(5).fill(cue(s, "英文词的首字母", ""));
+  const wordsAt = en ? initials : Array(5).fill(cue(s, "取自几个英文词", ""));
   const meaning = en ? null : cue(s, "信任要建立在证据上", "");
   const lights = en ? null : [
     cue(s, "证据", ""),
@@ -1569,7 +1570,7 @@ scenes["01"] = function(s, t) {
     });
     railNames(words, xs, LY + 66, {
       gap: NAME_GAP - 4,
-      alpha: (i) => stageB2 * (en ? listIn(t, initials, i) : named(t, initials[0])),
+      alpha: (i) => stageB2 * (en ? listIn(t, initials, i) : named(t, wordsAt[0])),
       set: "initials"
     });
     if (meaning !== null) {
@@ -4995,7 +4996,7 @@ scenes["11"] = function(s, t) {
 function forgeMark(x, y, w, h, name, { alpha = 1, color = P.ink, named: nameAlpha = alpha, set = null } = {}) {
   if (alpha < 0.01 && nameAlpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, { fill: P.row, stroke: color, alpha, radius: 14, width: 2.5 });
-  nameText(name, x, y + h / 2 + NAME_GAP, { valign: "top", alpha: nameAlpha, set });
+  nameText(name, x, y - h / 2 + 16, { valign: "top", alpha: nameAlpha, set });
 }
 scenes["12"] = function(s, t) {
   const [acceptAt, cutAt2, handAt] = en ? cues(s, [
@@ -5110,8 +5111,8 @@ scenes["12"] = function(s, t) {
         flow: (q + i * 0.5) % 1,
         color: P.authority
       });
-      commitDot(FX - 60, y, { alpha: sm, color: P.authority, r: 14 });
-      tagIcon(FX + 4, y, 92, 42, { alpha: sm });
+      commitDot(FX - 60, y + 24, { alpha: sm, color: P.authority, r: 14 });
+      tagIcon(FX + 4, y + 24, 92, 42, { alpha: sm });
     });
     nameText(L("同一次提交、同一个标签", "The same commit and tag"), 874, Y, {
       align: "left",
@@ -5796,7 +5797,7 @@ scenes["14"] = function(s, t) {
       start: -Math.PI * 0.3
     });
     const a = -Math.PI * 0.3 + Math.PI * 2 * 0.82;
-    dot(CX + R * Math.cos(a), CY + R * Math.sin(a), 8, { color: P.authority, alpha: stageD });
+    dot(CX + R * Math.cos(a), CY + R * Math.sin(a), 6, { color: P.authority, alpha: stageD });
     dot(
       CX + R * Math.cos(-Math.PI * 0.3 + q * Math.PI * 2 * 0.82),
       CY + R * Math.sin(-Math.PI * 0.3 + q * Math.PI * 2 * 0.82),
@@ -6010,9 +6011,9 @@ scenes["15"] = function(s, t) {
   if (stageB > 0) {
     const LX = 480, RX = 1420, Y = 450, ri = stageB * ramp(t, rightAt - 0.15, 0.4), va = stageB * ramp(t, validAt - 0.15, 0.4), cl = stageB * ramp(t, clashAt - 0.15, 0.4), shift = 420 * (1 - soon(t, rightAt - 0.3, 0.5)), DX = LX + shift, lost = soon(t, loseAt, 0.8);
     documentIcon(DX - 305, Y - 110, 170, 220, { alpha: stageB, rows: 5, stroke: P.authority });
-    documentIcon(DX + 135, Y - 110, 170, 220, { alpha: stageB, rows: 5, stroke: P.authority });
+    documentIcon(DX + 146, Y - 82, 148, 192, { alpha: stageB, rows: 4, stroke: P.authority });
     seal(DX - 220, Y - 110, 26, { alpha: va });
-    seal(DX + 220, Y - 110, 26, { alpha: va });
+    seal(DX + 220, Y - 82, 26, { alpha: va });
     stroke(
       () => {
         ctx.moveTo(DX - 26, Y - 14);
