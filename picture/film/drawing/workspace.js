@@ -75,12 +75,13 @@ export function terminalIcon(
     });
   }
 }
-/* The trust kernel: a small hexagon with a core, the one centre that compiles plans. `beat` lights its core. */
-export function kernelIcon(x, y, r, { alpha = 1, color = P.authority, beat = 0 } = {}) {
+/* The trust kernel: a small hexagon with a core, the one centre that compiles plans. `beat` lights its core; `turn`
+ * turns the hexagon by that many radians, for a kernel shown at work. */
+export function kernelIcon(x, y, r, { alpha = 1, color = P.authority, beat = 0, turn = 0 } = {}) {
   if (alpha < 0.01) return;
   const build = () => {
     for (let i = 0; i < 6; i++) {
-      const a = Math.PI / 6 + (i * Math.PI) / 3,
+      const a = Math.PI / 6 + (i * Math.PI) / 3 + turn,
         px = x + r * Math.cos(a),
         py = y + r * Math.sin(a);
       i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);

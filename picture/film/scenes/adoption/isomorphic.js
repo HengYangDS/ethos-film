@@ -85,26 +85,28 @@ scenes["16"] = function (s, t) {
   const LX = 500,
     RX = 1420;
   // 1. ETHOS's own repository and a repository that adopts it, each with the same kernel inside; the sign of sameness
-  // stands between them on the words that say it is the same kernel and procedure.
+  // stands between them on the words that say it is the same kernel and procedure. From those words the two kernels
+  // turn together, at work in step while the voice speaks.
   if (stageA > 0) {
     const Y = 460,
       RW = 430,
       RH = 280,
       g = stageA * clearOfTitle(s, t, 300),
-      ad = g * ramp(t, adopt - 0.15, 0.4);
+      ad = g * ramp(t, adopt - 0.15, 0.4),
+      turn = 0.18 * Math.max(0, voiceTime(t) - voiceTime(same - 0.15)) * soon(t, same - 0.15, 1);
     const shift = 460 * (1 - soon(t, adopt - 0.3, 0.5)),
       lx = LX + shift,
       rx = RX + shift,
       eq = g * ramp(t, (en ? adopt : same) - 0.15, 0.4);
     repoIcon(lx, Y, RW, RH, { alpha: g });
-    kernelIcon(lx, Y - 18, 76, { alpha: g });
+    kernelIcon(lx, Y - 18, 76, { alpha: g, turn });
     nameText(L("ETHOS 自己的产品仓库", "ETHOS's own repository"), lx, Y + 104, {
       width: 380,
       color: P.authority,
       alpha: g,
     });
     repoIcon(rx, Y, RW, RH, { alpha: ad });
-    kernelIcon(rx, Y - 18, 76, { alpha: ad });
+    kernelIcon(rx, Y - 18, 76, { alpha: ad, turn });
     nameText(L("接入它的仓库", "A repository that adopts it"), rx, Y + 104, {
       width: 380,
       alpha: ad,

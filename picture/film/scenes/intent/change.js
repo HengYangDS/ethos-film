@@ -63,7 +63,7 @@ scenes["03"] = function (s, t) {
   const [found, revised, authority, again] = cues(s, [
     ["研究有了新发现", "Research may push"],
     ["改过的要求", "a revised requirement"],
-    ["有权决定的人", "whoever has the authority"],
+    ["要由有权决定的人", "whoever has the authority"],
     ["重新采纳", "accepted again"],
   ]);
   const stageA = stageOut(t, forPipe),
@@ -212,7 +212,8 @@ scenes["03"] = function (s, t) {
     illustrative(stageC);
   }
   // All of it goes into one Change in the repository; from there the Change opens, a folder that grows by a document at
-  // a time as its parts are named.
+  // a time as its parts are named. The two flows into the Change differ in length, so they read as two flows, each
+  // named by the Change it reaches, not as a list waiting for names of its own; the pipeline stands further out.
   if (stageD > 0) {
     const Y = 480,
       FW = 300,
@@ -221,9 +222,9 @@ scenes["03"] = function (s, t) {
       on = stageD,
       written = stageD * ramp(t, into - 0.15, 0.4),
       flow = soon(t, into + 0.1, 0.7);
-    const p = pipelineMark(380, Y, 460, { alpha: on, flow: q });
+    const p = pipelineMark(344, Y, 460, { alpha: on, flow: q });
     const m = signalMark(1540, Y, 460, 130, { alpha: on, seen: 1, marker: 1 });
-    nameText(L("管线的要求", "The pipeline's statements"), 380, p.bottom + NAME_GAP, {
+    nameText(L("管线的要求", "The pipeline's statements"), 344, p.bottom + NAME_GAP, {
       valign: "top",
       alpha: on,
     });
@@ -238,7 +239,7 @@ scenes["03"] = function (s, t) {
       bold: true,
     });
     link(p.storeX + 46, Y, FX, Y, { alpha: on, upto: flow, color: P.line });
-    link(1310, Y, FX + FW, Y, { alpha: on, upto: flow, color: P.line });
+    link(m.x0, Y, FX + FW, Y, { alpha: on, upto: flow, color: P.line });
     nameText(L("写进仓库", "In the repository"), 960, Y + FH / 2 + NAME_GAP, {
       valign: "top",
       alpha: written,
@@ -376,7 +377,8 @@ scenes["03"] = function (s, t) {
     });
   }
   // A new finding may change the intent, and the changed requirement goes back to whoever has the authority before it
-  // stands in the Change again.
+  // stands in the Change again. Chinese brings the authority in with the clause that names it (要由有权决定的人), so
+  // the station fills the room the rail has made for it.
   if (stageF > 0) {
     const Y = 470,
       names = en

@@ -996,11 +996,11 @@ function terminalIcon(x, y, w, h, { alpha = 1, color = P.ink, command = null, co
     });
   }
 }
-function kernelIcon(x, y, r, { alpha = 1, color = P.authority, beat = 0 } = {}) {
+function kernelIcon(x, y, r, { alpha = 1, color = P.authority, beat = 0, turn = 0 } = {}) {
   if (alpha < 0.01) return;
   const build = () => {
     for (let i = 0; i < 6; i++) {
-      const a = Math.PI / 6 + i * Math.PI / 3, px = x + r * Math.cos(a), py = y + r * Math.sin(a);
+      const a = Math.PI / 6 + i * Math.PI / 3 + turn, px = x + r * Math.cos(a), py = y + r * Math.sin(a);
       i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
     }
     ctx.closePath();
@@ -2074,7 +2074,7 @@ scenes["03"] = function(s, t) {
   const [found, revised, authority, again] = cues(s, [
     ["研究有了新发现", "Research may push"],
     ["改过的要求", "a revised requirement"],
-    ["有权决定的人", "whoever has the authority"],
+    ["要由有权决定的人", "whoever has the authority"],
     ["重新采纳", "accepted again"]
   ]);
   const stageA = stageOut(t, forPipe), stageB = stageIn(t, forPipe) * stageOut(t, study), stageC = stageIn(t, study) * stageOut(t, goes);
@@ -2191,9 +2191,9 @@ scenes["03"] = function(s, t) {
   }
   if (stageD > 0) {
     const Y = 480, FW = 300, FH = 190, FX = 960 - FW / 2, on = stageD, written = stageD * ramp(t, into - 0.15, 0.4), flow = soon(t, into + 0.1, 0.7);
-    const p = pipelineMark(380, Y, 460, { alpha: on, flow: q });
+    const p = pipelineMark(344, Y, 460, { alpha: on, flow: q });
     const m = signalMark(1540, Y, 460, 130, { alpha: on, seen: 1, marker: 1 });
-    nameText(L("管线的要求", "The pipeline's statements"), 380, p.bottom + NAME_GAP, {
+    nameText(L("管线的要求", "The pipeline's statements"), 344, p.bottom + NAME_GAP, {
       valign: "top",
       alpha: on
     });
@@ -2208,7 +2208,7 @@ scenes["03"] = function(s, t) {
       bold: true
     });
     link(p.storeX + 46, Y, FX, Y, { alpha: on, upto: flow, color: P.line });
-    link(1310, Y, FX + FW, Y, { alpha: on, upto: flow, color: P.line });
+    link(m.x0, Y, FX + FW, Y, { alpha: on, upto: flow, color: P.line });
     nameText(L("写进仓库", "In the repository"), 960, Y + FH / 2 + NAME_GAP, {
       valign: "top",
       alpha: written
@@ -2769,8 +2769,9 @@ scenes["05"] = function(s, t) {
       ["ETHOS 管这叫", "ETHOS calls this"]
     ]
   );
-  const [toolsAt, support, official, platform, mature] = cues(s, [
+  const [toolsAt, toolsSaid, support, official, platform, mature] = cues(s, [
     ["用工具也是", "The same principle"],
+    ["工具也是", "principle"],
     ["辅助的工作", "Supporting work"],
     ["官方的规范和工具", "official standards"],
     ["平台自带的功能", "the platform's own"],
@@ -2880,7 +2881,7 @@ scenes["05"] = function(s, t) {
     );
     nameText(L("工具也一样", "The same for tools"), 960, MY + MH / 2 + NAME_GAP + 172, {
       valign: "top",
-      alpha: stageA * named(t, toolsAt)
+      alpha: stageA * named(t, toolsSaid)
     });
   }
   nameText(
@@ -6255,17 +6256,17 @@ scenes["16"] = function(s, t) {
   const stageA = stageOut(t, diffAt), stageB = stageIn(t, diffAt) * stageOut(t, noCopy), stageC = stageIn(t, noCopy) * stageOut(t, hourAt), stageD = stageIn(t, hourAt) * stageOut(t, prevAt), stageE = stageIn(t, prevAt);
   const LX = 500, RX = 1420;
   if (stageA > 0) {
-    const Y = 460, RW = 430, RH = 280, g = stageA * clearOfTitle(s, t, 300), ad = g * ramp(t, adopt - 0.15, 0.4);
+    const Y = 460, RW = 430, RH = 280, g = stageA * clearOfTitle(s, t, 300), ad = g * ramp(t, adopt - 0.15, 0.4), turn = 0.18 * Math.max(0, voiceTime(t) - voiceTime(same - 0.15)) * soon(t, same - 0.15, 1);
     const shift = 460 * (1 - soon(t, adopt - 0.3, 0.5)), lx = LX + shift, rx = RX + shift, eq = g * ramp(t, (en ? adopt : same) - 0.15, 0.4);
     repoIcon(lx, Y, RW, RH, { alpha: g });
-    kernelIcon(lx, Y - 18, 76, { alpha: g });
+    kernelIcon(lx, Y - 18, 76, { alpha: g, turn });
     nameText(L("ETHOS 自己的产品仓库", "ETHOS's own repository"), lx, Y + 104, {
       width: 380,
       color: P.authority,
       alpha: g
     });
     repoIcon(rx, Y, RW, RH, { alpha: ad });
-    kernelIcon(rx, Y - 18, 76, { alpha: ad });
+    kernelIcon(rx, Y - 18, 76, { alpha: ad, turn });
     nameText(L("接入它的仓库", "A repository that adopts it"), rx, Y + 104, {
       width: 380,
       alpha: ad
@@ -6658,7 +6659,7 @@ scenes["17"] = function(s, t) {
       "已有的东西尽量少改",
       "第一次受治理的改动之前都可撤回"
     ];
-    const widest = Math.max(...names.map((v) => measure(v))), rest = 110 * (1 - soon(t, sameAt - 0.15, 0.5)) + 60 * (1 - soon(t, leastAt - 0.15, 0.5)) + 120 * (1 - soon(t, undoAt - 0.15, 0.5)), GX = Math.round(960 - (68 + NAME_GAP + widest) / 2 + 34) + 180 + rest;
+    const room = en ? [undoAt - 0.15, 0.5] : [cue(s, "而且在", "") - 0.15, 1], widest = Math.max(...names.map((v) => measure(v))), rest = 110 * (1 - soon(t, sameAt - 0.15, 0.5)) + 60 * (1 - soon(t, leastAt - 0.15, 0.5)) + 120 * (1 - soon(t, ...room)), GX = Math.round(960 - (68 + NAME_GAP + widest) / 2 + 34) + 180 + rest;
     const lead = 270 * (1 - soon(t, prevAt - 0.15, 0.5)), DX = GX - 340 + lead;
     folderIcon(DX - 140, 390, 280, 200, { alpha: stageB, color: P.authority });
     nameText(L("接入", "Adoption"), DX, 490, { color: P.authority, alpha: stageB, bold: true });

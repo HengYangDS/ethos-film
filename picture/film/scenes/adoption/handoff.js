@@ -160,11 +160,14 @@ scenes["17"] = function (s, t) {
             "已有的东西尽量少改",
             "第一次受治理的改动之前都可撤回",
           ];
-    const widest = Math.max(...names.map((v) => measure(v))),
+    // The list makes room for its last, longest property as that property's clause begins; Chinese names it only at
+    // the clause's end, so its room opens slowly over the words before.
+    const room = en ? [undoAt - 0.15, 0.5] : [cue(s, "而且在", "") - 0.15, 1],
+      widest = Math.max(...names.map((v) => measure(v))),
       rest =
         110 * (1 - soon(t, sameAt - 0.15, 0.5)) +
         60 * (1 - soon(t, leastAt - 0.15, 0.5)) +
-        120 * (1 - soon(t, undoAt - 0.15, 0.5)),
+        120 * (1 - soon(t, ...room)),
       GX = Math.round(960 - (68 + NAME_GAP + widest) / 2 + 34) + 180 + rest;
     const lead = 270 * (1 - soon(t, prevAt - 0.15, 0.5)),
       DX = GX - 340 + lead;

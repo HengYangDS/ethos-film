@@ -35,8 +35,9 @@ scenes["05"] = function (s, t) {
       ["ETHOS 管这叫", "ETHOS calls this"],
     ],
   );
-  const [toolsAt, support, official, platform, mature] = cues(s, [
+  const [toolsAt, toolsSaid, support, official, platform, mature] = cues(s, [
     ["用工具也是", "The same principle"],
+    ["工具也是", "principle"],
     ["辅助的工作", "Supporting work"],
     ["官方的规范和工具", "official standards"],
     ["平台自带的功能", "the platform's own"],
@@ -177,10 +178,11 @@ scenes["05"] = function (s, t) {
       MY + MH / 2 + NAME_GAP + 120,
       { valign: "top", color: P.authority, alpha: stageA * named(t, ownerAt) },
     );
-    // The same rule reaches tools: said under the rule, before the tools' own picture takes the stage.
+    // The same rule reaches tools: said under the rule, before the tools' own picture takes the stage. It arrives a
+    // word into its thought, after the example's names have begun to leave, so the thought opens on a change.
     nameText(L("工具也一样", "The same for tools"), 960, MY + MH / 2 + NAME_GAP + 172, {
       valign: "top",
-      alpha: stageA * named(t, toolsAt),
+      alpha: stageA * named(t, toolsSaid),
     });
   }
   // What supporting work goes to first is said under the rule and stays where it was said while the tools take the
