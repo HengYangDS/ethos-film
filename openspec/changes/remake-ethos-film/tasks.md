@@ -8,16 +8,16 @@
 
 ## 2. Script
 
-- [ ] 2.1 Check every part's `source_sections` against the cited documents at the pinned commit; verify that each named section exists and states the part's claims.
+- [x] 2.1 Check every part's `source_sections` against the cited documents at the pinned commit; verify that each named section exists and states the part's claims.
 - [x] 2.2 Write both editions' scripts from the text the user adopted, with chapters, segments, thought groups, release metadata and the pause policy, and add the declaration, the players, the entry page, the review prompt and the font subsets cut from the scripts; verify that the engine loads the declaration and that each edition's text equals the adopted text.
-- [ ] 2.3 Pass the independent sentence-by-sentence text review at 90 or more in fidelity, first-hearing clarity and idiom, with no material finding; verify that the review record binds both scripts' SHA-256.
+- [x] 2.3 Pass the independent sentence-by-sentence text review at 90 or more in fidelity, first-hearing clarity and idiom, with no material finding; verify that the review record binds both scripts' SHA-256.
 - [ ] 2.4 Write the pronunciation contract and the review readings, and audition every named term; verify that the listening plan derives from them and that each audition is heard in its declared spoken form.
 
 ## 3. Narration and sound
 
-- [ ] 3.1 Add the casts with the shared narrator's references and qualified parameters; verify each reference's SHA-256 and the clear reference's recorded derivation from the identity root.
-- [ ] 3.2 Narrate both editions and select each thought's take; verify that every selected take ends on its own, matches its text by recognition and keeps its pauses within the declared caps.
-- [ ] 3.3 Assemble each soundtrack and its captions at exactly 900 seconds; verify the runtime, the program loudness and the caption timing.
+- [x] 3.1 Add the casts with the shared narrator's references and qualified parameters; verify each reference's SHA-256 and the clear reference's recorded derivation from the identity root.
+- [x] 3.2 Narrate both editions and select each thought's take; verify that every selected take ends on its own, matches its text by recognition and keeps its pauses within the declared caps.
+- [x] 3.3 Assemble each soundtrack and its captions at exactly 900 seconds; verify the runtime, the program loudness and the caption timing.
 - [ ] 3.4 Have the user listen to both narrations and record the decision; verify that the record names both soundtracks, and reopen 2.2 or 3.2 for a requested change.
 
 ## 4. Picture
