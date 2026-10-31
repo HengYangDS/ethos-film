@@ -14,7 +14,7 @@ import {
   terminalIcon,
 } from "../../drawing/workspace.js";
 import { building, listIn, listLevel, named, speaking } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText } from "../../naming/names.js";
+import { NAME_GAP, NOTE, growName, nameText } from "../../naming/names.js";
 import { railNames, railStations } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { scenes } from "../registry.js";
@@ -63,10 +63,12 @@ scenes["17"] = function (s, t) {
     ["充当权威来源的生成文件", "no generated file"],
     ["第二套控制机制", "no second control"],
   ]);
-  const [before, ownAt, usefulAt] = cues(s, [
+  const [before, ownAt, usefulAt, giveAt, keepAt] = cues(s, [
     ["交接或者退出之前", "Before a handoff"],
     ["归属权", "ownership"],
     ["有用的结果和必要的证据", "useful results"],
+    ["要交给负责", "go to their owner"],
+    ["存成可以恢复", "be kept"],
   ]);
   const [afterAt, retireAt, burdenAt] = cues(s, [
     ["做完这些以后", "After that"],
@@ -311,20 +313,25 @@ scenes["17"] = function (s, t) {
       width: 420,
       alpha: stageD * named(t, usefulAt),
     });
+    // They go on the words that say where: the link reaches their owner's place, which keeps them recoverable, and its
+    // name grows by its second part on that part's own words.
+    const go = stageD * ramp(t, giveAt - 0.15, 0.4),
+      parts = en
+        ? ["To its owner,", " or kept recoverable"]
+        : ["交给负责的一方，", "或存成可恢复的"];
     link(PX + 90, Y2, QX - 120, Y2, {
       alpha: us,
-      upto: soon(t, usefulAt + 0.2, 0.7),
+      upto: soon(t, giveAt, 0.7),
       flow: q,
       color: P.evidence,
     });
-    repoIcon(QX, Y2, 240, 150, { alpha: us });
-    recoverIcon(QX + 16, Y2 + 12, 30, { alpha: us });
-    nameText(
-      L("交给负责的一方，或存成可恢复的", "To its owner, or kept recoverable"),
-      QX,
-      Y2 + 75 + 12,
-      { valign: "top", width: 440, color: P.evidence, alpha: stageD * named(t, usefulAt) },
-    );
+    repoIcon(QX, Y2, 240, 150, { alpha: go });
+    recoverIcon(QX + 16, Y2 + 12, 30, { alpha: go });
+    growName(t, parts, [giveAt, keepAt], QX - measure(parts.join("")) / 2, Y2 + 75 + 12, {
+      build: true,
+      color: P.evidence,
+      alpha: stageD,
+    });
   }
   // A mechanism whose obligation is done steps off the rail: the flow continues without it, and the burden is gone.
   if (stageE > 0) {

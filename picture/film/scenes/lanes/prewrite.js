@@ -7,7 +7,7 @@ import { link } from "../../drawing/links.js";
 import { box, dot, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
 import { agent, clock, cross, documentIcon, lock, person, seal } from "../../drawing/symbols.js";
 import { folderIcon } from "../../drawing/workspace.js";
-import { listIn, named, speaking } from "../../naming/lists.js";
+import { beats, listIn, named, speaking } from "../../naming/lists.js";
 import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
 import { P } from "../../palette.js";
 import { scenes } from "../registry.js";
@@ -30,6 +30,10 @@ scenes["07"] = function (s, t) {
         ["这个工作区", ""],
         ["这几个文件", ""],
       ]);
+  const [carryAt, againAt] = cues(s, [
+    ["受版本管理", "a tracked file"],
+    ["再核对", "looks again"],
+  ]);
   const [ifAt, dirty, foreign, state, readOnly, freshAt] = cues(s, [
     ["如果那里有", "If there is"],
     ["还没提交的改动", "uncommitted work"],
@@ -89,8 +93,9 @@ scenes["07"] = function (s, t) {
       alpha: on,
     });
   }
-  // Every write meets its own gate, named from the thought's first words: an agent carries a change up to it, and the
-  // check looks at the worktree and exactly the files about to change, as they are now.
+  // Every write meets its own gate, named from the thought's first words: an agent carries a change up to it on the words
+  // that say what the change touches, the gate checks it again on its words, and the check looks at the worktree and
+  // exactly the files about to change, as they are now.
   if (stageB > 0) {
     const lead = 200 * (1 - soon(t, wtAt - 0.3, 0.5)),
       Y = 490,
@@ -102,9 +107,14 @@ scenes["07"] = function (s, t) {
       q = (voiceTime(t) * 0.4) % 1;
     agent(AX, Y, { alpha: stageB, size: 1.5 });
     nameText("Agent", AX, Y + 40 + NAME_GAP, { valign: "top", alpha: stageB });
-    documentIcon(AX + 70, Y - 34, 52, 68, { alpha: stageB, rows: 3, stroke: P.evidence });
     link(AX + 126, Y, GX - 36, Y, { alpha: stageB, flow: q });
+    documentIcon(mix(AX + 70, GX - 98, soon(t, carryAt - 0.1, 1.3)), Y - 34, 52, 68, {
+      alpha: stageB,
+      rows: 3,
+      stroke: P.evidence,
+    });
     writeGate(GX, Y, 280, { alpha: stageB, single: true });
+    beats(t, GX, Y + 129, 40, [againAt], { color: P.authority, alpha: stageB });
     nameText(L("写入前的检查", "A check just before writing"), GX, Y - 140 - NAME_GAP, {
       valign: "bottom",
       color: P.authority,

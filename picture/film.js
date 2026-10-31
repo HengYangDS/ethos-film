@@ -1572,12 +1572,24 @@ scenes["01"] = function(s, t) {
       alpha: (i) => stageB2 * (en ? listIn(t, initials, i) : named(t, initials[0])),
       set: "initials"
     });
-    if (meaning !== null)
-      nameText("信任要建立在证据上", 960, LY + 66 + 88, {
+    if (meaning !== null) {
+      [
+        [2, "人和 Agent"],
+        [3, "一项工作"],
+        [4, "打理"]
+      ].forEach(
+        ([i, v]) => nameText(v, xs[i], LY + 128, {
+          valign: "top",
+          color: P.authority,
+          alpha: stageB2 * named(t, lights[i])
+        })
+      );
+      nameText("信任要建立在证据上", 960, LY + 186, {
         valign: "top",
         color: P.authority,
         alpha: stageB2 * named(t, meaning)
       });
+    }
   }
   if (stageC > 0) {
     const rows = en ? [
@@ -3398,6 +3410,10 @@ scenes["07"] = function(s, t) {
     ["这个工作区", ""],
     ["这几个文件", ""]
   ]);
+  const [carryAt, againAt] = cues(s, [
+    ["受版本管理", "a tracked file"],
+    ["再核对", "looks again"]
+  ]);
   const [ifAt, dirty, foreign, state, readOnly, freshAt] = cues(s, [
     ["如果那里有", "If there is"],
     ["还没提交的改动", "uncommitted work"],
@@ -3452,9 +3468,14 @@ scenes["07"] = function(s, t) {
     const lead = 200 * (1 - soon(t, wtAt - 0.3, 0.5)), Y = 490, AX = 330 + lead, GX = 800 + lead, FX = 1090 + lead, FW = 480, FH = 250, q = voiceTime(t) * 0.4 % 1;
     agent(AX, Y, { alpha: stageB, size: 1.5 });
     nameText("Agent", AX, Y + 40 + NAME_GAP, { valign: "top", alpha: stageB });
-    documentIcon(AX + 70, Y - 34, 52, 68, { alpha: stageB, rows: 3, stroke: P.evidence });
     link(AX + 126, Y, GX - 36, Y, { alpha: stageB, flow: q });
+    documentIcon(mix(AX + 70, GX - 98, soon(t, carryAt - 0.1, 1.3)), Y - 34, 52, 68, {
+      alpha: stageB,
+      rows: 3,
+      stroke: P.evidence
+    });
     writeGate(GX, Y, 280, { alpha: stageB, single: true });
+    beats(t, GX, Y + 129, 40, [againAt], { color: P.authority, alpha: stageB });
     nameText(L("写入前的检查", "A check just before writing"), GX, Y - 140 - NAME_GAP, {
       valign: "bottom",
       color: P.authority,
@@ -3684,8 +3705,10 @@ scenes["08"] = function(s, t) {
     ["执行这份计划", "carries it out"],
     ["写下新的核验记录", "writes new verification"]
   ]);
-  const [fromChange, comm] = cues(s, [
+  const [fromChange, criteriaAt, compileAt, comm] = cues(s, [
     ["采纳的意图来自", "Accepted intent comes"],
+    ["验收条件", "acceptance criteria"],
+    ["编译成一个临时", "compiles its"],
     ["Commitment", "the Commitment"]
   ]);
   const [temp, discard] = cues(s, [
@@ -3819,7 +3842,7 @@ scenes["08"] = function(s, t) {
       "The fresh observations",
       "The plan compiled from them"
     ] : ["验收条件编译成的值", "刚观察到的事实", "编译出来的计划"];
-    kernelIcon(KX, KY, KR, { alpha: stageC });
+    kernelIcon(KX, KY, KR, { alpha: stageC, beat: speaking(t, [compileAt], 0) });
     folderIcon(xs[0] - 55, KY - 42, 110, 84, { alpha: stageC, color: P.authority });
     nameText(L("正式变更", "The official Change"), xs[0], KY + 42 + NAME_GAP, {
       valign: "top",
@@ -3827,6 +3850,11 @@ scenes["08"] = function(s, t) {
       alpha: stageC
     });
     link(xs[0] + 55, KY, KX - KR, KY, { alpha: stageC, flow: q, color: P.authority });
+    documentIcon(mix(xs[0] + 70, KX - KR - 50, soon(t, criteriaAt - 0.1, 1.2)), KY - 26, 40, 52, {
+      alpha: stageC * ramp(t, criteriaAt - 0.15, 0.3) * (1 - soon(t, criteriaAt + 1, 0.3)),
+      rows: 3,
+      stroke: P.authority
+    });
     [
       [-30, -22],
       [24, -30],
@@ -6590,10 +6618,12 @@ scenes["17"] = function(s, t) {
     ["充当权威来源的生成文件", "no generated file"],
     ["第二套控制机制", "no second control"]
   ]);
-  const [before, ownAt, usefulAt] = cues(s, [
+  const [before, ownAt, usefulAt, giveAt, keepAt] = cues(s, [
     ["交接或者退出之前", "Before a handoff"],
     ["归属权", "ownership"],
-    ["有用的结果和必要的证据", "useful results"]
+    ["有用的结果和必要的证据", "useful results"],
+    ["要交给负责", "go to their owner"],
+    ["存成可以恢复", "be kept"]
   ]);
   const [afterAt, retireAt, burdenAt] = cues(s, [
     ["做完这些以后", "After that"],
@@ -6782,20 +6812,20 @@ scenes["17"] = function(s, t) {
       width: 420,
       alpha: stageD * named(t, usefulAt)
     });
+    const go = stageD * ramp(t, giveAt - 0.15, 0.4), parts = en ? ["To its owner,", " or kept recoverable"] : ["交给负责的一方，", "或存成可恢复的"];
     link(PX + 90, Y2, QX - 120, Y2, {
       alpha: us,
-      upto: soon(t, usefulAt + 0.2, 0.7),
+      upto: soon(t, giveAt, 0.7),
       flow: q,
       color: P.evidence
     });
-    repoIcon(QX, Y2, 240, 150, { alpha: us });
-    recoverIcon(QX + 16, Y2 + 12, 30, { alpha: us });
-    nameText(
-      L("交给负责的一方，或存成可恢复的", "To its owner, or kept recoverable"),
-      QX,
-      Y2 + 75 + 12,
-      { valign: "top", width: 440, color: P.evidence, alpha: stageD * named(t, usefulAt) }
-    );
+    repoIcon(QX, Y2, 240, 150, { alpha: go });
+    recoverIcon(QX + 16, Y2 + 12, 30, { alpha: go });
+    growName(t, parts, [giveAt, keepAt], QX - measure(parts.join("")) / 2, Y2 + 75 + 12, {
+      build: true,
+      color: P.evidence,
+      alpha: stageD
+    });
   }
   if (stageE > 0) {
     const Y = 620, X0 = 300, X1 = 1620, q = voiceTime(t) * 0.4 % 1, off = soon(t, retireAt + 0.1, 1), MX = 960, MY = mix(Y, Y - 150, off), a = stageE * (1 - off * 0.55);

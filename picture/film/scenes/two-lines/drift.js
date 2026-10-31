@@ -292,12 +292,26 @@ scenes["01"] = function (s, t) {
       alpha: (i) => stageB2 * (en ? listIn(t, initials, i) : named(t, initials[0])),
       set: "initials",
     });
-    if (meaning !== null)
-      nameText("信任要建立在证据上", 960, LY + 66 + 88, {
+    // The Chinese meaning is said in its own order: who works together and on what stand under the initials they give,
+    // each on its words, and what trust rests on stands beneath the row.
+    if (meaning !== null) {
+      [
+        [2, "人和 Agent"],
+        [3, "一项工作"],
+        [4, "打理"],
+      ].forEach(([i, v]) =>
+        nameText(v, xs[i], LY + 128, {
+          valign: "top",
+          color: P.authority,
+          alpha: stageB2 * named(t, lights[i]),
+        }),
+      );
+      nameText("信任要建立在证据上", 960, LY + 186, {
         valign: "top",
         color: P.authority,
         alpha: stageB2 * named(t, meaning),
       });
+    }
   }
   // 5-6. More governance is a stack of layers, refused. The three promises are three places, each filled with its
   // mark and its words as it is said; the group stays centred on the frame as its parts arrive. When the film says

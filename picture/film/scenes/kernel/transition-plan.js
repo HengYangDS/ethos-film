@@ -77,8 +77,10 @@ scenes["08"] = function (s, t) {
     ["执行这份计划", "carries it out"],
     ["写下新的核验记录", "writes new verification"],
   ]);
-  const [fromChange, comm] = cues(s, [
+  const [fromChange, criteriaAt, compileAt, comm] = cues(s, [
     ["采纳的意图来自", "Accepted intent comes"],
+    ["验收条件", "acceptance criteria"],
+    ["编译成一个临时", "compiles its"],
     ["Commitment", "the Commitment"],
   ]);
   const [temp, discard] = cues(s, [
@@ -257,7 +259,7 @@ scenes["08"] = function (s, t) {
             "The plan compiled from them",
           ]
         : ["验收条件编译成的值", "刚观察到的事实", "编译出来的计划"];
-    kernelIcon(KX, KY, KR, { alpha: stageC });
+    kernelIcon(KX, KY, KR, { alpha: stageC, beat: speaking(t, [compileAt], 0) });
     folderIcon(xs[0] - 55, KY - 42, 110, 84, { alpha: stageC, color: P.authority });
     nameText(L("正式变更", "The official Change"), xs[0], KY + 42 + NAME_GAP, {
       valign: "top",
@@ -265,6 +267,12 @@ scenes["08"] = function (s, t) {
       alpha: stageC,
     });
     link(xs[0] + 55, KY, KX - KR, KY, { alpha: stageC, flow: q, color: P.authority });
+    // On the words that name them, the acceptance criteria leave the Change for the kernel, which compiles them.
+    documentIcon(mix(xs[0] + 70, KX - KR - 50, soon(t, criteriaAt - 0.1, 1.2)), KY - 26, 40, 52, {
+      alpha: stageC * ramp(t, criteriaAt - 0.15, 0.3) * (1 - soon(t, criteriaAt + 1, 0.3)),
+      rows: 3,
+      stroke: P.authority,
+    });
     [
       [-30, -22],
       [24, -30],

@@ -19,9 +19,10 @@ run = [
 ]
 
 [tasks.check]
-description = "Run the Python tests and check the Markdown formatting without writing"
+description = "Run the picture and Python tests and check the Markdown formatting without writing"
 depends = ["check:dependencies"]
 run = [
+  "npm test",
   "npm run format:markdown:check",
   "uv run --python 3.12 --frozen --offline --group dev python -m pytest -q tests",
 ]
