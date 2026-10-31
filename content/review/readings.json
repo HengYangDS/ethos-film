@@ -20,7 +20,8 @@
     "落后": "luòhòu",
     "归属": "guīshǔ",
     "当初": "dāngchū",
-    "还能恢复过来": "hái néng huīfù guòlái"
+    "为这种情况": "wèi zhè zhǒng qíngkuàng",
+    "相应": "xiāngyìng"
   },
   "heteronyms": {
     "duplicate": {
@@ -67,33 +68,31 @@
     "record": {
       "03:234": "noun",
       "05:87": "noun",
-      "08:587": "noun",
-      "18:556": "noun"
+      "08:603": "noun"
     },
     "records": {
       "02:156": "noun",
       "03:208": "noun",
       "03:259": "noun",
-      "03:663": "verb",
-      "03:703": "verb",
       "06:436": "verb",
-      "08:148": "verb",
+      "08:148": "noun",
+      "08:223": "noun",
       "13:206": "noun"
     },
     "use": {
       "01:200": "noun",
       "02:366": "verb",
-      "09:852": "noun",
+      "09:858": "noun",
       "13:236": "noun"
     },
     "read": {
-      "07:416": "present",
-      "09:463": "past",
+      "07:412": "present",
+      "09:469": "past",
       "10:666": "past"
     },
     "separate": {
       "06:246": "adjective",
-      "07:218": "adjective",
+      "07:113": "adjective",
       "10:298": "adjective",
       "12:75": "adjective",
       "18:325": "adjective"
@@ -106,10 +105,10 @@
       "02:473": "noun",
       "02:687": "noun",
       "13:882": "noun",
-      "14:719": "noun",
-      "14:826": "noun",
+      "14:752": "noun",
+      "14:859": "noun",
       "17:2": "noun",
-      "18:696": "noun"
+      "18:725": "noun"
     },
     "conflicts": {
       "16:921": "noun"
@@ -134,7 +133,7 @@
       "15:132": "verb"
     },
     "coordinate": {
-      "07:641": "verb"
+      "07:637": "verb"
     }
   }
 }
