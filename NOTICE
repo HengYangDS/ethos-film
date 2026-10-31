@@ -14,6 +14,7 @@ License (SPDX-License-Identifier: CC-BY-4.0); see LICENSES/CC-BY-4.0.txt. It com
   content/voice-performance.json, content/en/film-script.json, content/en/narration.md
   and content/en/voice-reference.json;
 - the narrator's reference recordings in assets/audio/;
+- the covers in assets/cover/, which the composition paints;
 - the films, captions, transcripts, chapters and covers that the build makes from them
   and that the releases publish.
 
@@ -39,6 +40,8 @@ their own licenses, which the licenses above do not cover:
 - GSAP 3.15.0, from npm, under its standard no-charge license
   (https://gsap.com/standard-license); the build copies its minified script into each
   staged picture document;
+- esbuild 0.25.12, from npm, under the MIT License, which bundles the composition's
+  modules under picture/film/ into picture/film.js;
 - Prettier 3.9.10, from npm, under the MIT License, for the Markdown format check;
 - Chrome Headless Shell 152.0.7977.30, which the supply task installs, under the
   licenses of Chromium and its components;

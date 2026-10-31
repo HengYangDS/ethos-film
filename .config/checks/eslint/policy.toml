@@ -1,0 +1,9 @@
+[[environment]]
+paths = [
+  "picture/film.js",
+  "picture/film/canvas.js",
+  "picture/film/playback.js",
+  "picture/film/timeline.js",
+]
+globals = ["browser"]
+reason = "the composition runs in the render page that picture/index.html loads: the bundle and the modules that read the page's timeline and canvas and give it the frame renderer use window and document, browser globals"

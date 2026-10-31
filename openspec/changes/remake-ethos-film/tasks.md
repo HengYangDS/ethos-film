@@ -22,8 +22,8 @@
 
 ## 4. Picture
 
-- [ ] 4.1 Plan each thought's picture from the accepted narration; verify the plan against the gates for names, placement, whole lists and balance.
-- [ ] 4.2 Compose `picture/` with the primitives copied from `ddwg-film` at `v1.0.0`, cut the font subsets again from the scripts and the composition, and paint both covers; verify the font test, the geometry, still, motion and sync audits, and the cover check.
+- [x] 4.1 Plan each thought's picture from the accepted narration; verify the plan against the gates for names, placement, whole lists and balance.
+- [x] 4.2 Compose the picture as the ES modules under `picture/film/`, with the primitives copied from `ddwg-film` at `v1.0.0`, and bundle them into `picture/film.js`; cut the font subsets again from the scripts and the composition, and paint both covers; verify the composition tests and their coverage, the font test, the geometry, still, motion and sync audits, and the cover check.
 - [ ] 4.3 Render a 10 fps draft and scan its stills; verify that no frame shows a collision, clipping or a blank picture under speech.
 
 ## 5. Render, review and delivery

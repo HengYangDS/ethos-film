@@ -6,6 +6,7 @@ characters this film draws, and Latin-only text in the unmodified IBM Plex Sans.
 
 from collections.abc import Iterator
 
+import filmkit.picture.rendering as picture_rendering
 import filmkit.repository as repository
 import pytest
 from filmkit.captions.timing import typeset
@@ -46,8 +47,9 @@ def declared(family: str) -> list[str]:
 
 
 @pytest.mark.parametrize("font", declared("noto-sans-cjk-sc-subset"))
-def test_each_chinese_subset_maps_every_character_of_the_scripts(font):
-    drawn = set().union(*(written(code) for code in CODES))
+def test_each_chinese_subset_maps_every_character_of_the_scripts_and_the_composition(font):
+    composition = repository.ROOT / picture_rendering.COMPOSITION_SCRIPT
+    drawn = set(composition.read_text()).union(*(written(code) for code in CODES)) - {"\n"}
     assert sorted(drawn - mapped(font)) == []
 
 

@@ -1,0 +1,5 @@
+@font-face{font-family:Ethos;src:url('fonts/noto-sans-cjk-sc-subset-regular.otf') format('opentype');font-weight:400;font-display:block}
+@font-face{font-family:EthosBold;src:url('fonts/noto-sans-cjk-sc-subset-bold.otf') format('opentype');font-weight:700;font-display:block}
+@font-face{font-family:EthosLatin;src:url('fonts/ibm-plex-sans-regular.ttf') format('truetype');font-weight:400;font-display:block}
+@font-face{font-family:EthosLatinBold;src:url('fonts/ibm-plex-sans-bold.ttf') format('truetype');font-weight:700;font-display:block}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0F1519}#film{position:relative;width:1920px;height:1080px;overflow:hidden;background:#0F1519;color:#ECE8DF;font-family:Ethos,sans-serif}canvas{display:block;width:100%;height:100%}.font-probe{position:absolute;left:-10000px;top:-10000px;font:30px Ethos}.font-probe.bold{font-family:EthosBold}

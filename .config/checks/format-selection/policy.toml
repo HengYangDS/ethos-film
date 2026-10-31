@@ -1,12 +1,14 @@
 # Sources whose SHA-256 the film's build records bind and that film-media checks against a
-# build's receipts: the reference recordings and fonts, the scripts and casts, the source
-# manifest and the player and entry pages. A new production changes them together, through a
-# full render and review.
+# build's receipts: the reference recordings, covers and fonts, the scripts and casts, the source
+# manifest, the player and entry pages, and the composition and its page. A new production
+# changes them together, through a full render and review.
 [[ownership]]
 id = "film-media-bound-sources"
 paths = [
   "assets/audio/en/narration-reference.wav",
   "assets/audio/narration-reference-clear.wav",
+  "assets/cover/ethos-cover-en.png",
+  "assets/cover/ethos-cover.png",
   "assets/fonts/ibm-plex-sans-bold.ttf",
   "assets/fonts/ibm-plex-sans-regular.ttf",
   "assets/fonts/noto-sans-cjk-sc-subset-bold.otf",
@@ -20,6 +22,9 @@ paths = [
   "content/source-manifest.json",
   "content/voice-performance.json",
   "content/voice-reference.json",
+  "picture/film.css",
+  "picture/film.js",
+  "picture/index.html",
 ]
 format_owner = "immutable-carrier"
 format_command = "not-applicable:film-media-bound"
