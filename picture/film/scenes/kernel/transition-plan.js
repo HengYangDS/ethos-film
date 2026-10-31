@@ -17,7 +17,8 @@ import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
-/* A temporary value: a dashed card with its name. */
+/* A temporary value: a card with its name, which fades as the value is discarded. `titleAlpha` lets the name follow
+ * its own words after the note that describes it. */
 function transientCard(
   x,
   y,
@@ -25,7 +26,7 @@ function transientCard(
   h,
   name,
   note,
-  { alpha = 1, inkAlpha = alpha, gone = 0, color = P.evidence, set = null } = {},
+  { alpha = 1, inkAlpha = alpha, titleAlpha = inkAlpha, gone = 0, color = P.evidence, set = null } = {},
 ) {
   if (alpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, {
@@ -33,10 +34,9 @@ function transientCard(
     stroke: color,
     alpha: alpha * (1 - gone * 0.7),
     radius: 12,
-    dash: [8, 8],
     width: 2.5,
   });
-  nameText(name, x, y - 22, { color, alpha: inkAlpha * (1 - gone * 0.3), bold: true, set });
+  nameText(name, x, y - 22, { color, alpha: titleAlpha * (1 - gone * 0.3), bold: true, set });
   nameText(note, x, y + 24, {
     size: NOTE,
     color: P.muted,
@@ -45,8 +45,8 @@ function transientCard(
     set,
   });
 }
-/* The kernel's values on one shelf that runs to `end`: the three temporary values as dashed cards, each in its colour,
- * their fill one mark. `gone` fades the three away. */
+/* The kernel's values on one shelf that runs to `end`: the three temporary values as cards, each in its colour, their
+ * fill one mark. `gone` fades the three away. */
 function s08Values(xs, end, y, { alpha = 1, gone = 0, w = 150, h = 92 } = {}) {
   if (alpha < 0.01) return;
   const temporary = alpha * (1 - clamp(gone)),
@@ -62,7 +62,6 @@ function s08Values(xs, end, y, { alpha = 1, gone = 0, w = 150, h = 92 } = {}) {
       color: colours[i],
       alpha: temporary,
       width: 2.5,
-      dash: [8, 8],
     }),
   );
 }
@@ -110,6 +109,8 @@ scenes["08"] = function (s, t) {
       ]);
   const factsCard = en ? cue(s, "", "The fresh observations") : cue(s, "刚观察到的事实叫", ""),
     planCard = en ? cue(s, "", "the compiled plan") : cue(s, "的计划叫", "");
+  // English describes the Facts and the TransitionPlan before it names them.
+  const titleAts = en ? [comm, cue(s, "", "are the Facts"), cue(s, "", "is the TransitionPlan")] : null;
   const stageA = stageOut(t, what),
     stageB = stageIn(t, what) * stageOut(t, fromChange),
     stageC = stageIn(t, fromChange) * stageOut(t, persist),
@@ -238,8 +239,8 @@ scenes["08"] = function (s, t) {
     );
     path(along(back, soon(t, newRec + 0.5, 1.2)).kept, { color: P.line, alpha: ne, width: 2 });
   }
-  // Commitment, Facts and TransitionPlan are three dashed cards, each from its source and each on the words that say what
-  // it holds. They serve this one decision and then fade to their outlines.
+  // Commitment, Facts and TransitionPlan are three cards, each from its source and each on the words that say what it
+  // holds. They serve this one decision and then fade to their outlines.
   if (stageC > 0) {
     const ats = [comm, factsCard, planCard],
       xs = [420, 960, 1500],
@@ -285,6 +286,7 @@ scenes["08"] = function (s, t) {
       transientCard(xs[i], Y, W, H, names[i], notes[i], {
         alpha: on,
         inkAlpha: on * listLevel(t, ats, i),
+        titleAlpha: on * listLevel(t, ats, i) * (titleAts ? named(t, titleAts[i]) : 1),
         gone,
         color: i ? P.evidence : P.authority,
         set: "values",

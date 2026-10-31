@@ -1,9 +1,8 @@
 /* 01 two lines: understanding and answers drift apart. */
 
-import { ctx } from "../../canvas.js";
 import { blend } from "../../drawing/colour.js";
 import { link } from "../../drawing/links.js";
-import { flowDot, labelSize, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
+import { flowDot, labelSize, line, measure, ring, text } from "../../drawing/strokes.js";
 import { agent, check, documentIcon, person } from "../../drawing/symbols.js";
 import { TWO_LINES, answerStation, driftingLines, twoLines } from "../../drawing/two-lines.js";
 import { layersIcon, recoverIcon, repoIcon } from "../../drawing/workspace.js";
@@ -313,8 +312,8 @@ scenes["01"] = function (s, t) {
       });
     }
   }
-  // 5-6. More governance is a stack of layers, refused. The three promises are three places, each filled with its
-  // mark and its words as it is said; the group stays centred on the frame as its parts arrive. When the film says
+  // 5-6. More governance is a stack of layers, refused. The three promises arrive one at a time, each with its mark and
+  // its words as it is said; the group stays centred on the frame as its parts arrive. When the film says
   // these are aims, the promises are bracketed as aims; ETHOS's own documents then say they are not yet all delivered,
   // and their marks turn to dashed outlines.
   if (stageC > 0) {
@@ -379,17 +378,7 @@ scenes["01"] = function (s, t) {
       alpha: stageC * named(t, refusedName),
       mark: ramp(t, refused + 0.3, 0.4),
     });
-    // The three places: one dashed outline, each of its rings standing until its promise has filled it.
-    const waiting = ys.filter((y, i) => t < ats[i] + 0.3);
-    if (waiting.length)
-      stroke(
-        () =>
-          waiting.forEach((y) => {
-            ctx.moveTo(IX + 30, y);
-            ctx.arc(IX, y, 30, 0, Math.PI * 2);
-          }),
-        { color: P.muted, alpha: stageC * ramp(t, three - 0.15, 0.4), width: 3, dash: [6, 6] },
-      );
+    // Nothing stands for a promise before it is said: each ring comes with its mark and its words.
     nameText(header, IX - 30, ys[0] - 30 - NAME_GAP, {
       align: "left",
       valign: "bottom",

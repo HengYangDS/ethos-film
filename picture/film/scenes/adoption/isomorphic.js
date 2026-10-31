@@ -33,7 +33,7 @@ scenes["16"] = function (s, t) {
   const [adopt, same, isoAt] = cues(s, [
     ["接入它的其他仓库", "the repositories that adopt"],
     ["用的是同一个内核", "with the same kernel"],
-    ["同构治理", "governance means"],
+    ["同构治理", "isomorphic governance"],
   ]);
   const [diffAt, adapWord, eachAt, ownProf] = cues(s, [
     ["区别只在配置和适配器", "The difference lies"],
@@ -198,8 +198,9 @@ scenes["16"] = function (s, t) {
       });
     });
   }
-  // 3. Not a copy: each repository keeps its own shapes inside and names what it keeps, part by part; ETHOS stands
-  // between them as one loop that judges each change in both.
+  // 3. Not a copy: each repository keeps its own shapes inside, ETHOS's own its own model and the adopting one its own
+  // work, and the adopting repository names what it keeps, part by part; ETHOS stands between them as one loop that
+  // judges each change in both.
   if (stageC > 0) {
     const CY = 440,
       R = 74,
@@ -221,20 +222,20 @@ scenes["16"] = function (s, t) {
       valign: "bottom",
       alpha: stageC,
     });
-    pipelineMark(LX + 20, CY + 30, 340, { alpha: stageC });
-    modelGrid(RX - 120, CY - 60, 260, 150, { alpha: stageC, color: P.evidence });
+    modelGrid(LX - 120, CY - 60, 260, 150, { alpha: stageC, color: P.authority });
+    pipelineMark(RX + 20, CY + 30, 340, { alpha: stageC });
     const parts = en
       ? ["Keeps its own domain model, ", "layout, ", "platform conventions"]
       : ["保留自己的业务模型、", "目录结构、", "平台习惯"];
-    const lines = growTexts(parts, 700),
+    const lines = growTexts(parts, 460),
       wide = Math.max(...lines.map((line) => measure(line.map(([, v]) => v).join(""))));
     growName(
       t,
       parts,
       [keepsAt, layoutAt, convAt],
-      Math.round(960 - wide / 2),
+      Math.round(RX - wide / 2),
       CY + 135 + NAME_GAP,
-      { width: 700, alpha: stageC, build: true },
+      { width: 460, alpha: stageC, build: true },
     );
     ring(960, CY, R, { color: P.authority, alpha: et, width: 3 });
     nameText("ETHOS", 960, CY, { color: P.authority, alpha: et, bold: true });

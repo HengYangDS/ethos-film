@@ -95,8 +95,9 @@ scenes["18"] = function (s, t) {
     ["项目可以接着做下去", "The project can"],
     ["方法也始终可以修改", "the method stays"],
   ]);
-  const stageA = stageOut(t, rulesCut),
-    stageB = stageIn(t, rulesCut) * stageOut(t, doneAt),
+  // The two lines stay while the rules are announced; the rules take the stage with the first of them.
+  const stageA = stageOut(t, ruleAts[0]),
+    stageB = stageIn(t, ruleAts[0]) * stageOut(t, doneAt),
     stageC = stageIn(t, doneAt) * stageOut(t, newAt),
     stageD = stageIn(t, newAt) * stageOut(t, goAt),
     stageE = stageIn(t, goAt);
@@ -104,28 +105,32 @@ scenes["18"] = function (s, t) {
     q = (voiceTime(t) * 0.35) % 1,
     Y = (y1 + y2) / 2;
   // 1. The opening's two lines return, level and quiet under their shared name; each comes to full ink with its own
-  // name. Understanding sends a point down toward action, and what comes back corrects the understanding.
+  // name. Understanding sends a point down toward action, and what comes back corrects the understanding. When the
+  // rules are announced, the lines' names leave and the lines recede under the heading until the first rule comes.
   if (stageA > 0) {
+    const past = soon(t, rulesCut - 0.1, 0.4),
+      kept = stageA * (1 - past),
+      held = stageA * (1 - 0.4 * past);
     s18Lines({
-      alpha: stageA,
+      alpha: held,
       upper: ramp(t, underAt - 0.15, 0.4),
       lower: ramp(t, realAt - 0.15, 0.4),
     });
     nameText(L("开头那两条线", "The opening's two lines"), 960, Y, {
-      alpha: stageA * named(t, s.voice_start),
+      alpha: kept * named(t, s.voice_start),
     });
     nameText(L("理解", "Understanding"), x0 - NAME_GAP, y1, {
       align: "right",
       color: P.authority,
-      alpha: stageA * named(t, underAt),
+      alpha: kept * named(t, underAt),
     });
     nameText(L("实际的结果", "Real outcomes"), x0 - NAME_GAP, y2, {
       align: "right",
       color: P.evidence,
-      alpha: stageA * named(t, realAt),
+      alpha: kept * named(t, realAt),
     });
-    const dn = stageA * ramp(t, dirAt - 0.15, 0.4),
-      up = stageA * ramp(t, corrAt - 0.15, 0.4),
+    const dn = held * ramp(t, dirAt - 0.15, 0.4),
+      up = held * ramp(t, corrAt - 0.15, 0.4),
       XA = 700,
       XB = 1220;
     link(XA, y1, XA, y2, {
@@ -137,7 +142,7 @@ scenes["18"] = function (s, t) {
     });
     nameText(L("指出方向", "Gives direction"), XA - 18, Y, {
       align: "right",
-      alpha: stageA * named(t, dirAt),
+      alpha: kept * named(t, dirAt),
     });
     link(XB, y2, XB, y1, {
       alpha: up,
@@ -148,11 +153,27 @@ scenes["18"] = function (s, t) {
     });
     nameText(L("回过头来修正", "Comes back to correct"), XB + 18, Y, {
       align: "left",
-      alpha: stageA * named(t, corrAt),
+      alpha: kept * named(t, corrAt),
     });
   }
-  // 2. Four plain rules, each a term with its condition: the rows stand as one dashed ladder from the words that announce
-  // them, and each fills in on its own words. A zh edition speaks them across two thoughts, an en one in a single breath.
+  // 2. Four plain rules, each a term with its condition under the heading that announces them, along the rules' own rail:
+  // the heading comes on the words that begin to announce them, above the two lines, and stays; the rail comes with the
+  // first rule, and each rule stands on it on its own words, without a box. A zh edition speaks them across two thoughts,
+  // an en one in a single breath.
+  const heading = (stageA + stageB) * named(t, rulesCut);
+  if (heading > 0.01) {
+    if (en) {
+      const head = ["Four plain rules", " of judgment"],
+        w = measure(head.join(""));
+      growName(t, head, [rulesCut, judgment], Math.round(960 - w / 2), 258, {
+        valign: "middle",
+        alpha: heading,
+        color: P.authority,
+        build: true,
+      });
+    } else nameText("几条朴素的准则", 960, 258, { color: P.authority, alpha: heading });
+    line(960 - 150, 284, 960 + 150, 284, { color: P.authority, alpha: heading, width: 2.5 });
+  }
   if (stageB > 0) {
     const ys = [340, 450, 560, 670],
       W = en ? 620 : 520;
@@ -174,21 +195,7 @@ scenes["18"] = function (s, t) {
       : [["留住含义"], ["做区分"], ["看得到，不等于有权去做"], ["就让它退场"]];
     const widest = Math.max(...terms.map((term, i) => s18RowWidth(term, quals[i], W))),
       GX = Math.round(960 - (72 + NAME_GAP + widest) / 2 + 36);
-    if (en) {
-      const head = ["Four plain rules", " of judgment"],
-        w = measure(head.join(""));
-      growName(t, head, [rulesCut, judgment], Math.round(960 - w / 2), 258, {
-        valign: "middle",
-        alpha: stageB,
-        color: P.authority,
-        build: true,
-      });
-    } else nameText("几条朴素的准则", 960, 258, { color: P.authority, alpha: stageB });
-    line(960 - 150, 284, 960 + 150, 284, { color: P.authority, alpha: stageB, width: 2.5 });
-    stroke(
-      () => ys.forEach((y) => ctx.roundRect(GX - 56, y - 46, 112 + NAME_GAP + widest + 40, 92, 12)),
-      { color: P.muted, alpha: stageB, width: 3, dash: [8, 8] },
-    );
+    line(GX - 70, ys[0] - 46, GX - 70, ys[3] + 46, { color: P.authority, alpha: stageB, width: 3 });
     ruleAts.forEach((at, i) => {
       const on = stageB * ramp(t, at - 0.15, 0.4),
         c = blend(P.ink, P.authority, speaking(t, ruleAts, i)),

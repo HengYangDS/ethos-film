@@ -12,7 +12,7 @@ import { railNames, railStations } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L, en } from "../../timeline.js";
-import { cueFrom, cues } from "../../timing/cues.js";
+import { cue, cueFrom, cues } from "../../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
@@ -156,7 +156,8 @@ scenes["04"] = function (s, t) {
       ys = [370, 500, 630],
       ats = [keptAt, excludedAt, openAt],
       q = (voiceTime(t) * 0.45) % 1;
-    const docs = stageB;
+    // The sources stand with their name, on the words that name them.
+    const docs = stageB * named(t, en ? cue(s, "", "the declared sources") : sortAt);
     [
       [-22, -18],
       [0, 0],
@@ -166,7 +167,7 @@ scenes["04"] = function (s, t) {
     );
     nameText(L("指定范围的资料", "Declared sources"), DX, Y + 92 + NAME_GAP, {
       valign: "top",
-      alpha: stageB,
+      alpha: docs,
     });
     nameText(L("要靠判断", "Takes judgment"), BUS - 60, Y - 150, {
       valign: "bottom",
@@ -387,14 +388,14 @@ scenes["04"] = function (s, t) {
       right = xs[2] + 80;
     bubble(xs[0], Y, 44, { alpha: onAt(0) });
     agent(xs[1] - 30, Y, { alpha: onAt(1), color: P.muted, size: 1.3 });
-    box(xs[1] + 6, Y - 34, 62, 68, { stroke: P.muted, alpha: onAt(1), radius: 10, dash: [6, 6] });
+    box(xs[1] + 6, Y - 34, 62, 68, { stroke: P.muted, alpha: onAt(1), radius: 10 });
     documentIcon(xs[2] - 38, Y - 50, 76, 100, { alpha: onAt(2), rows: 3, stroke: P.muted });
     railNames(names, xs, Y + 60, {
       gap: NAME_GAP,
       alpha: (i) => stageF * listIn(t, ats, i),
       set: "traces",
     });
-    const no = stageF * named(t, noAuth),
+    const no = stageF * named(t, cue(s, "只是线索", "are leads")),
       BY = Y + 150;
     path(
       [

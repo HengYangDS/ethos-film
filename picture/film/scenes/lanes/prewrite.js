@@ -145,7 +145,7 @@ scenes["07"] = function (s, t) {
       alpha: wt * pass(scan, 0.1),
       width: 2.5,
     });
-    link(GX + 36, Y, FX, Y, { alpha: wt, upto: soon(t, wtAt, 0.5), dash: [8, 9] });
+    link(GX + 36, Y, FX, Y, { alpha: wt, upto: soon(t, wtAt, 0.5) });
   }
   // Three findings stop a write at the gate, which keeps its name beside the files it guards. The files stay readable,
   // the write waits, and only a fresh check lifts the bar.
@@ -251,7 +251,6 @@ scenes["07"] = function (s, t) {
     link(AX + 110, 340, BX - 160, 340, {
       alpha: now * move,
       upto: soon(t, nowAt, 0.6),
-      dash: [8, 9],
     });
     const w = stageD * ramp(t, onlyAt - 0.15, 0.4),
       u = stageD * ramp(t, unrelated - 0.15, 0.4),

@@ -264,7 +264,6 @@ scenes["06"] = function (s, t) {
     link(CX + W / 2, CY, RX - 96, CY, {
       alpha: on,
       upto: soon(t, fresh, 0.5),
-      dash: [8, 9],
       flow: q,
     });
     ring(RX, CY, 96, { color: P.evidence, alpha: on, width: 3 });

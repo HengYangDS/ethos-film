@@ -3,7 +3,7 @@
 import { ctx } from "../../canvas.js";
 import { blend } from "../../drawing/colour.js";
 import { along, link, rounded } from "../../drawing/links.js";
-import { box, dot, flowDot, labelSize, line, path, ring, stroke } from "../../drawing/strokes.js";
+import { box, dot, flowDot, labelSize, line, measure, path, ring, stroke } from "../../drawing/strokes.js";
 import { check, cross, documentIcon, lock } from "../../drawing/symbols.js";
 import { kernelIcon, repoIcon } from "../../drawing/workspace.js";
 import { clearOfTitle } from "../../framing/chapters.js";
@@ -54,15 +54,16 @@ scenes["05"] = function (s, t) {
     ["旧做法", "the path it replaces"],
     ["不让两套", "rather than both"],
   ]);
-  const [codeAt, intentAt, factsAt, changeAt] = cues(s, [
+  const [codeAt, oneJob, intentAt, factsAt, changeAt] = cues(s, [
     ["ETHOS 自己的代码", "ETHOS focuses"],
+    ["集中做一件事", "on one job"],
     ["采纳了的意图", "accepted intent"],
     ["刚观察到的事实", "freshly observed facts"],
     ["可以检验的仓库改动", "verifiable changes"],
   ]);
   const stage0 = stageOut(t, module),
-    stageA = stageIn(t, module) * stageOut(t, toolsAt),
-    stageB = stageIn(t, toolsAt) * stageOut(t, replaceAt),
+    stageA = stageIn(t, module) * stageOut(t, official),
+    stageB = stageIn(t, official) * stageOut(t, replaceAt),
     stageC = stageIn(t, replaceAt) * stageOut(t, codeAt),
     stageD = stageIn(t, codeAt);
   // A requirement, once clear, has to mean one thing wherever it is used: the places it reaches stand level with it on
@@ -100,8 +101,12 @@ scenes["05"] = function (s, t) {
   }
   // The meaning of a duplicate record, held where one module will be named for it: that it alone defines the meaning, and
   // the module itself, arrive on their words. Interfaces, tests and documents follow from it, each on its words; copies
-  // each would keep are refused, and the rule is named under the module.
+  // each would keep are refused, and the rule is named under the module. When the rule turns to tools, the example's
+  // names leave and its marks recede, so only the rule and what it now reaches are named.
   if (stageA > 0) {
+    const past = soon(t, toolsAt - 0.1, 0.4),
+      kept = stageA * (1 - past),
+      held = stageA * (1 - 0.4 * past);
     const lead = 240 * (1 - soon(t, iface - 0.4, 0.6)) + 100 * (1 - soon(t, own - 0.3, 0.5)),
       MX = 560 + lead,
       MY = 460,
@@ -114,28 +119,28 @@ scenes["05"] = function (s, t) {
     box(MX - MW / 2, MY - MH / 2, MW, MH, {
       fill: P.row,
       stroke: P.authority,
-      alpha: stageA,
+      alpha: held,
       radius: 14,
       width: 3,
     });
-    documentIcon(MX - 36, MY - 76, 72, 92, { alpha: stageA, rows: 2, stroke: P.authority });
+    documentIcon(MX - 36, MY - 76, 72, 92, { alpha: held, rows: 2, stroke: P.authority });
     nameText(L("一个模块", "One module"), MX, MY + 54, {
       color: P.authority,
-      alpha: stageA * named(t, oneModule),
+      alpha: kept * named(t, oneModule),
     });
     nameText(L("“重复记录”的定义", "What a duplicate record is"), MX, MY + MH / 2 + NAME_GAP, {
       valign: "top",
-      alpha: stageA,
+      alpha: kept,
     });
     nameText(L("只由它来定义", "Defined only here"), MX, MY + MH / 2 + NAME_GAP + 42, {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: stageA * named(t, onlyBy),
+      alpha: kept * named(t, onlyBy),
     });
     const names = en ? ["Interfaces", "Tests", "Documentation"] : ["接口", "测试", "文档"];
     ats.forEach((at, i) => {
-      const on = stageA * ramp(t, at - 0.15, 0.4),
+      const on = held * ramp(t, at - 0.15, 0.4),
         lit = speaking(t, ats, i),
         c = blend(P.ink, P.evidence, lit),
         y = ys[i];
@@ -150,11 +155,11 @@ scenes["05"] = function (s, t) {
       documentIcon(IX - 30, y - 38, 60, 76, { alpha: on, rows: 3, stroke: c });
       nameText(names[i], IX + 30 + NAME_GAP, y, {
         align: "left",
-        alpha: stageA * listIn(t, ats, i),
+        alpha: kept * listIn(t, ats, i),
         set: "followers",
       });
     });
-    const no = stageA * named(t, own),
+    const no = held * named(t, own),
       RX = 1540;
     ys.forEach((y) => {
       documentIcon(RX - 22, y - 28, 44, 56, { alpha: no, rows: 2, stroke: P.muted });
@@ -164,7 +169,7 @@ scenes["05"] = function (s, t) {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: no,
+      alpha: kept * named(t, own),
     });
     nameText(
       L("每一项责任，一处负责", "Every obligation, exactly one owner"),
@@ -172,18 +177,29 @@ scenes["05"] = function (s, t) {
       MY + MH / 2 + NAME_GAP + 120,
       { valign: "top", color: P.authority, alpha: stageA * named(t, ownerAt) },
     );
+    // The same rule reaches tools: said under the rule, before the tools' own picture takes the stage.
+    nameText(L("工具也一样", "The same for tools"), 960, MY + MH / 2 + NAME_GAP + 172, {
+      valign: "top",
+      alpha: stageA * named(t, toolsAt),
+    });
   }
-  // Tools follow the same rule as a ladder drawn whole from the start, named for tools: what already exists comes first,
-  // rung by rung. Custom code is the last rung, closed until a real gap, a bounded job and a clear net benefit have each
-  // been shown; it stands on its words, before its conditions in English and after them in Chinese, and opens once all
-  // three stand.
+  // What supporting work goes to first is said under the rule and stays where it was said while the tools take the
+  // stage, until a replacement is chosen.
+  nameText(
+    L("辅助的工作先交给现成的", "Supporting work goes first to what exists"),
+    960,
+    800,
+    { valign: "top", alpha: (stageA + stageB) * named(t, support) },
+  );
+  // Tools follow the same rule along one rail that comes with the first of them: what already exists comes first, each
+  // kind standing on the rail on its own words. Custom code is the last place on the rail, locked until a real gap, a bounded job and a
+  // clear net benefit have each been shown; it stands on its words, before its conditions in English and after them in
+  // Chinese, and opens once all three stand.
   if (stageB > 0) {
     const conds = [gap, bounded, benefit],
-      lead = 200 * (1 - soon(t, Math.min(customAt, gap) - 0.1, 0.6)),
-      LX = 300 + lead,
-      W = 760,
+      lead = 243 * (1 - soon(t, Math.min(customAt, gap) - 0.1, 0.6)),
+      LX = 377 + lead,
       ys = [330, 430, 530, 650],
-      H = 76,
       ats = [official, platform, mature],
       custom = stageB * ramp(t, customAt - 0.15, 0.4);
     const opened = soon(t, Math.max(benefit, customAt) + 0.6, 0.5);
@@ -191,28 +207,12 @@ scenes["05"] = function (s, t) {
       ? ["Official standards and tools", "The platform's own capabilities", "Mature tools"]
       : ["官方的规范和工具", "平台自带的功能", "成熟的工具"];
     const notes = ["OpenSpec, Git", "", ""];
-    nameText(
-      L("辅助的工作先交给现成的", "Supporting work goes first to what exists"),
-      LX,
-      ys[0] - H / 2 - NAME_GAP,
-      { align: "left", valign: "bottom", alpha: stageB * named(t, support) },
-    );
-    const ladder = () => ys.forEach((y) => ctx.roundRect(LX, y - H / 2, W, H, 10));
-    stroke(ladder, { color: P.muted, alpha: stageB, width: 3, dash: [8, 8] });
-    line(LX - 28, ys[0], LX - 28, ys[3], { color: P.line, alpha: stageB, width: 2.5 });
-    nameText(L("工具", "Tools"), LX - 28 - NAME_GAP, (ys[0] + ys[3]) / 2, {
-      align: "right",
-      color: P.muted,
-      alpha: stageB,
-    });
+    line(LX - 28, ys[0], LX - 28, ys[3], { color: P.muted, alpha: stageB, width: 3 });
     const down = (voiceTime(t) * 0.3) % 1;
     flowDot(LX - 28, mix(ys[0], ys[3], down), 9, down, { color: P.evidence, alpha: stageB });
     ats.forEach((at, i) => {
       const on = stageB * ramp(t, at - 0.15, 0.4),
-        lit = speaking(t, ats, i),
-        c = blend(P.line, P.evidence, lit),
         y = ys[i];
-      box(LX, y - H / 2, W, H, { fill: P.row, stroke: c, alpha: on, radius: 10 });
       check(LX + 40, y + 1, 24, { alpha: on, color: P.evidence });
       termRow(
         t,
@@ -225,15 +225,12 @@ scenes["05"] = function (s, t) {
         { alpha: stageB, set: "rungs" },
       );
     });
-    const y = ys[3];
-    box(LX, y - H / 2, W, H, {
-      stroke: blend(P.line, P.authority, opened),
-      alpha: custom * opened,
-      radius: 10,
-    });
+    const y = ys[3],
+      customName = L("自己写辅助代码", "Custom supporting code");
     lock(LX + 40, y + 2, { alpha: custom, closed: 1 - opened, color: P.authority });
-    nameText(L("自己写辅助代码", "Custom supporting code"), LX + 76, y, {
+    nameText(customName, LX + 76, y, {
       align: "left",
+      color: blend(P.ink, P.authority, opened),
       alpha: custom,
     });
     const CX = LX + 890,
@@ -251,9 +248,9 @@ scenes["05"] = function (s, t) {
         set: "conditions",
       });
     });
-    link(LX + W, y, CX - 26, cy[1], {
+    link(LX + 76 + measure(customName) + NAME_GAP, y, CX - 26, cy[1], {
       route: "hvh",
-      mid: LX + W + 60,
+      mid: CX - 70,
       alpha: custom * ramp(t, bounded - 0.15, 0.4),
       color: P.authority,
     });
@@ -343,7 +340,7 @@ scenes["05"] = function (s, t) {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: stageD,
+      alpha: stageD * named(t, oneJob),
     });
     documentIcon(IX - 48, Y - 150, 96, 124, { alpha: inA, rows: 3, stroke: P.authority });
     nameText(L("采纳的意图", "Accepted intent"), IX - 48 - NAME_GAP, Y - 88, {

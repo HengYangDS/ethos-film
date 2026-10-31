@@ -1632,15 +1632,6 @@ scenes["01"] = function(s, t) {
       alpha: stageC * named(t, refusedName),
       mark: ramp(t, refused + 0.3, 0.4)
     });
-    const waiting = ys.filter((y, i) => t < ats[i] + 0.3);
-    if (waiting.length)
-      stroke(
-        () => waiting.forEach((y) => {
-          ctx.moveTo(IX + 30, y);
-          ctx.arc(IX, y, 30, 0, Math.PI * 2);
-        }),
-        { color: P.muted, alpha: stageC * ramp(t, three - 0.15, 0.4), width: 3, dash: [6, 6] }
-      );
     nameText(header, IX - 30, ys[0] - 30 - NAME_GAP, {
       align: "left",
       valign: "bottom",
@@ -2068,6 +2059,12 @@ scenes["03"] = function(s, t) {
     ["设计记下", "a design"],
     ["任务清单", "a task list"]
   ]);
+  const noteAts = en ? cues(s, [
+    ["", "says why"],
+    ["", "the required behavior"],
+    ["", "the trade-offs"],
+    ["", "tracks progress"]
+  ]) : [proposal, specs, design, tasks];
   const [reads, compile, only, elsewhere] = cues(s, [
     ["ETHOS 会读取", "ETHOS reads"],
     ["编译成验收条件", "compiles it"],
@@ -2264,7 +2261,7 @@ scenes["03"] = function(s, t) {
         valign: "top",
         size: NOTE,
         color: P.muted,
-        alpha: stageD2 * listIn(t, ats, i),
+        alpha: stageD2 * listIn(t, noteAts, i),
         set: "parts"
       });
     });
@@ -2460,7 +2457,7 @@ scenes["04"] = function(s, t) {
   if (stageB > 0) {
     const { rows, dx: shift } = s04SortShift(), lead = S04_LEAD * (1 - soon(t, keptAt - 0.3, 0.6)), dx = shift + lead;
     const Y = 500, DX = 430 + dx, BUS = 760 + dx, IX = 900 + dx, ys = [370, 500, 630], ats = [keptAt, excludedAt, openAt], q = voiceTime(t) * 0.45 % 1;
-    const docs = stageB;
+    const docs = stageB * named(t, en ? cue(s, "", "the declared sources") : sortAt);
     [
       [-22, -18],
       [0, 0],
@@ -2470,7 +2467,7 @@ scenes["04"] = function(s, t) {
     );
     nameText(L("指定范围的资料", "Declared sources"), DX, Y + 92 + NAME_GAP, {
       valign: "top",
-      alpha: stageB
+      alpha: docs
     });
     nameText(L("要靠判断", "Takes judgment"), BUS - 60, Y - 150, {
       valign: "bottom",
@@ -2651,14 +2648,14 @@ scenes["04"] = function(s, t) {
     const onAt = (i) => stageF * ramp(t, ats[i] - 0.15, 0.4), left = xs[0] - 80, right = xs[2] + 80;
     bubble(xs[0], Y, 44, { alpha: onAt(0) });
     agent(xs[1] - 30, Y, { alpha: onAt(1), color: P.muted, size: 1.3 });
-    box(xs[1] + 6, Y - 34, 62, 68, { stroke: P.muted, alpha: onAt(1), radius: 10, dash: [6, 6] });
+    box(xs[1] + 6, Y - 34, 62, 68, { stroke: P.muted, alpha: onAt(1), radius: 10 });
     documentIcon(xs[2] - 38, Y - 50, 76, 100, { alpha: onAt(2), rows: 3, stroke: P.muted });
     railNames(names, xs, Y + 60, {
       gap: NAME_GAP,
       alpha: (i) => stageF * listIn(t, ats, i),
       set: "traces"
     });
-    const no = stageF * named(t, noAuth), BY = Y + 150;
+    const no = stageF * named(t, cue(s, "只是线索", "are leads")), BY = Y + 150;
     path(
       [
         [left, BY - 22],
@@ -2790,13 +2787,14 @@ scenes["05"] = function(s, t) {
     ["旧做法", "the path it replaces"],
     ["不让两套", "rather than both"]
   ]);
-  const [codeAt, intentAt, factsAt, changeAt] = cues(s, [
+  const [codeAt, oneJob, intentAt, factsAt, changeAt] = cues(s, [
     ["ETHOS 自己的代码", "ETHOS focuses"],
+    ["集中做一件事", "on one job"],
     ["采纳了的意图", "accepted intent"],
     ["刚观察到的事实", "freshly observed facts"],
     ["可以检验的仓库改动", "verifiable changes"]
   ]);
-  const stage0 = stageOut(t, module), stageA = stageIn(t, module) * stageOut(t, toolsAt), stageB = stageIn(t, toolsAt) * stageOut(t, replaceAt), stageC = stageIn(t, replaceAt) * stageOut(t, codeAt), stageD = stageIn(t, codeAt);
+  const stage0 = stageOut(t, module), stageA = stageIn(t, module) * stageOut(t, official), stageB = stageIn(t, official) * stageOut(t, replaceAt), stageC = stageIn(t, replaceAt) * stageOut(t, codeAt), stageD = stageIn(t, codeAt);
   if (stage0 > 0) {
     const g = stage0 * clearOfTitle(s, t, 340), DX = 600, DY = CONTENT_CY - 20, DW = 200, DH = 280, EX = 840, RX0 = EX + 60, RW = 520, same = g * ramp(t, mean - 0.15, 0.4);
     documentIcon(DX - DW / 2, DY - DH / 2, DW, DH, { alpha: g, rows: 5, stroke: P.authority });
@@ -2821,32 +2819,33 @@ scenes["05"] = function(s, t) {
     });
   }
   if (stageA > 0) {
+    const past = soon(t, toolsAt - 0.1, 0.4), kept = stageA * (1 - past), held = stageA * (1 - 0.4 * past);
     const lead = 240 * (1 - soon(t, iface - 0.4, 0.6)) + 100 * (1 - soon(t, own - 0.3, 0.5)), MX = 560 + lead, MY = 460, MW = 300, MH = 190, IX = 1120 + lead, ys = [320, 460, 600], ats = [iface, tests, docs], q = voiceTime(t) * 0.45 % 1;
     box(MX - MW / 2, MY - MH / 2, MW, MH, {
       fill: P.row,
       stroke: P.authority,
-      alpha: stageA,
+      alpha: held,
       radius: 14,
       width: 3
     });
-    documentIcon(MX - 36, MY - 76, 72, 92, { alpha: stageA, rows: 2, stroke: P.authority });
+    documentIcon(MX - 36, MY - 76, 72, 92, { alpha: held, rows: 2, stroke: P.authority });
     nameText(L("一个模块", "One module"), MX, MY + 54, {
       color: P.authority,
-      alpha: stageA * named(t, oneModule)
+      alpha: kept * named(t, oneModule)
     });
     nameText(L("“重复记录”的定义", "What a duplicate record is"), MX, MY + MH / 2 + NAME_GAP, {
       valign: "top",
-      alpha: stageA
+      alpha: kept
     });
     nameText(L("只由它来定义", "Defined only here"), MX, MY + MH / 2 + NAME_GAP + 42, {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: stageA * named(t, onlyBy)
+      alpha: kept * named(t, onlyBy)
     });
     const names = en ? ["Interfaces", "Tests", "Documentation"] : ["接口", "测试", "文档"];
     ats.forEach((at, i) => {
-      const on = stageA * ramp(t, at - 0.15, 0.4), lit = speaking(t, ats, i), c = blend(P.ink, P.evidence, lit), y = ys[i];
+      const on = held * ramp(t, at - 0.15, 0.4), lit = speaking(t, ats, i), c = blend(P.ink, P.evidence, lit), y = ys[i];
       link(MX + MW / 2, MY, IX - 40, y, {
         route: "hvh",
         mid: MX + MW / 2 + 110,
@@ -2858,11 +2857,11 @@ scenes["05"] = function(s, t) {
       documentIcon(IX - 30, y - 38, 60, 76, { alpha: on, rows: 3, stroke: c });
       nameText(names[i], IX + 30 + NAME_GAP, y, {
         align: "left",
-        alpha: stageA * listIn(t, ats, i),
+        alpha: kept * listIn(t, ats, i),
         set: "followers"
       });
     });
-    const no = stageA * named(t, own), RX = 1540;
+    const no = held * named(t, own), RX = 1540;
     ys.forEach((y) => {
       documentIcon(RX - 22, y - 28, 44, 56, { alpha: no, rows: 2, stroke: P.muted });
       cross(RX + 42, y, 20, { alpha: no * ramp(t, own + 0.3, 0.4), width: 3 });
@@ -2871,7 +2870,7 @@ scenes["05"] = function(s, t) {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: no
+      alpha: kept * named(t, own)
     });
     nameText(
       L("每一项责任，一处负责", "Every obligation, exactly one owner"),
@@ -2879,31 +2878,27 @@ scenes["05"] = function(s, t) {
       MY + MH / 2 + NAME_GAP + 120,
       { valign: "top", color: P.authority, alpha: stageA * named(t, ownerAt) }
     );
+    nameText(L("工具也一样", "The same for tools"), 960, MY + MH / 2 + NAME_GAP + 172, {
+      valign: "top",
+      alpha: stageA * named(t, toolsAt)
+    });
   }
+  nameText(
+    L("辅助的工作先交给现成的", "Supporting work goes first to what exists"),
+    960,
+    800,
+    { valign: "top", alpha: (stageA + stageB) * named(t, support) }
+  );
   if (stageB > 0) {
-    const conds = [gap, bounded, benefit], lead = 200 * (1 - soon(t, Math.min(customAt, gap) - 0.1, 0.6)), LX = 300 + lead, W = 760, ys = [330, 430, 530, 650], H = 76, ats = [official, platform, mature], custom = stageB * ramp(t, customAt - 0.15, 0.4);
+    const conds = [gap, bounded, benefit], lead = 243 * (1 - soon(t, Math.min(customAt, gap) - 0.1, 0.6)), LX = 377 + lead, ys = [330, 430, 530, 650], ats = [official, platform, mature], custom = stageB * ramp(t, customAt - 0.15, 0.4);
     const opened = soon(t, Math.max(benefit, customAt) + 0.6, 0.5);
     const names = en ? ["Official standards and tools", "The platform's own capabilities", "Mature tools"] : ["官方的规范和工具", "平台自带的功能", "成熟的工具"];
     const notes = ["OpenSpec, Git", "", ""];
-    nameText(
-      L("辅助的工作先交给现成的", "Supporting work goes first to what exists"),
-      LX,
-      ys[0] - H / 2 - NAME_GAP,
-      { align: "left", valign: "bottom", alpha: stageB * named(t, support) }
-    );
-    const ladder = () => ys.forEach((y2) => ctx.roundRect(LX, y2 - H / 2, W, H, 10));
-    stroke(ladder, { color: P.muted, alpha: stageB, width: 3, dash: [8, 8] });
-    line(LX - 28, ys[0], LX - 28, ys[3], { color: P.line, alpha: stageB, width: 2.5 });
-    nameText(L("工具", "Tools"), LX - 28 - NAME_GAP, (ys[0] + ys[3]) / 2, {
-      align: "right",
-      color: P.muted,
-      alpha: stageB
-    });
+    line(LX - 28, ys[0], LX - 28, ys[3], { color: P.muted, alpha: stageB, width: 3 });
     const down = voiceTime(t) * 0.3 % 1;
     flowDot(LX - 28, mix(ys[0], ys[3], down), 9, down, { color: P.evidence, alpha: stageB });
     ats.forEach((at, i) => {
-      const on = stageB * ramp(t, at - 0.15, 0.4), lit = speaking(t, ats, i), c = blend(P.line, P.evidence, lit), y2 = ys[i];
-      box(LX, y2 - H / 2, W, H, { fill: P.row, stroke: c, alpha: on, radius: 10 });
+      const on = stageB * ramp(t, at - 0.15, 0.4), y2 = ys[i];
       check(LX + 40, y2 + 1, 24, { alpha: on, color: P.evidence });
       termRow(
         t,
@@ -2916,15 +2911,11 @@ scenes["05"] = function(s, t) {
         { alpha: stageB, set: "rungs" }
       );
     });
-    const y = ys[3];
-    box(LX, y - H / 2, W, H, {
-      stroke: blend(P.line, P.authority, opened),
-      alpha: custom * opened,
-      radius: 10
-    });
+    const y = ys[3], customName = L("自己写辅助代码", "Custom supporting code");
     lock(LX + 40, y + 2, { alpha: custom, closed: 1 - opened, color: P.authority });
-    nameText(L("自己写辅助代码", "Custom supporting code"), LX + 76, y, {
+    nameText(customName, LX + 76, y, {
       align: "left",
+      color: blend(P.ink, P.authority, opened),
       alpha: custom
     });
     const CX = LX + 890, cn = en ? ["A real gap shown", "A bounded job", "A clear net benefit"] : ["证明确实缺了什么", "边界清楚", "净收益说得清"], cy = [y - 110, y - 20, y + 70];
@@ -2938,9 +2929,9 @@ scenes["05"] = function(s, t) {
         set: "conditions"
       });
     });
-    link(LX + W, y, CX - 26, cy[1], {
+    link(LX + 76 + measure(customName) + NAME_GAP, y, CX - 26, cy[1], {
       route: "hvh",
-      mid: LX + W + 60,
+      mid: CX - 70,
       alpha: custom * ramp(t, bounded - 0.15, 0.4),
       color: P.authority
     });
@@ -3013,7 +3004,7 @@ scenes["05"] = function(s, t) {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: stageD
+      alpha: stageD * named(t, oneJob)
     });
     documentIcon(IX - 48, Y - 150, 96, 124, { alpha: inA, rows: 3, stroke: P.authority });
     nameText(L("采纳的意图", "Accepted intent"), IX - 48 - NAME_GAP, Y - 88, {
@@ -3317,7 +3308,6 @@ scenes["06"] = function(s, t) {
     link(CX + W / 2, CY, RX - 96, CY, {
       alpha: on,
       upto: soon(t, fresh, 0.5),
-      dash: [8, 9],
       flow: q
     });
     ring(RX, CY, 96, { color: P.evidence, alpha: on, width: 3 });
@@ -3505,7 +3495,7 @@ scenes["07"] = function(s, t) {
       alpha: wt * pass(scan, 0.1),
       width: 2.5
     });
-    link(GX + 36, Y, FX, Y, { alpha: wt, upto: soon(t, wtAt, 0.5), dash: [8, 9] });
+    link(GX + 36, Y, FX, Y, { alpha: wt, upto: soon(t, wtAt, 0.5) });
   }
   if (stageC > 0) {
     const ats = [dirty, foreign, state], ys = [350, 490, 630], IX = 300, GX = 1010, Y = 490, names = en ? ["Uncommitted work", "Someone else's, or unclear", "Not the state expected"] : ["还没提交的改动", "别人的，或归属说不清", "状态跟预期对不上"];
@@ -3588,8 +3578,7 @@ scenes["07"] = function(s, t) {
     });
     link(AX + 110, 340, BX - 160, 340, {
       alpha: now * move,
-      upto: soon(t, nowAt, 0.6),
-      dash: [8, 9]
+      upto: soon(t, nowAt, 0.6)
     });
     const w = stageD * ramp(t, onlyAt - 0.15, 0.4), u = stageD * ramp(t, unrelated - 0.15, 0.4), Y1 = 560, Y2 = 680;
     laneTrack(300, 1e3, Y1, { alpha: w, flow: null });
@@ -3657,17 +3646,16 @@ scenes["07"] = function(s, t) {
 };
 
 // picture/film/scenes/kernel/transition-plan.js
-function transientCard(x, y, w, h, name, note, { alpha = 1, inkAlpha = alpha, gone = 0, color = P.evidence, set = null } = {}) {
+function transientCard(x, y, w, h, name, note, { alpha = 1, inkAlpha = alpha, titleAlpha = inkAlpha, gone = 0, color = P.evidence, set = null } = {}) {
   if (alpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, {
     fill: P.row,
     stroke: color,
     alpha: alpha * (1 - gone * 0.7),
     radius: 12,
-    dash: [8, 8],
     width: 2.5
   });
-  nameText(name, x, y - 22, { color, alpha: inkAlpha * (1 - gone * 0.3), bold: true, set });
+  nameText(name, x, y - 22, { color, alpha: titleAlpha * (1 - gone * 0.3), bold: true, set });
   nameText(note, x, y + 24, {
     size: NOTE,
     color: P.muted,
@@ -3689,8 +3677,7 @@ function s08Values(xs, end, y, { alpha = 1, gone = 0, w = 150, h = 92 } = {}) {
     (x, i) => stroke(() => ctx.roundRect(x - w / 2, y - h / 2, w, h, 12), {
       color: colours[i],
       alpha: temporary,
-      width: 2.5,
-      dash: [8, 8]
+      width: 2.5
     })
   );
 }
@@ -3734,6 +3721,7 @@ scenes["08"] = function(s, t) {
     ["一次改动", ""]
   ]);
   const factsCard = en ? cue(s, "", "The fresh observations") : cue(s, "刚观察到的事实叫", ""), planCard = en ? cue(s, "", "the compiled plan") : cue(s, "的计划叫", "");
+  const titleAts = en ? [comm, cue(s, "", "are the Facts"), cue(s, "", "is the TransitionPlan")] : null;
   const stageA = stageOut(t, what), stageB = stageIn(t, what) * stageOut(t, fromChange), stageC = stageIn(t, fromChange) * stageOut(t, persist), stageD = stageIn(t, persist);
   if (stageA > 0) {
     const g = stageA * clearOfTitle(s, t, 340), KX = 960, KY = 600, KR = 72, TOP = 380, k = g * ramp(t, small - 0.15, 0.4);
@@ -3867,6 +3855,7 @@ scenes["08"] = function(s, t) {
       transientCard(xs[i], Y, W, H, names[i], notes[i], {
         alpha: on,
         inkAlpha: on * listLevel(t, ats, i),
+        titleAlpha: on * listLevel(t, ats, i) * (titleAts ? named(t, titleAts[i]) : 1),
         gone,
         color: i ? P.evidence : P.authority,
         set: "values"
@@ -4240,20 +4229,14 @@ scenes["09"] = function(s, t) {
       color: P.unknown,
       alpha: stageE
     });
-    stroke(
-      () => ys.forEach((y) => {
-        ctx.moveTo(IX + 34, y);
-        ctx.arc(IX, y, 34, 0, Math.PI * 2);
-      }),
-      { color: P.muted, alpha: stageE, width: 2, dash: [6, 7] }
-    );
-    nameText(L("有四种情况", "In four situations"), IX - 34, ys[0] - 34 - NAME_GAP, {
-      align: "left",
-      valign: "bottom",
-      size: NOTE,
-      color: P.muted,
-      alpha: stageE
-    });
+    if (!en)
+      nameText("有几种情况", IX - 34, ys[0] - 34 - NAME_GAP, {
+        align: "left",
+        valign: "bottom",
+        size: NOTE,
+        color: P.muted,
+        alpha: stageE
+      });
     ats.forEach((at, i) => {
       const on = stageE * ramp(t, at - 0.15, 0.4), c = blend(P.ink, P.unknown, speaking(t, ats, i)), y = ys[i];
       link(IX - 34, y, SX + SR, CY, {
@@ -4306,8 +4289,9 @@ scenes["09"] = function(s, t) {
       color: P.unknown,
       alpha: stageF
     });
-    link(530, 500, left, top + 52, { route: "hvh", mid: left - 60, alpha: stageF });
-    box(left, top, W, H, { fill: P.row, stroke: P.ink, alpha: stageF, radius: 14, width: 2.5 });
+    const card = stageF * ramp(t, happened - 0.5, 0.4);
+    link(530, 500, left, top + 52, { route: "hvh", mid: left - 60, alpha: card });
+    box(left, top, W, H, { fill: P.row, stroke: P.ink, alpha: card, radius: 14, width: 2.5 });
     ats.forEach((at, i) => {
       const on = stageF * ramp(t, at - 0.15, 0.4), y = top + 52 + i * STEP2, c = i === 3 ? P.authority : P.evidence;
       if (i === 3) {
@@ -4392,7 +4376,7 @@ scenes["10"] = function(s, t) {
   const [locAt, proofAt, labAt, hubAt, threeAt] = cues(s, [
     ["ETHOS 在本地", "ETHOS runs"],
     ["这叫本地证明", "That local proof"],
-    ["GitLab", "GitLab"],
+    ["GitLab", "the automatic checks"],
     ["GitHub", "GitHub"],
     ["三份来源不同", "three separate sources"]
   ]);
@@ -4645,7 +4629,7 @@ scenes["10"] = function(s, t) {
       valign: "top",
       size: NOTE,
       color: P.evidence,
-      alpha: stageE
+      alpha: stageE * named(t, cueFrom(s, "通过了", "has passed", exAt))
     });
     nameText(L("还没看", "Not read"), (xs[1] + xs[2]) / 2, Y + 90 + NAME_GAP, {
       valign: "top",
@@ -5002,17 +4986,9 @@ scenes["11"] = function(s, t) {
 };
 
 // picture/film/scenes/review/release.js
-function forgeMark(x, y, w, h, name, { alpha = 1, color = P.ink, named: nameAlpha = alpha, set = null, place = 0 } = {}) {
+function forgeMark(x, y, w, h, name, { alpha = 1, color = P.ink, named: nameAlpha = alpha, set = null } = {}) {
   if (alpha < 0.01 && nameAlpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, { fill: P.row, stroke: color, alpha, radius: 14, width: 2.5 });
-  if (place > 0.01)
-    box(x - w / 2 + 40, y - 34, w - 80, 68, {
-      stroke: P.muted,
-      alpha: alpha * place,
-      radius: 10,
-      width: 3,
-      dash: [6, 6]
-    });
   nameText(name, x, y + h / 2 + NAME_GAP, { valign: "top", alpha: nameAlpha, set });
 }
 scenes["12"] = function(s, t) {
@@ -5118,8 +5094,7 @@ scenes["12"] = function(s, t) {
       forgeMark(FX, y, FW, FH, name, {
         alpha: stageB * ramp(t, at - 0.15, 0.4),
         named: stageB * named(t, at),
-        set: "forges",
-        place: 1
+        set: "forges"
       });
       link(LX + 155, Y, FX - FW / 2, y, {
         route: "hvh",
@@ -5145,7 +5120,7 @@ scenes["12"] = function(s, t) {
       width: 380,
       alpha: stageB * named(t, noCopy)
     });
-    nameText(L("也不重建、不重新签名", "No rebuild, no new signature"), LX, 720, {
+    nameText(L("不改写、不重新签名", "No rebuild, no new signature"), LX, 720, {
       valign: "top",
       alpha: stageB * named(t, noSign),
       size: NOTE,
@@ -5208,7 +5183,7 @@ scenes["12"] = function(s, t) {
     const CX = 960, Y = 300, rows = en ? ["Code accepted", "Release published", "Deployed and in use"] : ["代码被接受", "版本发布", "部署并投入使用"], W = 128 + Math.max(...rows.map((v) => measure(v))) + 70, H = 340;
     const owed = ramp(t, stillOwed - 0.15, 0.4), ok = ramp(t, acceptedAt - 0.15, 0.4), n = stageD * ramp(t, notDone - 0.15, 0.4);
     folderIcon(CX - W / 2, Y, W, H, { alpha: stageD, color: P.authority });
-    nameText(L("正式变更记下还欠的责任", "The Change tracks what is owed"), CX, Y - NAME_GAP + 4, {
+    nameText(L("正式变更记下没完成的责任", "The Change tracks what is owed"), CX, Y - NAME_GAP + 4, {
       valign: "bottom",
       color: P.authority,
       alpha: stageD
@@ -5315,7 +5290,7 @@ scenes["13"] = function(s, t) {
     ["这些观察", "these observations"],
     ["原来的要求和假设", "the original requirements"],
     ["开发上的指标", "development metrics"],
-    ["衡量业务成败的标准", "own measure"]
+    ["衡量业务成败的标准", "the project's own"]
   ]);
   const stageA = stageOut(t, suppose), stageB = stageIn(t, suppose) * stageOut(t, showAt), stageC = stageIn(t, showAt) * stageOut(t, interim), stageD = stageIn(t, interim) * stageOut(t, signalAt);
   const stageE = stageIn(t, signalAt) * stageOut(t, histAt), stageF = stageIn(t, histAt) * stageOut(t, mapAt), stageG = stageIn(t, mapAt);
@@ -5684,19 +5659,7 @@ scenes["14"] = function(s, t) {
   const stageA = stageOut(t, upAt), stageB = stageIn(t, upAt) * stageOut(t, goalAt), stageC = stageIn(t, goalAt) * stageOut(t, openAt), stageD = stageIn(t, openAt) * stageOut(t, projAt), stageE = stageIn(t, projAt);
   const X = 680, W = 760, H = 86;
   if (stageA > 0) {
-    const g = stageA * clearOfTitle(s, t, 300), ats = [useAt, methodAt, conceptAt, purposeAt], reachAts = [useAt, methodAt, reachConcept, purposeAt], ys = FEEDBACK_LAYERS.ys, RX = 540;
-    stroke(() => ys.forEach((y) => ctx.roundRect(X, y - H / 2, W, H, 10)), {
-      color: P.muted,
-      alpha: g,
-      width: 3,
-      dash: [8, 8]
-    });
-    nameText(
-      L("理解的几个层次", "Layers of understanding"),
-      X + W + NAME_GAP,
-      (ys[0] + ys[3]) / 2,
-      { align: "left", size: NOTE, color: P.muted, alpha: g, width: 200 }
-    );
+    const g = stageA * clearOfTitle(s, t, 300), ats = [useAt, methodAt, conceptAt, purposeAt], reachAts = [useAt, methodAt, reachConcept, purposeAt], ys = FEEDBACK_LAYERS.ys, shift = 420 * (1 - soon(t, useAt - 0.6, 0.45)), RX = 540 + shift;
     ats.forEach(
       (at, i) => layerSlab(X + (i === 2 ? s14Shake(t, at) : 0), W, H, i, {
         alpha: g * ramp(t, at - 0.15, 0.4),
@@ -5898,7 +5861,7 @@ scenes["14"] = function(s, t) {
     nameText(L("大家共用的机制", "Shared mechanisms"), SX, Y + 32 + NAME_GAP, {
       valign: "top",
       width: 260,
-      alpha: stageE * named(t, suggestAt)
+      alpha: stageE * named(t, en ? cue(s, "", "shared mechanisms") : suggestAt)
     });
     link(PX + RW / 2, Y + 64, 1160, Y + 64, {
       alpha: no,
@@ -6245,7 +6208,7 @@ scenes["16"] = function(s, t) {
   const [adopt, same, isoAt] = cues(s, [
     ["接入它的其他仓库", "the repositories that adopt"],
     ["用的是同一个内核", "with the same kernel"],
-    ["同构治理", "governance means"]
+    ["同构治理", "isomorphic governance"]
   ]);
   const [diffAt, adapWord, eachAt, ownProf] = cues(s, [
     ["区别只在配置和适配器", "The difference lies"],
@@ -6402,17 +6365,17 @@ scenes["16"] = function(s, t) {
       valign: "bottom",
       alpha: stageC
     });
-    pipelineMark(LX + 20, CY + 30, 340, { alpha: stageC });
-    modelGrid(RX - 120, CY - 60, 260, 150, { alpha: stageC, color: P.evidence });
+    modelGrid(LX - 120, CY - 60, 260, 150, { alpha: stageC, color: P.authority });
+    pipelineMark(RX + 20, CY + 30, 340, { alpha: stageC });
     const parts = en ? ["Keeps its own domain model, ", "layout, ", "platform conventions"] : ["保留自己的业务模型、", "目录结构、", "平台习惯"];
-    const lines = growTexts(parts, 700), wide = Math.max(...lines.map((line2) => measure(line2.map(([, v]) => v).join(""))));
+    const lines = growTexts(parts, 460), wide = Math.max(...lines.map((line2) => measure(line2.map(([, v]) => v).join(""))));
     growName(
       t,
       parts,
       [keepsAt, layoutAt, convAt],
-      Math.round(960 - wide / 2),
+      Math.round(RX - wide / 2),
       CY + 135 + NAME_GAP,
-      { width: 700, alpha: stageC, build: true }
+      { width: 460, alpha: stageC, build: true }
     );
     ring(960, CY, R, { color: P.authority, alpha: et, width: 3 });
     nameText("ETHOS", 960, CY, { color: P.authority, alpha: et, bold: true });
@@ -6628,7 +6591,7 @@ scenes["17"] = function(s, t) {
   const [afterAt, retireAt, burdenAt] = cues(s, [
     ["做完这些以后", "After that"],
     ["就该撤下", "should be retired"],
-    ["别让它", "so that it does not"]
+    ["新的负担", "a new burden"]
   ]);
   const mechAt = en ? cue(s, "", "a mechanism whose") : cue(s, "责任已经结束的机制", "") - 0.2;
   const stageA = stageOut(t, adoptAt), stageB = stageIn(t, adoptAt) * stageOut(t, uninst), stageC = stageIn(t, uninst) * stageOut(t, before), stageD = stageIn(t, before) * stageOut(t, afterAt), stageE = stageIn(t, afterAt);
@@ -6736,7 +6699,7 @@ scenes["17"] = function(s, t) {
     });
   }
   if (stageC > 0) {
-    const ats = [hookAt, genAt, secondAt], names = en ? ["No hook scripts", "No generated source of truth", "No second set of controls"] : ["不留钩子脚本", "不留充当权威的生成文件", "不留第二套控制机制"], Y = 480, RX = 960, STEP = 320, EDGE = 170;
+    const ats = [hookAt, genAt, secondAt], names = en ? ["No hook scripts", "No generated source of truth", "No second set of controls"] : ["不留钩子脚本", "不留充当权威的\n生成文件", "不留第二套控制机制"], Y = 480, RX = 960, STEP = 320, EDGE = 170;
     const growth = ats.map((at) => soon(t, at - 0.5, 0.4)), n = growth.filter((v) => v >= 1).length, reach = (k) => EDGE * 2 + (k - 1) * STEP;
     const RW = n === 0 ? mix(300, reach(1), growth[0]) : n >= 3 ? reach(3) : mix(reach(n), reach(n + 1), growth[n]), RH = mix(180, 330, growth[0]), left = RX - RW / 2;
     repoIcon(RX, Y, RW, RH, { alpha: stageC });
@@ -6838,11 +6801,10 @@ scenes["17"] = function(s, t) {
       width: 520,
       alpha: stageE * named(t, mechAt)
     });
-    cross(MX + 158, MY - 70, 28, { alpha: stageE * ramp(t, retireAt + 0.4, 0.4), width: 3.5 });
-    nameText(L("别变成新的负担", "Not a new burden"), MX + 158 + 14 + NAME_GAP, MY - 70, {
+    rejectedName(L("新的负担", "A new burden"), MX + 158, MY - 70, {
       align: "left",
-      color: P.authority,
-      alpha: stageE * named(t, burdenAt)
+      alpha: stageE * named(t, burdenAt),
+      mark: ramp(t, burdenAt + 0.4, 0.4)
     });
   }
 };
@@ -6910,28 +6872,29 @@ scenes["18"] = function(s, t) {
     ["项目可以接着做下去", "The project can"],
     ["方法也始终可以修改", "the method stays"]
   ]);
-  const stageA = stageOut(t, rulesCut), stageB = stageIn(t, rulesCut) * stageOut(t, doneAt), stageC = stageIn(t, doneAt) * stageOut(t, newAt), stageD = stageIn(t, newAt) * stageOut(t, goAt), stageE = stageIn(t, goAt);
+  const stageA = stageOut(t, ruleAts[0]), stageB = stageIn(t, ruleAts[0]) * stageOut(t, doneAt), stageC = stageIn(t, doneAt) * stageOut(t, newAt), stageD = stageIn(t, newAt) * stageOut(t, goAt), stageE = stageIn(t, goAt);
   const { x0, x1, y1, y2 } = TWO_LINES, q = voiceTime(t) * 0.35 % 1, Y = (y1 + y2) / 2;
   if (stageA > 0) {
+    const past = soon(t, rulesCut - 0.1, 0.4), kept = stageA * (1 - past), held = stageA * (1 - 0.4 * past);
     s18Lines({
-      alpha: stageA,
+      alpha: held,
       upper: ramp(t, underAt - 0.15, 0.4),
       lower: ramp(t, realAt - 0.15, 0.4)
     });
     nameText(L("开头那两条线", "The opening's two lines"), 960, Y, {
-      alpha: stageA * named(t, s.voice_start)
+      alpha: kept * named(t, s.voice_start)
     });
     nameText(L("理解", "Understanding"), x0 - NAME_GAP, y1, {
       align: "right",
       color: P.authority,
-      alpha: stageA * named(t, underAt)
+      alpha: kept * named(t, underAt)
     });
     nameText(L("实际的结果", "Real outcomes"), x0 - NAME_GAP, y2, {
       align: "right",
       color: P.evidence,
-      alpha: stageA * named(t, realAt)
+      alpha: kept * named(t, realAt)
     });
-    const dn = stageA * ramp(t, dirAt - 0.15, 0.4), up = stageA * ramp(t, corrAt - 0.15, 0.4), XA = 700, XB = 1220;
+    const dn = held * ramp(t, dirAt - 0.15, 0.4), up = held * ramp(t, corrAt - 0.15, 0.4), XA = 700, XB = 1220;
     link(XA, y1, XA, y2, {
       alpha: dn,
       upto: soon(t, dirAt, 0.6),
@@ -6941,7 +6904,7 @@ scenes["18"] = function(s, t) {
     });
     nameText(L("指出方向", "Gives direction"), XA - 18, Y, {
       align: "right",
-      alpha: stageA * named(t, dirAt)
+      alpha: kept * named(t, dirAt)
     });
     link(XB, y2, XB, y1, {
       alpha: up,
@@ -6952,8 +6915,21 @@ scenes["18"] = function(s, t) {
     });
     nameText(L("回过头来修正", "Comes back to correct"), XB + 18, Y, {
       align: "left",
-      alpha: stageA * named(t, corrAt)
+      alpha: kept * named(t, corrAt)
     });
+  }
+  const heading = (stageA + stageB) * named(t, rulesCut);
+  if (heading > 0.01) {
+    if (en) {
+      const head = ["Four plain rules", " of judgment"], w = measure(head.join(""));
+      growName(t, head, [rulesCut, judgment], Math.round(960 - w / 2), 258, {
+        valign: "middle",
+        alpha: heading,
+        color: P.authority,
+        build: true
+      });
+    } else nameText("几条朴素的准则", 960, 258, { color: P.authority, alpha: heading });
+    line(960 - 150, 284, 960 + 150, 284, { color: P.authority, alpha: heading, width: 2.5 });
   }
   if (stageB > 0) {
     const ys = [340, 450, 560, 670], W = en ? 620 : 520;
@@ -6970,20 +6946,7 @@ scenes["18"] = function(s, t) {
       ["once its obligation is gone"]
     ] : [["留住含义"], ["做区分"], ["看得到，不等于有权去做"], ["就让它退场"]];
     const widest = Math.max(...terms.map((term, i) => s18RowWidth(term, quals[i], W))), GX = Math.round(960 - (72 + NAME_GAP + widest) / 2 + 36);
-    if (en) {
-      const head = ["Four plain rules", " of judgment"], w = measure(head.join(""));
-      growName(t, head, [rulesCut, judgment], Math.round(960 - w / 2), 258, {
-        valign: "middle",
-        alpha: stageB,
-        color: P.authority,
-        build: true
-      });
-    } else nameText("几条朴素的准则", 960, 258, { color: P.authority, alpha: stageB });
-    line(960 - 150, 284, 960 + 150, 284, { color: P.authority, alpha: stageB, width: 2.5 });
-    stroke(
-      () => ys.forEach((y) => ctx.roundRect(GX - 56, y - 46, 112 + NAME_GAP + widest + 40, 92, 12)),
-      { color: P.muted, alpha: stageB, width: 3, dash: [8, 8] }
-    );
+    line(GX - 70, ys[0] - 46, GX - 70, ys[3] + 46, { color: P.authority, alpha: stageB, width: 3 });
     ruleAts.forEach((at, i) => {
       const on = stageB * ramp(t, at - 0.15, 0.4), c = blend(P.ink, P.authority, speaking(t, ruleAts, i)), y = ys[i];
       ring(GX, y, 36, { color: c, alpha: on, width: 2.5 });

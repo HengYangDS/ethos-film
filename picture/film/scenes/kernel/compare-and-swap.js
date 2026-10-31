@@ -313,8 +313,8 @@ scenes["09"] = function (s, t) {
       alpha: stageD * named(t, confirmAt),
     });
   }
-  // Four conditions stop the kernel: a dashed slot for each stands beside the stop sign from the first words, and each
-  // fills on its words.
+  // The conditions that stop the kernel each stand beside the stop sign on their own words. The list stays open: Chinese
+  // heads it with the "several situations" it speaks, and English speaks no count, so it draws none.
   if (stageE > 0) {
     const names = en
       ? [
@@ -339,21 +339,14 @@ scenes["09"] = function (s, t) {
       color: P.unknown,
       alpha: stageE,
     });
-    stroke(
-      () =>
-        ys.forEach((y) => {
-          ctx.moveTo(IX + 34, y);
-          ctx.arc(IX, y, 34, 0, Math.PI * 2);
-        }),
-      { color: P.muted, alpha: stageE, width: 2, dash: [6, 7] },
-    );
-    nameText(L("有四种情况", "In four situations"), IX - 34, ys[0] - 34 - NAME_GAP, {
-      align: "left",
-      valign: "bottom",
-      size: NOTE,
-      color: P.muted,
-      alpha: stageE,
-    });
+    if (!en)
+      nameText("有几种情况", IX - 34, ys[0] - 34 - NAME_GAP, {
+        align: "left",
+        valign: "bottom",
+        size: NOTE,
+        color: P.muted,
+        alpha: stageE,
+      });
     ats.forEach((at, i) => {
       const on = stageE * ramp(t, at - 0.15, 0.4),
         c = blend(P.ink, P.unknown, speaking(t, ats, i)),
@@ -418,8 +411,10 @@ scenes["09"] = function (s, t) {
       color: P.unknown,
       alpha: stageF,
     });
-    link(530, 500, left, top + 52, { route: "hvh", mid: left - 60, alpha: stageF });
-    box(left, top, W, H, { fill: P.row, stroke: P.ink, alpha: stageF, radius: 14, width: 2.5 });
+    // The card comes with its first line, so no empty card waits for what it will say.
+    const card = stageF * ramp(t, happened - 0.5, 0.4);
+    link(530, 500, left, top + 52, { route: "hvh", mid: left - 60, alpha: card });
+    box(left, top, W, H, { fill: P.row, stroke: P.ink, alpha: card, radius: 14, width: 2.5 });
     ats.forEach((at, i) => {
       const on = stageF * ramp(t, at - 0.15, 0.4),
         y = top + 52 + i * STEP2,

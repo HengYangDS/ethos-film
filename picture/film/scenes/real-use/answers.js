@@ -57,7 +57,7 @@ scenes["13"] = function (s, t) {
     ["这些观察", "these observations"],
     ["原来的要求和假设", "the original requirements"],
     ["开发上的指标", "development metrics"],
-    ["衡量业务成败的标准", "own measure"],
+    ["衡量业务成败的标准", "the project's own"],
   ]);
   const stageA = stageOut(t, suppose),
     stageB = stageIn(t, suppose) * stageOut(t, showAt),

@@ -17,26 +17,17 @@ import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
-/* A forge: a rounded host with its name beneath, holding what it received. `place` draws the dashed place where it
- * receives a release, so the host stands with its content's place before the content arrives. */
+/* A forge: a rounded host with its name beneath, holding what it received. */
 function forgeMark(
   x,
   y,
   w,
   h,
   name,
-  { alpha = 1, color = P.ink, named: nameAlpha = alpha, set = null, place = 0 } = {},
+  { alpha = 1, color = P.ink, named: nameAlpha = alpha, set = null } = {},
 ) {
   if (alpha < 0.01 && nameAlpha < 0.01) return;
   box(x - w / 2, y - h / 2, w, h, { fill: P.row, stroke: color, alpha, radius: 14, width: 2.5 });
-  if (place > 0.01)
-    box(x - w / 2 + 40, y - 34, w - 80, 68, {
-      stroke: P.muted,
-      alpha: alpha * place,
-      radius: 10,
-      width: 3,
-      dash: [6, 6],
-    });
   nameText(name, x, y + h / 2 + NAME_GAP, { valign: "top", alpha: nameAlpha, set });
 }
 scenes["12"] = function (s, t) {
@@ -171,7 +162,6 @@ scenes["12"] = function (s, t) {
         alpha: stageB * ramp(t, at - 0.15, 0.4),
         named: stageB * named(t, at),
         set: "forges",
-        place: 1,
       });
       link(LX + 155, Y, FX - FW / 2, y, {
         route: "hvh",
@@ -197,7 +187,7 @@ scenes["12"] = function (s, t) {
       width: 380,
       alpha: stageB * named(t, noCopy),
     });
-    nameText(L("也不重建、不重新签名", "No rebuild, no new signature"), LX, 720, {
+    nameText(L("不改写、不重新签名", "No rebuild, no new signature"), LX, 720, {
       valign: "top",
       alpha: stageB * named(t, noSign),
       size: NOTE,
@@ -284,7 +274,7 @@ scenes["12"] = function (s, t) {
       ok = ramp(t, acceptedAt - 0.15, 0.4),
       n = stageD * ramp(t, notDone - 0.15, 0.4);
     folderIcon(CX - W / 2, Y, W, H, { alpha: stageD, color: P.authority });
-    nameText(L("正式变更记下还欠的责任", "The Change tracks what is owed"), CX, Y - NAME_GAP + 4, {
+    nameText(L("正式变更记下没完成的责任", "The Change tracks what is owed"), CX, Y - NAME_GAP + 4, {
       valign: "bottom",
       color: P.authority,
       alpha: stageD,

@@ -40,7 +40,7 @@ scenes["10"] = function (s, t) {
   const [locAt, proofAt, labAt, hubAt, threeAt] = cues(s, [
     ["ETHOS 在本地", "ETHOS runs"],
     ["这叫本地证明", "That local proof"],
-    ["GitLab", "GitLab"],
+    ["GitLab", "the automatic checks"],
     ["GitHub", "GitHub"],
     ["三份来源不同", "three separate sources"],
   ]);
@@ -356,7 +356,7 @@ scenes["10"] = function (s, t) {
       valign: "top",
       size: NOTE,
       color: P.evidence,
-      alpha: stageE,
+      alpha: stageE * named(t, cueFrom(s, "通过了", "has passed", exAt)),
     });
     nameText(L("还没看", "Not read"), (xs[1] + xs[2]) / 2, Y + 90 + NAME_GAP, {
       valign: "top",

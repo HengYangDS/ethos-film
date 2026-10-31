@@ -14,7 +14,7 @@ import {
   terminalIcon,
 } from "../../drawing/workspace.js";
 import { building, listIn, listLevel, named, speaking } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, growName, nameText } from "../../naming/names.js";
+import { NAME_GAP, NOTE, growName, nameText, rejectedName } from "../../naming/names.js";
 import { railNames, railStations } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { scenes } from "../registry.js";
@@ -73,7 +73,7 @@ scenes["17"] = function (s, t) {
   const [afterAt, retireAt, burdenAt] = cues(s, [
     ["做完这些以后", "After that"],
     ["就该撤下", "should be retired"],
-    ["别让它", "so that it does not"],
+    ["新的负担", "a new burden"],
   ]);
   // The mechanism is named on its own clause, which a Chinese comma separates from the first words.
   const mechAt = en ? cue(s, "", "a mechanism whose") : cue(s, "责任已经结束的机制", "") - 0.2;
@@ -214,7 +214,7 @@ scenes["17"] = function (s, t) {
     const ats = [hookAt, genAt, secondAt],
       names = en
         ? ["No hook scripts", "No generated source of truth", "No second set of controls"]
-        : ["不留钩子脚本", "不留充当权威的生成文件", "不留第二套控制机制"],
+        : ["不留钩子脚本", "不留充当权威的\n生成文件", "不留第二套控制机制"],
       Y = 480,
       RX = 960,
       STEP = 320,
@@ -333,7 +333,8 @@ scenes["17"] = function (s, t) {
       alpha: stageD,
     });
   }
-  // A mechanism whose obligation is done steps off the rail: the flow continues without it, and the burden is gone.
+  // A mechanism whose obligation is done steps off the rail: the flow continues without it, and a new burden is refused
+  // on its words.
   if (stageE > 0) {
     const Y = 620,
       X0 = 300,
@@ -353,11 +354,10 @@ scenes["17"] = function (s, t) {
       width: 520,
       alpha: stageE * named(t, mechAt),
     });
-    cross(MX + 158, MY - 70, 28, { alpha: stageE * ramp(t, retireAt + 0.4, 0.4), width: 3.5 });
-    nameText(L("别变成新的负担", "Not a new burden"), MX + 158 + 14 + NAME_GAP, MY - 70, {
+    rejectedName(L("新的负担", "A new burden"), MX + 158, MY - 70, {
       align: "left",
-      color: P.authority,
       alpha: stageE * named(t, burdenAt),
+      mark: ramp(t, burdenAt + 0.4, 0.4),
     });
   }
 };

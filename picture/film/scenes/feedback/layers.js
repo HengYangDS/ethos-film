@@ -110,26 +110,15 @@ scenes["14"] = function (s, t) {
     W = 760,
     H = 86;
   // Feedback rises: from a single fix at the bottom, each layer it can reach arrives on its words, the shaken layer of
-  // concepts trembling as it comes, and one point climbs to the layer being named. The dashed column is named as the
-  // layers of understanding from the first word.
+  // concepts trembling as it comes, and one point climbs to the layer being named. No layer stands before it is named:
+  // the feedback and its single fix stand at the centre and step aside before the first layer comes.
   if (stageA > 0) {
     const g = stageA * clearOfTitle(s, t, 300),
       ats = [useAt, methodAt, conceptAt, purposeAt],
       reachAts = [useAt, methodAt, reachConcept, purposeAt],
       ys = FEEDBACK_LAYERS.ys,
-      RX = 540;
-    stroke(() => ys.forEach((y) => ctx.roundRect(X, y - H / 2, W, H, 10)), {
-      color: P.muted,
-      alpha: g,
-      width: 3,
-      dash: [8, 8],
-    });
-    nameText(
-      L("理解的几个层次", "Layers of understanding"),
-      X + W + NAME_GAP,
-      (ys[0] + ys[3]) / 2,
-      { align: "left", size: NOTE, color: P.muted, alpha: g, width: 200 },
-    );
+      shift = 420 * (1 - soon(t, useAt - 0.6, 0.45)),
+      RX = 540 + shift;
     ats.forEach((at, i) =>
       layerSlab(X + (i === 2 ? s14Shake(t, at) : 0), W, H, i, {
         alpha: g * ramp(t, at - 0.15, 0.4),
@@ -379,7 +368,7 @@ scenes["14"] = function (s, t) {
     nameText(L("大家共用的机制", "Shared mechanisms"), SX, Y + 32 + NAME_GAP, {
       valign: "top",
       width: 260,
-      alpha: stageE * named(t, suggestAt),
+      alpha: stageE * named(t, en ? cue(s, "", "shared mechanisms") : suggestAt),
     });
     link(PX + RW / 2, Y + 64, 1160, Y + 64, {
       alpha: no,

@@ -45,6 +45,15 @@ scenes["03"] = function (s, t) {
     ["设计记下", "a design"],
     ["任务清单", "a task list"],
   ]);
+  // English says what each part holds after naming the part, so each note stands on its own words.
+  const noteAts = en
+    ? cues(s, [
+        ["", "says why"],
+        ["", "the required behavior"],
+        ["", "the trade-offs"],
+        ["", "tracks progress"],
+      ])
+    : [proposal, specs, design, tasks];
   const [reads, compile, only, elsewhere] = cues(s, [
     ["ETHOS 会读取", "ETHOS reads"],
     ["编译成验收条件", "compiles it"],
@@ -303,7 +312,7 @@ scenes["03"] = function (s, t) {
         valign: "top",
         size: NOTE,
         color: P.muted,
-        alpha: stageD2 * listIn(t, ats, i),
+        alpha: stageD2 * listIn(t, noteAts, i),
         set: "parts",
       });
     });
