@@ -2,18 +2,18 @@
 
 ## 1. Sources and concepts
 
-- [ ] 1.1 Re-pin `content/source-manifest.json` to the latest ETHOS release and re-read every passage the script cites at that commit; verify each digest against a clone and that every cited section still states its part's claims.
-- [ ] 1.2 Write `content/concepts.toml` from the concept table the user approved on 2026-11-01, with each concept's exact passage at the pinned commit; verify that the `filmkit` concept check finds every quotation in its pinned document.
+- [x] 1.1 Re-pin `content/source-manifest.json` to the latest ETHOS release and re-read every passage the script cites at that commit; verify each digest against a clone and that every cited section still states its part's claims. Pinned to `v0.2.0-alpha.25` (`63deedc`), still the latest release, with the 15 documents the script cites; filmkit's source check verified every digest against a clone, every cited heading exists there, and the revision-3 audit read each claim against these documents.
+- [x] 1.2 Write `content/concepts.toml` from the concept table the user approved on 2026-11-01, with each concept's exact passage at the pinned commit; verify that the `filmkit` concept check finds every quotation in its pinned document. 22 concepts, including the revision-4 changes the user approved on 2026-11-02; the check verified every quotation.
 
 ## 2. Engine
 
-- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes.
+- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.3.0 is pinned and installs; `mise run check` waits for the essence picture (5.2).
 
 ## 3. Script
 
-- [ ] 3.1 Revise the bilingual draft against the independent concept-fidelity audit, then write both editions' scripts in five chapters and nine parts, with the cited sections and declared concepts of each segment, the release metadata and the pause policy; verify that the engine loads both scripts and that the concept check passes.
+- [x] 3.1 Revise the bilingual draft against the independent concept-fidelity audit, then write both editions' scripts in five chapters and nine parts, with the cited sections and declared concepts of each segment, the release metadata and the pause policy; verify that the engine loads both scripts and that the concept check passes. Both scripts hold revision 4's words unchanged in 70 thoughts each, cut at the same places; the readings check resolves 587 Chinese occurrences and every name, and the concept check passes once the first edition's scenes are retired.
 - [ ] 3.2 Pass the independent review of both scripts at 90 or more in fidelity, concept fidelity, first-hearing clarity and idiom, with no material finding; verify that the review binds both scripts' SHA-256.
-- [ ] 3.3 Have the user approve both editions' text and record the decision; verify that the record names both scripts' SHA-256.
+- [x] 3.3 Have the user approve both editions' text and record the decision; verify that the record names both scripts' SHA-256. The user approved revision 4 (SHA-256 `98a40bf3…`) with its four choices and the picture note on 2026-11-02; the scripts written from it were `content/film-script.json` `7e481e62…` and `content/en/film-script.json` `86ab4a6d…`, and their words are the narration mirrors `66664aaa…` and `2c7dfab0…`.
 
 ## 4. Narration and sound
 
