@@ -3,8 +3,8 @@
 ## 1. Narration
 
 - [x] 1.1 Audition run-on takes of the eighteen thoughts whose takes end abruptly; verify that each proposed take ends naturally, cuts no phrase end and is heard to say its required words.
-- [ ] 1.2 Bind the proposed takes in both casts, narrate and assemble both editions, and measure every thought's ending; verify exactly 900 seconds, no released tail in either assembly record and every thought's last 10 ms at or below -55 dBFS before the program gain, retaking any thought that the reassembly releases.
-- [ ] 1.3 Have the user hear each retaken thought before and after and record the decision; verify that the record names every retake with its seed, and that any declined thought keeps its `v1.0.0` take.
+- [x] 1.2 Bind the proposed takes in both casts, narrate and assemble both editions, and measure every thought's ending; verify exactly 900 seconds, no released tail in either assembly record and every thought's last 10 ms at or below -55 dBFS before the program gain, retaking any thought that the reassembly releases.
+- [x] 1.3 Have the user hear each retaken thought before and after and record the decision; verify that the record names every retake with its seed, and that any declined thought keeps its `v1.0.0` take. The user delegated the adoption and accepted the borderline endings (`build/evidence/review/listening/2026-11-01-user-endings-decision.json`).
 
 ## 2. Picture
 
