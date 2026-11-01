@@ -8,8 +8,8 @@
 
 ## 2. Picture
 
-- [ ] 2.1 Re-time the picture to the new timelines; verify the geometry, still, motion and sync audits on the new and the `v1.0.0` timelines.
-- [ ] 2.2 Render a 10 fps draft of each edition and scan its stills; verify that no frame shows a collision, clipping or a blank picture under speech.
+- [x] 2.1 Re-time the picture to the new timelines; verify the geometry, still, motion and sync audits on the new and the `v1.0.0` timelines. Scenes 04, 13 and 16 moved clear of their thresholds; on both timelines of both editions the frame, sync and motion audits find nothing beyond the three Chinese caption echoes `v1.0.0` accepted, and the real-browser geometry check passes all 27,000 frames of each edition (`build/evidence/picture/`).
+- [x] 2.2 Render a 10 fps draft of each edition and scan its stills; verify that no frame shows a collision, clipping or a blank picture under speech. Both drafts render, and no still run under speech reaches the 3.5-second limit (longest 3.0 s in Chinese and 3.12 s in English).
 
 ## 3. Render, review and delivery
 
