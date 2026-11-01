@@ -2621,7 +2621,7 @@ scenes["04"] = function(s, t) {
         (i) => check(CX - 18, y - 26 + i * 26, 15, { alpha: out, color: P.evidence, width: 2.5 })
       );
     });
-    nameText(L("同样的输入", "The same inputs"), DX - 40 - NAME_GAP, (ys[0] + ys[1]) / 2, {
+    nameText(L("同样的输入", "The same inputs"), DX - 40 - NAME_GAP, (ys[0] + ys[1]) / 2 - 4, {
       align: "right",
       alpha: stageE * named(t, sameAt)
     });
@@ -5304,8 +5304,9 @@ scenes["13"] = function(s, t) {
     ["开发上的指标", "development metrics"],
     ["衡量业务成败的标准", "the project's own"]
   ]);
+  const kernelAt = en ? mapAt : cueFrom(s, "计", "", mapAt);
   const stageA = stageOut(t, suppose), stageB = stageIn(t, suppose) * stageOut(t, showAt), stageC = stageIn(t, showAt) * stageOut(t, interim), stageD = stageIn(t, interim) * stageOut(t, signalAt);
-  const stageE = stageIn(t, signalAt) * stageOut(t, histAt), stageF = stageIn(t, histAt) * stageOut(t, mapAt), stageG = stageIn(t, mapAt);
+  const stageE = stageIn(t, signalAt) * stageOut(t, histAt), stageF = stageIn(t, histAt) * stageOut(t, kernelAt), stageG = stageIn(t, kernelAt);
   const q = voiceTime(t) * 0.4 % 1;
   if (stageA > 0) {
     const g = stageA * clearOfTitle(s, t, 300), LX = 520, RX = 1400, Y = 470, HY = 337;
@@ -6412,7 +6413,7 @@ scenes["16"] = function(s, t) {
     });
   }
   if (stageD > 0) {
-    const lead = 300 * (1 - soon(t, outAts[0] - 0.15, 0.5)), TX = 380 + lead, TW = 560, TH = 96, TY = 490, run = stageD * ramp(t, runAt - 0.15, 0.4);
+    const lead = 220 * (1 - soon(t, outAts[0] - 0.15, 0.5)), TX = 380 + lead, TW = 560, TH = 96, TY = 490, run = stageD * ramp(t, runAt - 0.15, 0.4);
     const names = en ? ["The current facts", "The gaps", "The next action"] : ["现在的事实", "缺口", "下一步"], IX = 1250 + lead, ys = [370, 510, 650];
     clock(TX + TW / 2, 370, 62, {
       alpha: stageD,

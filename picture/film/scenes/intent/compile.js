@@ -351,7 +351,9 @@ scenes["04"] = function (s, t) {
         check(CX - 18, y - 26 + i * 26, 15, { alpha: out, color: P.evidence, width: 2.5 }),
       );
     });
-    nameText(L("同样的输入", "The same inputs"), DX - 40 - NAME_GAP, (ys[0] + ys[1]) / 2, {
+    // The name sits a little above the bracket's middle, so it belongs to the first input and the second reads as its
+    // repeat; a name equally near both would be claimed by either from one frame to the next.
+    nameText(L("同样的输入", "The same inputs"), DX - 40 - NAME_GAP, (ys[0] + ys[1]) / 2 - 4, {
       align: "right",
       alpha: stageE * named(t, sameAt),
     });

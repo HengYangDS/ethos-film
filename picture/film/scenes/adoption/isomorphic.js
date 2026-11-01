@@ -262,9 +262,10 @@ scenes["16"] = function (s, t) {
     });
   }
   // 4. The first hour asks for little: a clock, and at an empty prompt one command, the status command, which shows the
-  // current facts, the gaps and the next action.
+  // current facts, the gaps and the next action. The group slides left as the outputs are named, from no further right
+  // than keeps the longest output name inside the safe area while it fades in.
   if (stageD > 0) {
-    const lead = 300 * (1 - soon(t, outAts[0] - 0.15, 0.5)),
+    const lead = 220 * (1 - soon(t, outAts[0] - 0.15, 0.5)),
       TX = 380 + lead,
       TW = 560,
       TH = 96,

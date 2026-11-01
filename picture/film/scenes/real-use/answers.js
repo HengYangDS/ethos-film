@@ -13,7 +13,7 @@ import { railNames, railStations } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L, en } from "../../timeline.js";
-import { cue, cues } from "../../timing/cues.js";
+import { cue, cueFrom, cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
@@ -59,13 +59,16 @@ scenes["13"] = function (s, t) {
     ["开发上的指标", "development metrics"],
     ["衡量业务成败的标准", "the project's own"],
   ]);
+  // Chinese says 按设计 before it names ETHOS, so the kernel enters on the last word before its name rather than
+  // standing unnamed through the whole phrase.
+  const kernelAt = en ? mapAt : cueFrom(s, "计", "", mapAt);
   const stageA = stageOut(t, suppose),
     stageB = stageIn(t, suppose) * stageOut(t, showAt),
     stageC = stageIn(t, showAt) * stageOut(t, interim),
     stageD = stageIn(t, interim) * stageOut(t, signalAt);
   const stageE = stageIn(t, signalAt) * stageOut(t, histAt),
-    stageF = stageIn(t, histAt) * stageOut(t, mapAt),
-    stageG = stageIn(t, mapAt);
+    stageF = stageIn(t, histAt) * stageOut(t, kernelAt),
+    stageG = stageIn(t, kernelAt);
   const q = (voiceTime(t) * 0.4) % 1;
   // The two examples return under the headings they had at the start, and each takes its name on its words.
   if (stageA > 0) {
