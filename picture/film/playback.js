@@ -11,24 +11,6 @@ import { P } from "./palette.js";
 import { scenes } from "./scenes/registry.js";
 import { film } from "./timeline.js";
 import { ramp } from "./timing/easing.js";
-import "./scenes/two-lines/drift.js";
-import "./scenes/two-lines/examples.js";
-import "./scenes/intent/change.js";
-import "./scenes/intent/compile.js";
-import "./scenes/one-owner/definition.js";
-import "./scenes/lanes/leases.js";
-import "./scenes/lanes/prewrite.js";
-import "./scenes/kernel/transition-plan.js";
-import "./scenes/kernel/compare-and-swap.js";
-import "./scenes/proof/evidence.js";
-import "./scenes/review/integration.js";
-import "./scenes/review/release.js";
-import "./scenes/real-use/answers.js";
-import "./scenes/feedback/layers.js";
-import "./scenes/feedback/model-promotion.js";
-import "./scenes/adoption/isomorphic.js";
-import "./scenes/adoption/handoff.js";
-import "./scenes/adoption/coda.js";
 
 /* Within a chapter the picture changes as the next voice begins, in the same cut as a stage within a scene: the
  * outgoing scene holds and the incoming one replaces it in one frame, so the change reads as one cut rather than a
