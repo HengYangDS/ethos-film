@@ -2,9 +2,15 @@
 
 Rebuild the ETHOS introduction films, a Chinese and an English edition, from tracked sources with [filmkit](https://github.com/HengYangDS/filmkit).
 
-Each film explains [ETHOS](https://github.com/HengYangDS/ethos) as its documents state it at the commit that `content/source-manifest.json` pins: how people and agents working on a project keep their understanding of the problem joined to the answers that code, data and real use give back. It covers intent written into a Change, one owner for each obligation, Work Lanes and Leases, the trust kernel and separate evidence, review, release, real use, feedback and Model Promotion, and finally adoption, handoff and exit. The market-data pipeline and the stock-selection study in the films are illustrative, and planned capabilities are described as design. Each edition lasts exactly 900 seconds: 54,000 native 60 fps frames of 2D picture in 16:9, 48 kHz stereo narration in one synthetic voice, small single-line captions and no music. Each comes as a UHD master and a captioned 1080p film. The films are in production, and no release has been published yet.
+Each film explains [ETHOS](https://github.com/HengYangDS/ethos) as its documents state it at the commit that `content/source-manifest.json` pins: how people and agents working on a project keep their understanding of the problem joined to the answers that code, data and real use give back. It covers intent written into a Change, one owner for each obligation, Work Lanes and Leases, the trust kernel and separate evidence, review, release, real use, feedback and Model Promotion, and finally adoption, handoff and exit. The market-data pipeline and the stock-selection study in the films are illustrative, and planned capabilities are described as design. Each edition lasts exactly 900 seconds: 54,000 native 60 fps frames of 2D picture in 16:9, 48 kHz stereo narration in one synthetic voice, small single-line captions and no music. Each comes as a UHD master and a captioned 1080p film.
 
 Author: Yang HENG.
+
+## The films
+
+The films are published as release assets, together with their captions, transcripts, covers, independent review records and `SHA256SUMS`. [`content/release.json`](content/release.json) records each asset's name, size and SHA-256, the digests of the soundtrack and staged picture each edition was made from, and those of the film-bound sources: the scripts, narration texts, voice contracts, reference recordings, source manifest, covers, fonts, composition and pages whose exact bytes the build reads. The independent review of the published films scored the Chinese edition 94.5 and the English edition 95.1 out of 100, with every dimension at 92 or above and no material finding. That review scores the audio from automated evidence; human listening is a separate acceptance.
+
+The films of `v1.0.0` are the published editions. A later release that changes only how they are built publishes no films of its own, and its tag names the source that rebuilds them.
 
 ## Rebuilding the films
 

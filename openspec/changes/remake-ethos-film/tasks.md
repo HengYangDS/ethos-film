@@ -31,13 +31,13 @@
 - [x] 5.1 Render, package and verify both editions; verify the technical checks and that the tracked tree is unchanged.
 - [x] 5.2 Pass the independent production review of the exact build at 90 or more overall and in every declared dimension; a fixed build is reviewed again.
 - [x] 5.3 Deliver both editions to `~/Documents/ethos-introduction-film/` and read them back; verify every delivered file's SHA-256, both players in a real browser, and that each replaced file of the previous film lies in the rollback copy.
-- [ ] 5.4 Record the user's acceptance of the delivered films; verify that the record names both editions' delivered films, and keep the rollback copy until it exists.
+- [x] 5.4 Record the user's acceptance of the delivered films; verify that the record names both editions' delivered films, and keep the rollback copy until it exists.
 
 ## 6. Publication
 
 - [x] 6.1 Write the README with the supply, build and comparison steps, `LICENSE`, `NOTICE`, the CC BY 4.0 legal code and `CHANGELOG.md`; verify that `ethos lane repair-paradigm --json` reports no gap.
 - [x] 6.2 Project the portable gates into the CI of the forges the release topology declares; verify that `ethos lane project --check` passes and that each projection validates against its forge's schema.
-- [ ] 6.3 Record the release manifest from the accepted films and verify a rebuild against it with `film:compare`; prepare `v1.0.0` with `.ethos/release.toml` and the release folder with `SHA256SUMS`.
+- [x] 6.3 Record the release manifest from the accepted films and verify a rebuild against it with `film:compare`; prepare `v1.0.0` with `.ethos/release.toml` and the release folder with `SHA256SUMS`.
 
 ## Workflow follow-up
 
