@@ -104,7 +104,7 @@ A research team's market-data pipeline ingests daily prices from a vendor and ca
 | interchangeable Agents         | Product Design Contract, Product           | Capabilities that can be replaced without losing meaning or authority.                                                           | 可以互相替换的 Agent | interchangeable Agents         |                                     |
 | actual benefit                 | Product Design Contract, Product           | Shown only by observations bound to the deployed version, environment, baseline and window.                                      | 实际收益             | actual benefit                 |                                     |
 
-The user approves these renderings together with the script. A rendering the review rejects changes here first and then everywhere it is used.
+The user approved these renderings on 2026-11-01. A rendering that a later review rejects changes here first, with the user's approval, and then everywhere it is used.
 
 ### 5. Pronunciation
 
@@ -137,13 +137,14 @@ The source manifest pins ETHOS v0.2.0-alpha.25 and the SHA-256 of every cited do
 
 ## Migration Plan
 
-1. The user reviews this design and the concept contract's renderings.
+1. The user approved the concept contract's renderings on 2026-11-01.
 2. Specifications and tasks follow; the scripts are written and reviewed, then approved by the user.
 3. After the `filmkit` release with the new checks is pinned, the narration is synthesized, checked and heard by the user, then the picture is composed, rendered and reviewed.
 4. Both editions are delivered to Documents with readback, replacing v1.0.x only after qualification; v2.0.0 is released after the user confirms. v1.0.x stays available as its Release assets.
 
 ## Open Questions
 
+The narration describes Model Promotion as revising the model and leaves the English name to the concept contract; that is a choice made here, not a question for the user.
+
 - The edition titles; v1's "让信任建立在证据上" remains a candidate.
-- Whether the English edition shows the Chinese verses with an English gloss or only the four rules.
-- Whether the narration names Model Promotion or only describes revising the model.
+- Whether the close speaks the Root Constraint's verses in the Chinese edition, and whether the English edition shows them with a gloss or only the four rules.
