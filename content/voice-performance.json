@@ -1,6 +1,6 @@
 {
   "pronunciation": {
-    "schema_version": 1,
+    "schema_version": 2,
     "status": "planned-not-listened",
     "control_boundary": "Dictionary and occurrence targets are acceptance criteria. Native Qwen Base does not consume IPA or SSML. The normalization below carries the spoken forms the previous ETHOS film adopted after heard errors; no further normalization is proposed without an actually heard error.",
     "sources": [
@@ -61,243 +61,746 @@
         ],
         "targets": [
           {
-            "term": "行情",
+            "term": "一只",
             "kind": "contextual-mandarin-word",
-            "target_reading": "hángqíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "yī zhī",
+            "dictionary_disagreement": "只 is the measure word zhī in 一只股票; the dictionary reads zhǐ, only."
           },
           {
-            "term": "执行",
+            "term": "一处",
             "kind": "contextual-mandarin-word",
-            "target_reading": "zhíxíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "yī chù"
           },
           {
-            "term": "运行",
+            "term": "一模一样",
             "kind": "contextual-mandarin-word",
-            "target_reading": "yùnxíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "yī mú yī yàng"
           },
           {
-            "term": "行动",
+            "term": "一片",
             "kind": "contextual-mandarin-word",
-            "target_reading": "xíngdòng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "yī piàn"
           },
           {
-            "term": "进行",
+            "term": "一长",
             "kind": "contextual-mandarin-word",
-            "target_reading": "jìnxíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "yī cháng",
+            "dictionary_disagreement": "长 is cháng, long, in 时间一长; the dictionary reads zhǎng."
           },
           {
-            "term": "放行",
+            "term": "三种",
             "kind": "contextual-mandarin-word",
-            "target_reading": "fàngxíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "sān zhǒng"
           },
           {
-            "term": "平行",
+            "term": "不了",
             "kind": "contextual-mandarin-word",
-            "target_reading": "píngxíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "bù liǎo"
           },
           {
-            "term": "重新",
+            "term": "不见了",
             "kind": "contextual-mandarin-word",
-            "target_reading": "chóngxīn",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "bú jiàn le"
           },
           {
-            "term": "重复",
+            "term": "中",
             "kind": "contextual-mandarin-word",
-            "target_reading": "chóngfù",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
-          },
-          {
-            "term": "长期",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "chángqī",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
-          },
-          {
-            "term": "还是",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "háishi",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "zhōng"
           },
           {
             "term": "为了",
             "kind": "contextual-mandarin-word",
-            "target_reading": "wèile",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
-          },
-          {
-            "term": "作为",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "zuòwéi",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
-          },
-          {
-            "term": "为止",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "wéizhǐ",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "wèile"
           },
           {
             "term": "为什么",
             "kind": "contextual-mandarin-word",
-            "target_reading": "wèishénme",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "wèishénme"
+          },
+          {
+            "term": "也得",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yě děi",
+            "dictionary_disagreement": "得 is děi, must, in 也得有人维护; the dictionary reads dé."
+          },
+          {
+            "term": "了",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "le"
+          },
+          {
+            "term": "互相",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "hù xiāng"
+          },
+          {
+            "term": "交给",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiāo gěi"
+          },
+          {
+            "term": "什么",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shén me"
+          },
+          {
+            "term": "什么时候",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shén me shí hòu"
+          },
+          {
+            "term": "会",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "huì"
+          },
+          {
+            "term": "会话",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "huì huà"
+          },
+          {
+            "term": "假",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiǎ"
+          },
+          {
+            "term": "其中",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "qí zhōng"
+          },
+          {
+            "term": "再说",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zài shuō"
+          },
+          {
+            "term": "写得",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xiě de",
+            "dictionary_disagreement": "得 is the complement particle de after a verb; the dictionary reads 得 alone as dé."
+          },
+          {
+            "term": "冲着",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chòng zhe",
+            "dictionary_disagreement": "冲 is chòng, aimed at, in 冲着; the dictionary reads chōng."
+          },
+          {
+            "term": "冲突",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chōng tū"
+          },
+          {
+            "term": "几",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jǐ"
+          },
+          {
+            "term": "几个",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jǐ gè"
+          },
+          {
+            "term": "几样",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jǐ yàng"
+          },
+          {
+            "term": "分别",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fēn bié"
+          },
+          {
+            "term": "分开",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fēn kāi"
+          },
+          {
+            "term": "分支",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fēn zhī"
+          },
+          {
+            "term": "分清",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fēn qīng"
+          },
+          {
+            "term": "划清",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "huà qīng"
+          },
+          {
+            "term": "刚好",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "gāng hǎo"
+          },
+          {
+            "term": "到了",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dào le"
+          },
+          {
+            "term": "区分",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "qū fēn"
+          },
+          {
+            "term": "去重",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "qù chóng",
+            "dictionary_disagreement": "重 is chóng, again or repeated, in 去重 (to remove duplicates); the dictionary reads zhòng."
+          },
+          {
+            "term": "反倒",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fǎn dào"
+          },
+          {
+            "term": "发",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fā"
+          },
+          {
+            "term": "发布",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fā bù"
           },
           {
             "term": "变更",
             "kind": "contextual-mandarin-word",
-            "target_reading": "biàngēng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "biàngēng"
           },
           {
-            "term": "调整",
+            "term": "只为",
             "kind": "contextual-mandarin-word",
-            "target_reading": "tiáozhěng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "zhǐ wèi"
           },
           {
-            "term": "协调",
+            "term": "只写",
             "kind": "contextual-mandarin-word",
-            "target_reading": "xiétiáo",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "zhǐ xiě"
+          },
+          {
+            "term": "只分",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ fēn"
+          },
+          {
+            "term": "只剩下",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ shèng xià"
+          },
+          {
+            "term": "只在",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ zài"
+          },
+          {
+            "term": "只声明",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ shēng míng"
+          },
+          {
+            "term": "只有",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ yǒu"
+          },
+          {
+            "term": "只管",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ guǎn"
+          },
+          {
+            "term": "只能",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ néng"
+          },
+          {
+            "term": "只认得",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ rèn de"
+          },
+          {
+            "term": "只证明了",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ zhèng míng le",
+            "dictionary_disagreement": "了 is the aspect particle after 证明; the dictionary's segmenter takes 明了 in 证明了它 and reads liǎo."
+          },
+          {
+            "term": "和",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "hé"
+          },
+          {
+            "term": "因为",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yīn wèi"
+          },
+          {
+            "term": "地方",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dì fāng"
+          },
+          {
+            "term": "声称",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shēng chēng"
           },
           {
             "term": "处理",
             "kind": "contextual-mandarin-word",
-            "target_reading": "chǔlǐ",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "chǔlǐ"
           },
           {
-            "term": "参与",
+            "term": "多少",
             "kind": "contextual-mandarin-word",
-            "target_reading": "cānyù",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "duō shǎo"
           },
           {
-            "term": "要求",
+            "term": "好",
             "kind": "contextual-mandarin-word",
-            "target_reading": "yāoqiú",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "hǎo"
           },
           {
-            "term": "应该",
+            "term": "完了",
             "kind": "contextual-mandarin-word",
-            "target_reading": "yīnggāi",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "wán le"
           },
           {
-            "term": "背景",
+            "term": "少",
             "kind": "contextual-mandarin-word",
-            "target_reading": "bèijǐng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "shǎo"
           },
           {
-            "term": "转交",
+            "term": "就当",
             "kind": "contextual-mandarin-word",
-            "target_reading": "zhuǎnjiāo",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "jiù dàng",
+            "dictionary_disagreement": "当 is dàng, to treat as, in 就当已经发布; the dictionary reads dāng."
           },
           {
-            "term": "载体",
+            "term": "干活",
             "kind": "contextual-mandarin-word",
-            "target_reading": "zàitǐ",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "gàn huó"
           },
           {
-            "term": "模型",
+            "term": "应用",
             "kind": "contextual-mandarin-word",
-            "target_reading": "móxíng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "yìng yòng"
           },
           {
-            "term": "负担",
+            "term": "开发",
             "kind": "contextual-mandarin-word",
-            "target_reading": "fùdān",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "kāi fā"
           },
           {
-            "term": "尽量",
+            "term": "当下",
             "kind": "contextual-mandarin-word",
-            "target_reading": "jǐnliàng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "dāng xià"
           },
           {
-            "term": "积累",
+            "term": "当初",
             "kind": "contextual-mandarin-word",
-            "target_reading": "jīlěi",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "dāng chū"
           },
           {
-            "term": "衡量",
+            "term": "当时",
             "kind": "contextual-mandarin-word",
-            "target_reading": "héngliáng",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "dāng shí"
+          },
+          {
+            "term": "当真相",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dàng zhēn xiàng",
+            "dictionary_disagreement": "当 is dàng, to take as, and 相 is xiàng in 当真相; the dictionary's segmenter takes 当真 and reads 相 as xiāng."
+          },
+          {
+            "term": "当线索",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dàng xiàn suǒ",
+            "dictionary_disagreement": "当 is dàng, to serve as, in 只能当线索; the dictionary reads dāng."
+          },
+          {
+            "term": "得到",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dé dào"
+          },
+          {
+            "term": "总结",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zǒng jié"
+          },
+          {
+            "term": "恰好",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "qià hǎo"
           },
           {
             "term": "悄悄",
             "kind": "contextual-mandarin-word",
-            "target_reading": "qiāoqiāo",
-            "source": "macos-dictionary",
-            "status": "planned-not-listened"
+            "target_reading": "qiāoqiāo"
+          },
+          {
+            "term": "执行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhíxíng"
+          },
+          {
+            "term": "把",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "bǎ"
+          },
+          {
+            "term": "拿它当",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "ná tā dàng",
+            "dictionary_disagreement": "当 is dàng, to take as, in 拿它当权威依据; the dictionary reads dāng."
+          },
+          {
+            "term": "接着",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiē zhe"
+          },
+          {
+            "term": "摘要",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhāi yào"
+          },
+          {
+            "term": "数据",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shù jù"
+          },
+          {
+            "term": "时间",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shí jiān"
+          },
+          {
+            "term": "更",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "gèng"
+          },
+          {
+            "term": "更正",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "gēng zhèng"
+          },
+          {
+            "term": "有的",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yǒu de"
+          },
+          {
+            "term": "本地",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "běn dì"
+          },
+          {
+            "term": "模型",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "móxíng"
+          },
+          {
+            "term": "正",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhèng"
+          },
+          {
+            "term": "正式",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhèng shì"
+          },
+          {
+            "term": "没",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "méi"
+          },
+          {
+            "term": "没人",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "méi rén"
+          },
+          {
+            "term": "没有",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "méi yǒu"
+          },
+          {
+            "term": "照着",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhào zhe"
+          },
+          {
+            "term": "片",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "piàn"
+          },
+          {
+            "term": "的",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "de"
+          },
+          {
+            "term": "看",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "kàn"
+          },
+          {
+            "term": "看板",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "kàn bǎn"
+          },
+          {
+            "term": "看清",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "kàn qīng"
+          },
+          {
+            "term": "真正",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhēn zhèng"
+          },
+          {
+            "term": "真相",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhēn xiàng"
+          },
+          {
+            "term": "着",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhe"
+          },
+          {
+            "term": "答案",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dá àn"
+          },
+          {
+            "term": "系统",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xì tǒng"
+          },
+          {
+            "term": "结束",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jié shù"
+          },
+          {
+            "term": "结构",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jié gòu"
+          },
+          {
+            "term": "结果",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jié guǒ"
+          },
+          {
+            "term": "结论",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jié lùn"
+          },
+          {
+            "term": "给",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "gěi"
+          },
+          {
+            "term": "编号",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "biān hào"
+          },
+          {
+            "term": "落到",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "luò dào"
+          },
+          {
+            "term": "落地",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "luò dì"
+          },
+          {
+            "term": "行动",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xíngdòng"
+          },
+          {
+            "term": "要",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yào"
+          },
+          {
+            "term": "要么",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yào me"
+          },
+          {
+            "term": "要是",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yào shì"
+          },
+          {
+            "term": "要求",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yāoqiú"
+          },
+          {
+            "term": "见分晓",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiàn fēn xiǎo"
+          },
+          {
+            "term": "解",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiě"
+          },
+          {
+            "term": "解决",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiě jué"
+          },
+          {
+            "term": "解释",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiě shì"
+          },
+          {
+            "term": "计划",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jì huà"
+          },
+          {
+            "term": "记得",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jì de"
+          },
+          {
+            "term": "说",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shuō"
+          },
+          {
+            "term": "说不清",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shuō bù qīng"
+          },
+          {
+            "term": "说明",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shuō míng"
+          },
+          {
+            "term": "说清楚",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shuō qīng chǔ"
+          },
+          {
+            "term": "读得",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dú de",
+            "dictionary_disagreement": "得 is the complement particle de after a verb; the dictionary reads 得 alone as dé."
+          },
+          {
+            "term": "负担",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fùdān"
+          },
+          {
+            "term": "跟着",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "gēn zhe"
+          },
+          {
+            "term": "转一手",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhuǎn yī shǒu"
+          },
+          {
+            "term": "转述",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhuǎn shù"
+          },
+          {
+            "term": "运行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "yùnxíng"
+          },
+          {
+            "term": "还",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "hái"
+          },
+          {
+            "term": "还是",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "hái shì"
+          },
+          {
+            "term": "退场",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "tuì chǎng"
+          },
+          {
+            "term": "部分",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "bù fèn"
+          },
+          {
+            "term": "都",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dōu"
+          },
+          {
+            "term": "重复",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chóngfù"
+          },
+          {
+            "term": "重新",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chóng xīn",
+            "dictionary_disagreement": "重新 is chóng xīn; the dictionary's segmenter takes 权重 in 授权重新 and reads 重 as zhòng."
+          },
+          {
+            "term": "长期",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chángqī"
+          },
+          {
+            "term": "间",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jiān"
+          },
+          {
+            "term": "难",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "nán"
+          },
+          {
+            "term": "难处",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "nán chù",
+            "dictionary_disagreement": "处 is the noun chù in 难处, a difficulty; the dictionary reads chǔ."
+          },
+          {
+            "term": "需要",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xū yào"
+          },
+          {
+            "term": "靠得住",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "kào de zhù"
           }
         ],
         "sandhi": "Natural Mandarin connected-speech tone sandhi and weak grammatical syllables; never force isolated citation tones.",
         "embedded_english_targets": [
-          "ETHOS",
-          "AI",
+          "Eethos",
           "Agent",
-          "OpenSpec",
-          "Git",
-          "Work Lane",
-          "Lease",
-          "Commitment",
-          "Facts",
-          "TransitionPlan",
-          "Attestation",
-          "compare-and-swap",
-          "ethos status",
-          "dev",
-          "main",
           "GitLab",
-          "GitHub",
-          "Model Promotion"
+          "GitHub"
         ],
         "target_scope": "Every Chinese segment; the embedded English names are spoken as English words inside the Chinese clauses."
       },
@@ -345,23 +848,6 @@
             "source": "cmudict"
           },
           {
-            "term": "Git",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "G",
-                "IH1",
-                "T"
-              ],
-              "syllable_count": 1,
-              "primary_syllable": 1,
-              "secondary_syllables": [],
-              "weak_syllables": [],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
             "term": "agents",
             "kind": "lexical",
             "lexical_stress": {
@@ -378,49 +864,6 @@
               "secondary_syllables": [],
               "weak_syllables": [
                 2
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "Lease",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "L",
-                "IY1",
-                "S"
-              ],
-              "syllable_count": 1,
-              "primary_syllable": 1,
-              "secondary_syllables": [],
-              "weak_syllables": [],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "Commitment",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "K",
-                "AH0",
-                "M",
-                "IH1",
-                "T",
-                "M",
-                "AH0",
-                "N",
-                "T"
-              ],
-              "syllable_count": 3,
-              "primary_syllable": 2,
-              "secondary_syllables": [],
-              "weak_syllables": [
-                1,
-                3
               ],
               "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
             },
@@ -535,109 +978,6 @@
             "source": "cmudict"
           },
           {
-            "term": "disposition",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "D",
-                "IH2",
-                "S",
-                "P",
-                "AH0",
-                "Z",
-                "IH1",
-                "SH",
-                "AH0",
-                "N"
-              ],
-              "syllable_count": 4,
-              "primary_syllable": 3,
-              "secondary_syllables": [
-                1
-              ],
-              "weak_syllables": [
-                2,
-                4
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "hypothesis",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "HH",
-                "AY0",
-                "P",
-                "AA1",
-                "TH",
-                "AH0",
-                "S",
-                "AH0",
-                "S"
-              ],
-              "syllable_count": 4,
-              "primary_syllable": 2,
-              "secondary_syllables": [],
-              "weak_syllables": [
-                1,
-                3,
-                4
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "divergence",
-            "kind": "lexical",
-            "lexical_stress": [
-              {
-                "arpabet": [
-                  "D",
-                  "AY0",
-                  "V",
-                  "ER1",
-                  "JH",
-                  "AH0",
-                  "N",
-                  "S"
-                ],
-                "syllable_count": 3,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1,
-                  3
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              {
-                "arpabet": [
-                  "D",
-                  "IH0",
-                  "V",
-                  "ER1",
-                  "JH",
-                  "AH0",
-                  "N",
-                  "S"
-                ],
-                "syllable_count": 3,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1,
-                  3
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
-            ],
-            "source": "cmudict"
-          },
-          {
             "term": "repository",
             "kind": "lexical",
             "lexical_stress": {
@@ -668,60 +1008,6 @@
             "source": "cmudict"
           },
           {
-            "term": "integration",
-            "kind": "lexical",
-            "lexical_stress": [
-              {
-                "arpabet": [
-                  "IH2",
-                  "N",
-                  "T",
-                  "AH0",
-                  "G",
-                  "R",
-                  "EY1",
-                  "SH",
-                  "AH0",
-                  "N"
-                ],
-                "syllable_count": 4,
-                "primary_syllable": 3,
-                "secondary_syllables": [
-                  1
-                ],
-                "weak_syllables": [
-                  2,
-                  4
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              {
-                "arpabet": [
-                  "IH2",
-                  "N",
-                  "AH0",
-                  "G",
-                  "R",
-                  "EY1",
-                  "SH",
-                  "AH0",
-                  "N"
-                ],
-                "syllable_count": 4,
-                "primary_syllable": 3,
-                "secondary_syllables": [
-                  1
-                ],
-                "weak_syllables": [
-                  2,
-                  4
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
-            ],
-            "source": "cmudict"
-          },
-          {
             "term": "authority",
             "kind": "lexical",
             "lexical_stress": {
@@ -741,58 +1027,6 @@
                 1,
                 3,
                 4
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "generation",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "JH",
-                "EH2",
-                "N",
-                "ER0",
-                "EY1",
-                "SH",
-                "AH0",
-                "N"
-              ],
-              "syllable_count": 4,
-              "primary_syllable": 3,
-              "secondary_syllables": [
-                1
-              ],
-              "weak_syllables": [
-                2,
-                4
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "expiry",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "EH2",
-                "K",
-                "S",
-                "P",
-                "AY1",
-                "R",
-                "IY0"
-              ],
-              "syllable_count": 3,
-              "primary_syllable": 2,
-              "secondary_syllables": [
-                1
-              ],
-              "weak_syllables": [
-                3
               ],
               "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
             },
@@ -825,173 +1059,6 @@
             "source": "cmudict"
           },
           {
-            "term": "superseded",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "S",
-                "UW2",
-                "P",
-                "ER0",
-                "S",
-                "IY1",
-                "D",
-                "IH0",
-                "D"
-              ],
-              "syllable_count": 4,
-              "primary_syllable": 3,
-              "secondary_syllables": [
-                1
-              ],
-              "weak_syllables": [
-                2,
-                4
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "reconciled",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "R",
-                "EH1",
-                "K",
-                "AH0",
-                "N",
-                "S",
-                "AY2",
-                "L",
-                "D"
-              ],
-              "syllable_count": 3,
-              "primary_syllable": 1,
-              "secondary_syllables": [
-                3
-              ],
-              "weak_syllables": [
-                2
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "alias",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "EY1",
-                "L",
-                "IY0",
-                "AH0",
-                "S"
-              ],
-              "syllable_count": 3,
-              "primary_syllable": 1,
-              "secondary_syllables": [],
-              "weak_syllables": [
-                2,
-                3
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "Promotion",
-            "kind": "lexical",
-            "lexical_stress": [
-              {
-                "arpabet": [
-                  "P",
-                  "R",
-                  "AH0",
-                  "M",
-                  "OW1",
-                  "SH",
-                  "AH0",
-                  "N"
-                ],
-                "syllable_count": 3,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1,
-                  3
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              {
-                "arpabet": [
-                  "P",
-                  "ER0",
-                  "M",
-                  "OW1",
-                  "SH",
-                  "AH0",
-                  "N"
-                ],
-                "syllable_count": 3,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1,
-                  3
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
-            ],
-            "source": "cmudict"
-          },
-          {
-            "term": "compile",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "K",
-                "AH0",
-                "M",
-                "P",
-                "AY1",
-                "L"
-              ],
-              "syllable_count": 2,
-              "primary_syllable": 2,
-              "secondary_syllables": [],
-              "weak_syllables": [
-                1
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "minutes",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "M",
-                "IH1",
-                "N",
-                "AH0",
-                "T",
-                "S"
-              ],
-              "syllable_count": 2,
-              "primary_syllable": 1,
-              "secondary_syllables": [],
-              "weak_syllables": [
-                2
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
             "term": "leads",
             "kind": "lexical",
             "lexical_stress": {
@@ -1000,47 +1067,6 @@
                 "IY1",
                 "D",
                 "Z"
-              ],
-              "syllable_count": 1,
-              "primary_syllable": 1,
-              "secondary_syllables": [],
-              "weak_syllables": [],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "produced",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "P",
-                "R",
-                "AH0",
-                "D",
-                "UW1",
-                "S",
-                "T"
-              ],
-              "syllable_count": 2,
-              "primary_syllable": 2,
-              "secondary_syllables": [],
-              "weak_syllables": [
-                1
-              ],
-              "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "used",
-            "kind": "lexical",
-            "lexical_stress": {
-              "arpabet": [
-                "Y",
-                "UW1",
-                "Z",
-                "D"
               ],
               "syllable_count": 1,
               "primary_syllable": 1,
@@ -1099,13 +1125,6 @@
             "source": "cmudict"
           },
           {
-            "term": "AI",
-            "kind": "letter-name",
-            "target_reading": "A /eɪ/ + I /aɪ/, not an ordinary word",
-            "source": "standard English letter names",
-            "lexical_stress": {}
-          },
-          {
             "term": "Attestation",
             "kind": "contextual-compound",
             "lexical_stress": {
@@ -1122,71 +1141,7 @@
             "source": "contextual-composition"
           },
           {
-            "term": "isomorphic",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "verifier",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "deterministically",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "counterexamples",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "worktree",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
             "term": "GitLab",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "OpenSpec",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "TransitionPlan",
-            "kind": "contextual-compound",
-            "lexical_stress": {
-              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
-            },
-            "source": "contextual-composition"
-          },
-          {
-            "term": "compare-and-swap",
             "kind": "contextual-compound",
             "lexical_stress": {
               "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
@@ -1511,302 +1466,20 @@
             "source": "cmudict"
           },
           {
-            "term": "object",
-            "kind": "contextual-homograph",
+            "term": "GitHub",
+            "kind": "contextual-compound",
             "lexical_stress": {
-              "noun": {
-                "arpabet": [
-                  "AA1",
-                  "B",
-                  "JH",
-                  "EH0",
-                  "K",
-                  "T"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 1,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  2
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              "verb": {
-                "arpabet": [
-                  "AH0",
-                  "B",
-                  "JH",
-                  "EH1",
-                  "K",
-                  "T"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
             },
-            "source": "cmudict"
+            "source": "contextual-composition"
           },
           {
-            "term": "project",
-            "kind": "contextual-homograph",
+            "term": "Human-Agent",
+            "kind": "contextual-compound",
             "lexical_stress": {
-              "noun": {
-                "arpabet": [
-                  "P",
-                  "R",
-                  "AA1",
-                  "JH",
-                  "EH0",
-                  "K",
-                  "T"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 1,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  2
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              "verb": {
-                "arpabet": [
-                  "P",
-                  "R",
-                  "AH0",
-                  "JH",
-                  "EH1",
-                  "K",
-                  "T"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
+              "basis": "No headword in pinned CMU dictionary. Evaluate the recognizable parts in the full clause; not dictionary-certified."
             },
-            "source": "cmudict"
-          },
-          {
-            "term": "conflicts",
-            "kind": "contextual-homograph",
-            "lexical_stress": {
-              "noun": [
-                {
-                  "arpabet": [
-                    "K",
-                    "AA1",
-                    "N",
-                    "F",
-                    "L",
-                    "IH0",
-                    "K",
-                    "T",
-                    "S"
-                  ],
-                  "syllable_count": 2,
-                  "primary_syllable": 1,
-                  "secondary_syllables": [],
-                  "weak_syllables": [
-                    2
-                  ],
-                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-                },
-                {
-                  "arpabet": [
-                    "K",
-                    "AA1",
-                    "N",
-                    "F",
-                    "L",
-                    "IH0",
-                    "K",
-                    "S"
-                  ],
-                  "syllable_count": 2,
-                  "primary_syllable": 1,
-                  "secondary_syllables": [],
-                  "weak_syllables": [
-                    2
-                  ],
-                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-                }
-              ],
-              "verb": [
-                {
-                  "arpabet": [
-                    "K",
-                    "AH0",
-                    "N",
-                    "F",
-                    "L",
-                    "IH1",
-                    "K",
-                    "T",
-                    "S"
-                  ],
-                  "syllable_count": 2,
-                  "primary_syllable": 2,
-                  "secondary_syllables": [],
-                  "weak_syllables": [
-                    1
-                  ],
-                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-                },
-                {
-                  "arpabet": [
-                    "K",
-                    "AH0",
-                    "N",
-                    "F",
-                    "L",
-                    "IH1",
-                    "K",
-                    "S"
-                  ],
-                  "syllable_count": 2,
-                  "primary_syllable": 2,
-                  "secondary_syllables": [],
-                  "weak_syllables": [
-                    1
-                  ],
-                  "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-                }
-              ]
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "combine",
-            "kind": "contextual-homograph",
-            "lexical_stress": {
-              "verb": {
-                "arpabet": [
-                  "K",
-                  "AH0",
-                  "M",
-                  "B",
-                  "AY1",
-                  "N"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              "noun": {
-                "arpabet": [
-                  "K",
-                  "AA1",
-                  "M",
-                  "B",
-                  "AY0",
-                  "N"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 1,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  2
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "updates",
-            "kind": "contextual-homograph",
-            "lexical_stress": {
-              "verb": {
-                "arpabet": [
-                  "AH0",
-                  "P",
-                  "D",
-                  "EY1",
-                  "T",
-                  "S"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              "noun": {
-                "arpabet": [
-                  "AH1",
-                  "P",
-                  "D",
-                  "EY2",
-                  "T",
-                  "S"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 1,
-                "secondary_syllables": [
-                  2
-                ],
-                "weak_syllables": [],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
-            },
-            "source": "cmudict"
-          },
-          {
-            "term": "subject",
-            "kind": "contextual-homograph",
-            "lexical_stress": {
-              "noun": {
-                "arpabet": [
-                  "S",
-                  "AH1",
-                  "B",
-                  "JH",
-                  "IH0",
-                  "K",
-                  "T"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 1,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  2
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              },
-              "verb": {
-                "arpabet": [
-                  "S",
-                  "AH0",
-                  "B",
-                  "JH",
-                  "EH1",
-                  "K",
-                  "T"
-                ],
-                "syllable_count": 2,
-                "primary_syllable": 2,
-                "secondary_syllables": [],
-                "weak_syllables": [
-                  1
-                ],
-                "basis": "CMU dictionary pinned source; valid listed accent variants remain admissible"
-              }
-            },
-            "source": "cmudict"
+            "source": "contextual-composition"
           }
         ]
       }

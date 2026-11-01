@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/HengYangDS/ethos",
-  "commit": "c063bfa07e58877c637db141921944e86264a436",
+  "commit": "63deedc091d4d639da2d3f094193d0b9a8fee587",
   "members": [
     {
       "path": "README.md",
@@ -8,19 +8,7 @@
     },
     {
       "path": "docs/governance/product-design-contract.md",
-      "sha256": "40ed2650de9754c5079ac64a78cd4f1ed083f8bd53d877853af18a8acd8dfe1d"
-    },
-    {
-      "path": "docs/plans/terminal-governance-product-design.md",
-      "sha256": "948fe6efab8aee9b5997e17f87e71c72e50e8d7a6991f00f39ec59a9ec533059"
-    },
-    {
-      "path": "docs/guides/quickstart.md",
-      "sha256": "dd26d6fe64101e4f7bf4c90bac4edb443c638863fa19aa7adb28729c30e14dc5"
-    },
-    {
-      "path": "docs/guides/release-and-publication.md",
-      "sha256": "24389e2bef4dfebf28e2918f852ab36285685a4b158880615a56f69578eba0a0"
+      "sha256": "67d20e225acaf8b743fe4d66ace58c9bd7d04b1499fc628502af59a4f28ed3ae"
     },
     {
       "path": "docs/concepts/kernel-model.md",
@@ -29,6 +17,50 @@
     {
       "path": "docs/reference/glossary.md",
       "sha256": "1aeab7b672fdda9260b493a002168d36afb5645baa0a38a6d56dc5ad38ee0170"
+    },
+    {
+      "path": "docs/architecture/transition-plan.md",
+      "sha256": "acef14dfa1fda54a8eca4e2f7d55a3aaaee971d377660e73acb868d671240817"
+    },
+    {
+      "path": "docs/architecture/runner-and-mutation.md",
+      "sha256": "ef37ee14c6912e780985282a78f9c974eb5c0565e0adde4b6aedd44472a83442"
+    },
+    {
+      "path": "docs/decisions/dr-0006-proof-trust-boundary.md",
+      "sha256": "912fcad278f15f946bbf966e9c28cd8c62a02a3c392d8c619572f309bc1762c7"
+    },
+    {
+      "path": "docs/decisions/dr-0010-source-budget-non-compensation.md",
+      "sha256": "2f4baa7b6d2a25ba86f7b446d49bcff3b95116c8ee57cb6ad326eadc704a5f14"
+    },
+    {
+      "path": "docs/decisions/dr-0014-comparative-correction.md",
+      "sha256": "5d4a42041842884ec0c4661eafd5f831aaabad09adcbd78924f3afbfb6190948"
+    },
+    {
+      "path": "docs/decisions/dr-0016-change-closure-scope.md",
+      "sha256": "cf33d0369d215e72900675926cf959ad5c3a8006a131ee4e7e1d5ed25bbaeb5a"
+    },
+    {
+      "path": "docs/decisions/dr-0017-one-obligation-one-owner.md",
+      "sha256": "862f93ca4516af32d483f215048c11025a56650bb23d65c833f98a42c16a5f70"
+    },
+    {
+      "path": "docs/reference/command-plane.md",
+      "sha256": "ed5d9dd70a632db094873a6b4c24b88dd9458fcb8fdedd3a3b50935006d27bb6"
+    },
+    {
+      "path": "docs/research/modern-engineering-foundations.md",
+      "sha256": "5c2247258e79b77771549ff2a5a9c46586555f3885a65a139faa2b85c7d52d4b"
+    },
+    {
+      "path": "docs/reference/brand-kit.md",
+      "sha256": "e0369584383aff08641ac2b088473db612836f9fadd04bad6e55eabc9aa311df"
+    },
+    {
+      "path": "rules/agents.md",
+      "sha256": "203103fd9e4b2efed84df5ef7b2c041136bb67f5320ac8b471d73df80e861796"
     }
   ]
 }

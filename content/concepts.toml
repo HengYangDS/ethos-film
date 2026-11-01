@@ -1,0 +1,180 @@
+# The ETHOS film's concept contract: what each concept the film names means in ETHOS at the pinned
+# release, and the words each edition uses for it. The user approved the renderings on 2026-11-01
+# and, with the revision-4 script on 2026-11-02, 实际效益, 原意, the verdict's forms and the
+# inflections. A rendering changes here first, with the user's approval, then wherever it is used.
+
+[[concept]]
+id = "authority"
+term = "Authority"
+essence = "What a judgment may rest on; never a person by title and never a view."
+source = { path = "docs/reference/glossary.md", quote = "The inputs of product judgment: current user instruction, repository truth, the exact official OpenSpec projection, fresh Facts, applicable policy, and valid Attestations." }
+zh = { rendering = "权威依据", avoid = ["有权决定的人"] }
+en = { rendering = "authority" }
+
+[[concept]]
+id = "view"
+term = "Projection"
+essence = "Anything derived for people to read that is not repository truth by itself."
+source = { path = "docs/reference/glossary.md", quote = "A repo-authored or host-local view that is not repository truth by itself." }
+zh = { rendering = "视图" }
+en = { rendering = "view", forms = ["views"] }
+
+[[concept]]
+id = "intent"
+term = "intent"
+essence = "What is to be solved, why, and what counts as solved, accepted into one Change."
+source = { path = "docs/reference/glossary.md", quote = "An official OpenSpec Change: the sole tracked carrier of intent, design, specs, task progress, and archive in a mutation-capable repository." }
+zh = { rendering = "意图" }
+en = { rendering = "intent" }
+
+[[concept]]
+id = "change"
+term = "Change"
+essence = "The one tracked carrier of a requirement's intent, design, specifications and tasks."
+source = { path = "docs/reference/glossary.md", quote = "An official OpenSpec Change: the sole tracked carrier of intent, design, specs, task progress, and archive in a mutation-capable repository." }
+zh = { rendering = "正式变更" }
+en = { rendering = "Change", forms = ["Changes"] }
+
+[[concept]]
+id = "fresh-facts"
+term = "Facts"
+essence = "Observed again for each judgment, never stored as truth."
+source = { path = "docs/reference/glossary.md", quote = "Fresh observations of the repository and its governed environment." }
+zh = { rendering = "刚观察到的事实" }
+en = { rendering = "fresh facts" }
+
+[[concept]]
+id = "plan"
+term = "TransitionPlan"
+essence = "Compiled for one transition, then executed or discarded."
+source = { path = "docs/reference/glossary.md", quote = "The deterministic, transient plan compiled from Commitment, current Facts, policy, and applicable Attestations." }
+zh = { rendering = "计划" }
+en = { rendering = "plan" }
+
+[[concept]]
+id = "attestation"
+term = "Attestation"
+essence = "The only lasting record: what was observed, judged, proved or done, by whom, and where it holds."
+source = { path = "docs/reference/glossary.md", quote = "The persistent semantic entity that records a content-addressed observation, judgment, proof, effect, or external assurance with its verifier and validity boundary." }
+zh = { rendering = "存证", avoid = ["核验记录"] }
+en = { rendering = "attestation", forms = ["attestations"] }
+
+[[concept]]
+id = "verdict"
+term = "pass, block, unknown"
+essence = "Only pass permits an effect; missing or unverifiable facts give unknown, conflicts and failures give block, and neither permits anything."
+source = { path = "docs/architecture/transition-plan.md", quote = "Missing required facts, unknown predicates, unresolved authority, and contradictions produce unknown or block; neither permits effects." }
+zh = { rendering = "通过", forms = ["拦下", "未知"] }
+en = { rendering = "pass", forms = ["block", "blocks", "unknown"] }
+
+[[concept]]
+id = "proof"
+term = "proof"
+essence = "An executed check of an exact commit that establishes local readiness, and no more."
+source = { path = "docs/decisions/dr-0006-proof-trust-boundary.md", quote = "Local executed proof establishes exact local readiness." }
+zh = { rendering = "核验", avoid = ["本地证明"] }
+en = { rendering = "proof" }
+
+[[concept]]
+id = "evidence-planes"
+term = "evidence planes"
+essence = "Each kind of evidence supports only its own claim."
+source = { path = "docs/governance/product-design-contract.md", quote = "are independent evidence planes" }
+zh = { rendering = "各自独立的证据" }
+en = { rendering = "separate planes of evidence" }
+
+[[concept]]
+id = "work-lane"
+term = "Work Lane"
+essence = "An isolated, held place for one change."
+source = { path = "docs/reference/glossary.md", quote = "An isolated lane for tracked mutation." }
+zh = { rendering = "工作通道", forms = ["通道"] }
+en = { rendering = "Work Lane" }
+
+[[concept]]
+id = "obligation"
+term = "obligation"
+essence = "Each duty a repository must meet, which has exactly one owner."
+source = { path = "docs/decisions/dr-0017-one-obligation-one-owner.md", quote = "Each obligation has one owner across ETHOS and every governed repository" }
+zh = { rendering = "义务" }
+en = { rendering = "obligation", forms = ["obligations"] }
+
+[[concept]]
+id = "owner"
+term = "owner"
+essence = "The one place an obligation belongs: ETHOS for a rule the same everywhere, the repository for its own purpose."
+source = { path = "docs/decisions/dr-0017-one-obligation-one-owner.md", quote = "Each obligation has one owner across ETHOS and every governed repository" }
+zh = { rendering = "归属" }
+en = { rendering = "owner", forms = ["owners"] }
+
+[[concept]]
+id = "model"
+term = "model"
+essence = "The concepts and structure that express meaning, kept as small as meaning allows."
+source = { path = "docs/governance/product-design-contract.md", quote = "preserve meaning with the smallest model" }
+zh = { rendering = "模型" }
+en = { rendering = "model", forms = ["models"] }
+
+[[concept]]
+id = "model-promotion"
+term = "Model Promotion"
+essence = "Revising the model at the smallest affected boundary when valid input cannot be expressed, then recompiling what depends on it."
+source = { path = "docs/governance/product-design-contract.md", quote = "Model Promotion may replace existing abstractions destructively while preserving required meaning and retiring their superseded consumers." }
+zh = { rendering = "修订模型", avoid = ["模型提升"] }
+en = { rendering = "revising the model", forms = ["revises the model", "revise the model"] }
+
+[[concept]]
+id = "authorized-intent-alignment"
+term = "authorized intent alignment"
+essence = "A goal or standard changes only by an explicit, authorized decision, never by quiet relaxation."
+source = { path = "docs/governance/product-design-contract.md", quote = "Revised goals or standards require authorized intent alignment, not silent relaxation to make a result pass." }
+zh = { rendering = "经授权重新对齐意图" }
+en = { rendering = "authorized intent alignment" }
+
+[[concept]]
+id = "observation"
+term = "observed fact"
+essence = "What was seen, judged apart from its explanation and from any proposed fix."
+source = { path = "rules/agents.md", quote = "Separate delegated material into observed fact, inference, and proposed remedy." }
+zh = { rendering = "观察到的" }
+en = { rendering = "observation", forms = ["observed"] }
+
+[[concept]]
+id = "inference"
+term = "inference"
+essence = "An explanation of what was seen, which may be wrong while the observation stands."
+source = { path = "rules/agents.md", quote = "Separate delegated material into observed fact, inference, and proposed remedy." }
+zh = { rendering = "推断的原因" }
+en = { rendering = "inference" }
+
+[[concept]]
+id = "remedy"
+term = "proposed remedy"
+essence = "A proposed fix; rejecting it rejects neither the observation nor the inference."
+source = { path = "rules/agents.md", quote = "Separate delegated material into observed fact, inference, and proposed remedy." }
+zh = { rendering = "补救办法", forms = ["提出的补救办法"] }
+en = { rendering = "proposed remedy" }
+
+[[concept]]
+id = "interchangeable-agents"
+term = "interchangeable Agent capabilities"
+essence = "Capabilities that can be replaced without losing meaning or authority."
+source = { path = "docs/governance/product-design-contract.md", quote = "interchangeable Agent capabilities" }
+zh = { rendering = "可以互相替换的 Agent" }
+en = { rendering = "interchangeable Agents" }
+
+[[concept]]
+id = "actual-benefit"
+term = "actual benefit"
+essence = "Shown only by observations bound to the deployed version, environment, baseline and window."
+source = { path = "docs/governance/product-design-contract.md", quote = "actual benefit requires observations bound to the deployed identity, environment, baseline and observation window." }
+zh = { rendering = "实际效益", avoid = ["实际收益"] }
+en = { rendering = "actual benefit" }
+
+[[concept]]
+id = "meaning"
+term = "meaning"
+essence = "What a source or request means, kept intact through every handoff; distinct from intent, which is what is to be solved."
+source = { path = "docs/governance/product-design-contract.md", quote = "preserve meaning with the smallest model" }
+zh = { rendering = "原意", avoid = ["本意"] }
+en = { rendering = "meaning" }

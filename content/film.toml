@@ -10,6 +10,8 @@ documents_folder = "ethos-introduction-film"
 entry = "content/index.html"
 # The commit and digests of the canonical documents the films explain.
 source_manifest = "content/source-manifest.json"
+# What each concept the film names means in those documents, and each edition's words for it.
+concepts = "content/concepts.toml"
 
 # Each edition's folder of script, cast and player, and its 16:9 cover.
 [editions.zh]
@@ -23,23 +25,24 @@ cover = "assets/cover/ethos-cover-en.png"
 # qualifies.
 caption_terms = [
   "Work Lane",
-  "Work Lanes",
   "trust kernel",
   "official Change",
-  "compare-and-swap",
-  "Model Promotion",
-  "ETHOS status command",
-  "acceptance criteria",
-  "local proof",
-  "code-hosting platform",
-  "continuous integration",
-  "merge request",
-  "candidate branch",
-  "source of truth",
-  "control system",
-  "isomorphic governance",
+  "Product Design Contract",
   "market-data pipeline",
-  "stock-selection signal",
+  "code-hosting platforms",
+  "local proof",
+  "fresh facts",
+  "separate planes of evidence",
+  "authorized intent alignment",
+  "proposed remedy",
+  "source of truth",
+  "actual benefit",
+  "stock code",
+  "revision number",
+  "development branch",
+  "version control",
+  "issue tracker",
+  "status output",
 ]
 
 # The fonts the picture stages below fonts/, in this order: Noto Sans CJK SC, subset to the
