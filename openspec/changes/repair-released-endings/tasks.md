@@ -13,7 +13,7 @@
 
 ## 3. Render, review and delivery
 
-- [ ] 3.1 Render, package and verify both editions; verify the technical checks and that the tracked tree is unchanged.
+- [x] 3.1 Render, package and verify both editions; verify the technical checks and that the tracked tree is unchanged. `film:picture`, `film:package` and `film:verify` passed for both editions at edff7bf (18:36), and the chain left no tracked change; the review round's measurements find every thought's take and delivered ending natural, with no released tail.
 - [ ] 3.2 Pass the independent production review of the exact build at 90 or more overall and in every declared dimension; a fixed build is reviewed again.
 - [ ] 3.3 Deliver both editions to `~/Documents/ethos-introduction-film/` and read them back; verify every delivered file's SHA-256, both players in a real browser, and that each replaced `v1.0.0` file lies in the rollback copy.
 - [ ] 3.4 Record the user's acceptance of the delivered films; verify that the record names both editions' delivered films, and keep the rollback copy until it exists.
