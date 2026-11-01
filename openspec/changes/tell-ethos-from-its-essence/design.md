@@ -66,16 +66,16 @@ The film answers the viewer's questions in their natural order: what a single "i
 | ---- | -------------------------------------------------------------------------------------------------------------------- | ------: |
 | 01   | An Agent reports "done, all tests pass". What does that sentence establish?                                          |      60 |
 | 02   | Why reliance is the hard part: lost meaning, claims beyond evidence, unsafe effects, and the cost of more governance |     120 |
-| 03   | What ETHOS is: the path, the promise and the small kernel                                                            |     120 |
-| 04   | Rule one, in the story: the summary that lost the exception                                                          |     100 |
+| 03   | What ETHOS is: the path, the promise and the small kernel                                                            |     125 |
+| 04   | Rule one, in the story: the summary that lost the exception                                                          |     105 |
 | 05   | Rule two: what "all tests pass" does and does not permit                                                             |     100 |
-| 06   | Rule three: the remembered branch and the green dashboard against a write-time check                                 |     100 |
-| 07   | Rule four: the temporary script and the side sheet that retire                                                       |      80 |
-| 08   | The requirement's whole life, and the second correction that revises the model                                       |     150 |
-| 09   | Back to the opening sentence; the mark                                                                               |      40 |
-|      | Credits                                                                                                              |      30 |
+| 06   | Rule three: the remembered branch and the green dashboard against a write-time check                                 |     105 |
+| 07   | Rule four: the temporary script and the side sheet that retire                                                       |      85 |
+| 08   | The requirement's whole life, and the second correction that revises the model                                       |     155 |
+| 09   | Back to the opening sentence; the mark                                                                               |      42 |
+|      | Credits                                                                                                              |       3 |
 
-Five chapters group the parts: the question (01–02), what ETHOS is (03), why it is built this way (04–07), one requirement's life (08) and the close (09). About 650 s of each edition is speech: at most about 2,900 Chinese characters at 4.5 per articulated second, and about 1,600 English words at 150 per minute. What and why take about 620 of the 870 s before the credits.
+Five chapters group the parts: the question (01–02), what ETHOS is (03), why it is built this way (04–07), one requirement's life (08) and the close (09). What and why take 700 of the 897 s before the credits. About 740 s of each edition is speech: about 3,200 Chinese units at no more than 4.5 per articulated second, and about 2,150 English words, about 150 per minute over the film. The narrator spoke v1 at 5.96 Chinese units and 3.87 English words per articulated second, which the user found too fast. The slower pace comes from the voice itself, through an in-context reference derived from the same identity root at the slower rate, and is qualified on a sample before full narration; speech is never time-stretched.
 
 ### 3. The running story
 
