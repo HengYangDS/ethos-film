@@ -28,9 +28,9 @@
 
 ## 5. Render, review and delivery
 
-- [ ] 5.1 Render, package and verify both editions; verify the technical checks and that the tracked tree is unchanged.
-- [ ] 5.2 Pass the independent production review of the exact build at 90 or more overall and in every declared dimension; a fixed build is reviewed again.
-- [ ] 5.3 Deliver both editions to `~/Documents/ethos-introduction-film/` and read them back; verify every delivered file's SHA-256, both players in a real browser, and that each replaced file of the previous film lies in the rollback copy.
+- [x] 5.1 Render, package and verify both editions; verify the technical checks and that the tracked tree is unchanged.
+- [x] 5.2 Pass the independent production review of the exact build at 90 or more overall and in every declared dimension; a fixed build is reviewed again.
+- [x] 5.3 Deliver both editions to `~/Documents/ethos-introduction-film/` and read them back; verify every delivered file's SHA-256, both players in a real browser, and that each replaced file of the previous film lies in the rollback copy.
 - [ ] 5.4 Record the user's acceptance of the delivered films; verify that the record names both editions' delivered films, and keep the rollback copy until it exists.
 
 ## 6. Publication
