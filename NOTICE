@@ -33,19 +33,20 @@ THIRD-PARTY SOFTWARE AND MODELS
 The repository includes no third-party code. The build installs the following under
 their own licenses, which the licenses above do not cover:
 
-- filmkit 0.1.1, the film engine, from https://github.com/HengYangDS/filmkit, under the
+- filmkit 0.4.0, the film engine, from https://github.com/HengYangDS/filmkit, under the
   MIT License;
-- HyperFrames 0.8.150, puppeteer-core 25.12.0 and @puppeteer/browsers 3.2.3, from npm,
-  under the Apache License 2.0;
+- HyperFrames 0.9.3, puppeteer-core 25.16.0 and @puppeteer/browsers 3.2.6, from npm,
+  under the Apache License 2.0, and undici 7.30.1, which `package.json` selects for
+  HyperFrames, from npm, under the MIT License;
 - GSAP 3.15.0, from npm, under its standard no-charge license
   (https://gsap.com/standard-license); the build copies its minified script into each
   staged picture document;
-- esbuild 0.25.12, from npm, under the MIT License, which bundles the composition's
+- esbuild 0.28.2, from npm, under the MIT License, which bundles the composition's
   modules under picture/film/ into picture/film.js;
 - Prettier 3.9.10, from npm, under the MIT License, for the Markdown format check;
 - Chrome Headless Shell 152.0.7977.30, which the supply task installs, under the
   licenses of Chromium and its components;
-- mlx-audio 0.5.8 and MLX 0.32.3 under the MIT License, with the other Python packages
+- mlx-audio 0.6.3 and MLX 0.32.4 under the MIT License, with the other Python packages
   that uv.lock pins, each under its own license;
 - the speech models that the supply task downloads, each under the Apache License 2.0:
   mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16 at revision a6eb4f68,

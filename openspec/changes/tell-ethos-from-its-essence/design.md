@@ -123,6 +123,10 @@ The picture uses the ETHOS palette (ink, paper, one cinnabar accent and a muted 
 
 The source manifest pinned ETHOS v0.2.0-alpha.25 and the SHA-256 of every cited document, and was re-pinned to v0.2.0-alpha.27, the latest release, before the script was frozen (task 1.1). Language review adds concept fidelity as a scored dimension and reads the concept contract with the script; a rendering that narrows, personifies or substitutes a concept is a material finding. The bilingual script, with the concept contract, goes to the user before any narration.
 
+### 8. Supply
+
+On 2026-11-02 the owner asked that every supply move to its latest stable release. The film moves to `filmkit` 0.4.0, which renders with HyperFrames 0.9.3, keeps Chrome Headless Shell 152.0.7977.30 and the `undici` 7.30.1 override, and narrates with mlx-audio 0.6.3 and MLX 0.32.4; puppeteer-core 25.16.0 and @puppeteer/browsers 3.2.6 move with it. esbuild moves to 0.28.2 and bundles `picture/film.js` byte for byte as 0.25.12 did. Node moves to 26.13.0, uv to 0.13.6, the CI's Mise to 2026.10.25, hatchling to 1.33.0, coverage to 7.17.0 and pytest to 9.2.0, and both locks take the newest releases their declarations admit; OSV reports no advisory in either lock. Python stays at 3.12.16, the newest release of the 3.12 line. The essence edition is narrated, composed and rendered on this supply from the start; a renderer that HyperFrames publishes during its production moves with the next recheck, as HyperFrames 0.9.4 does.
+
 ## Alternatives Considered
 
 | Approach                                       | Trade-off                                                                                                                         | Decision |
@@ -144,7 +148,7 @@ The source manifest pinned ETHOS v0.2.0-alpha.25 and the SHA-256 of every cited 
 
 1. The user approved the concept contract's renderings on 2026-11-01.
 2. Specifications and tasks follow; the scripts are written and reviewed, then approved by the user. The user approved revision 4 on 2026-11-02.
-3. After filmkit v0.3.0, the release with the new checks, is pinned, the narration is synthesized, checked and heard by the user, then the picture is composed, rendered and reviewed.
+3. After filmkit v0.3.0, the release with the new checks, is pinned, and v0.4.0 with the latest stable supply after it, the narration is synthesized, checked and heard by the user, then the picture is composed, rendered and reviewed.
 4. Both editions are delivered to Documents with readback, replacing v1.0.x only after qualification; v2.0.0 is released after the user confirms. v1.0.x stays available as its Release assets.
 
 ## Open Questions
