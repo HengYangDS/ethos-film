@@ -60,8 +60,8 @@
       "thought": 1.62,
       "question": 1.77,
       "opening": 2.5,
-      "paragraph": 2.3,
-      "chapter": 2.6,
+      "paragraph": 2.0,
+      "chapter": 2.4,
       "closing": 1.7
     },
     "thought_pause_range": [

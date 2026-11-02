@@ -31,6 +31,22 @@
           "text_sha256": "52bff83bb7b59ebd93b335195dbf08a660ccf86a0622cf8114c5971ca28e9ed8"
         }
       }
+    },
+    "04": {
+      "groups": {
+        "1": {
+          "seed": 91790,
+          "text_sha256": "3c8598cf5359b04235bec5fcdc4e7abcf14099221c2b860aad0cd8e1348c6c4b"
+        }
+      }
+    },
+    "06": {
+      "groups": {
+        "1": {
+          "seed": 115549,
+          "text_sha256": "884e2fcaceb667cbe6d0a8f5006b32d257b6632ff650b9771e442d113bf3487f"
+        }
+      }
     }
   }
 }
