@@ -4,6 +4,14 @@ All notable changes to the ETHOS introduction films and their build are recorded
 
 ## [Unreleased]
 
+### Added
+
+- `CONTRIBUTING.md`: how to prepare the tools, change the films in an ETHOS Work Lane, verify a change, rebuild and compare the films, commit, and cut and publish a release.
+
+### Changed
+
+- The repository runs ETHOS 0.2.0-alpha.27, and its CI workflow uses `jdx/mise-action` 5.2.5.
+
 ## [1.0.1] - 2026-11-02
 
 ### Fixed
