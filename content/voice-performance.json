@@ -103,6 +103,11 @@
             "target_reading": "bú jiàn le"
           },
           {
+            "term": "两种",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "liǎng zhǒng"
+          },
+          {
             "term": "中",
             "kind": "contextual-mandarin-word",
             "target_reading": "zhōng"
@@ -178,6 +183,12 @@
             "kind": "contextual-mandarin-word",
             "target_reading": "xiě de",
             "dictionary_disagreement": "得 is the complement particle de after a verb; the dictionary reads 得 alone as dé."
+          },
+          {
+            "term": "写明了",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xiě míng le",
+            "dictionary_disagreement": "了 is the aspect particle after 写明 in 写明了这些; the dictionary's segmenter takes 明了 and reads liǎo."
           },
           {
             "term": "冲着",
@@ -277,6 +288,11 @@
             "target_reading": "zhǐ wèi"
           },
           {
+            "term": "只会",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ huì"
+          },
+          {
             "term": "只写",
             "kind": "contextual-mandarin-word",
             "target_reading": "zhǐ xiě"
@@ -328,6 +344,11 @@
             "dictionary_disagreement": "了 is the aspect particle after 证明; the dictionary's segmenter takes 明了 in 证明了它 and reads liǎo."
           },
           {
+            "term": "只说明",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ shuō míng"
+          },
+          {
             "term": "和",
             "kind": "contextual-mandarin-word",
             "target_reading": "hé"
@@ -358,9 +379,19 @@
             "target_reading": "duō shǎo"
           },
           {
+            "term": "大",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "dà"
+          },
+          {
             "term": "好",
             "kind": "contextual-mandarin-word",
             "target_reading": "hǎo"
+          },
+          {
+            "term": "好处",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "hǎo chù"
           },
           {
             "term": "完了",
@@ -371,6 +402,12 @@
             "term": "少",
             "kind": "contextual-mandarin-word",
             "target_reading": "shǎo"
+          },
+          {
+            "term": "少得多",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shǎo de duō",
+            "dictionary_disagreement": "少 is shǎo, less, and 得 the complement particle de in 少得多; the dictionary reads shào and dé."
           },
           {
             "term": "就当",
@@ -444,6 +481,11 @@
             "term": "执行",
             "kind": "contextual-mandarin-word",
             "target_reading": "zhíxíng"
+          },
+          {
+            "term": "找得到",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǎo de dào"
           },
           {
             "term": "把",
@@ -542,6 +584,11 @@
             "target_reading": "de"
           },
           {
+            "term": "相关",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xiāng guān"
+          },
+          {
             "term": "看",
             "kind": "contextual-mandarin-word",
             "target_reading": "kàn"
@@ -575,6 +622,11 @@
             "term": "答案",
             "kind": "contextual-mandarin-word",
             "target_reading": "dá àn"
+          },
+          {
+            "term": "算数",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "suàn shù"
           },
           {
             "term": "系统",
@@ -687,6 +739,12 @@
             "target_reading": "shuō bù qīng"
           },
           {
+            "term": "说得清",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "shuō de qīng",
+            "dictionary_disagreement": "得 is the potential-complement particle de in 说得清; the dictionary reads 得 alone as dé."
+          },
+          {
             "term": "说明",
             "kind": "contextual-mandarin-word",
             "target_reading": "shuō míng"
@@ -736,6 +794,11 @@
             "term": "还是",
             "kind": "contextual-mandarin-word",
             "target_reading": "hái shì"
+          },
+          {
+            "term": "进行",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "jìn xíng"
           },
           {
             "term": "退场",
@@ -800,7 +863,8 @@
           "Eethos",
           "Agent",
           "GitLab",
-          "GitHub"
+          "GitHub",
+          "Git"
         ],
         "target_scope": "Every Chinese segment; the embedded English names are spoken as English words inside the Chinese clauses."
       },

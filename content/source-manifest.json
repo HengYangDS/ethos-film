@@ -1,10 +1,10 @@
 {
   "repository": "https://github.com/HengYangDS/ethos",
-  "commit": "63deedc091d4d639da2d3f094193d0b9a8fee587",
+  "commit": "18ed740e035542bf4ce26b7021cc7a3ceebb0ffa",
   "members": [
     {
       "path": "README.md",
-      "sha256": "782e0508adfb2994fc87a7a5768c81fd762bebe059cd549cc227c681cc06fa50"
+      "sha256": "818ae3979859052397f7a9d6a364301cafe881066790a28f92a71ca744e4043d"
     },
     {
       "path": "docs/governance/product-design-contract.md",
@@ -32,7 +32,7 @@
     },
     {
       "path": "docs/decisions/dr-0010-source-budget-non-compensation.md",
-      "sha256": "2f4baa7b6d2a25ba86f7b446d49bcff3b95116c8ee57cb6ad326eadc704a5f14"
+      "sha256": "78224be845800611072a5e44a664e2c602d02a9793ec5ab52d90bd026e101db6"
     },
     {
       "path": "docs/decisions/dr-0014-comparative-correction.md",
@@ -61,6 +61,10 @@
     {
       "path": "rules/agents.md",
       "sha256": "203103fd9e4b2efed84df5ef7b2c041136bb67f5320ac8b471d73df80e861796"
+    },
+    {
+      "path": "docs/governance/evolution-campaign.md",
+      "sha256": "f9edeaa443facc69e10e8827fcbd3e13174e41d539041b13b82e19cb04bb17f4"
     }
   ]
 }
