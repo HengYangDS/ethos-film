@@ -8,9 +8,9 @@ Author: Yang HENG.
 
 ## The films
 
-The films are published as release assets, together with their captions, transcripts, covers, independent review records and `SHA256SUMS`. [`content/release.json`](content/release.json) records each asset's name, size and SHA-256, the digests of the soundtrack and staged picture each edition was made from, and those of the film-bound sources: the scripts, narration texts, voice contracts, reference recordings, source manifest, covers, fonts, composition and pages whose exact bytes the build reads. The independent review of the published films scored the Chinese edition 94.5 and the English edition 95.1 out of 100, with every dimension at 92 or above and no material finding. That review scores the audio from automated evidence; human listening is a separate acceptance.
+The films are published as release assets, together with their captions, transcripts, covers, independent review records and `SHA256SUMS`. [`content/release.json`](content/release.json) records each asset's name, size and SHA-256, the digests of the soundtrack and staged picture each edition was made from, and those of the film-bound sources: the scripts, narration texts, voice contracts, reference recordings, source manifest, covers, fonts, composition and pages whose exact bytes the build reads. The independent review of the published films scored the Chinese edition 95.1 and the English edition 95.4 out of 100, with every dimension at 94 or above and no material finding. That review scores the audio from automated evidence; human listening is a separate acceptance.
 
-The films of `v1.0.0` are the published editions. A later release that changes only how they are built publishes no films of its own, and its tag names the source that rebuilds them.
+The films of `v1.0.1` are the published editions. A later release that changes only how they are built publishes no films of its own, and its tag names the source that rebuilds them.
 
 ## Rebuilding the films
 
@@ -44,10 +44,10 @@ The stages also run one at a time: `film:narrate`, `film:sound`, `film:picture`,
 
 ## Comparing a rebuild with the published films
 
-Once a release is published, download its assets into `build/artifacts/release/` and compare; for `v1.0.0`:
+Once a release is published, download its assets into `build/artifacts/release/` and compare; for `v1.0.1`:
 
 ```bash
-gh release download v1.0.0 --repo HengYangDS/ethos-film --dir build/artifacts/release
+gh release download v1.0.1 --repo HengYangDS/ethos-film --dir build/artifacts/release
 ```
 
 ```bash

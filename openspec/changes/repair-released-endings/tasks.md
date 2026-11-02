@@ -20,7 +20,7 @@
 
 ## 4. Release
 
-- [ ] 4.1 Record the release manifest from the accepted films, set `VERSION` to `1.0.1` and add its `CHANGELOG.md` entry; verify a rebuild against the manifest with `film:compare` and prepare the `v1.0.1` release folder with `SHA256SUMS`.
+- [x] 4.1 Record the release manifest from the accepted films, set `VERSION` to `1.0.1` and add its `CHANGELOG.md` entry; verify a rebuild against the manifest with `film:compare` and prepare the `v1.0.1` release folder with `SHA256SUMS`. A clean clone of `e58ba91` rebuilt both editions on 2026-11-02 with the README's commands, and `film:compare` passed: every soundtrack, caption, transcript, cover and staged picture document is byte-identical, every frame is at or above the 45 dB floor (lowest 62.0 dB), and the tracked tree is unchanged (`build/evidence/reproduction/v1.0.1-clean-clone/`). `build/artifacts/release/` holds the 16 assets, each matching `SHA256SUMS`.
 
 ## Workflow follow-up
 

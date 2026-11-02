@@ -4,6 +4,13 @@ All notable changes to the ETHOS introduction films and their build are recorded
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-02
+
+### Fixed
+
+- Eighteen thoughts no longer end in a swallowed syllable, sixteen in the Chinese edition and two in the English edition. Each is narrated again as a run-on take that finishes its last syllable and ends in its own quiet. The user heard the borderline endings that were kept and left the adoption of the retakes to the maintainer, who adopted all eighteen. Both editions still last exactly 900 seconds, no thought is released while its voice is heard, and the picture follows the new timelines. The independent review scored the Chinese edition 95.1 and the English edition 95.4, with every dimension at 94 or above and no material finding.
+- A clean clone of the release source rebuilt on an Apple M5 Max reproduces the published editions: every soundtrack, caption, transcript, cover and staged picture document is byte-identical, and each film has the published frame count, decoded audio, streams, chapters and tags, with every frame at or above the 45 dB PSNR floor; the lowest frame measured 62.0 dB.
+
 ## [1.0.0] - 2026-11-01
 
 ### Added
@@ -14,5 +21,6 @@ All notable changes to the ETHOS introduction films and their build are recorded
 - ETHOS governance, with its portable proof projected into GitHub Actions and GitLab CI.
 - The MIT License for the code and CC BY 4.0 for the films' content, with the third-party notices and the narrator's provenance in `NOTICE`.
 
-[Unreleased]: https://github.com/HengYangDS/ethos-film/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/HengYangDS/ethos-film/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/HengYangDS/ethos-film/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/HengYangDS/ethos-film/releases/tag/v1.0.0
