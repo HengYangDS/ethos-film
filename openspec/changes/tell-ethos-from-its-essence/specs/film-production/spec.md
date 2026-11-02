@@ -36,7 +36,7 @@ Every claim SHALL keep the conditions, modality and scope of its cited sections.
 
 ### Requirement: Each edition meets the media contract
 
-Each edition SHALL be exactly 900 seconds at native progressive 60 fps, in five chapters, with a UHD master and a captioned 1080p viewing edition, 48 kHz stereo narration only, no music and purposeful 2D motion. Each film SHALL carry the release metadata its script declares, small single-line captions, a designed cover with the author Yang HENG, a transcript, chapters and a player.
+Each edition SHALL be exactly 840 seconds at native progressive 60 fps, in five chapters, with a UHD master and a captioned 1080p viewing edition, 48 kHz stereo narration only, no music and purposeful 2D motion. Each film SHALL carry the release metadata its script declares, small single-line captions, a designed cover with the author Yang HENG, a transcript, chapters and a player.
 
 #### Scenario: A packaged edition reads back its contract
 
@@ -102,10 +102,10 @@ The film SHALL keep a concept contract that binds each ETHOS concept the narrati
 
 ### Requirement: The narration keeps an unhurried pace
 
-Each edition SHALL be spoken at a pace a first-time listener can follow: the Chinese at no more than 4.5 units per articulated second, and the English at no more than 150 words per minute over the film. The pace SHALL come from the voice's native speech, never from time-stretching.
+Each edition SHALL be spoken at the narrator's native articulation, keeping the natural pauses inside each take, with about 0.8 seconds between thoughts, 1.6 seconds between paragraphs and 2.6 seconds between parts, so that a first-time listener can follow. Each part SHALL take its natural length, and only each edition's total SHALL be fitted to its runtime, through those pauses, by no more than a fifth either way. The pace SHALL come from the voice's native speech, never from time-stretching.
 
 #### Scenario: A qualified narration meets its pace
 
 - **WHEN** an edition's selected narration is measured
-- **THEN** its articulated rate or its rate over the film is within its bound
+- **THEN** its median pauses between thoughts, between paragraphs and between parts each lie within a fifth of 0.8, 1.6 and 2.6 seconds
 - **AND** every selected take is native model output without a tempo transform

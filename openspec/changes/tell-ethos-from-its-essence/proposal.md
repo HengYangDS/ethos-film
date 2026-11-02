@@ -8,7 +8,7 @@ The user also found renderings that change ETHOS's concepts. The Chinese edition
 
 ## What Changes
 
-- **Breaking:** a v2.0.0 edition replaces the v1 script, narration and picture. Each edition stays 900 s at 60 fps, 2D, without music, with the same narrator. It states what ETHOS is and why it exists before how it works, carries the four judgment rules of the Product Design Contract's Root Constraint as its spine, and tells one requirement's life as its running story. The v1.0.x films remain available as their Release assets.
+- **Breaking:** a v2.0.0 edition replaces the v1 script, narration and picture. Each edition lasts 14 minutes (840 s) at 60 fps, 2D, without music, with the same narrator, spoken at the narrator's native pace. It states what ETHOS is and why it exists before how it works, carries the four judgment rules of the Product Design Contract's Root Constraint as its spine, and tells one requirement's life as its running story. The v1.0.x films remain available as their Release assets.
 - A concept contract binds every ETHOS concept the film names to its definition at the pinned source, its essence in one sentence and one approved rendering in each edition, with the counterexamples found in v1. Both editions are composed from that contract, not translated from each other, and the user approves its renderings with the script.
 - The pronunciation contract declares one reading for every name the narration speaks, ETHOS as /ˈiːθɒs/ in both editions, and the context reading of every Chinese polyphone; every occurrence in the delivered narration is checked against the declared reading.
 - Language review judges concept fidelity against the contract's definitions as its own dimension.

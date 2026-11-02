@@ -62,20 +62,22 @@ The film answers the viewer's questions in their natural order: what a single "i
 
 ### 2. Structure and time
 
-| Part | Content                                                                                                              | Seconds |
-| ---- | -------------------------------------------------------------------------------------------------------------------- | ------: |
-| 01   | An Agent reports "done, all tests pass". What does that sentence establish?                                          |      53 |
-| 02   | Why reliance is the hard part: lost meaning, claims beyond evidence, unsafe effects, and the cost of more governance |     107 |
-| 03   | What ETHOS is: the path, the promise and the small kernel                                                            |     136 |
-| 04   | Rule one, in the story: the summary that lost the exception                                                          |     120 |
-| 05   | Rule two: what "all tests pass" does and does not permit                                                             |      82 |
-| 06   | Rule three: the remembered branch and the green dashboard against a write-time check                                 |      98 |
-| 07   | Rule four: the temporary script and the side sheet that retire                                                       |      73 |
-| 08   | The requirement's whole life, and the second correction that revises the model                                       |     181 |
-| 09   | Back to the opening sentence; the mark                                                                               |      47 |
-|      | Credits                                                                                                              |       3 |
+| Part | Content                                                                                                              | Chinese s | English s |
+| ---- | -------------------------------------------------------------------------------------------------------------------- | --------: | --------: |
+| 01   | An Agent reports "done, all tests pass". What does that sentence establish?                                          |        54 |        57 |
+| 02   | Why reliance is the hard part: lost meaning, claims beyond evidence, unsafe effects, and the cost of more governance |        98 |       101 |
+| 03   | What ETHOS is: the path, the promise and the small kernel                                                            |       128 |       127 |
+| 04   | Rule one, in the story: the summary that lost the exception                                                          |       111 |       109 |
+| 05   | Rule two: what "all tests pass" does and does not permit                                                             |        78 |        72 |
+| 06   | Rule three: the remembered branch and the green dashboard against a write-time check                                 |        91 |        86 |
+| 07   | Rule four: the temporary script and the side sheet that retire                                                       |        68 |        63 |
+| 08   | The requirement's whole life, and the second correction that revises the model                                       |       159 |       171 |
+| 09   | Back to the opening sentence; the mark                                                                               |        42 |        46 |
+|      | Credits                                                                                                              |         3 |         3 |
 
-Five chapters group the parts: the question (01–02), what ETHOS is (03), why it is built this way (04–07), one requirement's life (08) and the close (09). What and why take 669 of the 897 s before the credits. The user approved the revision-4 script with these seconds on 2026-11-02; they give every part one pace. The Chinese edition says 3,067 units, 3.7 to 4.1 per articulated second in each part (no more than 4.5), and the English edition 2,067 words, 124 to 143 words per minute in each part and 138 over the film (no more than 150). The narrator spoke v1 at 5.96 Chinese units and 3.87 English words per articulated second, which the user found too fast. The slower pace comes from the voice itself, through an in-context reference derived from the same identity root at the slower rate, and is qualified on a sample before full narration; speech is never time-stretched.
+Five chapters group the parts: the question (01–02), what ETHOS is (03), why it is built this way (04–07), one requirement's life (08) and the close (09). The narrator's articulation cannot be slowed: a reference at a slower rate still left about 6.0 Chinese units and 4.0 to 4.4 English words per articulated second, so revision 4 lasted only about 671 s at its natural pace. On 2026-11-02 the user agreed to restore the length with more text rather than longer silences, delegated the remaining choices, and allowed an unreasonable runtime to change in whole minutes. At the native articulation, with about 0.8 s between thoughts, 1.6 s between paragraphs and 2.6 s between parts, revision 7 runs about 853 s in Chinese and 857 s in English, while 15 minutes would stretch every pause by about 40%; each edition therefore lasts 14 minutes, 837 s before 3 s of credits, its pauses fitted to that by no more than a fifth. The Chinese edition says 3,799 units and the English edition 2,579 words, 4.5 units per second and 184 words per minute over the film. The seconds above estimate each part's natural length from the rates measured on revision-4 narration (5.12 units and 3.46 words per second) with those pauses and 2.6 s between parts; each part's measured length replaces them once both editions are narrated. Speech is never time-stretched.
+
+The user approved revision 7 (SHA-256 `221ae7d0…`) and its samples on 2026-11-02. Its words are cut into 101 thoughts in each edition, at the same places, so that each thought holds one idea. Three long sentences are cut at a sentence end, so three marks between their clauses become full stops, no word changing: the semicolon after 往下走 in 05, the colons after 不靠前一个的记忆 and 三件事要分开判断 in 08, and in English the colon after "the last one's memory" in 08, whose next word takes its capital.
 
 ### 3. The running story
 
@@ -121,12 +123,12 @@ The source manifest pins ETHOS v0.2.0-alpha.25 and the SHA-256 of every cited do
 
 ## Alternatives Considered
 
-| Approach                                       | Trade-off                                                                                                             | Decision |
-| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- |
-| Repair v1's wording in place                   | Cheapest; fixes the concepts but keeps the mechanism-first order the user rejected.                                   | Rejected |
-| A lecture on the four rules                    | States the essence directly, but abstract rules heard once are hard to hold and nothing shows them at work.           | Rejected |
-| Essence first, one running story               | Answers what and why first and shows each rule in a scene; needs a new picture and a new story.                       | Chosen   |
-| A short essence film and a long mechanism film | Serves both audiences, but the user fixed one 15-minute film, and 15 minutes holds the essence and a compressed life. | Rejected |
+| Approach                                       | Trade-off                                                                                                                         | Decision |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| Repair v1's wording in place                   | Cheapest; fixes the concepts but keeps the mechanism-first order the user rejected.                                               | Rejected |
+| A lecture on the four rules                    | States the essence directly, but abstract rules heard once are hard to hold and nothing shows them at work.                       | Rejected |
+| Essence first, one running story               | Answers what and why first and shows each rule in a scene; needs a new picture and a new story.                                   | Chosen   |
+| A short essence film and a long mechanism film | Serves both audiences, but the user fixed one film of about 15 minutes, now 14, and that holds the essence and a compressed life. | Rejected |
 
 ## Risks / Trade-offs
 
