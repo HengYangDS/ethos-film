@@ -116,6 +116,26 @@
             "spoken_text": "Done this way, the pipeline would leave an improvement that can be verified, and the research would write down the conditions under which its conclusion holds, for the next study to question. ",
             "cut_sample": 350160
           }
+        },
+        "1": {
+          "seed": 99723,
+          "text_sha256": "5ae16a431570f4d8f768e9d499b5a575cf20e46c1e4637bcbd0f5fcef1872e2c",
+          "run_on": {
+            "spoken_text": "The design of Ethos holds to four plain rules of judgment. Preserve meaning with the smallest model that is enough, and make a distinction only where it changes what we do. Keep authority separate from views, because seeing is not permission. And retire a mechanism when its obligation is gone. ",
+            "cut_sample": 158160
+          }
+        }
+      }
+    },
+    "11": {
+      "groups": {
+        "5": {
+          "seed": 147230,
+          "text_sha256": "65e578619921651f675e3e1c07fc117739370e4d1eb14be3aefbea56e24c27bc",
+          "run_on": {
+            "spoken_text": "Continuous integration, the service that runs checks on every push, works independently and observes without holding a lease or any authority.",
+            "cut_sample": 166320
+          }
         }
       }
     }
