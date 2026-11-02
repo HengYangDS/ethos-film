@@ -7,7 +7,7 @@
 
 ## 2. Engine
 
-- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.4.0 is pinned and installs with the supply of design §8; `mise run check` waits for the essence picture and its font subsets (5.2), the v2 readings (4.2) and the release manifest (7.1).
+- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.4.0 is pinned and installs with the supply of design §8; `mise run check` waits for the essence picture and its font subsets (5.2) and the release manifest (7.1).
 
 ## 3. Script
 
@@ -18,7 +18,7 @@
 ## 4. Narration and sound
 
 - [x] 4.1 Qualify the narrator at the required pace on a sample of each edition, deriving an in-context reference from the identity root where the pace needs one; verify the sample's rate, its recorded derivation and that its speaker identity is kept. The samples the user approved on 2026-11-02 were narrated from the unmodified identity root (Chinese `a355801a`, English `a763e48e`) at temperature 0.46 with an in-context repetition penalty of 1.05, so no derived reference is needed and the casts hold exactly those settings. On 2026-11-03 one take of every paragraph-level thought ran 5.11 Chinese units and 3.46 English words a second, which fits 840 s at about 1.6 s a join (design §2).
-- [ ] 4.2 Declare every name's spoken form and every ambiguous Chinese reading in the pronunciation contract, re-derive the review readings' English heteronym uses for the v2 scripts, and audition each; verify that the coverage check passes, that every review reading names an occurrence in the current scripts and that each audition is heard as declared. `content/review/readings.json` still keys its English uses to the v1 segments.
+- [ ] 4.2 Declare every name's spoken form and every ambiguous Chinese reading in the pronunciation contract, re-derive the review readings' English heteronym uses for the v2 scripts, and audition each; verify that the coverage check passes, that every review reading names an occurrence in the current scripts and that each audition is heard as declared. Since 2026-11-03 `content/review/readings.json` keys the 21 English heteronym occurrences of the v2 scripts by their part of speech, and the listening plan derives from both scripts; the auditions remain.
 - [ ] 4.3 Narrate both editions and select each thought's take; verify that every take ends on its own, matches its text by recognition and that every occurrence of a declared name or reading matches its approved reference.
 - [ ] 4.4 Assemble each soundtrack and its captions at exactly 840 seconds; verify the runtime, the pace bounds, the program loudness and the caption timing.
 - [ ] 4.5 Have the user listen to both narrations and record the decision; verify that the record names both soundtracks, and reopen 3.1 or 4.3 for a requested change.
