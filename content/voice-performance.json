@@ -2,7 +2,7 @@
   "pronunciation": {
     "schema_version": 2,
     "status": "planned-not-listened",
-    "control_boundary": "Dictionary and occurrence targets are acceptance criteria. Native Qwen Base does not consume IPA or SSML. The normalization below carries the spoken forms the previous ETHOS film adopted after heard errors; no further normalization is proposed without an actually heard error.",
+    "control_boundary": "Dictionary and occurrence targets are acceptance criteria. Native Qwen Base does not consume IPA or SSML. The normalization below carries the spoken forms the previous ETHOS film adopted after heard errors, and three homophones adopted on 2026-11-03 after minimal pairs showed the narration saying 重 as zhòng in 去重 and 当 as dāng in 就当 and 当真相; no further normalization is proposed without an observed error.",
     "sources": [
       {
         "id": "cmudict",
@@ -57,6 +57,27 @@
             "spoken": "Transition Plan",
             "kind": "english-name",
             "source": "previous-film-normalization"
+          },
+          {
+            "display": "去重",
+            "spoken": "去虫",
+            "kind": "homophone",
+            "reading": "qù chóng",
+            "source": "measured-misreading"
+          },
+          {
+            "display": "就当",
+            "spoken": "就荡",
+            "kind": "homophone",
+            "reading": "jiù dàng",
+            "source": "measured-misreading"
+          },
+          {
+            "display": "当真相",
+            "spoken": "荡真相",
+            "kind": "homophone",
+            "reading": "dàng zhēn xiàng",
+            "source": "measured-misreading"
           }
         ],
         "targets": [
@@ -252,12 +273,6 @@
             "target_reading": "qū fēn"
           },
           {
-            "term": "去重",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "qù chóng",
-            "dictionary_disagreement": "重 is chóng, again or repeated, in 去重 (to remove duplicates); the dictionary reads zhòng."
-          },
-          {
             "term": "反倒",
             "kind": "contextual-mandarin-word",
             "target_reading": "fǎn dào"
@@ -405,12 +420,6 @@
             "dictionary_disagreement": "少 is shǎo, less, and 得 the complement particle de in 少得多; the dictionary reads shào and dé."
           },
           {
-            "term": "就当",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "jiù dàng",
-            "dictionary_disagreement": "当 is dàng, to treat as, in 就当已经发布; the dictionary reads dāng."
-          },
-          {
             "term": "干活",
             "kind": "contextual-mandarin-word",
             "target_reading": "gàn huó"
@@ -439,12 +448,6 @@
             "term": "当时",
             "kind": "contextual-mandarin-word",
             "target_reading": "dāng shí"
-          },
-          {
-            "term": "当真相",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "dàng zhēn xiàng",
-            "dictionary_disagreement": "当 is dàng, to take as, and 相 is xiàng in 当真相; the dictionary's segmenter takes 当真 and reads 相 as xiāng."
           },
           {
             "term": "当线索",
