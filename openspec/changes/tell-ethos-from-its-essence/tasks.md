@@ -7,7 +7,7 @@
 
 ## 2. Engine
 
-- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.5.0 is pinned since 2026-11-03 and installs with the supply of design §8, reporting 0.5.0 with mlx-audio 0.6.4 and HyperFrames 0.9.5; `mise run check` waits for the essence picture and its font subsets (5.2) and the release manifest (7.1).
+- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.6.0 is pinned since 2026-11-03 and installs with the supply of design §8, reporting 0.6.0 with mlx-audio 0.6.4 and HyperFrames 0.9.6; `mise run check` waits for the essence picture and its font subsets (5.2) and the release manifest (7.1).
 
 ## 3. Script
 

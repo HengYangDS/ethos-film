@@ -144,6 +144,8 @@ On 2026-11-02 the owner asked that every supply move to its latest stable releas
 
 On 2026-11-03, after the narration and before any picture, the film moves to `filmkit` 0.5.0, which renders with HyperFrames 0.9.5 and narrates with mlx-audio 0.6.4. When `filmkit` 0.5.0 was cut, seven takes that mlx-audio 0.6.4 narrated from their recorded seeds matched their 0.6.3 recordings byte for byte, so the narration keeps every take it binds. The uv lock moves `filmkit` and mlx-audio and the npm lock HyperFrames and semver 7.8.6; every other package was already the newest its declaration admits, and OSV reports no advisory in either lock.
 
+Before the picture renders, on 2026-11-03, the film moves to `filmkit` 0.6.0, which renders with HyperFrames 0.9.6 and keeps Chrome Headless Shell 152.0.7977.30 and the `undici` 7.30.1 override. Its picture task runs `check-picture` before each `render-picture`, so a render refuses a picture that its headless frame, sync and motion audits have not passed as it stands. The uv lock moves only `filmkit` and the npm lock only HyperFrames; mlx-audio stays at 0.6.4, so the narration keeps every take it binds, and OSV reports no advisory in either lock. The same day, before the move, the 0.6.0 audits of the composition over both assembled timelines found no gated finding in 25,201 frames of each edition.
+
 ## Alternatives Considered
 
 | Approach                                       | Trade-off                                                                                                                         | Decision |
