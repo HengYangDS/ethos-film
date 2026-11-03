@@ -33,9 +33,9 @@ THIRD-PARTY SOFTWARE AND MODELS
 The repository includes no third-party code. The build installs the following under
 their own licenses, which the licenses above do not cover:
 
-- filmkit 0.6.0, the film engine, from https://github.com/HengYangDS/filmkit, under the
+- filmkit 0.7.0, the film engine, from https://github.com/HengYangDS/filmkit, under the
   MIT License;
-- HyperFrames 0.9.6, puppeteer-core 25.16.0 and @puppeteer/browsers 3.2.6, from npm,
+- HyperFrames 0.9.8, puppeteer-core 25.16.0 and @puppeteer/browsers 3.2.6, from npm,
   under the Apache License 2.0, and undici 7.30.1, which `package.json` selects for
   HyperFrames, from npm, under the MIT License;
 - GSAP 3.15.0, from npm, under its standard no-charge license
