@@ -136,7 +136,7 @@ The picture uses the ETHOS palette (ink, paper, one cinnabar accent and a muted 
 
 ### 7. Sources and review
 
-The source manifest pinned ETHOS v0.2.0-alpha.25 and the SHA-256 of every cited document, and was re-pinned to v0.2.0-alpha.27, the latest release, before the script was frozen (task 1.1). After the narration it moved to v0.2.0-alpha.28, at which every cited document is unchanged, so the film cites the latest release when it is rendered. Language review adds concept fidelity as a scored dimension and reads the concept contract with the script; a rendering that narrows, personifies or substitutes a concept is a material finding. The bilingual script, with the concept contract, goes to the user before any narration.
+The source manifest pinned ETHOS v0.2.0-alpha.25 and the SHA-256 of every cited document, and was re-pinned to v0.2.0-alpha.27, the latest release, before the script was frozen (task 1.1). After the narration it moved to v0.2.0-alpha.28, at which every cited document is unchanged, so the film cites the latest release when it is rendered. Language review adds concept fidelity as a scored dimension and reads the concept contract with the script; a rendering that narrows, personifies or substitutes a concept is a material finding. The bilingual script, with the concept contract, goes to the user before any narration. The production review scores concept fidelity as well: each reviewer's prompt carries the concept contract and the reading occurrence plans, as in the DDWG films.
 
 ### 8. Supply
 

@@ -72,6 +72,10 @@ subject_and_faithfulness = """\
   ETHOS remains the subject; every claim follows its cited sections with their conditions, \
   modalities and scope; planned capabilities are stated as design; the pipeline and signal \
   examples stay illustrative; human and Agent roles accurate."""
+concept_fidelity = """\
+  each concept the film names keeps its source meaning as the concept contract quotes it, in \
+  the edition's one rendering through narration, captions, titles and picture; no rendering \
+  narrows, personifies, substitutes or literally translates a concept."""
 narrative_and_clarity = """\
   the real problem before the response; terms defined before use; connected argument; clear \
   chapter boundaries; ending returns to the opening; the edition stands alone."""
