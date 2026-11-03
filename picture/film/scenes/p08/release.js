@@ -6,7 +6,7 @@
 import { link } from "../../drawing/links.js";
 import { ctx } from "../../canvas.js";
 import { box, line, measure, ring, stroke } from "../../drawing/strokes.js";
-import { agent, check, clock, lock, person, seal } from "../../drawing/symbols.js";
+import { agent, check, clock, documentIcon, lock, person, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot, tagIcon } from "../../drawing/workspace.js";
 import { commitRow } from "../../drawing/history.js";
 import { listIn, named } from "../../naming/lists.js";
@@ -244,12 +244,14 @@ const STRETCHES = [
 
 /* 08.5, second: the whole journey on one rail, the work at the start of its last stretch, named "from here on" over
  * it; from here on the path is the one ETHOS is designed for, drawn dashed, and the handover between Agents turns
- * dashed on its words. One name beneath says neither has yet completed acceptance, linked to both. */
+ * dashed on its words. Its own documents, on their words, and one name beside them say neither has yet completed
+ * acceptance, linked to both. */
 export function overview(s, t, a) {
   if (a <= 0) return;
-  const [hereAt, pathAt, handoverAt, acceptAt] = cues(s, [
+  const [hereAt, pathAt, docsAt, handoverAt, acceptAt] = cues(s, [
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
+    ["它的文档也写明", "its own documents"],
     ["换 Agent 接手那一段", "the handover between Agents"],
     ["都还没有完成验收", "has not yet completed acceptance"],
   ]);
@@ -297,14 +299,18 @@ export function overview(s, t, a) {
       alpha: h,
     },
   );
-  // Neither stretch has completed acceptance: one name beneath, linked up to the names of both.
+  // Neither stretch has completed acceptance, as its own documents say: the documents on their words, then one name
+  // beside them, the two as one row linked up to the names of both stretches.
   const NY = 700,
     accept = L("尚未完成验收", "has not yet completed acceptance"),
-    half = measure(accept) / 2;
-  nameText(accept, 1100, NY, { alpha: acc });
+    DOC = [40, 52],
+    row = DOC[0] + NAME_GAP + measure(accept),
+    x0 = 1100 - row / 2;
+  documentIcon(x0, NY - DOC[1] / 2, DOC[0], DOC[1], { alpha: a * named(t, docsAt), rows: 3 });
+  nameText(accept, x0 + DOC[0] + NAME_GAP, NY, { align: "left", alpha: acc });
   [
-    [1100 - half - 14, (B[0] + B[1]) / 2, hb.bottom + 12],
-    [1100 + half + 14, (D[0] + D[1]) / 2, db.bottom + 12],
+    [x0 - 14, (B[0] + B[1]) / 2, hb.bottom + 12],
+    [x0 + row + 14, (D[0] + D[1]) / 2, db.bottom + 12],
   ].forEach(([x1, x2, y2]) =>
     link(x1, NY, x2, y2, { route: "hv", alpha: acc, upto: soon(t, acceptAt + 0.05, 0.6) }),
   );

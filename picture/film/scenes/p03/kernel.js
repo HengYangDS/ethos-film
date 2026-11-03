@@ -114,11 +114,23 @@ export function stageKernel(t, a, c) {
     valign: "top",
     alpha: a * named(t, L(c.kernel - 0.55, c.kCut)),
   });
-  // The inputs, each with its mark, named at its left and linked to the kernel round its name.
-  const ats = [c.in1, c.in2, c.in3];
+  // The inputs, each with its mark, named at its left and linked to the kernel round its name. On the words that say
+  // the kernel takes three of them, their three places open, each a ring that its input fills on its own words; the
+  // rings are drawn firm enough to read in a frame seen small.
+  const ats = [c.in1, c.in2, c.in3],
+    places = a * ramp(t, c.inputs - 0.15, 0.4);
   ats.forEach((at, i) => {
     const on = a * ramp(t, at - 0.15, 0.4),
-      y = ys[i];
+      y = ys[i],
+      open = places * (1 - on / Math.max(a, 1e-6));
+    if (open > 0.01)
+      stroke(
+        () => {
+          ctx.moveTo(IX + 30, y);
+          ctx.arc(IX, y, 30, 0, Math.PI * 2);
+        },
+        { color: P.muted, alpha: open, width: 3 },
+      );
     if (on < 0.01) return;
     if (i === 0) paper(IX - 32, y - 40, 64, 80, { alpha: on, rows: 3 });
     if (i === 1)

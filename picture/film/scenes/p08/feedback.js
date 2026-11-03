@@ -12,7 +12,7 @@ import { NAME_GAP, NOTE, nameText } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { cues } from "../../timing/cues.js";
+import { cueFrom, cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
@@ -168,8 +168,8 @@ function verdictMark(i, x, y, alpha) {
 
 /* 08.7. The people watching the pipeline report back along a link to their report, and ETHOS's rule that three
  * things be judged separately is named between them. The three panels then build below on their words, the row moving
- * toward the centre as each joins so it stays balanced; each panel states its part. Last, why they are kept apart:
- * the inference may be wrong, the observation still stands, the remedy is refused, and the observation's check beats
+ * toward the centre as each joins so it stays balanced; each panel states its part. Last, why they are kept apart,
+ * a rule standing between each two panels on the words that say so: the inference may be wrong, the observation still stands, the remedy is refused, and the observation's check beats
  * again as the problem is said to remain. The report's row stands on the panels' three columns, the people over the
  * first, the rule over the middle one and the report over the last, its three names on one baseline, so the row is
  * centred on the frame both alone and over the finished panels. */
@@ -192,6 +192,8 @@ export function judgement(s, t, a) {
     ["被否掉", "rejecting"],
     ["问题不存在", "the problem go away"],
   ]);
+  // The Chinese "要分开" first occurs in the rule's "三件事要分开判断", so it is taken after the remedy's words.
+  const apartAt = cueFrom(s, "要分开", "They stay apart", remSays);
   // The report stands on the centre line until the panels come, then rises to make room for them.
   const p = a * named(t, peopleAt),
     b = a * named(t, backAt),
@@ -252,6 +254,18 @@ export function judgement(s, t, a) {
     verdictMark(i, x + PANEL_W / 2 - 40, PANEL_Y - 32, v);
     if (i === 0) beats(t, x + PANEL_W / 2 - 40, PANEL_Y - 32, 30, [problemAt], { alpha: a });
   });
+  // They stay apart: a rule between each two panels, on the words that say so, firm enough to read in a frame seen
+  // small.
+  const apart = a * ramp(t, apartAt - 0.15, 0.4);
+  stroke(
+    () =>
+      [0, 1].forEach((i) => {
+        const x = (PANEL_X[i] + PANEL_X[i + 1]) / 2 + shift;
+        ctx.moveTo(x, PANEL_Y - PANEL_H / 2 + 12);
+        ctx.lineTo(x, PANEL_Y + PANEL_H / 2 - 12);
+      }),
+    { alpha: apart, width: 4 },
+  );
   // Why they stay apart: each verdict named under its panel on its words.
   [L("照样成立", "still stands"), L("可能错", "can be wrong"), L("被否掉", "rejecting")].forEach(
     (v, i) =>

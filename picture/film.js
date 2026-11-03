@@ -2457,9 +2457,17 @@ function stageKernel(t, a, c) {
     valign: "top",
     alpha: a * named(t, L(c.kernel - 0.55, c.kCut))
   });
-  const ats = [c.in1, c.in2, c.in3];
+  const ats = [c.in1, c.in2, c.in3], places = a * ramp(t, c.inputs - 0.15, 0.4);
   ats.forEach((at, i) => {
-    const on = a * ramp(t, at - 0.15, 0.4), y = ys[i];
+    const on = a * ramp(t, at - 0.15, 0.4), y = ys[i], open = places * (1 - on / Math.max(a, 1e-6));
+    if (open > 0.01)
+      stroke(
+        () => {
+          ctx.moveTo(IX + 30, y);
+          ctx.arc(IX, y, 30, 0, Math.PI * 2);
+        },
+        { color: P.muted, alpha: open, width: 3 }
+      );
     if (on < 0.01) return;
     if (i === 0) paper(IX - 32, y - 40, 64, 80, { alpha: on, rows: 3 });
     if (i === 1)
@@ -3092,6 +3100,7 @@ scenes["03"] = function(s, t) {
     // 03.3 the kernel.
     kCut: ["这条路", "A small trust kernel"],
     kernel: ["很小的信任内核", "a small trust kernel"],
+    inputs: ["三样东西", "three inputs"],
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
@@ -5978,17 +5987,18 @@ var STRETCHES = [
 ];
 function overview(s, t, a) {
   if (a <= 0) return;
-  const [hereAt, pathAt, handoverAt, acceptAt] = cues(s, [
+  const [hereAt, pathAt, docsAt, handoverAt, acceptAt] = cues(s, [
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
+    ["它的文档也写明", "its own documents"],
     ["换 Agent 接手那一段", "the handover between Agents"],
     ["都还没有完成验收", "has not yet completed acceptance"]
   ]);
   const h = a * named(t, handoverAt), acc = a * named(t, acceptAt), [A, B, C, D] = STRETCHES;
   const solid = t < handoverAt - 0.15 ? [A, B, C] : [A, C];
   stroke(
-    () => solid.forEach(([x0, x1]) => {
-      ctx.moveTo(x0, RAIL_Y);
+    () => solid.forEach(([x02, x1]) => {
+      ctx.moveTo(x02, RAIL_Y);
       ctx.lineTo(x1, RAIL_Y);
     }),
     { color: P.line, alpha: a, width: 4 }
@@ -6021,11 +6031,12 @@ function overview(s, t, a) {
       alpha: h
     }
   );
-  const NY = 700, accept = L("尚未完成验收", "has not yet completed acceptance"), half = measure(accept) / 2;
-  nameText(accept, 1100, NY, { alpha: acc });
+  const NY = 700, accept = L("尚未完成验收", "has not yet completed acceptance"), DOC = [40, 52], row = DOC[0] + NAME_GAP + measure(accept), x0 = 1100 - row / 2;
+  documentIcon(x0, NY - DOC[1] / 2, DOC[0], DOC[1], { alpha: a * named(t, docsAt), rows: 3 });
+  nameText(accept, x0 + DOC[0] + NAME_GAP, NY, { align: "left", alpha: acc });
   [
-    [1100 - half - 14, (B[0] + B[1]) / 2, hb.bottom + 12],
-    [1100 + half + 14, (D[0] + D[1]) / 2, db.bottom + 12]
+    [x0 - 14, (B[0] + B[1]) / 2, hb.bottom + 12],
+    [x0 + row + 14, (D[0] + D[1]) / 2, db.bottom + 12]
   ].forEach(
     ([x1, x2, y2]) => link(x1, NY, x2, y2, { route: "hv", alpha: acc, upto: soon(t, acceptAt + 0.05, 0.6) })
   );
@@ -6168,6 +6179,7 @@ function judgement(s, t, a) {
     ["被否掉", "rejecting"],
     ["问题不存在", "the problem go away"]
   ]);
+  const apartAt = cueFrom(s, "要分开", "They stay apart", remSays);
   const p = a * named(t, peopleAt), b = a * named(t, backAt), TOP2 = mix(450, 300, soon(t, obsAt - 0.5, 0.8)), [PX, , DX] = PANEL_X, DOC = [84, 108], names = rowNameTop([TOP2 + 22.7 * 1.5, TOP2 + DOC[1] / 2]);
   person(PX, TOP2, { size: 1.5, alpha: p });
   nameText(L("负责观察的人", ["The people watching", "the pipeline"]), PX, names, {
@@ -6215,6 +6227,15 @@ function judgement(s, t, a) {
     verdictMark2(i, x + PANEL_W / 2 - 40, PANEL_Y - 32, v);
     if (i === 0) beats(t, x + PANEL_W / 2 - 40, PANEL_Y - 32, 30, [problemAt], { alpha: a });
   });
+  const apart = a * ramp(t, apartAt - 0.15, 0.4);
+  stroke(
+    () => [0, 1].forEach((i) => {
+      const x = (PANEL_X[i] + PANEL_X[i + 1]) / 2 + shift;
+      ctx.moveTo(x, PANEL_Y - PANEL_H / 2 + 12);
+      ctx.lineTo(x, PANEL_Y + PANEL_H / 2 - 12);
+    }),
+    { alpha: apart, width: 4 }
+  );
   [L("照样成立", "still stands"), L("可能错", "can be wrong"), L("被否掉", "rejecting")].forEach(
     (v, i) => nameText(v, PANEL_X[i] + shift, PANEL_Y + PANEL_H / 2 + NAME_GAP, {
       valign: "top",

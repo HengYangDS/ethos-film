@@ -40,6 +40,7 @@ scenes["03"] = function (s, t) {
     // 03.3 the kernel.
     kCut: ["这条路", "A small trust kernel"],
     kernel: ["很小的信任内核", "a small trust kernel"],
+    inputs: ["三样东西", "three inputs"],
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
