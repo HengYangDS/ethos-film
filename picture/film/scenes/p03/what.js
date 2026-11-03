@@ -94,7 +94,8 @@ scenes["03"] = function (s, t) {
     connect: ["接进来的系统", "connecting a system"],
     truth: ["真相的来源", "a source of truth"],
     layerCut: ["所有仓库共有的部分", "What every repository shares"],
-    owns: ["归 ETHOS", "ETHOS owns in one place"],
+    // The layer is named on its own words; in English they follow the clause that opens the stage.
+    owns: ["共有的部分", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "its own purpose"],
     // 03.8 design aims.

@@ -1,56 +1,123 @@
-/* Part 06, rule three (06.3-06.5): keep authority separate from views. The mark stands large and its boundary closes on
- * the rule's words: inside it, what a judgment may rest on builds as a list of six; outside, beyond the opening, the
- * views that are derived from it for people to read, the opening sentence among them. A view computed earlier does
- * not show that the branch inside has moved on; it helps people see but never counts as authority, acting on it can
- * overwrite someone else's work, and when authority is ambiguous or stale the judgment cannot pass. */
+/* Part 06, rule three (06.3-06.5): keep authority separate from views. Rule three's heading stands in the rules' shared
+ * place, its text alone, with what authority means under the statement as a note; the mark is the rule's stage. In 06.3
+ * the mark stands under the heading, centred on the frame, and its boundary closes on the rule's words: inside it, what
+ * a judgment may rest on builds as a list of six. From 06.4, once the heading has gone, the mark stands large at the
+ * left with the views that are derived from it for people to read beyond its opening, the opening sentence among them;
+ * the cut on the views' first word moves it there, as the gate and the branch move at the cut into 06.2. A view
+ * computed earlier does not show that the branch inside has moved on; it helps people see but never counts as
+ * authority, acting on it can overwrite someone else's work, and when authority is ambiguous or stale the judgment
+ * cannot pass. */
 
 import { ctx } from "../../canvas.js";
 import { commitRow } from "../../drawing/history.js";
 import { link } from "../../drawing/links.js";
-import { ethosMark } from "../../drawing/mark.js";
-import { measure, stroke } from "../../drawing/strokes.js";
+import { ethosMark, markExtent } from "../../drawing/mark.js";
+import { labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { cross, documentIcon, stopSign } from "../../drawing/symbols.js";
 import { bubble, commitDot, terminalIcon } from "../../drawing/workspace.js";
+import { ruleHeading, ruleHeadingLayout } from "../../framing/rules.js";
 import { beats, listIn, listLevel, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, growName, nameText, rejectedName, termRow } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import {
+  LEADING,
+  NAME_GAP,
+  NOTE,
+  TERM_GAP,
+  TERM_STACK,
+  growName,
+  nameText,
+  termRow,
+} from "../../naming/names.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { card } from "../p04/marks.js";
-import { claimPanel } from "../claim.js";
+import { claimPanel, claimWidth } from "../claim.js";
 
-/* The mark at the scale of rule three: its origin at (MX, MY), its boundary of radius R. */
-const MX = 740,
-  MY = 510,
-  SIZE = 980,
-  R = (164 * SIZE) / 512,
-  OPEN = MX + 0.82 * R;
+const FULL = { datum: 1, passages: 1, boundary: 1 };
 const flowOf = (t) => (voiceTime(t) * 0.4) % 1;
 
-/* Rule three's heading at the upper right, outside the mark; in 06.3 what authority means joins it as a note. */
-const HX = 1040;
-function ruleThreeHeading(t, c, g, { meaning = false } = {}) {
-  nameText(L("第三条准则", "Rule three"), HX, 364, {
+/* Rule three's heading: its number, its statement and, under the statement in the note style, what authority means. */
+const RULE = () => ({
+  number: L("第三条准则", "Rule three"),
+  statement: L("把权威依据和视图分开", "Keep authority separate from views"),
+  note: L("一次判断可以凭借的东西", "What a judgment may rest on"),
+});
+/* The heading drawn in the rules' shared place, without a glyph; the note joins it on its own words. */
+function ruleThreeHeading(t, c, g) {
+  const { number, statement, note } = RULE(),
+    h = ruleHeading(t, {
+      number,
+      numberAt: c.number,
+      statement,
+      statementAt: c.statement,
+      alpha: g,
+    });
+  nameText(note, h.tx, h.bottom + TERM_STACK, {
     align: "left",
+    valign: "top",
     size: NOTE,
     color: P.muted,
-    alpha: g * named(t, c.number),
+    alpha: g * named(t, c.restOn),
   });
-  nameText(L("把权威依据和视图分开", "Keep authority separate from views"), HX, 400, {
-    align: "left",
-    alpha: g * named(t, c.statement),
-  });
-  if (meaning)
-    nameText(L("一次判断可以凭借的东西", "What a judgment may rest on"), HX, 440, {
-      align: "left",
-      size: NOTE,
-      alpha: g * named(t, c.restOn),
-    });
 }
 
-/* The six sources of authority, three above the passages and three below, each a point at its row's start and its
- * name; `named` gives each name's ink. */
+/* The mark's two places, each its origin (x, y) and its size. In 06.3 it stands under the heading, centred on the frame
+ * by its ink, its boundary one line height clear of the heading's note, and as large as the band left under the heading
+ * holds above the captions. From 06.4 it stands at the original size on the content centre line, placed so that the
+ * mark, the views beyond its opening and the report's panel under them stand centred together. */
+const AUTHORITY_SIZE = 840,
+  VIEWS_SIZE = 980,
+  VIEWS_Y = 510;
+function authorityPlace() {
+  const { number, statement } = RULE(),
+    h = ruleHeadingLayout(number, statement, 0, {}),
+    noteBottom = h.bottom + TERM_STACK + labelSize(NOTE),
+    e = markExtent(AUTHORITY_SIZE, FULL);
+  return {
+    x: 960 - (e.left + e.right) / 2,
+    y: noteBottom + labelSize(LABEL) * LEADING - e.top,
+    size: AUTHORITY_SIZE,
+  };
+}
+
+/* The views beyond the opening: a summary, a dashboard, status output and an Agent's report, each an icon with its
+ * name, linked from inside through the opening. The icons stand on one column VIEW_RUN px beyond the opening, centred
+ * on it; their names start VIEW_TEXT px from it, 16 px clear of the widest icon, the terminal; the dashboard, the view
+ * kept on alone in 06.5, stands on the mark's axis. The opening sentence stands under them as a report, its panel's
+ * left edge PANEL_LEFT px from the icons' column. */
+const VIEW_RUN = 213,
+  VIEW_TEXT = 48,
+  VIEW_STEP = 90,
+  PANEL_LEFT = -120;
+const VIEWS = () =>
+  L(
+    ["摘要", "看板", "状态输出", "Agent 的汇报"],
+    ["Summaries", "Dashboards", "Status output", "An Agent's report"],
+  );
+const GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
+/* The opening's place for a mark at `size`, from its origin. */
+const openingOf = (size) => 0.82 * 164 * (size / 512);
+function viewsPlace() {
+  const e = markExtent(VIEWS_SIZE, FULL),
+    widths = VIEWS().map(
+      (v, i) => measure(v) + (i === 1 ? TERM_GAP + measure(GREEN()[0], NOTE) : 0),
+    ),
+    right =
+      openingOf(VIEWS_SIZE) +
+      VIEW_RUN +
+      Math.max(VIEW_TEXT + Math.max(...widths), PANEL_LEFT + claimWidth());
+  return { x: 960 - (e.left + right) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
+}
+/* Where the views stand for the mark at `place`. */
+function viewsOf({ x, y, size }) {
+  const open = x + openingOf(size),
+    vx = open + VIEW_RUN;
+  return { open, vx, text: vx + VIEW_TEXT, ys: [-1, 0, 1, 2].map((k) => y + k * VIEW_STEP) };
+}
+
+/* The six sources of authority, three above the passages and three below, centred in the bowl on the mark's ink
+ * centre, which in 06.3 is the frame's axis and the heading's: a centred list, so its rows have no points before them. */
 const SOURCES = () =>
   L(
     [
@@ -70,114 +137,91 @@ const SOURCES = () =>
       "Valid attestations",
     ],
   );
-const ROWS = [-230, -180, -130, 130, 180, 230].map((d) => MY + d);
-function sources(t, c, g, { names = 1 } = {}) {
-  const ats = c.sources;
-  SOURCES().forEach((v, i) => {
-    const on = g * ramp(t, ats[i] - 0.15, 0.4),
-      w = measure(v, NOTE),
-      x = MX - 20;
-    stroke(
-      () => {
-        ctx.moveTo(x - w / 2 - 16 + 4, ROWS[i]);
-        ctx.arc(x - w / 2 - 16, ROWS[i], 4, 0, Math.PI * 2);
-      },
-      { color: P.ink, alpha: on, width: 4 },
-    );
-    nameText(v, x + 4, ROWS[i], {
+/* The rows' offsets from the origin for the mark at AUTHORITY_SIZE: each row clear of the boundary and of the
+ * passages, at one pitch within each group. */
+const SOURCE_ROWS = [-169, -135, -101, 101, 135, 169];
+function sources(t, c, g, { x, y, size }) {
+  const e = markExtent(size, FULL),
+    axis = x + (e.left + e.right) / 2,
+    k = size / AUTHORITY_SIZE;
+  SOURCES().forEach((v, i) =>
+    nameText(v, axis, y + SOURCE_ROWS[i] * k, {
       size: NOTE,
-      alpha: g * names * listIn(t, ats, i),
+      alpha: g * listIn(t, c.sources, i),
       set: "sources",
-    });
-  });
+    }),
+  );
 }
 
-/* The mark, its boundary closing on the rule's words, with authority named inside at the datum's left. In 06.3 it
- * enters at the size rule two left it, beside the heading, and grows into place as its boundary closes. */
-function boundaryMark(t, c, g, { grow = 1 } = {}) {
-  ethosMark(mix(800, MX, grow), mix(470, MY, grow), mix(760, SIZE, grow), {
+/* The mark at `place`, its boundary closing on the rule's words, with authority named inside at the datum's left. */
+function boundaryMark(t, c, g, { x, y, size }) {
+  const k = size / 512;
+  ethosMark(x, y, size, {
     datum: g,
     hole: 1,
     passages: 1,
     boundary: soon(t, c.statement + 0.05, 1.2),
     alpha: g,
   });
-  beats(t, MX, MY, 40, [c.inEthos], { alpha: g * grow });
-  nameText(L("权威依据", "Authority"), MX - 27 - NAME_GAP, MY, {
+  beats(t, x, y, 21 * k, [c.inEthos], { alpha: g });
+  nameText(L("权威依据", "Authority"), x - 14 * k - NAME_GAP, y, {
     align: "right",
     alpha: g * named(t, c.authority),
   });
 }
 
-/* 06.3 Authority inside the boundary: the mark large, its boundary closing as the rule is stated, authority named at
- * the datum and its six sources built as a list on their words. */
+/* 06.3 Authority inside the boundary: the heading in the rules' place and the mark in its place under it, its boundary
+ * closing on the statement; authority is named at the datum and its six sources build as a list on their words. */
 export function authorityStage(s, t, c, g) {
-  ruleThreeHeading(t, c, g, { meaning: true });
-  boundaryMark(t, c, g, { grow: soon(t, c.statement + 0.05, 1.1) });
-  sources(t, c, g);
+  ruleThreeHeading(t, c, g);
+  const at = authorityPlace();
+  boundaryMark(t, c, g, at);
+  sources(t, c, g, at);
 }
 
-/* The views outside the boundary, beyond its opening: a summary, a dashboard, status output and an Agent's report,
- * each an icon with its name, each linked from inside through the opening. */
-const VX = 1210,
-  VIEW_YS = [420, 505, 590, 675];
-const VIEWS = () =>
-  L(
-    ["摘要", "看板", "状态输出", "Agent 的汇报"],
-    ["Summaries", "Dashboards", "Status output", "An Agent's report"],
-  );
-function viewIcon(i, a) {
-  const y = VIEW_YS[i];
-  if (i === 0) documentIcon(VX - 22, y - 28, 44, 56, { alpha: a, rows: 2, fold: false });
+function viewIcon(i, x, y, a) {
+  if (i === 0) documentIcon(x - 22, y - 28, 44, 56, { alpha: a, rows: 2, fold: false });
   else if (i === 1) {
-    card(VX - 30, y - 24, 60, 48, { alpha: a, color: P.ink });
+    card(x - 30, y - 24, 60, 48, { alpha: a, color: P.ink });
     stroke(
       () => {
         for (let k = 0; k < 3; k++) {
-          const x = VX - 16 + k * 16;
-          ctx.moveTo(x - 5, y);
-          ctx.lineTo(x - 1, y + 5);
-          ctx.lineTo(x + 6, y - 5);
+          const cx = x - 16 + k * 16;
+          ctx.moveTo(cx - 5, y);
+          ctx.lineTo(cx - 1, y + 5);
+          ctx.lineTo(cx + 6, y - 5);
         }
       },
       { color: P.ink, alpha: a, width: 2.5 },
     );
-  } else if (i === 2) terminalIcon(VX - 32, y - 26, 64, 52, { alpha: a });
-  else bubble(VX, y, 22, { alpha: a, color: P.ink });
+  } else if (i === 2) terminalIcon(x - 32, y - 26, 64, 52, { alpha: a });
+  else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
-function views(t, c, g, { only = null, flow = null, linked = true } = {}) {
+function views(t, c, g, place, { only = null, flow = null, linked = true } = {}) {
   // The four views build and leave as one list; one view kept on alone after them is no longer that list's member.
   const ats = c.views,
     names = VIEWS(),
+    v = viewsOf(place),
     set = only === null ? "views" : "view";
-  names.forEach((v, i) => {
+  names.forEach((name, i) => {
     if (only !== null && only !== i) return;
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
     if (linked)
-      link(OPEN - 40, MY, VX - 36, VIEW_YS[i], {
+      link(v.open - 40, place.y, v.vx - 36, v.ys[i], {
         route: "hvh",
-        mid: OPEN + 60,
+        mid: v.open + 60,
         alpha: on,
         flow: flow === null ? null : (flow + i * 0.25) % 1,
       });
-    viewIcon(i, on);
+    viewIcon(i, v.vx, v.ys[i], on);
     if (i === 1)
-      termRow(
-        t,
-        [v],
-        [ats[i]],
-        L(["那片绿灯"], ["that green dashboard"]),
-        [c.thatGreen],
-        VX + 40,
-        VIEW_YS[i] - 15,
-        {
-          alpha: g * (only === null ? listLevel(t, ats, i) : 1),
-          set,
-          width: 1800 - VX,
-        },
-      );
+      termRow(t, [name], [ats[i]], GREEN(), [c.thatGreen], v.text, v.ys[i] - labelSize(LABEL) / 2, {
+        alpha: g * (only === null ? listLevel(t, ats, i) : 1),
+        set,
+        width: 1800 - v.text,
+      });
     else
-      nameText(v, VX + 40, VIEW_YS[i], {
+      nameText(name, v.text, v.ys[i], {
         align: "left",
         alpha: g * listIn(t, ats, i),
         set,
@@ -186,69 +230,81 @@ function views(t, c, g, { only = null, flow = null, linked = true } = {}) {
 }
 
 /* 06.4 Views outside: each view arrives on its words, linked from inside through the opening; the links carry their
- * derivation, the views are named, the dashboard is that green one, and the opening sentence joins them as a report. */
+ * derivation, the views are named under a heading on the icons' column, the dashboard is that green one, and the
+ * opening sentence joins them as a report, its panel under the report's bubble. */
 export function viewsStage(s, t, c, g) {
-  boundaryMark(t, c, g);
-  views(t, c, g, { flow: ramp(t, c.derived, 0.4) > 0.5 ? flowOf(t) : null });
-  nameText(L("给人看的视图", "Views"), VX - 36, VIEW_YS[0] - 40 - NAME_GAP, {
+  const place = viewsPlace(),
+    v = viewsOf(place);
+  boundaryMark(t, c, g, place);
+  views(t, c, g, place, { flow: ramp(t, c.derived, 0.4) > 0.5 ? flowOf(t) : null });
+  nameText(L("给人看的视图", "Views"), v.vx - 32, v.ys[0] - 40 - NAME_GAP, {
     align: "left",
     valign: "bottom",
     alpha: g * named(t, c.areViews),
   });
-  const report = g * named(t, c.sentence);
-  const panel = claimPanel(t, 1400, 770, { alpha: report });
-  link(VX, VIEW_YS[3] + 26, 1400 - 120, panel.top, { route: "vh", alpha: report });
-  beats(t, VX, VIEW_YS[3], 34, [c.suchReport], { alpha: g });
+  const report = g * named(t, c.sentence),
+    py = v.ys[3] + 95,
+    panel = claimPanel(t, v.vx + PANEL_LEFT + claimWidth() / 2, py, { alpha: report });
+  link(v.vx, v.ys[3] + 26, v.vx, panel.top, { alpha: report });
+  beats(t, v.vx, v.ys[3], 34, [c.suchReport], { alpha: g });
 }
 
 /* The branch inside the boundary, what the repository actually contains: four commits and, once things change, a
- * fifth, someone else's work. */
-const BX = 520,
-  BY = 384,
-  BSTEP = 70,
-  BEND = BX + 4 * BSTEP;
-function innerBranch(t, c, g, moved, { named: says = true } = {}) {
-  commitRow(BX, BSTEP, BY, 4, { alpha: g, single: true });
+ * fifth, someone else's work, in the bowl above the passages; what is said of it centres over it. */
+const BSTEP = 70;
+function branchOf({ x, y }) {
+  const bx = x - 180;
+  return { bx, by: y - 126, end: bx + 4 * BSTEP, mid: bx + 2 * BSTEP };
+}
+function innerBranch(t, c, g, place, moved, { named: says = true } = {}) {
+  const b = branchOf(place);
+  commitRow(b.bx, BSTEP, b.by, 4, { alpha: g, single: true });
   stroke(
     () => {
-      ctx.moveTo(BX + 3 * BSTEP + 9, BY);
-      ctx.lineTo(mix(BX + 3 * BSTEP + 9, BEND - 9, moved), BY);
+      ctx.moveTo(b.bx + 3 * BSTEP + 9, b.by);
+      ctx.lineTo(mix(b.bx + 3 * BSTEP + 9, b.end - 9, moved), b.by);
     },
     { color: P.ink, alpha: g * ramp(moved, 0, 0.1), width: 2.5 },
   );
-  commitDot(BEND, BY, { alpha: g * ramp(moved, 0.6, 0.4) });
+  commitDot(b.end, b.by, { alpha: g * ramp(moved, 0.6, 0.4) });
   if (says)
-    nameText(L("情况可能又变了", "Things can change"), 700, BY - 22 - NAME_GAP + 8, {
+    nameText(L("情况可能又变了", "Things can change"), b.mid, b.by - 22 - NAME_GAP + 8, {
       valign: "bottom",
       alpha: g * named(t, c.change),
     });
 }
 
 /* 06.5 A stale view: the dashboard was computed from inside; inside, the branch then moves on, and the view still
- * shows what it showed, without showing the change. */
+ * shows what it showed, without showing the change. What is said of the view stands on its names' column. */
 export function staleViewStage(s, t, c, g) {
-  boundaryMark(t, c, g);
-  views(t, c, g, { only: 1, flow: flowOf(t) });
-  nameText(L("视图算出来以后", "Computed"), VX + 40, VIEW_YS[1] - 46, {
+  const place = viewsPlace(),
+    v = viewsOf(place);
+  boundaryMark(t, c, g, place);
+  views(t, c, g, place, { only: 1, flow: flowOf(t) });
+  nameText(L("视图算出来以后", "Computed"), v.text, v.ys[1] - 46, {
     align: "left",
     alpha: g * named(t, c.first5),
   });
-  innerBranch(t, c, g, soon(t, c.change + 0.05, 0.7));
-  beats(t, VX, VIEW_YS[1], 36, [c.notShown, c.turnedGreen], { alpha: g });
-  nameText(L("看不出来", "Without the view showing it"), VX + 40, VIEW_YS[1] + 46, {
+  innerBranch(t, c, g, place, soon(t, c.change + 0.05, 0.7));
+  beats(t, v.vx, v.ys[1], 36, [c.notShown, c.turnedGreen], { alpha: g });
+  nameText(L("看不出来", "Without the view showing it"), v.text, v.ys[1] + 46, {
     align: "left",
     alpha: g * named(t, c.notShown),
   });
 }
 
 /* 06.5 Not authority: the view helps people see, but taken as authority its relation back into the boundary is
- * struck at the opening; acting on it would overwrite the new commit, someone else's work; and when authority is
- * ambiguous or stale, the judgment cannot pass. */
+ * struck at the opening, with what is refused under the cross, clear of the view; acting on it would overwrite the new
+ * commit, someone else's work; and when authority is ambiguous or stale, the judgment cannot pass. The stop stands on
+ * the icons' column and every line of the column starts on the names' column. */
 export function notAuthorityStage(s, t, c, g) {
-  boundaryMark(t, c, g);
-  views(t, c, g, { only: 1, linked: false });
-  innerBranch(t, c, g, 1, { named: false });
-  nameText(L("帮人看清楚", "Helps people see"), VX + 40, VIEW_YS[1] - 46, {
+  const place = viewsPlace(),
+    v = viewsOf(place),
+    b = branchOf(place);
+  boundaryMark(t, c, g, place);
+  views(t, c, g, place, { only: 1, linked: false });
+  innerBranch(t, c, g, place, 1, { named: false });
+  nameText(L("帮人看清楚", "Helps people see"), v.text, v.ys[1] - 46, {
     align: "left",
     alpha: g * named(t, c.first5b),
   });
@@ -256,34 +312,44 @@ export function notAuthorityStage(s, t, c, g) {
   // view carries it on to the new commit, which it would overwrite.
   const refused = g * named(t, c.never),
     reach = mix(0.45, 1, soon(t, c.act + 0.05, 0.9)) * soon(t, c.never + 0.05, 0.5),
-    MOUTH = OPEN + 26;
-  link(VX - 36, VIEW_YS[1], BEND, BY + 22, {
+    counts = L("当权威依据", "Counts as authority"),
+    // The cross stands in the gap between the opening and the view, its words centred under it within that gap,
+    // ending at least 20 px before the view, so they stay clear of the passages inside.
+    room = v.vx - 30 - 20 - v.open,
+    mouth = v.open + room / 2;
+  link(v.vx - 36, v.ys[1], b.end, b.by + 22, {
     route: "hv",
     alpha: refused,
     dash: [8, 9],
     upto: reach,
   });
-  cross(MOUTH, VIEW_YS[1], 20, { color: P.ink, alpha: refused, width: 3 });
-  rejectedName(L("当权威依据", "Counts as authority"), MOUTH + 4, VIEW_YS[1] + 44, {
+  cross(mouth, v.ys[1], 20, { color: P.ink, alpha: refused, width: 3 });
+  nameText(counts, mouth, v.ys[1] + 44 - labelSize(LABEL) / 2, {
+    valign: "top",
+    width: room,
+    color: P.muted,
     alpha: refused,
-    mark: 0,
-    align: "left",
   });
   const over = g * named(t, c.overwrite);
-  cross(BEND, BY, 14, { color: P.ink, alpha: over, width: 3 });
-  nameText(L("覆盖掉别人的工作", "Overwrite someone else's work"), 700, BY - 22 - NAME_GAP + 8, {
-    valign: "bottom",
-    size: NOTE,
-    width: 260,
-    alpha: over,
-  });
-  // The judgment cannot pass: a stop beside the views, its conditions above it.
+  cross(b.end, b.by, 14, { color: P.ink, alpha: over, width: 3 });
+  nameText(
+    L("覆盖掉别人的工作", "Overwrite someone else's work"),
+    b.mid,
+    b.by - 22 - NAME_GAP + 8,
+    {
+      valign: "bottom",
+      size: NOTE,
+      width: 260,
+      alpha: over,
+    },
+  );
+  // The judgment cannot pass: a stop on the icons' column beside the views, its conditions above its words.
   const stop = g * named(t, c.cannotPass);
   growName(
     t,
     L(["不明确，", "或者已经过时"], ["Ambiguous", " or stale"]),
     [c.ambiguous, c.stale],
-    VX - 30,
+    v.text,
     318,
     {
       size: NOTE,
@@ -292,8 +358,8 @@ export function notAuthorityStage(s, t, c, g) {
       build: true,
     },
   );
-  stopSign(VX - 8, 372, 18, { color: P.ink, alpha: stop });
-  nameText(L("判断就不能通过", "The judgment cannot pass"), VX + 22, 372, {
+  stopSign(v.vx, 372, 18, { color: P.ink, alpha: stop });
+  nameText(L("判断就不能通过", "The judgment cannot pass"), v.text, 372, {
     align: "left",
     alpha: stop,
   });

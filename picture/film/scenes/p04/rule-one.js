@@ -6,61 +6,35 @@
 
 import { ctx } from "../../canvas.js";
 import { along, link } from "../../drawing/links.js";
-import { ethosMark } from "../../drawing/mark.js";
 import { modelGrid } from "../../drawing/models.js";
 import { box, dot, flowDot, measure, stroke } from "../../drawing/strokes.js";
 import { agent, documentIcon, person } from "../../drawing/symbols.js";
+import { ruleHeading } from "../../framing/rules.js";
 import { beats, listIn, named } from "../../naming/lists.js";
-import {
-  NAME_GAP,
-  NOTE,
-  TERM_GAP,
-  nameText,
-  termRow,
-  termRowLayout,
-  wrapName,
-} from "../../naming/names.js";
+import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
+import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
-/* The width of a term with its qualifier as termRow sets it, and the row centred on x. */
-export function rowWidth(term, qual, width = Infinity) {
-  const tw = measure(term.join("")),
-    qw = measure(qual.join(""), NOTE);
-  return termRowLayout(term, qual, width).one ? tw + TERM_GAP + qw : Math.max(tw, qw);
-}
-export function centredRow(t, term, termAt, qual, qualAt, x, y, { width = 320, alpha = 1 } = {}) {
-  const w = rowWidth(term, qual, width);
-  return termRow(t, term, [termAt], qual, [qualAt], x - w / 2, y, { width, alpha });
-}
-
-/* Rule one's heading: the rule's number in small type above its statement, and at their left the mark's origin: the
- * datum arrives with the number and its ink hole opens as it settles, the one part rule one adds (the passages are rule
- * two's). It beats once as the meaning is said to be kept. Returns the heading's bottom. */
+/* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
+ * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once as the
+ * meaning is said to be kept. Returns the heading's bottom. */
 export function ruleOneHeading(t, c, g) {
-  const number = L("第一条准则", "Rule one"),
-    statement = wrapName(
-      L("用刚好够用的模型，留住原意", "Preserve meaning with the smallest model that is enough"),
-      600,
-    );
-  const w = Math.max(measure(number, NOTE), ...statement.map((v) => measure(v))),
-    MX = 960 - (64 + w) / 2,
-    top = 184,
-    bottom = top + 34 + 38 * statement.length,
-    on = g * named(t, c.first4),
-    MY = (top + bottom) / 2 + 2,
-    hole = ramp(t, c.first4 - 0.05, 0.6);
-  ethosMark(MX, MY, 560, { datum: on, hole, passages: 0, boundary: 0, alpha: g });
-  beats(t, MX, MY, 26, [c.keep], { color: P.ink, alpha: g });
-  nameText(number, MX + 64, top + 12, { align: "left", size: NOTE, color: P.muted, alpha: on });
-  nameText(statement, MX + 64, top + 34, {
-    align: "left",
-    valign: "top",
-    alpha: g * named(t, c.statement),
-  });
-  return bottom;
+  const on = g * named(t, c.first4),
+    h = ruleHeading(t, {
+      number: L("第一条准则", "Rule one"),
+      numberAt: c.first4,
+      statement: L("用刚好够用的模型，留住原意", "Preserve meaning with the smallest model that is enough"),
+      statementAt: c.statement,
+      size: 560,
+      glyph: { datum: 1, passages: 0, boundary: 0 },
+      shares: { datum: on, hole: ramp(t, c.first4 - 0.05, 0.6), passages: 0, boundary: 0 },
+      alpha: g,
+    });
+  beats(t, h.mx, h.my, 26, [c.keep], { color: P.ink, alpha: g });
+  return h.bottom;
 }
 
 /* A model of the right size: three concepts and the two links of their structure, one stroke each, with the meaning
@@ -104,53 +78,58 @@ function enoughModel(t, x, y, a, flowing) {
 
 /* 04.4 The model: concepts and structure. The one of the right size stands with the statement; one too big, with
  * concepts no one needs, joins at its right, and one too small, which drops the meaning on the way, at its left. The
- * row keeps its balance as each joins: the first two stand as a pair, and the three spread to their places. */
+ * three stand at one pitch: the first two as a pair about the centre, and the three spread to their places as the
+ * third joins. Each model's name centres on it from its first word, its qualifier under it, and the names of the row
+ * hang from one line under its tallest model, the grid. */
+const MODEL_PITCH = 450;
 export function modelStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const s2 = soon(t, c.big - 0.1, 0.5),
     s3 = soon(t, c.small + 0.05, 0.6),
     Y = 620,
-    under = Y + 75 + NAME_GAP,
-    xs = [960 - 440, 960 - 240 * s2 + 240 * s3, 1220 + 200 * s3],
-    bigAt = c.big + 0.25;
+    half = MODEL_PITCH / 2,
+    under = rowNameTop([Y + 48, Y + 75, Y + 20]),
+    xs = [960 - MODEL_PITCH, 960 - half * s2 + half * s3, 960 + half + half * s3],
+    bigAt = c.big + 0.25,
+    row = { alpha: g, align: "center" };
   const enough = g * named(t, c.enough);
   enoughModel(t, xs[1], Y, enough, ramp(t, c.structure, 0.4));
-  centredRow(
+  termRow(
     t,
     L(["刚好够用"], ["Just enough"]),
-    c.enough,
+    [c.enough],
     L(["概念和结构"], ["concepts and structure"]),
-    c.concepts,
+    [c.concepts],
     xs[1],
     under,
-    { alpha: g },
+    row,
   );
   const big = g * named(t, bigAt);
   modelGrid(xs[2] - 130, Y - 75, 260, 150, { alpha: big, color: P.ink });
-  centredRow(
+  termRow(
     t,
     L(["模型大了"], ["Bigger than it needs to be"]),
-    bigAt,
+    [bigAt],
     L(["用不上的概念"], ["concepts they do not need"]),
-    c.unneeded,
+    [c.unneeded],
     xs[2],
     under,
-    { alpha: g },
+    row,
   );
   const small = g * named(t, c.small),
     lost = soon(t, c.lost + 0.05, 0.9);
   box(xs[0] - 32, Y - 20, 64, 40, { stroke: P.ink, alpha: small, radius: 6, width: 2.5 });
   // The meaning does not fit the small model: it sits on its edge and falls away when it is lost.
   dot(xs[0] + 44, mix(Y - 30, Y + 40, lost), 6, { color: P.ink, alpha: small * (1 - lost) });
-  centredRow(
+  termRow(
     t,
     L(["小到装不下原意"], ["Too small"]),
-    c.small,
+    [c.small],
     L(["半路丢掉"], ["the meaning is lost"]),
-    c.lost,
+    [c.lost],
     xs[0],
     under,
-    { alpha: g },
+    row,
   );
 }
 
@@ -201,15 +180,16 @@ export function changeStage(s, t, c, g) {
     valign: "top",
     alpha: meant * (1 - ramp(t, c.change + 0.05, 0.3)),
   });
-  centredRow(
+  // The Change is named under it from its first word; "only there" joins under its name.
+  termRow(
     t,
     L(["正式变更"], ["One official Change"]),
-    c.change,
+    [c.change],
     L(["只写在这一处"], ["only there"]),
-    c.only,
+    [c.only],
     DX + CHANGE_W / 2,
     DY + CHANGE_H + NAME_GAP,
-    { alpha: g, width: 300 },
+    { alpha: g, align: "center" },
   );
   names.forEach((v, i) => {
     link(DX + CHANGE_W, fieldY(DY, i), FX - 14, fieldY(DY, i), {
@@ -221,36 +201,40 @@ export function changeStage(s, t, c, g) {
 }
 
 /* 04.5 One copy: the Change at the centre and, at its left, a person and an Agent who pick the work up later; each
- * reads it along a link, and what they read is the same. */
+ * reads it along a link, and what they read is the same. The readers' name and the Change's hang from one line under
+ * the lower of their marks, the Agent. */
 export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const DX = 960 - CHANGE_W / 2 - 60,
     DY = 440,
     RX = DX - 250,
+    AY = 666,
+    names = rowNameTop([AY + 22, DY + CHANGE_H]),
     who = g * named(t, c.readers),
     reading = g * named(t, c.same),
     q = (voiceTime(t) * 0.5) % 1;
   changeDocument(DX, DY, { alpha: g });
-  centredRow(
+  termRow(
     t,
     L(["正式变更"], ["The Change"]),
-    c.first5,
+    [c.first5],
     L(["只写在一处"], ["one copy"]),
-    c.first5,
+    [c.first5],
     DX + CHANGE_W / 2,
-    DY + CHANGE_H + NAME_GAP,
-    { alpha: g, width: 300 },
+    names,
+    { alpha: g, align: "center" },
   );
   person(RX, 540, { alpha: who, size: 1.1 });
-  agent(RX, 666, { alpha: who });
-  nameText(L("后面接手的人和 Agent", "Everyone who picks up the work"), RX, 666 + 22 + NAME_GAP, {
+  agent(RX, AY, { alpha: who });
+  nameText(L("后面接手的人和 Agent", "Everyone who picks up the work"), RX, names, {
     valign: "top",
     width: 300,
     alpha: who,
   });
+  // The person's link runs level into the Change; the Agent's turns up to its lower row.
   for (const [x, y, to, k] of [
-    [RX + 34, 532, DY + 90, 0],
-    [RX + 26, 666, DY + 160, 0.5],
+    [RX + 34, DY + 90, DY + 90, 0],
+    [RX + 26, AY, DY + 160, 0.5],
   ])
     link(x, y, DX, to, {
       route: "hvh",

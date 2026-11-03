@@ -12,13 +12,15 @@ import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { agents, card, verdictMark } from "../p04/marks.js";
-import { centredRow } from "../p04/rule-one.js";
-import { claimPanel, claimWidth } from "../claim.js";
+import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 
-/* A plane of evidence: an outline whose name stands at its left and whose state stands at its right. */
+/* A plane of evidence: an outline whose name stands at its left and whose state stands at its right. The stack's top
+ * stands at PLANES_TOP from the moment it is whole until it rises beside the outcomes, so the heading set over it in
+ * 05.3 keeps a line height clear of rule two's glyph, which reaches y 318. */
 export const PLANE_W = 700,
   PLANE_H = 58,
-  PLANE_STEP = 70;
+  PLANE_STEP = 70,
+  PLANES_TOP = 420;
 export const PLANE_STATES = ["pass", "unknown", "none", "none", "none"];
 export const planeNames = () =>
   L(
@@ -58,12 +60,19 @@ export function planeStack(t, x, top, { alpha = 1 } = {}) {
   for (let i = 0; i < 5; i++) plane(t, i, x, top + i * PLANE_STEP, { alpha, at: -Infinity });
 }
 
-/* The Agent and its sentence, the claim: the Agent at the left of its speech panel, linked to it. Returns the panel's
- * edges. */
-export function claimRow(t, ax, ay, px, py, { alpha = 1, flow = null } = {}) {
+/* The Agent and its sentence, the claim: the Agent at the left of its speech panel, linked to it. The Agent's name
+ * hangs from `nameTop`. Returns the panel's edges. */
+export function claimRow(
+  t,
+  ax,
+  ay,
+  px,
+  py,
+  { alpha = 1, flow = null, nameTop = ay + 22 + NAME_GAP } = {},
+) {
   const edge = claimPanel(t, px, py, { alpha });
   agents([[ax, ay]], { alpha });
-  nameText("Agent", ax, ay + 22 + NAME_GAP, { valign: "top", alpha });
+  nameText("Agent", ax, nameTop, { valign: "top", alpha });
   // The report travels from the Agent to its sentence: up from the Agent, then along to the panel.
   if (Math.abs(ay - py) < 1) link(ax + 22, ay, edge.left, py, { alpha, flow });
   else link(ax, ay - 22, edge.left, py, { route: "vh", alpha, flow });
@@ -76,30 +85,37 @@ function claimAt(t, c) {
     rise = soon(t, c.local + 0.05, 0.7),
     gap = mix(560, 260, rise),
     ax = 960 - (w + gap) / 2;
-  return { ax, ay: mix(600, 214, rise), px: ax + gap + w / 2, py: mix(420, 214, rise) };
+  return { ax, ay: mix(600, 214, rise), px: ax + gap + w / 2, py: mix(420, 214, rise), rise };
 }
 
 /* 05.1-05.2 The sentence returns, the Agent lower left and its panel upper right so the claim stands as a block, and
- * is taken apart: under the sentence, the rule that takes it apart is named; with the first plane the claim rises to
- * the top, and the planes build from below on their words, each with its state, the stack rising one step as each
- * plane joins. */
+ * is taken apart: under the sentence, the rule that takes it apart is named, centred on the panel from its first word
+ * with "taken apart" under it; with the first plane the claim rises to the top, where the Agent's name and the rule's
+ * hang from one line under the panel, the deeper mark of the two, and the planes build from below on their words, each
+ * with its state, the stack rising one step as each plane joins. */
 export function apartStage(s, t, c, g) {
-  const { ax, ay, px, py } = claimAt(t, c);
-  claimRow(t, ax, ay, px, py, { alpha: g, flow: (voiceTime(t) * 0.4) % 1 });
+  const { ax, ay, px, py, rise } = claimAt(t, c),
+    under = py + CLAIM_H / 2 + NAME_GAP;
+  claimRow(t, ax, ay, px, py, {
+    alpha: g,
+    flow: (voiceTime(t) * 0.4) % 1,
+    // The Agent's name keeps its gap under the Agent while it rises and joins the panel's line as the two come level.
+    nameTop: Math.max(ay + 22, mix(ay + 22, py + CLAIM_H / 2, rise)) + NAME_GAP,
+  });
   // The first plane waits a moment on its words so the rising Agent has cleared its place.
   const ats = [c.local + 0.35, c.ci, c.release, c.use, c.benefit],
     stateAts = [c.passed, c.noResult, c.release, c.use, c.noObs],
     x = 960 - PLANE_W / 2,
-    top = 380 + building(t, ats, PLANE_STEP, 0.15);
-  centredRow(
+    top = PLANES_TOP + building(t, ats, PLANE_STEP, 0.15);
+  termRow(
     t,
     L(["按 ETHOS 的规则"], ["By ETHOS's rules"]),
-    c.first2,
+    [c.first2],
     L(["拆开来看"], ["taken apart"]),
-    c.apart,
+    [c.apart],
     px,
-    py + 32 + NAME_GAP,
-    { alpha: g, width: 700 },
+    under,
+    { alpha: g, align: "center" },
   );
   ats.forEach((at, i) =>
     plane(t, i, x, top + i * PLANE_STEP, {

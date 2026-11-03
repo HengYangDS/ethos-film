@@ -7,52 +7,35 @@
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { ethosMark } from "../../drawing/mark.js";
 import { cross } from "../../drawing/symbols.js";
-import { dot, measure, stroke } from "../../drawing/strokes.js";
+import { dot, labelSize, stroke } from "../../drawing/strokes.js";
+import { ruleHeading } from "../../framing/rules.js";
 import { beats, listLevel, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText, rejectedName, termRow, wrapName } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { NAME_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { card, linkSet, verdictMark } from "../p04/marks.js";
 import { claimPanel } from "../claim.js";
-import { PLANE_H, PLANE_STEP, PLANE_W, planeStack } from "./planes.js";
+import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack } from "./planes.js";
 
-const TOP = 380,
+const TOP = PLANES_TOP,
   ASIDE = 400;
 const rowOf = (top, i) => top + i * PLANE_STEP + PLANE_H / 2;
 
-/* Rule two's heading: its number in small type above its statement, and at their left the mark, whose two passages
- * draw out from the origin as the rule is stated. */
+/* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the
+ * rule is stated. */
 export function ruleTwoHeading(t, c, g) {
-  const number = L("第二条准则", "Rule two"),
-    statement = wrapName(
-      L("只在影响行动的地方做区分", "Distinguish only what changes action"),
-      640,
-    ),
-    w = Math.max(measure(number, NOTE), ...statement.map((v) => measure(v))),
-    MX = 960 - (150 + w) / 2,
-    top = 196,
-    MY = top + 20 + 19 * (statement.length - 1);
-  ethosMark(MX, MY, 560, {
-    datum: g,
-    hole: 1,
-    passages: soon(t, c.statement + 0.05, 1.1),
-    boundary: 0,
+  ruleHeading(t, {
+    number: L("第二条准则", "Rule two"),
+    numberAt: c.first3,
+    statement: L("只在影响行动的地方做区分", "Distinguish only what changes action"),
+    statementAt: c.statement,
+    size: 560,
+    glyph: { datum: 1, passages: 1, boundary: 0 },
+    shares: { datum: g, hole: 1, passages: soon(t, c.statement + 0.05, 1.1), boundary: 0 },
     alpha: g,
-  });
-  nameText(number, MX + 150, top, {
-    align: "left",
-    size: NOTE,
-    color: P.muted,
-    alpha: g * named(t, c.first3),
-  });
-  nameText(statement, MX + 150, top + 22, {
-    align: "left",
-    valign: "top",
-    alpha: g * named(t, c.statement),
   });
 }
 
@@ -125,11 +108,14 @@ export function verifiedStage(s, t, c, g) {
 }
 
 /* 05.4 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
- * with what it alone permits and block and unknown with their conditions; unknown is never permission. The checks
- * with no result are linked to unknown, and "no problem" is refused. The stack rises a little to keep the balance. */
+ * with what it alone permits and block and unknown with their conditions; unknown is never permission. The list keeps
+ * the stack's rows, so the two columns read on one grid: its heading on the first plane's row, the outcomes on the
+ * next three, and "never permission" on the last, a row of its own after unknown. The checks with no result are linked
+ * to unknown, and "no problem" is refused. The stack rises a little to keep the balance. */
 export function outcomesStage(s, t, c, g) {
   const top = mix(TOP, 340, soon(t, c.first4 + 0.05, 0.7)),
     LX = ASIDE + PLANE_W + 80,
+    em = labelSize(LABEL),
     names = L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]),
     quals = L(
       [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
@@ -138,7 +124,7 @@ export function outcomesStage(s, t, c, g) {
     kinds = ["pass", "block", "unknown"],
     ats = [c.pass, c.block, c.unknown],
     qualAts = [c.ahead, c.conflict, c.missing],
-    ys = [top + 90, top + 180, top + 270];
+    ys = [1, 2, 3].map((i) => rowOf(top, i));
   planeStack(t, ASIDE, top, { alpha: g });
   termRow(
     t,
@@ -147,20 +133,20 @@ export function outcomesStage(s, t, c, g) {
     L(["只分三种"], ["only three outcomes"]),
     [c.three],
     LX - 18,
-    top,
+    rowOf(top, 0) - em / 2,
     { alpha: g, width: 1824 - LX },
   );
   const restated = [[c.onlyPass], [c.isBlock], [c.isUnknownToo]];
   ats.forEach((at, i) => {
     verdictMark(kinds[i], LX, ys[i], 18, { alpha: g * ramp(t, at - 0.15, 0.4) });
     beats(t, LX, ys[i], 26, restated[i], { alpha: g });
-    termRow(t, [names[i]], [at], quals[i], [qualAts[i]], LX + 18 + NAME_GAP, ys[i] - 15, {
+    termRow(t, [names[i]], [at], quals[i], [qualAts[i]], LX + 18 + NAME_GAP, ys[i] - em / 2, {
       alpha: g * listLevel(t, ats, i),
       set: "outcomes",
       width: 1800 - LX,
     });
   });
-  nameText(L("不等于可以", "Never permission"), LX + 18 + NAME_GAP, ys[2] + 46, {
+  nameText(L("不等于可以", "Never permission"), LX + 18 + NAME_GAP, rowOf(top, 4), {
     align: "left",
     alpha: g * named(t, c.never),
   });

@@ -5,11 +5,11 @@ import { stagePerson, stageRail, stageSummaries, stageWrongGoal } from "./drift.
 import { stageBranch, stagePlatforms, stageSent } from "./facts.js";
 import { stageLedgers } from "./process.js";
 import { ctx } from "../../canvas.js";
-import { fill, ring, stroke, text } from "../../drawing/strokes.js";
+import { fill, labelSize, measure, ring, stroke, text } from "../../drawing/strokes.js";
 import { named } from "../../naming/lists.js";
 import { NAME_GAP, nameText } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
-import { P } from "../../palette.js";
+import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
@@ -69,7 +69,12 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels }) {
     valign: "bottom",
     alpha: named(t, headAt) * clamp(1.5 - 2 * k),
   });
-  nameText(heading, INDEX_XS[0] - 16 - 24, 156, {
+  // Docked, the heading ends one em before the first station's name begins, so the heading and the name hung under
+  // the first station read as two labels rather than one ragged two-line block; it never starts nearer the frame's
+  // edge than 120 px, inside the safe area wherever the camera drifts.
+  const clear = Math.max(16 + 24, measure(names[0]) / 2 + labelSize(LABEL)),
+    end = Math.max(INDEX_XS[0] - clear, 120 + measure(heading));
+  nameText(heading, end, 156, {
     align: "right",
     alpha: named(t, headAt) * clamp(2 * k - 0.5),
   });

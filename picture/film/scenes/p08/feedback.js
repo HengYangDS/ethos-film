@@ -4,11 +4,12 @@
 
 import { ctx } from "../../canvas.js";
 import { link, along } from "../../drawing/links.js";
-import { box, dot, ring, stroke } from "../../drawing/strokes.js";
+import { box, dot, measure, ring, stroke } from "../../drawing/strokes.js";
 import { check, clock, documentIcon, person, stopSign } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
 import { beats, building, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, NOTE, nameText } from "../../naming/names.js";
+import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
@@ -73,7 +74,10 @@ const travel = (t, toRun, toSlot) =>
 /* 08.6. A few days later, on a clock whose hand turns while the voice speaks: the vendor sends two corrections for the
  * same stock on the same day, the second drawn larger than the first; the pipeline keeps only an original value and
  * a single correction, each a slot of its store named on its words, and the second correction, arriving in the same
- * slot, takes the first one's place there. */
+ * slot, takes the first one's place there, named under the store. The clock stands on the vendor's axis, and the
+ * names over the row end on one line clear of the run. Until the store is named, the feed and the run stand centred on
+ * the frame; they step left as it arrives, and the finished picture, from the vendor's names to the store, is
+ * centred. */
 export function corrections(s, t, a) {
   if (a <= 0) return;
   const [laterAt, vendorAt, twoAt, pipeAt, origAt, singleAt, secondAt, overAt] = cues(s, [
@@ -86,20 +90,30 @@ export function corrections(s, t, a) {
     ["第二次更正", "the second correction"],
     ["覆盖掉了", "overwrites the first"],
   ]);
+  const LATER = L("几天后", "A few days later"),
+    VENDOR = L("厂商", "the vendor"),
+    TWO = L("两次更正", "two corrections"),
+    OVER = L("覆盖掉了", "overwrites the first"),
+    left = Math.min(FEED - 38, FEED - measure(TWO) / 2, FEED - measure(VENDOR) / 2),
+    before = Math.max(RUN + 110, FEED + 40 + measure(LATER)),
+    after = Math.max(before, STORE[0] + STORE[2] / 2, STORE[0] + measure(OVER) / 2),
+    ABOVE = Y - 48 - NAME_GAP;
   const v = a * named(t, vendorAt),
     over = ramp(t, overAt - 0.15, 0.4),
-    // Until the store is named, the feed and the run stand toward the centre; they step left as it arrives.
-    off = 300 * (1 - soon(t, origAt - 0.45, 0.8));
+    alone = 960 - (left + before) / 2,
+    done = 960 - (left + after) / 2,
+    // At least 0.8 s, longer for a longer step, so the picture keeps one pace as it steps.
+    off = mix(alone, done, soon(t, origAt - 0.45, Math.max(0.8, Math.abs(alone - done) / 350)));
   ctx.save();
   ctx.translate(off, 0);
-  clock(440, 330, 24, { hand: (voiceTime(t) * 0.5) % 1, alpha: a });
-  nameText(L("几天后", "A few days later"), 480, 330, {
+  clock(FEED, 330, 24, { hand: (voiceTime(t) * 0.5) % 1, alpha: a });
+  nameText(LATER, FEED + 40, 330, {
     align: "left",
     alpha: a * named(t, laterAt),
   });
   pipelineParts(v, a * named(t, origAt), [a * named(t, origAt), a * named(t, singleAt)]);
-  nameText(L("厂商", "the vendor"), FEED, Y + 38 + NAME_GAP, { valign: "top", alpha: v });
-  nameText(L("管线", "The pipeline"), RUN, Y - 48 - NAME_GAP, {
+  nameText(VENDOR, FEED, Y + 38 + NAME_GAP, { valign: "top", alpha: v });
+  nameText(L("管线", "The pipeline"), RUN, ABOVE, {
     valign: "bottom",
     alpha: a * named(t, pipeAt),
   });
@@ -114,7 +128,7 @@ export function corrections(s, t, a) {
   // The two corrections enter the run together; the first goes on into the slot of a single correction as it is
   // named, and the second follows into the same slot and takes the first one's place there.
   const c = a * named(t, twoAt);
-  nameText(L("两次更正", "two corrections"), FEED, Y - 38 - 16, { valign: "bottom", alpha: c });
+  nameText(TWO, FEED, ABOVE, { valign: "bottom", alpha: c });
   if (c > 0.01) {
     const [x1, y1] = travel(t, soon(t, twoAt + 0.1, 1.0), soon(t, singleAt + 0.2, 1.0)),
       [x2, y2] = travel(t, 0.8 * soon(t, twoAt + 0.3, 1.0), soon(t, secondAt + 0.05, 1.2));
@@ -122,8 +136,9 @@ export function corrections(s, t, a) {
     dot(x1, y1, 7, { color: P.ink, alpha: c * (1 - over) });
     dot(x2, y2, 16, { color: P.ink, alpha: c });
   }
-  nameText(L("覆盖掉了", "overwrites the first"), STORE[0] + STORE[2] / 2 + 22, SLOTS[1], {
-    align: "left",
+  // What the second correction does is named under the store, whose slot it overwrites.
+  nameText(OVER, STORE[0], STORE[1] + STORE[3] / 2 + NAME_GAP, {
+    valign: "top",
     alpha: a * named(t, overAt),
   });
   ctx.restore();
@@ -152,10 +167,12 @@ function verdictMark(i, x, y, alpha) {
 }
 
 /* 08.7. The people watching the pipeline report back along a link to their report, and ETHOS's rule that three
- * things be judged separately is named beside it. The three panels then build below on their words, the row moving
+ * things be judged separately is named between them. The three panels then build below on their words, the row moving
  * toward the centre as each joins so it stays balanced; each panel states its part. Last, why they are kept apart:
  * the inference may be wrong, the observation still stands, the remedy is refused, and the observation's check beats
- * again as the problem is said to remain. */
+ * again as the problem is said to remain. The report's row stands on the panels' three columns, the people over the
+ * first, the rule over the middle one and the report over the last, its three names on one baseline, so the row is
+ * centred on the frame both alone and over the finished panels. */
 export function judgement(s, t, a) {
   if (a <= 0) return;
   const [peopleAt, backAt, threeAt, obsAt, obsSays, infAt, infSays, remAt, remSays] = cues(s, [
@@ -178,25 +195,28 @@ export function judgement(s, t, a) {
   // The report stands on the centre line until the panels come, then rises to make room for them.
   const p = a * named(t, peopleAt),
     b = a * named(t, backAt),
-    TOP = mix(450, 300, soon(t, obsAt - 0.5, 0.8));
-  person(400, TOP, { size: 1.5, alpha: p });
-  nameText(L("负责观察的人", ["The people watching", "the pipeline"]), 400, TOP + 58 + NAME_GAP, {
+    TOP = mix(450, 300, soon(t, obsAt - 0.5, 0.8)),
+    [PX, , DX] = PANEL_X,
+    DOC = [84, 108],
+    names = rowNameTop([TOP + 22.7 * 1.5, TOP + DOC[1] / 2]);
+  person(PX, TOP, { size: 1.5, alpha: p });
+  nameText(L("负责观察的人", ["The people watching", "the pipeline"]), PX, names, {
     valign: "top",
     alpha: p,
   });
-  link(440, TOP, 1048, TOP, {
+  // The link spans the three panels; it draws on at the pace of a link across two of them.
+  link(PX + 40, TOP, DX - DOC[0] / 2 - 12, TOP, {
     alpha: b,
-    upto: soon(t, backAt + 0.05, 0.8),
+    upto: soon(t, backAt + 0.05, Math.max(0.8, (DX - DOC[0] / 2 - 52 - PX) / 760)),
     flow: (voiceTime(t) * 0.4) % 1,
   });
-  documentIcon(1060, TOP - 65, 100, 130, { alpha: b, rows: 0 });
-  nameText(L("把情况报了回来", "report this back"), 1110, TOP + 65 + NAME_GAP, {
+  documentIcon(DX - DOC[0] / 2, TOP - DOC[1] / 2, DOC[0], DOC[1], { alpha: b, rows: 0 });
+  nameText(L("把情况报了回来", "report this back"), DX, names, {
     valign: "top",
     alpha: b,
   });
-  nameText(L("三件事要分开判断", "three things be judged separately"), 1196, TOP, {
-    align: "left",
-    width: 420,
+  nameText(L("三件事要分开判断", "three things be judged separately"), PANEL_X[1], names, {
+    valign: "top",
     alpha: a * named(t, threeAt),
   });
   // The panels, each on its term; the row stands toward its open end for each panel still to come.

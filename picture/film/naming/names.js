@@ -56,6 +56,12 @@ export function wrapName(v, width, size = LABEL) {
   const [head, ...rest] = wrapName(best.a, width, size);
   return [head, ...wrapName([...rest, best.b].join(latin ? " " : ""), width, size)];
 }
+/* The ink of a final 、，。；：！？ fills only the left of its em, so a right-aligned line hangs it half an em past the
+ * edge and a centred line moves 0.3 em right, and its ink keeps the edge or centre of the other lines. */
+const hangOf = (line, align, em) =>
+  /[、，。；：！？]$/u.test(line)
+    ? (align === "right" ? 0.5 : align === "center" ? 0.3 : 0) * em
+    : 0;
 /* A name of one or more lines anchored at (x, y): `valign` top hangs it below the point, bottom stands it above, and
  * middle centres it. Its lines share one edge, so a wrapped name stays one block, and it counts as one name. */
 export function nameText(
@@ -73,14 +79,12 @@ export function nameText(
       : valign === "bottom"
         ? y - em / 2 - step * (lines.length - 1)
         : y - (step * (lines.length - 1)) / 2;
-  // The ink of a final 、，。；：！？ fills only the left of its em, so a right-aligned line hangs it half an em past
-  // the edge and a centred line moves 0.3 em right, and its ink keeps the edge or centre of the other lines.
-  const hang = (line) =>
-    /[、，。；：！？]$/u.test(line)
-      ? (align === "right" ? 0.5 : align === "center" ? 0.3 : 0) * em
-      : 0;
   lines.forEach((line, k) =>
-    text(line, x + hang(line), top + k * step, size, { align, ...o, whole: lines.join(" ") }),
+    text(line, x + hangOf(line, align, em), top + k * step, size, {
+      align,
+      ...o,
+      whole: lines.join(" "),
+    }),
   );
   return { lines, top: top - em / 2, bottom: top + step * (lines.length - 1) + em / 2 };
 }
@@ -187,7 +191,9 @@ export function growName(
         : y - (step * (lines.length - 1)) / 2;
   lines.forEach((line, r) => {
     const span = line.reduce((w, [, v]) => w + measure(v, size), 0);
-    let left = align === "center" ? x - span / 2 : align === "right" ? x - span : x;
+    let left =
+      (align === "center" ? x - span / 2 : align === "right" ? x - span : x) +
+      hangOf(line.map(([, v]) => v).join(""), align, em);
     line.forEach(([k, v]) => {
       const at = build ? (ats[k] ?? ats[0]) : ats[0];
       text(v, left, top + r * step, size, {
@@ -244,15 +250,14 @@ export function termRow(
     align = "left",
   } = {},
 ) {
-  // A centred row stands its term and qualifier together on x when they share a line, and each of its lines on x
-  // when the qualifier stands under the term.
+  // A row centred or ended on x sets its qualifier under the term unless `inline` says otherwise, so the term stands on
+  // x from its first word and does not move when the qualifier joins. When the two share a line, they centre or end on
+  // x together; when the qualifier stands under the term, each line centres or ends on x.
   const whole = [...term, ...qual].join(" "),
-    { one } = termRowLayout(term, qual, width, inline),
+    { one } = termRowLayout(term, qual, width, inline ?? (align === "left" ? null : false)),
     shared = one && qual.length,
-    left =
-      shared && align === "center"
-        ? x - (measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE)) / 2
-        : x,
+    span = measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE),
+    left = shared ? (align === "center" ? x - span / 2 : align === "right" ? x - span : x) : x,
     head = growName(t, term, termAts, left, y, {
       width,
       alpha,

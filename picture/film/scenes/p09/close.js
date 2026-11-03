@@ -3,8 +3,8 @@
  * named on its words and the cinnabar datum last. */
 
 import { link } from "../../drawing/links.js";
-import { ethosMark } from "../../drawing/mark.js";
-import { box, flowDot, ring } from "../../drawing/strokes.js";
+import { ethosMark, markExtent } from "../../drawing/mark.js";
+import { box, flowDot, measure, ring } from "../../drawing/strokes.js";
 import { agent, check, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot } from "../../drawing/workspace.js";
 import { clearOfTitle, illustrative } from "../../framing/chapters.js";
@@ -21,8 +21,29 @@ import { scenes } from "../registry.js";
 
 /* 09.1-09.2. The opening sentence returns where it began, said by its Agent, its datum reaching along a dashed link to
  * an empty place; in ETHOS the link holds, and the sentence's attestations stand at its end, each row on its words:
- * which commit, what the proof checked, what still has no result, all to be looked up. The picture stands right of
- * centre until the attestations come, then steps left. */
+ * which commit, what the proof checked, what still has no result, all to be looked up. The attestations' list hangs
+ * from a fan wide enough that the seal's name keeps clear of its markers, and what can all be looked up, the predicate
+ * of the three rows rather than a fourth, stands apart below them: half a row further down than a next row would,
+ * and starting at the markers' edge rather than the rows' text. The picture stands centred on the frame until ETHOS's
+ * way is named, the Agent and its sentence on the left and the empty place on the right, then steps left, and the
+ * finished picture is centred too. */
+const BOUND_X = 700,
+  BOUND_END = 1140,
+  // The empty place at the link's end, where the attestations will stand.
+  PLACE = 200,
+  FAN = 210,
+  // The rows stand a pitch apart that keeps the seal's name, under the middle row, clear of the last row's line.
+  BOUND_ROWS = [385, 470, 555],
+  ATTESTED = () => [
+    L("哪一次提交", "which commit it means"),
+    L("核验了什么", "what the proof checked"),
+    L("哪里还没有结果", "what still has no result"),
+  ];
+/* Where the sentence stands once its attestations have come: the finished picture, from the Agent to the longest row,
+ * is centred on the frame. 09.3 takes the sentence up from here. */
+export const boundShift = () =>
+  960 -
+  (BOUND_X - 370 - 34 + BOUND_END + FAN + 30 + Math.max(...ATTESTED().map((v) => measure(v)))) / 2;
 function bound(s, t, a) {
   if (a <= 0) return;
   const [beganAt, doneAt, wayAt, attestAt, commitAt, provedAt, openAt, lookAt, trustAt] = cues(s, [
@@ -36,14 +57,16 @@ function bound(s, t, a) {
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"],
   ]);
-  const off = 100 * (1 - soon(t, wayAt + 0.05, 0.9)),
-    PX = 700 + off,
+  // Before ETHOS's way is named the picture runs from the Agent to the empty place at the link's end.
+  const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE) / 2,
+    off = mix(before, boundShift(), soon(t, wayAt + 0.05, 0.9)),
+    PX = BOUND_X + off,
     Y = 470,
     clear = a * clearOfTitle(s, t, Y - 60),
     way = ramp(t, wayAt - 0.15, 0.5),
     at = a * named(t, attestAt),
-    end = 1180 + off,
-    rows = [395, 470, 545],
+    end = BOUND_END + off,
+    rows = BOUND_ROWS,
     ats = [commitAt, provedAt, openAt];
   agent(PX - 370, Y, { size: 1.5, alpha: clear });
   link(PX - 334, Y, PX - claimWidth() / 2 - 2, Y, { alpha: clear, end: false });
@@ -72,7 +95,7 @@ function bound(s, t, a) {
     flow: way < 1 ? (voiceTime(t) * 0.4) % 1 : null,
   });
   link(dx + 16, dy, end, dy, { alpha: a * way, flow: (voiceTime(t) * 0.4) % 1 });
-  box(end + 6, dy - 45, 110, 90, {
+  box(end + 6, dy - 45, PLACE, 90, {
     stroke: P.line,
     alpha: clear * (1 - at),
     radius: 10,
@@ -85,14 +108,14 @@ function bound(s, t, a) {
     alpha: a * way,
   });
   // Its attestations at the link's end, and each thing they let one look up.
+  const x = end + FAN;
   seal(end + 36, dy, 26, { alpha: at, color: P.ink });
   nameText(L("存证", "attestations"), end + 36, dy + 26 + NAME_GAP, { valign: "top", alpha: at });
   rows.forEach((y, i) => {
-    const r = a * named(t, ats[i]),
-      x = end + 170;
+    const r = a * named(t, ats[i]);
     link(end + 66, dy, x - 24, y, {
       route: "hvh",
-      mid: end + 140,
+      mid: x - 30,
       alpha: r,
       upto: soon(t, ats[i] + 0.05, 0.5),
     });
@@ -100,27 +123,31 @@ function bound(s, t, a) {
     else if (i === 1) check(x, y + 2, 26, { alpha: r, width: 3.5 });
     else askIcon(x, y - 2, 16, { alpha: r, color: P.ink });
   });
-  [
-    L("哪一次提交", "which commit it means"),
-    L("核验了什么", "what the proof checked"),
-    L("哪里还没有结果", "what still has no result"),
-  ].forEach((v, i) =>
-    nameText(v, end + 200, rows[i], {
+  ATTESTED().forEach((v, i) =>
+    nameText(v, x + 30, rows[i], {
       align: "left",
       alpha: a * listIn(t, ats, i),
       set: "09.2:attested",
     }),
   );
-  nameText(L("都找得到", "can all be looked up"), end + 200, rows[2] + 46, {
+  const pitch = rows[1] - rows[0];
+  nameText(L("都找得到", "can all be looked up"), x - 16, rows[2] + 1.5 * pitch, {
     align: "left",
-    valign: "top",
     alpha: a * named(t, lookAt),
   });
 }
 
 /* 09.3. The sentence rises to the top as the question of whether it can be trusted is put; what it does not depend on
  * is refused on the left, who said it and how much process, and what it does depend on builds on the right, the three
- * conditions the rules give, each a box that is ticked on its words. */
+ * conditions the rules give, each a box that is ticked on its words. The two lists are centred on each other, the two
+ * refusals midway between the three conditions' rows, and stand low enough to clear the question where the Chinese
+ * sentence starts its rise; the table they make is balanced under the sentence. */
+const REFUSED = () => [L("谁说的", "who said it"), L("走了多少流程", "how much process")],
+  CONDITIONS = () => [
+    L("原意是不是有一处可查", "the meaning can be found in one place"),
+    L("结论有没有超出证据", "stays within its evidence"),
+    L("能不能退回去", "you can get back after a mistake"),
+  ];
 function judged(s, t, a, cutAt) {
   if (a <= 0) return;
   const [trustAt, whoAt, processAt, alsoAt, meaningAt, withinAt, backAt] = cues(s, [
@@ -132,12 +159,21 @@ function judged(s, t, a, cutAt) {
     ["结论有没有超出证据", "stays within its evidence"],
     ["能不能退回去", "you can get back after a mistake"],
   ]);
+  const refused = REFUSED(),
+    conditions = CONDITIONS(),
+    // The cross after each refusal, and the box and its gap before each condition.
+    A = Math.max(...refused.map((v) => measure(v))) + 16 + 26,
+    B = 36 + 20 + Math.max(...conditions.map((v) => measure(v))),
+    GUTTER = 200,
+    // The table is centred on the frame, under the sentence that heads it.
+    RX = 960 - (A + GUTTER + B) / 2 + A - 42,
+    BX = RX + 42 + GUTTER;
   // The sentence rises as the question is put, or from the cut where the question was put before it.
   const q = soon(t, Math.max(trustAt + 0.05, cutAt), 0.9),
-    PX = mix(700, 960, q),
+    PX = mix(BOUND_X + boundShift(), 960, q),
     PY = mix(470, 380, q),
     conds = [meaningAt, withinAt, backAt],
-    rows = [530, 615, 700];
+    rows = [545, 630, 715];
   claimPanel(t, PX, PY, { alpha: a });
   nameText(L("这句话能不能信", "can be trusted"), PX, PY + CLAIM_H / 2 + 18, {
     valign: "top",
@@ -145,9 +181,8 @@ function judged(s, t, a, cutAt) {
     color: P.muted,
     alpha: a * named(t, trustAt),
   });
-  [L("谁说的", "who said it"), L("走了多少流程", "how much process")].forEach((v, i) =>
-    // Low enough to stay clear of the question where the Chinese sentence starts its rise.
-    rejectedName(v, 640, rows[i] + 60, {
+  refused.forEach((v, i) =>
+    rejectedName(v, RX, (rows[i] + rows[i + 1]) / 2, {
       align: "right",
       // Each may lead its words within its clause: English says both in one clause with the question; Chinese opens
       // a clause for each, so the second comes in on its own clause's first word.
@@ -158,15 +193,11 @@ function judged(s, t, a, cutAt) {
       set: "09.3:refused",
     }),
   );
-  [
-    L("原意是不是有一处可查", "the meaning can be found in one place"),
-    L("结论有没有超出证据", "stays within its evidence"),
-    L("能不能退回去", "you can get back after a mistake"),
-  ].forEach((v, i) => {
+  conditions.forEach((v, i) => {
     const k = a * named(t, conds[i]);
-    box(980, rows[i] - 18, 36, 36, { stroke: P.ink, alpha: k, radius: 6, width: 2.5 });
-    check(998, rows[i] + 1, 22, { alpha: a * named(t, conds[i] + 0.5), width: 3.5 });
-    nameText(v, 1036, rows[i], {
+    box(BX, rows[i] - 18, 36, 36, { stroke: P.ink, alpha: k, radius: 6, width: 2.5 });
+    check(BX + 18, rows[i] + 1, 22, { alpha: a * named(t, conds[i] + 0.5), width: 3.5 });
+    nameText(v, BX + 56, rows[i], {
       align: "left",
       width: 520,
       alpha: a * listIn(t, conds, i),
@@ -182,7 +213,10 @@ const MARK = [960, 470, 640];
  * ink, as the mark's outline. Then each part on its words, its name and what it stands for beside the mark: the
  * origin as a ring at the centre, named at the upper left; the two passages drawing out from it, named at the upper
  * right; the boundary taking full ink, named at the lower left; and last the cinnabar datum filling the origin, named
- * at the lower right. A point travels the boundary in voice time until the boundary is named. */
+ * at the lower right. A point travels the boundary in voice time until the boundary is named. The names on the right
+ * keep the same clearance from the mark's ink as those on the left, the two lower names stand on one line as the two
+ * upper ones do, and the Chinese origin's note breaks at its comma, as the English one breaks, so the close is centred
+ * on the frame with the datum at its centre. */
 function close(s, t, a) {
   if (a <= 0) return;
   const [cutAt, markAt, originAt, beforeAt, twoAt, whereAt, boundaryAt, scopeAt, pointAt, boundAt] =
@@ -229,8 +263,8 @@ function close(s, t, a) {
   });
   // Names: the origin's beside it inside the mark, the others outside, each with what it stands for.
   const LEFT = X - r - 50,
-    RIGHT = X + 170,
-    pair = (term, termAt, said, saidAt, x, y, align) => {
+    RIGHT = X + markExtent(S).right + 40,
+    pair = (term, termAt, said, saidAt, x, y, align, width = 380) => {
       nameText(term, x, y, {
         align,
         valign: "bottom",
@@ -242,7 +276,7 @@ function close(s, t, a) {
         valign: "top",
         size: NOTE,
         color: P.muted,
-        width: 380,
+        width,
         alpha: a * named(t, saidAt),
         set: "09.4:said",
       });
@@ -255,6 +289,7 @@ function close(s, t, a) {
     LEFT,
     Y - 96,
     "right",
+    L(220, 380),
   );
   pair(
     L("两条路径", "Two passages"),
@@ -280,7 +315,7 @@ function close(s, t, a) {
     L("结论必须落到证据上的地方", "bound to its evidence"),
     boundAt,
     RIGHT,
-    Y + 84,
+    Y + 70,
     "left",
   );
 }

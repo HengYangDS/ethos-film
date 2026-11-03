@@ -5,11 +5,21 @@ import { paper, papers } from "../p02/drift.js";
 import { ctx } from "../../canvas.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { link } from "../../drawing/links.js";
-import { box, dot, fill, flowDot, line, measure, stroke } from "../../drawing/strokes.js";
+import {
+  box,
+  dot,
+  fill,
+  flowDot,
+  labelSize,
+  line,
+  measure,
+  stroke,
+} from "../../drawing/strokes.js";
 import { check, cross, person, seal } from "../../drawing/symbols.js";
 import { folderIcon, kernelIcon } from "../../drawing/workspace.js";
 import { listIn, listLevel, named, speaking } from "../../naming/lists.js";
 import {
+  LEADING,
   NAME_GAP,
   NOTE,
   growName,
@@ -18,37 +28,81 @@ import {
   termRow,
   termRowLayout,
 } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { rowNameTop } from "../../naming/placement.js";
+import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
-/* A term row whose right edge stands at `right`, centred on `y`. */
-function termRowRight(t, term, termAts, qual, qualAts, right, y, o = {}) {
-  const width = o.width ?? 360,
-    { one, height } = termRowLayout(term, qual, width),
-    termW = measure(term.join("")),
-    qualW = Math.max(
-      ...growTexts(qual, width, NOTE).map((r) => measure(r.map(([, v]) => v).join(""), NOTE)),
-    ),
-    wide = one ? termW + 16 + qualW : Math.max(termW, qualW);
-  termRow(t, term, termAts, qual, qualAts, right - wide, y - height / 2, { ...o, width });
-}
-
 /* 03.3 A small trust kernel supports the path: the path at the top, the kernel under it on its words. Its three inputs
  * stand at its left, each linked to it on its words: the accepted intent, the fresh facts, the attestations on record.
  * By fixed rules it compiles a plan; at the moment it writes, the write passes a gate that checks again; and what it
- * observed, decided and did becomes a new attestation, which returns to the inputs. */
+ * observed, decided and did becomes a new attestation, which returns to the inputs.
+ *
+ * Layout. The diagram moves toward the frame's centre by its extent, from the inputs' names to the loop that returns
+ * the new attestation, as far as its build-up allows (balancedShift). The inputs' names end on one edge, the English
+ * intent's qualifier under its term. The names under the kernel, the plan, the gate and the new attestation hang from
+ * one baseline, one gap under the tallest of them, the kernel. What the kernel records stands over the new attestation,
+ * one clause to a line, each line centred on it; the loop turns down clear of the new attestation's name. */
+const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
+/* A picture built left to right stands off the centre until its last marks arrive. It shifts toward centring its
+ * finished extent [f0, f1], but no further than keeps the extent [e0, e1] that stands before those marks within 7% of
+ * the frame's width of the centre, so it stays balanced while it builds. Returns the shift. */
+const BUILD_REACH = 0.07 * 1920;
+function balancedShift([e0, e1], [f0, f1]) {
+  const centred = 960 - (f0 + f1) / 2,
+    early = (e0 + e1) / 2;
+  return centred < 0
+    ? Math.max(centred, 960 - BUILD_REACH - early)
+    : Math.min(centred, 960 + BUILD_REACH - early);
+}
 export function stageKernel(t, a, c) {
   if (a <= 0) return;
   const PY = 380,
-    KX = 860,
     KY = 560,
     KR = 54,
+    ys = [440, 560, 680],
+    LOOP = 740,
     q = (voiceTime(t) * 0.45) % 1;
+  const inputNames = L(
+      ["已经采纳的意图", "刚观察到的事实", "留下的存证"],
+      ["Intent", "Fresh facts", "Attestations"],
+    ),
+    intentQual = ["that has been accepted"],
+    inputsWide = Math.max(
+      ...inputNames.map((v) => measure(v)),
+      en ? measure(intentQual.join(""), NOTE) : 0,
+    );
+  // What the kernel records: each clause on its own line, a part carrying the space before it.
+  const parts = L(
+      ["看到了什么、", "判断了什么、", "做了什么"],
+      ["What it observed,", " what it decided", " and what it did"],
+    ),
+    recordWidth = Math.max(...parts.map((v) => measure(v.trim()))) + 1,
+    recordWide = Math.max(
+      ...growTexts(parts, recordWidth).map((r) => measure(r.map(([, v]) => v).join(""))),
+    );
+  const checkName = L("再核对一遍", "Checks again"),
+    newName = L("新的存证", "New attestations"),
+    loopX = KERNEL.SX + Math.max(120, measure(newName) / 2 + 24),
+    left = KERNEL.IX - 34 - NAME_GAP - inputsWide,
+    right = Math.max(loopX + 1.25, KERNEL.SX + recordWide / 2),
+    // The path runs over the diagram from above the inputs to past the gate, so until the new attestation arrives the
+    // diagram ends at the path's end.
+    pathFrom = KERNEL.KX - 260,
+    pathTo = KERNEL.GX + 90,
+    dx = balancedShift([left, pathTo + 7], [left, right]);
+  const IX = KERNEL.IX + dx,
+    KX = KERNEL.KX + dx,
+    PX = KERNEL.PX + dx,
+    GX = KERNEL.GX + dx,
+    SX = KERNEL.SX + dx,
+    RX = loopX + dx,
+    NX = IX - 34 - NAME_GAP,
+    namesTop = rowNameTop([KY + KR, KY + 45, KY + 50, KY + 34]);
   // The path as 03.2 left it, and the kernel under it from the cut; its clause names it soon after.
-  line(600, PY, 1440, PY, { color: P.ink, alpha: a, width: 3 });
-  dot(1440, PY, 7, { color: P.ink, alpha: a });
+  line(pathFrom + dx, PY, pathTo + dx, PY, { color: P.ink, alpha: a, width: 3 });
+  dot(pathTo + dx, PY, 7, { color: P.ink, alpha: a });
   kernelIcon(KX, KY, KR, {
     alpha: a,
     color: P.ink,
@@ -56,15 +110,12 @@ export function stageKernel(t, a, c) {
     turn: 0.1 * voiceTime(t),
   });
   link(KX, KY - KR, KX, PY + 3, { alpha: a, end: false });
-  nameText(L("很小的信任内核", "A small trust kernel"), KX, KY + KR + NAME_GAP, {
+  nameText(L("很小的信任内核", "A small trust kernel"), KX, namesTop, {
     valign: "top",
     alpha: a * named(t, L(c.kernel - 0.55, c.kCut)),
   });
   // The inputs, each with its mark, named at its left and linked to the kernel round its name.
-  const ats = [c.in1, c.in2, c.in3],
-    ys = [440, 560, 680],
-    IX = 560,
-    NX = IX - 34 - NAME_GAP;
+  const ats = [c.in1, c.in2, c.in3];
   ats.forEach((at, i) => {
     const on = a * ramp(t, at - 0.15, 0.4),
       y = ys[i];
@@ -78,9 +129,9 @@ export function stageKernel(t, a, c) {
             [14, -16],
             [-8, 12],
             [16, 12],
-          ].forEach(([dx, dy]) => {
-            ctx.moveTo(IX + dx + 7, y + dy);
-            ctx.arc(IX + dx, y + dy, 7, 0, Math.PI * 2);
+          ].forEach(([ox, oy]) => {
+            ctx.moveTo(IX + ox + 7, y + oy);
+            ctx.arc(IX + ox, y + oy, 7, 0, Math.PI * 2);
           }),
         { color: P.ink, alpha: on },
       );
@@ -93,35 +144,30 @@ export function stageKernel(t, a, c) {
       flow: q,
     });
   });
-  if (en)
-    termRowRight(t, ["Intent"], [c.in1], ["that has been accepted"], [c.in1q], NX, ys[0], {
+  if (en) {
+    const { height } = termRowLayout(["Intent"], intentQual, 360, false);
+    termRow(t, ["Intent"], [c.in1], intentQual, [c.in1q], NX, ys[0] - height / 2, {
+      width: 360,
+      align: "right",
       alpha: a * listLevel(t, ats, 0),
       set: "inputs",
     });
-  else
-    nameText("已经采纳的意图", NX, ys[0], {
+  } else
+    nameText(inputNames[0], NX, ys[0], {
       align: "right",
       alpha: a * listIn(t, ats, 0),
       set: "inputs",
     });
   [1, 2].forEach((i) =>
-    nameText(
-      L(["刚观察到的事实", "留下的存证"], ["Fresh facts", "Attestations"])[i - 1],
-      NX,
-      ys[i],
-      {
-        align: "right",
-        alpha: a * listIn(t, ats, i),
-        set: "inputs",
-      },
-    ),
+    nameText(inputNames[i], NX, ys[i], {
+      align: "right",
+      alpha: a * listIn(t, ats, i),
+      set: "inputs",
+    }),
   );
   // By fixed rules, a plan; the gate that checks again at the moment of writing; the new attestation, which returns to
   // the inputs round the names under the diagram.
-  const PX = 1180,
-    GX = 1380,
-    SX = 1620,
-    rules = a * ramp(t, c.rules - 0.15, 0.4),
+  const rules = a * ramp(t, c.rules - 0.15, 0.4),
     plan = a * ramp(t, c.plan - 0.15, 0.4),
     gate = a * ramp(t, c.writeAt - 0.15, 0.4),
     rec = a * ramp(t, c.rec1 - 0.15, 0.4),
@@ -132,7 +178,7 @@ export function stageKernel(t, a, c) {
     alpha: a * named(t, c.rules),
   });
   paper(PX, KY - 45, 70, 90, { alpha: plan, rows: 4 });
-  nameText(L("一份计划", "A plan"), PX + 35, KY + 45 + NAME_GAP, {
+  nameText(L("一份计划", "A plan"), PX + 35, namesTop, {
     valign: "top",
     alpha: a * named(t, c.plan),
   });
@@ -143,31 +189,26 @@ export function stageKernel(t, a, c) {
     single: true,
     open: soon(t, c.check + 0.3, 0.6),
   });
-  nameText(L("再核对一遍", "Checks again"), GX, KY + 50 + NAME_GAP, {
+  nameText(checkName, GX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.check),
   });
   link(GX + 30, KY, SX - 34, KY, { alpha: rec, upto: soon(t, c.rec1 + 0.05, 0.4) });
   seal(SX, KY, 34, { color: P.ink, alpha: rec, stamp: stamped });
-  const parts = L(
-      ["看到了什么、", "判断了什么、", "做了什么"],
-      ["What it observed, ", "what it decided ", "and what it did"],
-    ),
-    widest = Math.max(...growTexts(parts, 560).map((r) => measure(r.map(([, v]) => v).join("")))),
-    left = Math.min(SX - widest / 2, 1800 - widest);
-  growName(t, parts, [c.rec1, c.rec2, c.rec3], left, KY - 34 - 30, {
-    width: 560,
+  growName(t, parts, [c.rec1, c.rec2, c.rec3], SX, KY - 34 - NAME_GAP, {
+    width: recordWidth,
     valign: "bottom",
+    align: "center",
     alpha: a,
     build: true,
   });
-  nameText(L("新的存证", "New attestations"), SX, KY + 34 + NAME_GAP, {
+  nameText(newName, SX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.newAtt),
   });
   const back = soon(t, c.newAtt + 0.05, 0.25);
-  link(SX + 34, KY, 1790, 780, { route: "hv", alpha: stamped, upto: back, end: false });
-  link(1790, 780, IX, ys[2] + 28, {
+  link(SX + 34, KY, RX, LOOP, { route: "hv", alpha: stamped, upto: back, end: false });
+  link(RX, LOOP, IX, ys[2] + 28, {
     route: "hv",
     alpha: stamped * (back >= 1 ? 1 : 0),
     upto: soon(t, c.newAtt + 0.3, 0.3),
@@ -179,12 +220,14 @@ export function stageKernel(t, a, c) {
  * the cut. Intent stays, one bar from its Change, which copies drop from each time the kernel compiles it; facts are
  * marks seen afresh, a window of them passing that never stays; plans end, one carried out and one discarded, and are
  * not kept, and a new one is compiled again. Each row's marks touch its line, so the rows are one mark with the
- * lines; a point runs along each row once its term is said. */
+ * lines; a point runs along each row once its term is said. The lines stand centred on the frame; the heading shares
+ * their left edge with the rows' terms, one line height above the first term, so it heads the rows rather than the
+ * intent's folder under the frame's centre. */
 export function stageLifetimes(t, a, c) {
   if (a <= 0) return;
   const ys = [440, 590, 740],
-    X0 = 300,
-    X1 = 1640,
+    X0 = 290,
+    X1 = 1630,
     M0 = 960,
     starts = [c.intent, c.facts, c.planRow];
   // The rows' time lines, one ink stroke from the cut, named by the heading over them.
@@ -196,10 +239,33 @@ export function stageLifetimes(t, a, c) {
       }),
     { color: P.ink, alpha: a * 0.7, width: 2.5 },
   );
-  nameText(L("寿命不一样", "Different lengths of time"), 960, ys[0] - 70, {
-    valign: "bottom",
-    alpha: a * named(t, L(c.lifetimes - 0.25, c.lCut + 0.15)),
-  });
+  // Each row's term over the left of its line, its qualifier joining it on its words.
+  const rows = [
+      [[L("意图", "Intent")], [c.intent], [L("一份正式变更", "one official Change")], [c.change]],
+      [
+        [L("事实", "Facts")],
+        [c.facts],
+        L(["每次都重新去看，", "从不存下来"], ["observed again every time, ", "never stored"]),
+        [c.again, c.never],
+      ],
+      [
+        [L("计划", "A plan")],
+        [c.planRow],
+        L(["要么执行，", "要么作废"], ["carried out ", "or discarded"]),
+        [c.carried, c.discarded],
+      ],
+    ],
+    termTops = rows.map(([term, , qual], i) => ys[i] - 14 - termRowLayout(term, qual, 640).height);
+  nameText(
+    L("寿命不一样", "Different lengths of time"),
+    X0,
+    termTops[0] - labelSize(LABEL) * LEADING,
+    {
+      align: "left",
+      valign: "bottom",
+      alpha: a * named(t, L(c.lifetimes - 0.25, c.lCut + 0.15)),
+    },
+  );
   // A point runs along each row from the cut, while the voice speaks: the rows' time passing.
   ys.forEach((y, i) => {
     const q = (voiceTime(t) * 0.18 + i * 0.33) % 1;
@@ -265,25 +331,8 @@ export function stageLifetimes(t, a, c) {
     alpha: p3,
     width: 6,
   });
-  // Each row's term over the left of its line, its qualifier joining it on its words.
-  const rows = [
-    [[L("意图", "Intent")], [c.intent], [L("一份正式变更", "one official Change")], [c.change]],
-    [
-      [L("事实", "Facts")],
-      [c.facts],
-      L(["每次都重新去看，", "从不存下来"], ["observed again every time, ", "never stored"]),
-      [c.again, c.never],
-    ],
-    [
-      [L("计划", "A plan")],
-      [c.planRow],
-      L(["要么执行，", "要么作废"], ["carried out ", "or discarded"]),
-      [c.carried, c.discarded],
-    ],
-  ];
   rows.forEach(([term, termAts, qual, qualAts], i) => {
-    const { height } = termRowLayout(term, qual, 640);
-    termRow(t, term, termAts, qual, qualAts, X0, ys[i] - 14 - height, {
+    termRow(t, term, termAts, qual, qualAts, X0, termTops[i], {
       width: 640,
       alpha: a * listLevel(t, starts, i),
       set: "lifetimes",
@@ -295,31 +344,49 @@ export function stageLifetimes(t, a, c) {
 /* 03.5 The kernel keeps one thing for the long term: from the cut the kernel at the left, linked to what it keeps, a
  * card with its seal, the attestation. Its two fields fill in on their words, who verified it and where it holds, and
  * its scope is drawn around it; someone later checks it from below; a copy outside the scope fades and is struck: it
- * does not count. */
+ * does not count. The picture moves toward the frame's centre by its extent, from the kernel to the copy, as far as its
+ * build-up allows (balancedShift); the copy stands 100 px outside the scope. "For the long term" and the attestation's
+ * name read as one heading of two lines at the normal leading; the kernel's and the copy's names stand on one baseline;
+ * the reader and the check it makes from below are named from one left edge. */
 export function stageScope(t, a, c) {
   if (a <= 0) return;
-  const CX = 1000,
-    CY = 540,
-    W = L(300, 380),
+  // The card pads its content equally on both sides: 24 px, the seal, 24 px, the fields, 24 px.
+  const kernelName = L("内核", "The kernel"),
+    voidName = L("就不算数", "Does not count"),
+    fieldNames = L(["谁出具的", "范围"], ["Who verified it", "Where it holds"]),
+    W = 24 + 72 + 24 + Math.max(...fieldNames.map((v) => measure(v))) + 24,
+    scopeEnd = 1000 + W / 2 + 40,
+    copyAt = scopeEnd + 100,
+    left = Math.min(600 - 44, 600 - measure(kernelName) / 2),
+    right = Math.max(copyAt + 180, copyAt + 90 + measure(voidName) / 2),
+    // Until the copy arrives the picture ends at the scope.
+    dx = balancedShift([left, scopeEnd], [left, right]);
+  const CX = 1000 + dx,
+    CY = 520,
     H = 150,
-    KX = 600,
+    KX = 600 + dx,
+    namesTop = rowNameTop([CY + 44, CY + 50]),
+    headBottom = CY - H / 2 - 40 - NAME_GAP,
     q = (voiceTime(t) * 0.4) % 1;
   kernelIcon(KX, CY, 44, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
-  nameText(L("内核", "The kernel"), KX, CY + 44 + NAME_GAP, {
+  nameText(kernelName, KX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.aCut + 0.1),
   });
   link(KX + 44 * 0.87, CY, CX - W / 2, CY, { alpha: a, flow: q });
-  nameText(L("长期留下的", "For the long term"), CX, 320, { alpha: a * named(t, c.aCut + 0.15) });
+  nameText(L("长期留下的", "For the long term"), CX, headBottom - labelSize(LABEL) * LEADING, {
+    valign: "bottom",
+    alpha: a * named(t, c.aCut + 0.15),
+  });
   box(CX - W / 2, CY - H / 2, W, H, { stroke: P.ink, alpha: a, radius: 14, width: 2.5 });
   seal(CX - W / 2 + 60, CY, 36, { color: P.ink, alpha: a, stamp: a * ramp(t, c.att - 0.15, 0.4) });
   // The card is named over its scope, outside the boundary drawn round it.
-  nameText(L("存证", "The attestation"), CX, CY - H / 2 - 40 - NAME_GAP, {
+  nameText(L("存证", "The attestation"), CX, headBottom, {
     valign: "bottom",
     alpha: a * named(t, c.att),
   });
   const fields = [c.who, c.scope];
-  L(["谁出具的", "范围"], ["Who verified it", "Where it holds"]).forEach((v, i) =>
+  fieldNames.forEach((v, i) =>
     nameText(v, CX - W / 2 + 120, CY - 28 + 56 * i, {
       align: "left",
       alpha: a * listIn(t, fields, i),
@@ -337,7 +404,8 @@ export function stageScope(t, a, c) {
   });
   // Someone later checks it, from below its scope.
   const later = a * ramp(t, c.reader - 0.15, 0.4),
-    RY = 800;
+    RY = CY + 260,
+    RX = CX + 30 + NAME_GAP;
   person(CX, RY, { size: 1.0, alpha: later });
   link(CX, RY - 34, CX, bottom + 2, {
     alpha: later,
@@ -345,26 +413,26 @@ export function stageScope(t, a, c) {
     flow: q,
     end: false,
   });
-  nameText(L("后来的人", "Someone"), CX + 30 + NAME_GAP, RY - 6, {
+  nameText(L("后来的人", "Someone"), RX, RY - 6, {
     align: "left",
     alpha: a * named(t, c.reader),
   });
-  nameText(L("回头去查", "Check it later"), CX + 12 + NAME_GAP, (RY - 34 + bottom) / 2, {
+  nameText(L("回头去查", "Check it later"), RX, (RY - 34 + bottom) / 2, {
     align: "left",
     alpha: a * named(t, c.later),
   });
   // A copy outside the scope does not count; its seal is smaller than every ring here, so it is read as the copy's.
   const copy = a * ramp(t, c.outside - 0.15, 0.4),
     void_ = ramp(t, c.notCount - 0.15, 0.4);
-  box(1400, CY - 50, 180, 100, {
+  box(copyAt + dx, CY - 50, 180, 100, {
     stroke: P.ink,
     alpha: copy * mix(1, 0.6, void_),
     radius: 12,
     width: 2.5,
   });
-  seal(1440, CY, 18, { color: P.ink, alpha: copy * mix(1, 0.6, void_) });
-  cross(1530, CY, 26, { color: P.ink, alpha: copy * void_, width: 3.5 });
-  nameText(L("就不算数", "Does not count"), 1490, CY + 50 + NAME_GAP, {
+  seal(copyAt + 40 + dx, CY, 18, { color: P.ink, alpha: copy * mix(1, 0.6, void_) });
+  cross(copyAt + 130 + dx, CY, 26, { color: P.ink, alpha: copy * void_, width: 3.5 });
+  nameText(voidName, copyAt + 90 + dx, namesTop, {
     valign: "top",
     alpha: a * named(t, c.notCount),
   });

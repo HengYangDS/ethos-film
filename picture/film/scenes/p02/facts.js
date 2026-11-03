@@ -38,9 +38,14 @@ function agentPair(xs, y, { alpha = 1, size = 1 } = {}) {
     { color: P.ink, alpha },
   );
 }
-/* An unknown: a question mark, seen rather than read. */
-const unknownMark = (x, y, alpha) =>
-  text("?", x, y, 40, { role: "mark", align: "center", alpha, bold: true });
+/* An unknown: the film's unknown outcome, a question mark in a ring, drawn at the size of the stop sign it stands
+ * beside, so the markers of one list are of one family. */
+const UNKNOWN_R = 20;
+function unknownMark(x, y, alpha) {
+  if (alpha < 0.01) return;
+  ring(x, y, UNKNOWN_R, { color: P.ink, alpha, width: 3 });
+  text("?", x, y + 1, UNKNOWN_R * 1.25, { role: "mark", align: "center", alpha });
+}
 
 /* 02.5 Two Agents work on the same branch. One keeps a memory of the branch as it was, three commits; it writes from
  * that memory, its link drawn to the place after them, and its commit lands there; the other's commit, the newest on
@@ -70,7 +75,8 @@ export function stageBranch(t, a, c) {
   const dropY = mix(Y, Y + 96, over);
   commitDot(BX, dropY, { alpha: branch * mix(1, 0.75, over) });
   cross(BX, dropY, 30, { color: P.ink, alpha: branch * over, width: 3.5 });
-  nameText(L("被覆盖了", "Overwritten"), BX, Y + 96 + 9 + NAME_GAP, {
+  // The name hangs one gap under the struck commit and drops with it, so it stays on its mark from its first word.
+  nameText(L("被覆盖了", "Overwritten"), BX, dropY + 15 + NAME_GAP, {
     valign: "top",
     alpha: a * named(t, c.overwritten),
   });
@@ -164,7 +170,8 @@ export function stagePlatforms(t, a, c) {
     dash: [8, 8],
   });
   unknownMark(VX + 70 + 330, 800, again * soon(t, c.retry + 0.55, 0.3));
-  nameText(L("再试一遍", "Trying again"), VX + 70 + 360, 800, {
+  // Its name stands as far from its mark as the results' names stand from theirs.
+  nameText(L("再试一遍", "Trying again"), VX + 70 + 330 + UNKNOWN_R + 16, 800, {
     align: "left",
     alpha: a * named(t, c.retry),
   });

@@ -3,8 +3,9 @@
  * again before each write; halfway through, one Agent's session ends and the next takes over by reading, in ETHOS's
  * order, fresh facts, the Change and the attestations on record. */
 
+import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { dot, ring } from "../../drawing/strokes.js";
+import { dot, labelSize, measure, ring } from "../../drawing/strokes.js";
 import { agent, clock, seal } from "../../drawing/symbols.js";
 import { bubble, folderIcon } from "../../drawing/workspace.js";
 import { writeGate } from "../../drawing/lanes.js";
@@ -12,16 +13,19 @@ import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named } from "../../naming/lists.js";
 import { NOTE, nameText, rejectedName } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
-import { P } from "../../palette.js";
+import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cue, cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { RAIL_Y, docMark, journeyRail, ordinal, railFlow, work } from "./rail.js";
 
-/* The requirement's document at the start of the rail, where 08.1 shows it and 08.2 names it as the request. */
+/* The requirement's document at the start of the rail, where 08.1 shows it and 08.2 names it as the request. Both
+ * stages stand LIFE_DX right of their drawn places, so 08.2's stations, from the request's name to the rail's end,
+ * are centred on the frame, and the request keeps its place across the cut. */
 const REQ = [120, 150],
-  REQ_X = 250;
+  REQ_X = 250,
+  LIFE_DX = 34;
 const requirement = (alpha) =>
   docMark(REQ_X - REQ[0] / 2, RAIL_Y - REQ[1] / 2, REQ[0], REQ[1], { alpha, rows: 4 });
 
@@ -34,6 +38,8 @@ export function lifeStart(s, t, a) {
     ["把这项需求", "Now follow"],
     ["这项需求的一生", "this requirement"],
   ]);
+  ctx.save();
+  ctx.translate(LIFE_DX, 0);
   requirement(a * clearOfTitle(s, t, RAIL_Y - REQ[1] / 2));
   journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a, upto: soon(t, firstAt + 0.05, 1.6) });
   // The name may lead its clause a little, so the chapter's first thought is named on its first words.
@@ -48,6 +54,7 @@ export function lifeStart(s, t, a) {
       alpha: a * named(t, cue(s, "这项需求的一生", "its whole life")),
     });
   railFlow(t, REQ_X + 70, 1680, { alpha: a * soon(t, firstAt + 1.4, 0.4) });
+  ctx.restore();
 }
 
 /* The stations of 08.2 along the rail, and the Work Lane's span between its folder and its gate. */
@@ -82,6 +89,8 @@ export function lane(s, t, a) {
     level = (i) => a * listIn(t, spoken, spoken.indexOf(ats[i])),
     shown = (i) => a * named(t, ats[i]),
     [x0, x1, x2, x3, x4] = XS;
+  ctx.save();
+  ctx.translate(LIFE_DX, 0);
   journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a });
   railFlow(t, REQ_X + 70, 1680, { alpha: a });
   requirement(a);
@@ -106,8 +115,17 @@ export function lane(s, t, a) {
     u = a * named(t, untilAt);
   agent(hx, LEASE_Y, { size: 0.9, alpha: h });
   clock(ux, LEASE_Y, 20, { hand: 0.62, alpha: u });
-  link(hx, RAIL_Y - 6, hx, LEASE_Y + 30, { alpha: h, upto: soon(t, holdAt + 0.05, 0.5) });
-  link(ux, RAIL_Y - 6, ux, LEASE_Y + 30, { alpha: u, upto: soon(t, untilAt + 0.05, 0.5) });
+  // Each holds its record above the lane, as the lane's own track holds it, so neither ends in a point.
+  link(hx, RAIL_Y - 6, hx, LEASE_Y + 30, {
+    alpha: h,
+    upto: soon(t, holdAt + 0.05, 0.5),
+    end: false,
+  });
+  link(ux, RAIL_Y - 6, ux, LEASE_Y + 30, {
+    alpha: u,
+    upto: soon(t, untilAt + 0.05, 0.5),
+    end: false,
+  });
   nameText(L("由谁持有", "who holds that lane"), hx, LEASE_Y - 34, {
     valign: "bottom",
     width: 230,
@@ -129,6 +147,7 @@ export function lane(s, t, a) {
     [writeAt, x3 + 30 + 26],
   ].forEach(([at, to]) => (wx = mix(wx, to, soon(t, at + 0.05, 0.9))));
   work(wx, RAIL_Y, a);
+  ctx.restore();
 }
 
 /* The sources the Agent taking over reads, in ETHOS's order: each a term with what it tells, and its mark. */
@@ -151,8 +170,11 @@ function sourceMark(i, x, y, alpha) {
 
 /* 08.3. Halfway along, the work stands under its Agent on the rail; the Agent's session ends on its words and the
  * Agent dims, and the Agent that takes over arrives on its words as the work passes to it. The last one's memory is
- * refused between them. The handover stands centred until the reading begins, then steps left as the three sources
- * arrive on the right in ETHOS's order, each linked from the new Agent with what it tells. */
+ * refused between them. Until the reading begins the handover is centred on the frame, the rail reaching about as far
+ * either side of it; then it steps left and the rail draws back to the new Agent as the three sources arrive on the
+ * right in ETHOS's order, each linked from the new Agent with what it tells, and the finished picture, from the rail's
+ * start to the longest of what the sources tell, is centred on the frame. Each source's term stands on its marker's
+ * line from its first word, and what it tells hangs beneath. */
 export function handoff(s, t, a) {
   if (a <= 0) return;
   const [halfAt, endsAt, overAt, memoryAt, factsAt, nowAt, changeAt, doneAt, attestAt, passedAt] =
@@ -168,18 +190,28 @@ export function handoff(s, t, a) {
       ["已有的存证", "attestations already"],
       ["哪些核验已经通过", "which proofs have passed"],
     ]);
-  const off = 190 * (1 - soon(t, factsAt - 0.4, 0.8)),
+  const sources = SOURCES(),
+    widest = Math.max(
+      ...sources.map(([term, tell]) => Math.max(measure(term), measure(tell, NOTE))),
+    ),
+    S = 960 - (560 - 320 - 2 + TEXT_X + widest) / 2,
+    reading = soon(t, factsAt - 0.4, 0.8),
+    off = mix(960 - (560 + 820) / 2, S, reading),
     AX = 560 + off,
     BX = 820 + off,
     AY = 410,
+    // The rail's stretch beyond the new Agent draws back on its own, slower than the step, so no part of the rail
+    // travels more than a few pixels a frame.
+    railEnd = BX + 60 + 280 * (1 - soon(t, factsAt - 0.4, 1.2)),
     ended = ramp(t, endsAt - 0.15, 1.2),
     passed = soon(t, overAt + 0.05, 0.9),
     b = a * named(t, overAt),
     m = a * named(t, memoryAt),
     WX = mix(AX, BX, passed),
     flow = (voiceTime(t) * 0.4) % 1;
-  journeyRail(220 + off, BX + 60, { alpha: a });
-  railFlow(t, 220 + off, BX + 60, { alpha: a });
+  journeyRail(AX - 320, BX + 60, { alpha: a });
+  journeyRail(BX + 60, railEnd, { alpha: a });
+  railFlow(t, AX - 320, railEnd, { alpha: a });
   // The work halfway, under the Agent working on it; the link passes to the next Agent with the work.
   work(WX, RAIL_Y, a);
   nameText(L("做到一半", "Halfway through"), WX, RAIL_Y + 30, {
@@ -209,25 +241,24 @@ export function handoff(s, t, a) {
   // What the Agent taking over reads, in order, each on its words.
   const terms = [factsAt, changeAt, attestAt],
     tells = [nowAt, doneAt, passedAt];
-  SOURCES().forEach(([term, tell], i) => {
+  sources.forEach(([term, tell], i) => {
     const y = ROWS[i],
       r = a * named(t, terms[i]);
-    link(BX + 30, AY, ORDER_X - 20, y, {
+    link(BX + 30, AY, ORDER_X + S - 20, y, {
       route: "hvh",
-      mid: ORDER_X - 60,
+      mid: ORDER_X + S - 60,
       alpha: r,
       upto: soon(t, Math.max(terms[i], factsAt + 0.45) + 0.05, 0.6),
       flow: (flow + i / 3) % 1,
     });
-    ordinal(i + 1, ORDER_X + 4, y, r);
-    sourceMark(i, ICON_X, y, r);
-    nameText(term, TEXT_X, y - 2, {
+    ordinal(i + 1, ORDER_X + S + 4, y, r);
+    sourceMark(i, ICON_X + S, y, r);
+    nameText(term, TEXT_X + S, y, {
       align: "left",
-      valign: "bottom",
       alpha: a * listIn(t, terms, i),
       set: "08.3:order",
     });
-    nameText(tell, TEXT_X, y + 6, {
+    nameText(tell, TEXT_X + S, y + labelSize(LABEL) / 2 + 8, {
       align: "left",
       valign: "top",
       size: NOTE,

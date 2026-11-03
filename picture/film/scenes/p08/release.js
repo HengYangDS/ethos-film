@@ -11,6 +11,8 @@ import { askIcon, commitDot, tagIcon } from "../../drawing/workspace.js";
 import { commitRow } from "../../drawing/history.js";
 import { listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText } from "../../naming/names.js";
+import { rowNameTop } from "../../naming/placement.js";
+import { nameWidth } from "../p07/example.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
@@ -27,7 +29,10 @@ function proofMark(x, y, alpha) {
 /* 08.4. The finished work stands at the rail's start; on its words the commit it became is proved, the proof standing
  * over it and leaving its attestation beside; the maintainer reviews and authorizes it on the rail, and it joins the
  * protected development branch under its lock. It is then published along a link to each platform, the two drawn as
- * one group, and each platform's result is ticked on its own, one after the other. */
+ * one group, and each platform's result is ticked on its own, one after the other. The names over the upper row, the
+ * proof's, the attestation's and the maintainer's, end on one line clear of the tallest of their marks, the names
+ * under the rail hang from one line clear of the commit's ring, and neighbouring names keep at least a word's space
+ * between them. The picture, from the finished work's name to the platforms', is centred on the frame. */
 export function release(s, t, a) {
   if (a <= 0) return;
   const [doneAt, commitAt, proofAt, attestAt, reviewAt, branchAt, publishAt, ownAt] = cues(s, [
@@ -40,13 +45,24 @@ export function release(s, t, a) {
     ["分别发布", "published to each platform"],
     ["单独确认", "confirmed on its own"],
   ]);
-  const CX = 520,
-    AX = 720,
-    MX = 960,
-    BX = 1170,
-    PX = 1500,
+  const DONE = L("改完以后", "When the work is committed"),
+    OWN = L("单独确认", "confirmed on its own"),
+    EACH = L("每一个平台", "each platform"),
+    left = Math.min(220 - 2, 260 - nameWidth(DONE, 300) / 2),
+    right = 1600 + Math.max(70, nameWidth(OWN) / 2, nameWidth(EACH) / 2),
+    S = 960 - (left + right) / 2;
+  const WX = 260 + S,
+    CX = 570 + S,
+    AX = 820 + S,
+    MX = 1070 + S,
+    BX = 1270 + S,
+    PX = 1600 + S,
     UP = 410,
-    PY = [400, 600],
+    // The two platforms stand well clear of the rail, one above it and one below.
+    PY = [360, 640],
+    // The maintainer's head is the tallest of the upper row's marks; the commit's ring reaches lowest under the rail.
+    above = Math.min(UP - 26, UP - 22, UP + 4 - 2.15 * 15 * 1.15) - NAME_GAP,
+    below = rowNameTop([RAIL_Y + 23, RAIL_Y + 19]),
     flow = (voiceTime(t) * 0.4) % 1,
     c = a * named(t, commitAt),
     p = a * named(t, proofAt),
@@ -55,71 +71,76 @@ export function release(s, t, a) {
     br = a * named(t, branchAt),
     pub = a * named(t, publishAt);
   // The rail runs on across the band until the work is published, then ends where it branches to the platforms.
-  const end = mix(1680, 1260, soon(t, publishAt - 0.8, 0.5));
-  journeyRail(220, end, { alpha: a });
-  railFlow(t, 220, end, { alpha: a });
+  const end = mix(1680 + S, BX + 90, soon(t, publishAt - 0.8, 0.5));
+  journeyRail(220 + S, end, { alpha: a });
+  railFlow(t, 220 + S, end, { alpha: a });
   // The finished work under the Agent that finished it, then the commit it became, proved and attested; the Agent
   // steps back as the proof begins.
   const finisher = a * (1 - ramp(t, proofAt + 0.3, 0.5));
   // Its diamond is sized apart from the rings of the commit, proof and seal, so it is not read as one of them.
-  agent(260, UP, { size: 1.45, alpha: finisher });
-  link(260, UP + 36, 260, RAIL_Y - 22, { alpha: finisher, end: false });
-  nameText(L("改完以后", "When the work is committed"), 260, RAIL_Y + 30, {
+  agent(WX, UP, { size: 1.45, alpha: finisher });
+  link(WX, UP + 36, WX, RAIL_Y - 22, { alpha: finisher, end: false });
+  nameText(DONE, WX, below, {
     valign: "top",
     width: 300,
     alpha: a * named(t, doneAt),
   });
   // The commit is larger than the work's point, so the two are never read as one list of points.
   commitDot(CX, RAIL_Y, { alpha: c, r: 14, picked: c });
-  nameText(L("这一次提交", "that exact commit"), CX, RAIL_Y + 30, { valign: "top", alpha: c });
+  nameText(L("这一次提交", "that exact commit"), CX, below, { valign: "top", alpha: c });
   proofMark(CX, UP, p);
   link(CX, UP + 30, CX, RAIL_Y - 24, { alpha: p, upto: soon(t, proofAt + 0.05, 0.4) });
-  nameText(L("完整的核验", "a full local proof"), CX, UP - 40, { valign: "bottom", alpha: p });
+  nameText(L("完整的核验", "a full local proof"), CX, above, { valign: "bottom", alpha: p });
   link(CX + 30, UP, AX - 34, UP, { alpha: at, upto: soon(t, attestAt + 0.05, 0.5) });
   seal(AX, UP, 22, { alpha: at, color: P.ink });
-  nameText(L("存证", "attestation"), AX + 36, UP, { align: "left", alpha: at });
+  nameText(L("存证", "attestation"), AX, above, { valign: "bottom", alpha: at });
   // Review and authorization on the rail, then the protected branch.
   person(MX, UP + 4, { size: 1.15, alpha: m });
   link(MX, UP + 40, MX, RAIL_Y - 12, { alpha: m, upto: soon(t, reviewAt + 0.05, 0.5) });
-  nameText(L("维护者审阅、授权", ["A maintainer reviews", "and authorizes"]), MX, UP - 40, {
+  nameText(L("维护者审阅、授权", ["A maintainer reviews", "and authorizes"]), MX, above, {
     valign: "bottom",
     width: 300,
     alpha: m,
   });
   commitRow(BX - 60, 40, RAIL_Y, 4, { alpha: br, single: true });
   lock(BX, RAIL_Y - 52, { alpha: br, color: P.ink, size: 0.9 });
-  nameText(L("受保护的开发分支", "the protected development branch"), BX, RAIL_Y + 30, {
+  nameText(L("受保护的开发分支", "the protected development branch"), BX, below, {
     valign: "top",
     width: 300,
     alpha: br,
   });
   // Published to each platform along its own link, each result ticked on its own.
   PY.forEach((y, i) =>
-    link(1272, RAIL_Y, PX - 82, y, {
+    link(BX + 102, RAIL_Y, PX - 82, y, {
       route: "hvh",
-      mid: 1380,
+      mid: BX + 210,
       alpha: pub,
       upto: soon(t, publishAt + 0.05 + 0.25 * i, 0.6),
       flow: (flow + 0.5 * i) % 1,
     }),
   );
   platforms(PX, PY, { alpha: pub, w: 140, h: 76 });
-  nameText(L("每一个平台", "each platform"), PX, RAIL_Y, { alpha: pub });
+  nameText(EACH, PX, RAIL_Y, { alpha: pub });
   PY.forEach((y, i) =>
     check(PX + 34, y + 12, 26, { alpha: a * named(t, ownAt + 0.7 * i), width: 3.5 }),
   );
-  nameText(L("单独确认", "confirmed on its own"), PX, PY[1] + 38 + NAME_GAP, {
+  nameText(OWN, PX, PY[1] + 38 + NAME_GAP, {
     valign: "top",
     alpha: a * named(t, ownAt),
   });
   // The work travels on: proved, reviewed, onto the protected branch and out to publication.
-  let wx = 260;
+  // Each leg takes at least 0.9 s and longer in proportion to its length, so the work keeps one pace on the rail.
+  let wx = WX,
+    from = WX;
   [
     [proofAt, CX + 36],
     [reviewAt, MX + 30],
     [branchAt, BX + 90],
-    [publishAt, 1240],
-  ].forEach(([cueAt, to]) => (wx = mix(wx, to, soon(t, cueAt + 0.05, 0.9))));
+    [publishAt, BX + 70],
+  ].forEach(([cueAt, to]) => {
+    wx = mix(wx, to, soon(t, cueAt + 0.05, Math.max(0.9, Math.abs(to - from) / 390)));
+    from = to;
+  });
   work(wx, RAIL_Y, a * (1 - ramp(t, publishAt + 0.6, 0.4)));
 }
 
@@ -145,7 +166,9 @@ const NEED_Y = [350, 450, 550, 650],
 
 /* 08.5, first: the version goes live on the full rail; whether it works stands as a question over its actual benefit,
  * and real use is where it shows. A claim of actual benefit then needs four things: the rail draws back to the
- * question and each need arrives on its words in a column, linked from it. */
+ * question and each need arrives on its words in a column, linked from it. The stations' names under the rail share
+ * one line, the line of the third need beside them, and the question's bubble stands high enough on the rail that its
+ * tail keeps clear of its name. The picture, from the rail's start to the needs, is centred on the frame. */
 export function liveUse(s, t, a) {
   if (a <= 0) return;
   const [liveAt, worksAt, benefitAt, useAt, versionAt, envAt, baseAt, periodAt] = cues(s, [
@@ -158,31 +181,39 @@ export function liveUse(s, t, a) {
     ["和原来的做法比", "how things were done before"],
     ["一段时间", "a set period"],
   ]);
+  const needs = NEEDS(),
+    NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v) => nameWidth(v, 360))),
+    S = 960 - (220 - 2 + NEEDS_END) / 2;
   const QX = 1100,
+    QY = RAIL_Y - 11,
     TX = 380,
     UX = 740,
+    NAMES = NEED_Y[2],
     ats = [versionAt, envAt, baseAt, periodAt],
     back = soon(t, versionAt - 0.2, 0.7),
     flow = (voiceTime(t) * 0.4) % 1,
     v = a * named(t, liveAt),
     q = a * named(t, worksAt),
     u = a * named(t, useAt);
-  // The rail leaves room for the question, and its stretch beyond draws back as the needs arrive.
+  ctx.save();
+  ctx.translate(S, 0);
+  // The rail leaves room for the question, and its stretch beyond, reaching nearly as far as the needs will, draws
+  // back as the needs arrive.
   journeyRail(220, QX - 40, { alpha: a });
-  journeyRail(QX + 40, mix(1680, QX + 40, back), { alpha: a });
+  journeyRail(QX + 40, mix(NEEDS_END - 20, QX + 40, back), { alpha: a });
   railFlow(t, 220, QX - 40, { alpha: a });
   tagIcon(TX - 30, RAIL_Y, 64, 34, { alpha: v, color: P.ink });
-  nameText(L("版本上线", "the version is live"), TX, RAIL_Y + 34, { valign: "top", alpha: v });
+  nameText(L("版本上线", "the version is live"), TX, NAMES, { alpha: v });
   person(UX, RAIL_Y - 66, { size: 1.15, alpha: u });
   link(UX, RAIL_Y - 30, UX, RAIL_Y - 10, { alpha: u, upto: soon(t, useAt + 0.05, 0.4) });
-  nameText(L("实际使用", "real use"), UX, RAIL_Y + 34, { valign: "top", alpha: u });
-  askIcon(QX, RAIL_Y - 4, 30, { alpha: q, color: P.ink });
-  nameText(L("管不管用", "whether it works"), QX, RAIL_Y - 50, { valign: "bottom", alpha: q });
-  nameText(L("实际效益", "actual benefit"), QX, RAIL_Y + 44, {
-    valign: "top",
-    alpha: a * named(t, benefitAt),
+  nameText(L("实际使用", "real use"), UX, NAMES, { alpha: u });
+  askIcon(QX, QY, 30, { alpha: q, color: P.ink });
+  nameText(L("管不管用", "whether it works"), QX, QY - 30 - NAME_GAP, {
+    valign: "bottom",
+    alpha: q,
   });
-  NEEDS().forEach((v2, i) => {
+  nameText(L("实际效益", "actual benefit"), QX, NAMES, { alpha: a * named(t, benefitAt) });
+  needs.forEach((v2, i) => {
     const y = NEED_Y[i],
       n = a * named(t, ats[i]);
     link(QX + 34, RAIL_Y, NEED_X - 44, y, {
@@ -200,6 +231,7 @@ export function liveUse(s, t, a) {
       set: "08.5:needs",
     });
   });
+  ctx.restore();
 }
 
 /* The journey seen whole: its four stretches along the rail, the ones not yet accepted drawn dashed. */
@@ -210,9 +242,9 @@ const STRETCHES = [
   [1240, 1680],
 ];
 
-/* 08.5, second: the whole journey on one rail, the work at the start of its last stretch; from here on the path is the
- * one ETHOS is designed for, drawn dashed, and the handover between Agents turns dashed on its words. One name
- * beneath says neither has yet completed acceptance, linked to both. */
+/* 08.5, second: the whole journey on one rail, the work at the start of its last stretch, named "from here on" over
+ * it; from here on the path is the one ETHOS is designed for, drawn dashed, and the handover between Agents turns
+ * dashed on its words. One name beneath says neither has yet completed acceptance, linked to both. */
 export function overview(s, t, a) {
   if (a <= 0) return;
   const [hereAt, pathAt, handoverAt, acceptAt] = cues(s, [
@@ -238,8 +270,10 @@ export function overview(s, t, a) {
   journeyRail(B[0], B[1], { alpha: h, dash: [12, 10] });
   journeyRail(D[0], D[1], { alpha: a, dash: [12, 10] });
   railFlow(t, D[0], D[1], { alpha: a });
-  work(D[0] + 40, RAIL_Y, a);
-  nameText(L("从这里往后", "From here on"), (C[1] + D[0]) / 2, RAIL_Y - 30, {
+  // "From here on" names the work's point, where the dashed stretch begins, so it stands over that point.
+  const HERE = D[0] + 40;
+  work(HERE, RAIL_Y, a);
+  nameText(L("从这里往后", "From here on"), HERE, RAIL_Y - 30, {
     valign: "bottom",
     alpha: a * named(t, hereAt),
   });

@@ -8,14 +8,16 @@ import { ethosMark } from "../../drawing/mark.js";
 import { box, fill, labelSize, line, measure, stroke } from "../../drawing/strokes.js";
 import { check } from "../../drawing/symbols.js";
 import { kernelIcon, ledger, repoIcon } from "../../drawing/workspace.js";
+import { KICK_Y, RULE_Y, ruleHeadingLayout } from "../../framing/rules.js";
 import { listIn, named } from "../../naming/lists.js";
-import { LEADING, NAME_GAP, NOTE, nameText, rejectedName, wrapName } from "../../naming/names.js";
+import { LEADING, NAME_GAP, NOTE, nameText, rejectedName } from "../../naming/names.js";
+import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
-import { L } from "../../timeline.js";
+import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
-import { taskList } from "./example.js";
+import { nameWidth, taskList } from "./example.js";
 
 /* Repositories of one group drawn as one mark: their stores one fill, their outlines and branch glyphs one stroke, so
  * one name names the group. `checks` ticks each with a check of its own, again in one stroke. */
@@ -53,40 +55,29 @@ export function repoGroup(xs, y, w, h, { alpha = 1, checks = 0 } = {}) {
     );
 }
 
-/* The rule heading the four rules share: the kicker naming the rule and the rule itself, left-aligned as one block
- * centred on the frame, the kicker at y 196 and the rule from y 218 wrapped at 600 px, with the mark as the heading's
- * glyph 64 px to the left of the block and centred on it. At rest it stands at the top of the content band with the
- * rule's illustration below; `q` brings it there from its opening state, where it stands alone in the middle of the
- * band, larger, while the rule is spoken. The complete mark at the rule one heading's size of 560 would reach above
+/* Rule four's heading: its glyph is the complete mark. At rest it stands in the rules' shared place (framing/rules.js)
+ * with the rule's illustration below; `q` brings it there from its opening state, where it stands alone in the middle of
+ * the band, larger, while the rule is spoken. The complete mark at the rule one heading's size of 560 would reach above
  * the action-safe area at the top, so the glyph at rest is 240. */
 const GLYPH = 240,
   OPENING = 500,
-  GLYPH_GAP = 64,
-  KICK_Y = 196,
-  RULE_Y = 218,
-  RULE_WRAP = 600;
+  FULL = { datum: 1, passages: 1, boundary: 1 };
 function ruleHeading(t, q, { kick, kickAt, rule, ruleAt, alpha }) {
-  const lines = wrapName(rule, RULE_WRAP),
-    tw = Math.max(measure(kick, NOTE), ...lines.map((v) => measure(v))),
-    top = KICK_Y - labelSize(NOTE) / 2,
-    bottom = RULE_Y + labelSize(LABEL) * (1 + LEADING * (lines.length - 1)),
-    lift = 500 - (top + bottom) / 2;
-  // At rest: the block centred on the frame and the glyph to its left; opening: mark and block centred together.
-  const TX2 = 960 - tw / 2,
-    MX2 = TX2 - GLYPH_GAP - 0.27 * GLYPH,
-    left = 960 - (0.615 * OPENING + GLYPH_GAP + tw) / 2,
-    MX1 = left + 0.345 * OPENING,
-    TX1 = left + 0.615 * OPENING + GLYPH_GAP,
-    TX = mix(TX1, TX2, q),
-    dy = mix(lift, 0, q);
-  ethosMark(mix(MX1, MX2, q), (top + bottom) / 2 + dy, mix(OPENING, GLYPH, q), { alpha });
+  // At rest the heading stands in the rules' shared place; opening, it stands larger in the middle of the band, its glyph
+  // and text centred together there too.
+  const rest = ruleHeadingLayout(kick, rule, GLYPH, FULL),
+    lift = 500 - (rest.top + rest.bottom) / 2,
+    open = ruleHeadingLayout(kick, rule, OPENING, FULL, { dy: lift }),
+    dy = mix(lift, 0, q),
+    TX = mix(open.tx, rest.tx, q);
+  ethosMark(mix(open.mx, rest.mx, q), mix(open.my, rest.my, q), mix(OPENING, GLYPH, q), { alpha });
   nameText(kick, TX, KICK_Y + dy, {
     align: "left",
     size: NOTE,
     color: P.muted,
     alpha: alpha * named(t, kickAt),
   });
-  nameText(lines, TX, RULE_Y + dy, {
+  nameText(rest.lines, TX, RULE_Y + dy, {
     align: "left",
     valign: "top",
     alpha: alpha * named(t, ruleAt),
@@ -98,7 +89,8 @@ function ruleHeading(t, q, { kick, kickAt, rule, ruleAt, alpha }) {
  * every obligation linked to exactly one owner, and above it the obligation that is the same for every repository in
  * the first column, owned by ETHOS (the kernel, so the mark keeps its single place in the heading), and each
  * repository's own checks in the second, owned by the repositories. Heading and key frame the columns from the
- * start, so the picture keeps its centre while the columns build. */
+ * start, so the picture keeps its centre while the columns build: the heading and the key are centred on the frame,
+ * and the two columns stand at one distance either side of it. */
 export function ruleFour(s, t, a) {
   if (a <= 0) return;
   const [kickAt, ruleAt, everyAt, oneAt, sharedAt, ethosAt, eachAt, ownAt] = cues(s, [
@@ -128,23 +120,34 @@ export function ruleFour(s, t, a) {
     LEG = 730,
     DUTY = 410,
     OWN = 580,
-    C1 = 720,
-    C2 = 1260,
+    C1 = 690,
+    C2 = 1230,
     G = [C2 - 110, C2, C2 + 110],
+    KERNEL = 34,
+    REPO = [96, 76],
+    // The owners' names share one baseline under the taller of their marks.
+    ownerTop = rowNameTop([OWN + KERNEL, OWN + REPO[1] / 2]),
     e = a * named(t, ethosAt),
     r = a * named(t, eachAt),
     o = a * named(t, ownAt);
   // The table's key at its foot: every obligation, linked to exactly one owner. Standing below the columns from its
-  // words, it holds the picture on the centre while the columns above it build.
-  nameText(L("每一项义务", "Every obligation"), 900, LEG, {
+  // words, it holds the picture on the centre while the columns above it build; its words and link are centred on the
+  // frame together.
+  const every = L("每一项义务", "Every obligation"),
+    one = L("只有一个归属", "exactly one owner"),
+    kx = (measure(every, NOTE) - measure(one, NOTE)) / 2;
+  nameText(every, 900 + kx, LEG, {
     align: "right",
     size: NOTE,
     color: P.muted,
     alpha: a * listIn(t, heads, 0),
     set: "07.3:heads",
   });
-  link(912, LEG, 1008, LEG, { alpha: a * named(t, heads[1]), upto: soon(t, heads[1] + 0.05, 0.4) });
-  nameText(L("只有一个归属", "exactly one owner"), 1020, LEG, {
+  link(912 + kx, LEG, 1008 + kx, LEG, {
+    alpha: a * named(t, heads[1]),
+    upto: soon(t, heads[1] + 0.05, 0.4),
+  });
+  nameText(one, 1020 + kx, LEG, {
     align: "left",
     size: NOTE,
     color: P.muted,
@@ -157,9 +160,13 @@ export function ruleFour(s, t, a) {
     alpha: a * listIn(t, duties, 0),
     set: "07.3:duties",
   });
-  link(C1, d1.bottom + 12, C1, OWN - 46, { alpha: e, upto: soon(t, ethosAt + 0.05, 0.5), flow });
-  kernelIcon(C1, OWN, 34, { alpha: e, color: P.ink });
-  nameText("ETHOS", C1, OWN + 34 + NAME_GAP, {
+  link(C1, d1.bottom + 12, C1, OWN - KERNEL - 12, {
+    alpha: e,
+    upto: soon(t, ethosAt + 0.05, 0.5),
+    flow,
+  });
+  kernelIcon(C1, OWN, KERNEL, { alpha: e, color: P.ink });
+  nameText("ETHOS", C1, ownerTop, {
     valign: "top",
     alpha: a * listIn(t, owners, 0),
     set: "07.3:owners",
@@ -170,13 +177,13 @@ export function ruleFour(s, t, a) {
     alpha: a * listIn(t, duties, 1),
     set: "07.3:duties",
   });
-  link(C2, d2.bottom + 12, C2, OWN - 50, {
+  link(C2, d2.bottom + 12, C2, OWN - REPO[1] / 2 - 12, {
     alpha: o,
     upto: soon(t, ownAt + 0.05, 0.5),
     flow: (flow + 0.5) % 1,
   });
-  repoGroup(G, OWN, 96, 76, { alpha: r, checks: o });
-  nameText(L("每个仓库", "each repository"), C2, OWN + 38 + NAME_GAP, {
+  repoGroup(G, OWN, REPO[0], REPO[1], { alpha: r, checks: o });
+  nameText(L("每个仓库", "each repository"), C2, ownerTop, {
     valign: "top",
     alpha: a * listIn(t, owners, 1),
     set: "07.3:owners",
@@ -190,7 +197,8 @@ function ownRepo(x, y, alpha, ticked) {
 }
 
 /* 07.4, first: ETHOS, as its kernel, judges its own repository on its words; the same obligations it ships stand
- * between on theirs, linked on to every other repository, and each repository is ticked by them. */
+ * between on theirs, linked on to every other repository, and each repository is ticked by them. The two branches,
+ * its own repository above and every other one below, stand on one axis, and the picture is centred on the frame. */
 export function ownRepository(s, t, a) {
   if (a <= 0) return;
   const [ethosAt, ownAt, allAt, sameAt] = cues(s, [
@@ -199,36 +207,44 @@ export function ownRepository(s, t, a) {
     ["交给所有仓库", "every other one"],
     ["同一套义务", "the same obligations"],
   ]);
-  const flow = (voiceTime(t) * 0.4) % 1,
+  // The kernel's hexagon reaches 52 px either side of its centre; the group of repositories ends at its last outline.
+  const DX = 960 - (620 - 52 + 1450 + 50) / 2,
+    KX = 620 + DX,
+    LX = 960 + DX,
+    MID = 1100 + DX,
+    G = [1210, 1330, 1450].map((x) => x + DX),
+    OWNX = G[1],
+    flow = (voiceTime(t) * 0.4) % 1,
     o = a * named(t, ownAt),
     g = a * named(t, allAt),
     l = a * named(t, sameAt),
-    G = [1210, 1330, 1450];
-  kernelIcon(620, 500, 60, { alpha: a, color: P.ink });
-  nameText("ETHOS", 620, 560 + NAME_GAP, { valign: "top", alpha: a * named(t, ethosAt) });
-  link(692, 500, 1218, 330, {
+    // The kernel's name and the obligations' share one baseline under the taller of their marks.
+    top = rowNameTop([500 + 60, 500 + 65]);
+  kernelIcon(KX, 500, 60, { alpha: a, color: P.ink });
+  nameText("ETHOS", KX, top, { valign: "top", alpha: a * named(t, ethosAt) });
+  link(KX + 72, 500, OWNX - 102, 330, {
     route: "hvh",
-    mid: 1100,
+    mid: MID,
     alpha: o,
     upto: soon(t, ownAt + 0.05, 0.8),
     flow,
   });
-  link(1010, 500, 1148, 690, {
+  link(LX + 50, 500, G[0] - 62, 690, {
     route: "hvh",
-    mid: 1100,
+    mid: MID,
     alpha: l,
     upto: soon(t, sameAt + 0.05, 0.6),
     flow: (flow + 0.5) % 1,
   });
-  ownRepo(1320, 330, o, named(t, sameAt + 0.4));
-  nameText(L("自己的仓库", "its own repository"), 1320, 385 + NAME_GAP, {
+  ownRepo(OWNX, 330, o, named(t, sameAt + 0.4));
+  nameText(L("自己的仓库", "its own repository"), OWNX, 385 + NAME_GAP, {
     valign: "top",
     alpha: o,
   });
   repoGroup(G, 690, 100, 76, { alpha: g, checks: named(t, sameAt + 0.4) });
   nameText(L("所有仓库", "every other one"), G[1], 728 + NAME_GAP, { valign: "top", alpha: g });
-  ledger(960, 500, 100, 130, { alpha: l });
-  nameText(L("同一套义务", "the same obligations"), 960, 565 + NAME_GAP, {
+  ledger(LX, 500, 100, 130, { alpha: l });
+  nameText(L("同一套义务", "the same obligations"), LX, top, {
     valign: "top",
     width: 230,
     alpha: l,
@@ -250,7 +266,8 @@ function wayBox(x, y, rows, { alpha = 1, more = 1, extra = 0 } = {}) {
 }
 
 /* 07.4, second: a replacement takes the old way's place on its words; it holds every check the old one held, and the
- * rule that it may never be weaker is named beneath as its extra check arrives. */
+ * rule that it may never be weaker is named as its extra check arrives: Chinese states it beneath both ways, comparing
+ * them, and English, whose words continue the replacement's own name, sets them as that name's second line. */
 export function replacement(s, t, a) {
   if (a <= 0) return;
   const [newAt, weakAt, oldAt] = cues(s, [
@@ -264,17 +281,27 @@ export function replacement(s, t, a) {
   wayBox(700, 430, 3, { alpha: o });
   nameText(L("旧做法", "what it replaces"), 700, 505 + NAME_GAP, { valign: "top", alpha: o });
   wayBox(1220, 430, 4, { alpha: n, more: w, extra: 1 });
-  nameText(L("新做法", "A replacement"), 1220, 505 + NAME_GAP, { valign: "top", alpha: n });
+  const named2 = nameText(L("新做法", "A replacement"), 1220, 505 + NAME_GAP, {
+    valign: "top",
+    alpha: n,
+  });
   link(827, 430, 1093, 430, {
     alpha: Math.min(n, o),
     upto: soon(t, Math.max(newAt, oldAt) + 0.05, 0.6),
     flow: (voiceTime(t) * 0.4) % 1,
   });
-  nameText(L("新的不能比旧的弱", "may never be weaker"), 960, 650, { alpha: w });
+  if (en)
+    nameText("may never be weaker", 1220, named2.top + LEADING * labelSize(LABEL), {
+      valign: "top",
+      alpha: w,
+    });
+  else nameText("新的不能比旧的弱", 960, 650, { alpha: w });
 }
 
 /* 07.4, third: an official Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
- * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. */
+ * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. The Change and the
+ * record hang their names from one baseline, and the picture is centred on the frame by its outer edges, the Change on
+ * the left and the record on the right. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
@@ -283,46 +310,59 @@ export function closing(s, t, a) {
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
   ]);
+  const DELIVERED = L("做到哪儿，就按哪儿收尾", "what it actually delivered"),
+    RECORD = L("没做完的留下记录", "unfinished work stays on the record"),
+    DY = 440,
+    H = 270,
+    left = Math.min(700 - 100, 700 - nameWidth(L("一项正式变更", "an official Change")) / 2),
+    // English sets the delivered rows' name on two lines beside their bracket; the Chinese name fits on one.
+    DELIVERED_WIDTH = L(330, 300),
+    right = Math.max(
+      1240 + 55,
+      1240 + nameWidth(RECORD, 300) / 2,
+      700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH),
+    ),
+    S = 960 - (left + right) / 2,
+    LX = 700 + S,
+    RX = 1240 + S,
+    top = rowNameTop([DY + H / 2, DY + 70 + 70]);
   const c = a * named(t, changeAt),
     d = a * named(t, deliveredAt),
     r = a * named(t, recordAt),
-    p = a * named(t, passAt),
-    DX = 700,
-    DY = 470,
-    H = 270;
-  taskList(DX, DY, 200, H, { alpha: c, done: 2, tick: d });
-  nameText(L("一项正式变更", "an official Change"), DX, DY + H / 2 + NAME_GAP, {
+    p = a * named(t, passAt);
+  taskList(LX, DY, 200, H, { alpha: c, done: 2, tick: d });
+  nameText(L("一项正式变更", "an official Change"), LX, top, {
     valign: "top",
     alpha: c,
   });
   // The bracket of the delivered rows, and their name beside it.
   stroke(
     () => {
-      ctx.moveTo(DX + 118, 398);
-      ctx.lineTo(DX + 132, 398);
-      ctx.lineTo(DX + 132, 482);
-      ctx.lineTo(DX + 118, 482);
+      ctx.moveTo(LX + 118, DY - 72);
+      ctx.lineTo(LX + 132, DY - 72);
+      ctx.lineTo(LX + 132, DY + 12);
+      ctx.lineTo(LX + 118, DY + 12);
     },
     { color: P.ink, alpha: d, width: 2.5 },
   );
-  nameText(L("做到哪儿，就按哪儿收尾", "what it actually delivered"), DX + 156, 440, {
+  nameText(DELIVERED, LX + 156, DY - 30, {
     align: "left",
-    width: 330,
+    width: DELIVERED_WIDTH,
     alpha: d,
   });
   // The unfinished rows go on record.
-  link(DX + 122, 543, 1238, 543, {
+  link(LX + 122, DY + 70, RX - 62, DY + 70, {
     alpha: r,
     upto: soon(t, recordAt + 0.05, 0.7),
     flow: (voiceTime(t) * 0.4) % 1,
   });
-  ledger(1300, 543, 110, 140, { alpha: r });
-  nameText(L("没做完的留下记录", "unfinished work stays on the record"), 1300, 613 + NAME_GAP, {
+  ledger(RX, DY + 70, 110, 140, { alpha: r });
+  nameText(RECORD, RX, top, {
     valign: "top",
     width: 300,
     alpha: r,
   });
-  rejectedName(L("冒充做完了", "passing for done"), 960, 760, {
+  rejectedName(L("冒充做完了", "passing for done"), 960, DY + 290, {
     alpha: p,
     mark: ramp(t, passAt + 0.3, 0.4),
   });

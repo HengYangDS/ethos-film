@@ -8,7 +8,7 @@ import { box, dashed, dot, flowDot, line, ring, stroke } from "../../drawing/str
 import { agent, check, cross, person, token } from "../../drawing/symbols.js";
 import { beats, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText } from "../../naming/names.js";
-import { railNames } from "../../naming/placement.js";
+import { railNames, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
@@ -247,8 +247,10 @@ export function stageWrongGoal(t, a, c) {
   dot(DX + 70, DY + 90, 22, { color: P.ground, alpha: a });
   ring(DX + 70, DY + 90, 22, { color: P.ink, alpha: a, width: 2.5 });
   check(DX + 70, DY + 91, 20, { color: P.ink, alpha: a, width: 3 });
+  // The two ends of the aim are named on one baseline, under the deeper of the two: the document's check.
+  const namesTop = rowNameTop([DY + 90 + 22, DY + 58]);
   // Its clause begins with the stage, so the specification is named from the cut.
-  nameText(L("格式齐全、挑不出毛病", "Complete and well formed"), DX, DY + 112 + NAME_GAP, {
+  nameText(L("格式齐全、挑不出毛病", "Complete and well formed"), DX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.gCut + 0.15),
   });
@@ -261,7 +263,7 @@ export function stageWrongGoal(t, a, c) {
   [58, 36].forEach((r) => ring(TX, DY, r, { color: P.ink, alpha: a, width: 2.5 }));
   dot(TX, DY, 10, { color: P.ink, alpha: a });
   cross(TX + 62, DY - 62, 26, { color: P.ink, alpha: aim, width: 3.5 });
-  nameText(L("从一开始就定错了", "Aimed at the wrong goal"), TX, DY + 58 + NAME_GAP, {
+  nameText(L("从一开始就定错了", "Aimed at the wrong goal"), TX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.wrong),
   });

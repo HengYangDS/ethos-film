@@ -13,16 +13,17 @@ import { dot, measure, ring, stroke } from "../../drawing/strokes.js";
 import { documentIcon, stopSign } from "../../drawing/symbols.js";
 import { commitDot, ledger, tagIcon } from "../../drawing/workspace.js";
 import { beats, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
+import { NAME_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
+import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { agents, card, linkSet } from "../p04/marks.js";
-import { centredRow } from "../p04/rule-one.js";
 import { planeState } from "../p05/planes.js";
 
-/* The example's places: the Agent at the left, its plan, the write gate and the repository's branch to the right. */
+/* The example's places: the Agent at the left, its plan, the write gate and the repository's branch to the right. The
+ * names under the row hang from one line under its tallest mark, the gate, which stands 75 px either side of the row. */
 const AX = 440,
   Y = 530,
   PLAN_X = 860,
@@ -30,7 +31,8 @@ const AX = 440,
   BRANCH_X = 1200,
   STEP = 100,
   HEAD = BRANCH_X + 3 * STEP,
-  NEW = HEAD + STEP;
+  NEW = HEAD + STEP,
+  ROW_NAMES = rowNameTop([Y + 60, Y + 75, Y + 22]);
 const flowOf = (t) => (voiceTime(t) * 0.4) % 1;
 
 /* The example's context, the pipeline of part 04: large at the right while the second Agent is introduced, then
@@ -65,7 +67,7 @@ function secondAgent(t, c, g) {
 /* The branch as the repository holds it: four commits, and a fifth once someone else has written. */
 function branch(t, g, { moved = 0, nameAlpha = g } = {}) {
   commitRow(BRANCH_X, STEP, Y, 4, { alpha: g, single: true });
-  nameText(L("分支", "The branch"), BRANCH_X + 1.5 * STEP, Y + 22 + NAME_GAP, {
+  nameText(L("分支", "The branch"), BRANCH_X + 1.5 * STEP, ROW_NAMES, {
     valign: "top",
     alpha: nameAlpha,
   });
@@ -115,15 +117,15 @@ export function staleStage(s, t, c, g) {
     { color: P.ink, alpha: board, width: 3.5 },
   );
   link(AX, Y + 22, 560, DY, { route: "vh", alpha: board });
-  centredRow(
+  termRow(
     t,
     L(["看板"], ["Its dashboard"]),
-    c.dashboard,
+    [c.dashboard],
     L(["一片绿灯"], ["all green"]),
-    c.green,
+    [c.green],
     665,
     DY + 36 + NAME_GAP,
-    { alpha: g, width: 340 },
+    { alpha: g, align: "center" },
   );
   // The plan, the write and the branch as it is, which someone else may have moved on.
   const planned = g * named(t, c.plan),
@@ -131,9 +133,9 @@ export function staleStage(s, t, c, g) {
     real = g * named(t, c.branch),
     changed = g * named(t, c.changed);
   plan(planned);
-  nameText(L("编好计划", "A plan"), PLAN_X, Y + 60 + NAME_GAP, { valign: "top", alpha: planned });
+  nameText(L("编好计划", "A plan"), PLAN_X, ROW_NAMES, { valign: "top", alpha: planned });
   writeGate(GATE_X, Y, 150, { alpha: write, color: P.ink, single: true });
-  nameText(L("写入", "Writing"), GATE_X, Y + 75 + NAME_GAP, { valign: "top", alpha: write });
+  nameText(L("写入", "Writing"), GATE_X, ROW_NAMES, { valign: "top", alpha: write });
   link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: write });
   link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: real });
   branch(t, real, { moved: soon(t, c.changed + 0.05, 0.8) });
@@ -153,16 +155,16 @@ export function checkStage(s, t, c, g) {
   plan(g);
   beats(t, PLAN_X, Y, 70, [c.expected, c.again], { alpha: g });
   // The plan's name gives way to "compiled again" on those words, the one leaving before the other arrives.
-  nameText(L("编好计划", "A plan"), PLAN_X, Y + 60 + NAME_GAP, {
+  nameText(L("编好计划", "A plan"), PLAN_X, ROW_NAMES, {
     valign: "top",
     alpha: g * (1 - ramp(t, c.again - 0.4, 0.25)),
   });
-  nameText(L("重新编译", "Compiled again"), PLAN_X, Y + 60 + NAME_GAP, {
+  nameText(L("重新编译", "Compiled again"), PLAN_X, ROW_NAMES, {
     valign: "top",
     alpha: g * named(t, c.again),
   });
   writeGate(GATE_X, Y, 150, { alpha: g, color: P.ink, single: true });
-  nameText(L("写入", "Writing"), GATE_X, Y + 75 + NAME_GAP, { valign: "top", alpha: g });
+  nameText(L("写入", "Writing"), GATE_X, ROW_NAMES, { valign: "top", alpha: g });
   link(AX + 22, Y, PLAN_X - 48, Y, { alpha: g });
   link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: g });
   link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: g });
@@ -186,7 +188,7 @@ export function checkStage(s, t, c, g) {
   // The branch has moved on: the ring on the expected head moves to the real one.
   const moving = soon(t, c.movedOn + 0.05, 0.6);
   ring(mix(HEAD, NEW, moving), Y, 18, { color: P.ink, alpha: look, width: 2.5 });
-  nameText(L("往前走了", "Moved on"), NEW + 30, Y + 22 + NAME_GAP, {
+  nameText(L("往前走了", "Moved on"), NEW + 30, ROW_NAMES, {
     align: "right",
     valign: "top",
     alpha: g * named(t, c.movedOn),
@@ -194,7 +196,7 @@ export function checkStage(s, t, c, g) {
   // Nothing is written: a stop at the gate.
   const stop = g * named(t, c.nothing);
   stopSign(GATE_X, Y - 6, 22, { color: P.ink, alpha: stop });
-  nameText(L("什么都不写", "Nothing is written"), GATE_X, Y + 75 + NAME_GAP + 46, {
+  nameText(L("什么都不写", "Nothing is written"), GATE_X, ROW_NAMES + 46, {
     valign: "top",
     alpha: stop,
   });
@@ -219,8 +221,10 @@ const GX = 700,
   BX = 860,
   BSTEP = 110;
 /* 06.2 One step, then read back: the check and the write stand in one outline; the gate lifts, a commit is written at
- * the branch's head and its result runs back to a check. */
+ * the branch's head and its result runs back to a check. The outline's name centres on it from its first word, and
+ * the branch's name shares its line under the outline, the row's tallest mark. */
 export function oneStepStage(s, t, c, g) {
+  const names = rowNameTop([Y + 100, Y + 22]);
   card(GX - 70, Y - 100, 140, 200, { alpha: g, color: P.ink });
   writeGate(GX, Y, 150, {
     alpha: g,
@@ -228,19 +232,19 @@ export function oneStepStage(s, t, c, g) {
     single: true,
     open: soon(t, c.afterwards + 0.05, 0.6),
   });
-  centredRow(
+  termRow(
     t,
     L(["核对和写入"], ["Checking and writing"]),
-    c.first2,
+    [c.first2],
     L(["一步完成"], ["as one step"]),
-    c.oneStep,
+    [c.oneStep],
     GX,
-    Y + 100 + NAME_GAP,
-    { alpha: g, width: 420 },
+    names,
+    { alpha: g, align: "center" },
   );
   commitRow(BX, BSTEP, Y, 5, { alpha: g, single: true });
   link(GX + 70, Y, BX - 9, Y, { alpha: g });
-  nameText(L("分支", "The branch"), BX + 2 * BSTEP, Y + 22 + NAME_GAP, { valign: "top", alpha: g });
+  nameText(L("分支", "The branch"), BX + 2 * BSTEP, names, { valign: "top", alpha: g });
   // The write lands as a new commit; its result is read back to a check above the step.
   const wrote = soon(t, c.afterwards + 0.3, 0.6),
     end = BX + 5 * BSTEP;
@@ -268,18 +272,23 @@ export function oneStepStage(s, t, c, g) {
 }
 
 /* 06.2 Several platforms, each recorded as it is: a version is pushed to three platforms, which succeed, fail or are
- * still pending, each named on its words; all three are recorded, and one joint outcome is refused. */
+ * still pending, each named on its words; all three are recorded, and one joint outcome is refused under the
+ * platforms. The names at the two ends of the fan share one line under the deeper end, the record. */
 export function platformsStage(s, t, c, g) {
+  // The platforms centre on the middle of the fan, between the version and the record.
   const VX = 540,
-    PX = 840,
+    LX = 1420,
     PW = 330,
-    ys = [380, 500, 620],
+    PX = (VX + LX) / 2 - PW / 2,
+    // The three platforms fan out about the example's axis, the middle one on it, so its links run straight.
+    ys = [Y - 130, Y, Y + 130],
     states = ["pass", "block", "none"],
     names = L(["成功", "失败", "还没推"], ["Succeeded", "Failed", "Still pending"]),
-    ats = [c.succeeded, c.failed, c.pending];
+    ats = [c.succeeded, c.failed, c.pending],
+    ends = rowNameTop([Y + 26, Y + 65]);
   const version = g * named(t, c.version);
   tagIcon(VX - 60, Y, 120, 52, { alpha: version, color: P.ink });
-  nameText(L("一个版本", "A version"), VX, Y + 26 + NAME_GAP, { valign: "top", alpha: version });
+  nameText(L("一个版本", "A version"), VX, ends, { valign: "top", alpha: version });
   // The platforms arrive together, one mark of cards and links named "several platforms"; each one's outcome then
   // stands in its card on its own words.
   const several = g * named(t, c.several);
@@ -307,16 +316,20 @@ export function platformsStage(s, t, c, g) {
     });
   });
   // All recorded as they are: each platform's outcome runs into the record.
-  const LX = 1420,
-    kept = g * named(t, c.recorded);
+  const kept = g * named(t, c.recorded);
   linkSet(
     ys.map((y) => [PX + PW, y, LX - 56, Y, "hvh"]),
     { alpha: kept, upto: soon(t, c.recorded + 0.05, 0.6), flow: flowOf(t) },
   );
   ledger(LX, Y, 100, 130, { alpha: kept });
-  nameText(L("照实记下", "All recorded"), LX, Y + 65 + NAME_GAP, { valign: "top", alpha: kept });
-  rejectedName(L("同时成功、同时失败", "All succeed or fail together"), 960, ys[2] + 30 + 70, {
-    alpha: g * named(t, c.together),
-    mark: ramp(t, c.together + 0.35, 0.35),
-  });
+  nameText(L("照实记下", "All recorded"), LX, ends, { valign: "top", alpha: kept });
+  rejectedName(
+    L("同时成功、同时失败", "All succeed or fail together"),
+    PX + PW / 2,
+    ys[2] + 30 + 70,
+    {
+      alpha: g * named(t, c.together),
+      mark: ramp(t, c.together + 0.35, 0.35),
+    },
+  );
 }

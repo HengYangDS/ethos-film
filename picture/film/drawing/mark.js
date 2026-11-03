@@ -44,6 +44,29 @@ export function ethosMark(x, y, size, { datum = 1, hole = 1, passages = 1, bound
   if (hole > 0 && datum > 0) dot(x, y, HOLE * k, { color: P.ground, alpha: alpha * clamp(datum) * clamp(hole) });
 }
 
+/* The ink extent of the mark's parts at `size`, relative to its origin: `left` and `top` are negative. A part counts
+ * when its share is above zero, as drawn finished, so a heading laid out from it keeps its place while the part draws
+ * on. Each stroke counts half its width beyond its path. */
+export function markExtent(size, { datum = 1, passages = 1, boundary = 1 } = {}) {
+  const k = size / 512, xs = [], ys = [];
+  const add = ([px, py], pad) => {
+    xs.push(px - ORIGIN[0] - pad, px - ORIGIN[0] + pad);
+    ys.push(py - ORIGIN[1] - pad, py - ORIGIN[1] + pad);
+  };
+  if (datum > 0) add(ORIGIN, DATUM);
+  if (passages > 0) for (const curve of PASSAGES) for (let i = 0; i <= 24; i++) add(bezier(curve, i / 24), PASSAGE_WIDTH / 2);
+  if (boundary > 0) {
+    const a0 = Math.atan2(BOUNDARY.from[1] - ORIGIN[1], BOUNDARY.from[0] - ORIGIN[0]);
+    const a1 = Math.atan2(BOUNDARY.to[1] - ORIGIN[1], BOUNDARY.to[0] - ORIGIN[0]) - 2 * Math.PI;
+    for (let i = 0; i <= 72; i++) {
+      const a = a0 + ((a1 - a0) * i) / 72;
+      add([ORIGIN[0] + BOUNDARY.r * Math.cos(a), ORIGIN[1] + BOUNDARY.r * Math.sin(a)], BOUNDARY.width / 2);
+    }
+  }
+  if (!xs.length) return { left: 0, right: 0, top: 0, bottom: 0 };
+  return { left: Math.min(...xs) * k, right: Math.max(...xs) * k, top: Math.min(...ys) * k, bottom: Math.max(...ys) * k };
+}
+
 /* Where a part of the mark at (x, y) and `size` stands, for placing its names: the upper and lower passage ends, the
  * boundary's leftmost point and the datum. */
 export function markPoints(x, y, size) {

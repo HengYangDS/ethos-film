@@ -3,31 +3,14 @@
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { box, flowDot, measure, ring, stroke } from "../../drawing/strokes.js";
+import { box, flowDot, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
 import { beats, named } from "../../naming/lists.js";
-import {
-  NAME_GAP,
-  NOTE,
-  nameText,
-  rejectedName,
-  termRow,
-  termRowLayout,
-} from "../../naming/names.js";
+import { NAME_GAP, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
-
-/* A term row centred on x, its top at y. */
-function termRowCentred(t, term, termAts, qual, qualAts, x, y, o = {}) {
-  const width = o.width ?? 520,
-    { one } = termRowLayout(term, qual, width),
-    termW = measure(term.join("")),
-    qualW = measure(qual.join(""), NOTE),
-    wide = one ? termW + 16 + qualW : Math.max(termW, qualW);
-  return termRow(t, term, termAts, qual, qualAts, x - wide / 2, y, { ...o, width });
-}
 
 /* 03.6 ETHOS's own code does the kernel's one job: a small kernel named from the cut, its job under it. For everything
  * else it turns to mature tools, larger outlines of two sizes beside and below it, each holding its content (Git's
@@ -145,10 +128,11 @@ export function stageSystems(t, a, c) {
       flow: q,
     });
   });
-  // The user's own machine, under ETHOS, depending on no vendor.
+  // The user's own machine, under ETHOS, depending on no vendor: its name centred under it from its first word, the
+  // qualifier joining under the name, each line on the machine's axis.
   const machine = a * ramp(t, c.machine - 0.15, 0.4);
   terminalIcon(KX - 90, 560, 180, 76, { alpha: machine });
-  termRowCentred(
+  termRow(
     t,
     [L("自己的机器", "Your own machine")],
     [c.machine],
@@ -156,7 +140,7 @@ export function stageSystems(t, a, c) {
     [c.vendor],
     KX,
     560 + 76 + NAME_GAP - 6,
-    { width: 560, alpha: a },
+    { width: 560, alpha: a, align: "center" },
   );
   rejectedName(L("真相的来源", "A source of truth"), KX, 800, {
     alpha: a * named(t, c.truth),
@@ -164,22 +148,26 @@ export function stageSystems(t, a, c) {
   });
 }
 
-/* 03.7 What every repository shares, ETHOS owns in one place: three repositories of three sizes, each its own mark, standing on
- * one shared layer named from the cut, a point running along it; each repository's own purpose arrives inside it as its
- * own shape. */
+/* 03.7 What every repository shares, ETHOS owns in one place: three repositories of three sizes, each its own mark,
+ * standing on one shared layer from the cut, a point running along it, the layer named on the words that give it
+ * to ETHOS; each repository's own purpose arrives inside it as its own shape. The repositories stand at equal gaps,
+ * the row and the layer under it centred on the frame; the layer's name centres on the layer, and the heading over
+ * the row centres on it from its first word, its qualifier joining under it. */
+const REPO_WIDTHS = [220, 260, 300],
+  REPO_GAP = 140;
 export function stageLayer(t, a, c) {
   if (a <= 0) return;
-  const repos = [
-      [560, 220],
-      [960, 260],
-      [1360, 300],
-    ],
+  const total = REPO_WIDTHS.reduce((sum, w) => sum + w, 0) + REPO_GAP * (REPO_WIDTHS.length - 1),
+    x0 = 960 - total / 2,
+    x1 = x0 + total,
+    repos = REPO_WIDTHS.map((w, i) => [
+      x0 + REPO_WIDTHS.slice(0, i).reduce((sum, v) => sum + v + REPO_GAP, 0) + w / 2,
+      w,
+    ]),
     RH = 150,
     RY = 520,
     LY = RY + RH / 2 + 50,
-    q = (voiceTime(t) * 0.3) % 1,
-    x0 = repos[0][0] - repos[0][1] / 2,
-    x1 = repos[2][0] + repos[2][1] / 2;
+    q = (voiceTime(t) * 0.3) % 1;
   repos.forEach(([x, w]) =>
     box(x - w / 2, RY - RH / 2, w, RH, { stroke: P.ink, alpha: a, radius: 14, width: 2.5 }),
   );
@@ -205,8 +193,8 @@ export function stageLayer(t, a, c) {
     { color: P.ink, alpha: a, width: 2.5 },
   );
   flowDot(mix(x0 + 30, x1 - 30, q), LY + 22, 6, q, { color: P.ink, alpha: a });
-  nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), 960, LY - 6, {
-    alpha: a * named(t, c.layerCut + 0.15),
+  nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), (x0 + x1) / 2, LY - 6, {
+    alpha: a * named(t, c.owns),
   });
   // Each repository's own purpose: a shape of its own inside it.
   const own = a * ramp(t, c.own - 0.15, 0.4),
@@ -222,14 +210,12 @@ export function stageLayer(t, a, c) {
     { color: P.ink, alpha: own, width: 3 },
   );
   box(cx + 16, RY - 16, 48, 48, { stroke: P.ink, alpha: own, radius: 6, width: 3 });
-  termRowCentred(
-    t,
-    [L("每个仓库", "Each repository")],
-    [c.each],
-    [L("自己特有的事", "its own purpose")],
-    [c.own],
-    960,
-    RY - RH / 2 - NAME_GAP - 34,
-    { alpha: a },
-  );
+  const term = [L("每个仓库", "Each repository")],
+    qual = [L("自己特有的事", "its own purpose")],
+    { height } = termRowLayout(term, qual, 520, false);
+  termRow(t, term, [c.each], qual, [c.own], (x0 + x1) / 2, RY - RH / 2 - NAME_GAP - height, {
+    width: 520,
+    alpha: a,
+    align: "center",
+  });
 }

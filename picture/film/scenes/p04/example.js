@@ -79,7 +79,8 @@ export function exampleStage(s, t, c, g) {
 }
 
 /* 04.2 The pipeline rises to make room; its rerun loop draws on "run again", and below it the researcher's request
- * builds as two lines, each on its words. */
+ * builds as two lines, each on its words. The lines start clear of the researcher's name as well as the figure, and
+ * the figure, its name and the lines stand centred together. */
 export function requestStage(s, t, c, g) {
   const Y = mix(470, 400, soon(t, c.researcher + 0.05, 0.6));
   const m = pipelineMark(960, Y, 900, {
@@ -98,13 +99,20 @@ export function requestStage(s, t, c, g) {
   const lines = REQUEST(),
     ats = [c.dup, c.corrected],
     lw = Math.max(...lines.map((v) => measure(v))),
-    PX = 960 - (64 + lw) / 2 + 20,
+    who = L("研究员", "A researcher"),
+    // The figure's half width, its shoulders' arc, and its name's: the lines keep 36 px from the one and 30 px from
+    // the other.
+    figure = 1.55 * 15 * 1.2,
+    nameHalf = measure(who) / 2,
+    unit = Math.max(figure, nameHalf),
+    lead = Math.max(figure + 36, nameHalf + 30),
+    PX = 960 - (lead + lw - unit) / 2,
     RY = 690,
-    who = g * named(t, c.researcher);
-  person(PX, RY, { alpha: who, size: 1.2 });
-  nameText(L("研究员", "A researcher"), PX, RY + 28 + NAME_GAP, { valign: "top", alpha: who });
+    on = g * named(t, c.researcher);
+  person(PX, RY, { alpha: on, size: 1.2 });
+  nameText(who, PX, RY + 28 + NAME_GAP, { valign: "top", alpha: on });
   lines.forEach((v, i) =>
-    nameText(v, PX + 64, RY - 24 + i * 50, {
+    nameText(v, PX + lead, RY - 24 + i * 50, {
       align: "left",
       alpha: g * listIn(t, ats, i),
       set: "request",
@@ -274,10 +282,12 @@ export function replaceStage(s, t, c, g) {
   nameText(gone, ox + cw + 40, oy, { align: "left", alpha: g * named(t, c.noOne) });
   quoteCard(qx, qy, { alpha: g });
   nameText(takes, qx + qw + 40, qy, { align: "left", alpha: g * named(t, c.replace) });
-  // Faster to read: a check below the summary, which travels with it.
+  // Faster to read: a check below the summary, which travels with it; the check and its words centre on the card
+  // together. The check's ink runs from 12.75 px left of its point to 13.85 px right, and the words start 26 px right.
   const fast = g * named(t, c.fast),
-    fx = qx + qw / 2 - 70,
+    quick = L("读得快", "Reading faster"),
+    fx = qx + qw / 2 - (26 - 12.75 + measure(quick)) / 2,
     fy = qy + 32 + NAME_GAP + 16;
   check(fx, fy, 22, { color: P.ink, alpha: fast });
-  nameText(L("读得快", "Reading faster"), fx + 26, fy, { align: "left", alpha: fast });
+  nameText(quick, fx + 26, fy, { align: "left", alpha: fast });
 }

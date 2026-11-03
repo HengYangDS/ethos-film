@@ -7,6 +7,9 @@ import { LABEL, P } from "../palette.js";
 /* The centre line of the content area, between the chapter label and the caption band; a composed stage balances its
  * groups about it. */
 export const CONTENT_CY = 500;
+/* The top from which the names of a row of marks hang: one gap below the lowest bottom among the row's marks, so every
+ * name of the row stands on one baseline however tall its own mark is. */
+export const rowNameTop = (bottoms, gap = NAME_GAP) => Math.max(...bottoms) + gap;
 /* Names along a rail: all on one side, on one baseline, each centred on its station; a name wider than its share of
  * the rail wraps onto a second line instead of stepping off the baseline. */
 export function railNames(

@@ -7,8 +7,9 @@ import { box, dot, line, measure, ring, stroke } from "../../drawing/strokes.js"
 import { agent, check, clock, documentIcon, person } from "../../drawing/symbols.js";
 import { askIcon, ledger, repoIcon, terminalIcon } from "../../drawing/workspace.js";
 import { named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { NAME_GAP, nameText, rejectedName, wrapName } from "../../naming/names.js";
+import { rowNameTop } from "../../naming/placement.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
@@ -78,7 +79,8 @@ const CHECK_NAME = () => L("仓库自己声明的检查", "own declared check");
  * steps left as the owners arrive. Each obligation passes from its making to its owner along a link on its words, a
  * point flowing along it under the obligation's name. The makings and the Agent retire together on their word, each
  * link drawing back to a short lead into its owner, the owners settle to the centre, and keeping the makings just in
- * case is refused where they stood. */
+ * case is refused where they stood. Each of the three pictures, the Agent with its makings, the same with the owners,
+ * and the owners with the refusal, is centred on the frame by its outer names. */
 export function makings(s, t, a) {
   if (a <= 0) return;
   const [agentAt, scriptAt, sheetAt, checkAt, dedupAt, listAt, progressAt, retireAt, caseAt] = cues(
@@ -98,9 +100,23 @@ export function makings(s, t, a) {
   const lift = soon(t, checkAt + 0.05, 0.9),
     gone = a * (1 - ramp(t, retireAt + 0.05, 0.4)),
     settle = soon(t, retireAt + 0.05, 0.9);
-  const AX = mix(640, 400, lift),
-    MX = mix(1040, 760, lift),
-    OX = mix(1330, 1150, settle),
+  // How far each column's marks and names reach either side of its axis.
+  const agentHalf = Math.max(53, measure(L("最早那个 Agent", "the first Agent")) / 2),
+    makingHalf = Math.max(
+      SCRIPT[0] / 2,
+      nameWidth(L("临时的去重脚本", "temporary deduplication script"), 350) / 2,
+      measure(L("进度表", "progress sheet")) / 2,
+    ),
+    ownerHalf = Math.max(
+      OWNER[0] / 2,
+      nameWidth(CHECK_NAME(), 300) / 2,
+      nameWidth(L("正式变更里的任务清单", "the official Change's task list"), 300) / 2,
+    ),
+    first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2,
+    owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2;
+  const AX = mix(640 + first, 400 + owned, lift),
+    MX = mix(1040 + first, 760 + owned, lift),
+    OX = mix(1330 + owned, 1150, settle),
     AY = 495,
     flow = (voiceTime(t) * 0.35) % 1;
   // The Agent and its place stand from the cut; its name may lead its clause by a fifth of a second, so the thought
@@ -131,15 +147,18 @@ export function makings(s, t, a) {
     end: hIn > 0.5,
     flow: hIn > 0.5 ? (flow + 0.5) % 1 : null,
   });
+  // Each row of marks, a making and its owner, hangs its names from one baseline under the row's lower mark.
+  const top1 = rowNameTop([R1 + SCRIPT[1] / 2, R1 + OWNER[1] / 2]),
+    top2 = rowNameTop([R2 + SHEET[1] / 2, R2 + LIST[1] / 2]);
   terminalIcon(MX - SCRIPT[0] / 2, R1 - SCRIPT[1] / 2, SCRIPT[0], SCRIPT[1], { alpha: sIn });
-  nameText(
-    L("临时的去重脚本", "temporary deduplication script"),
-    MX,
-    R1 + SCRIPT[1] / 2 + NAME_GAP,
-    { valign: "top", width: 350, alpha: sIn, set: "07.1:makings" },
-  );
+  nameText(L("临时的去重脚本", "temporary deduplication script"), MX, top1, {
+    valign: "top",
+    width: 350,
+    alpha: sIn,
+    set: "07.1:makings",
+  });
   ledger(MX, R2, SHEET[0], SHEET[1], { alpha: hIn });
-  nameText(L("进度表", "progress sheet"), MX, R2 + SHEET[1] / 2 + NAME_GAP, {
+  nameText(L("进度表", "progress sheet"), MX, top2, {
     valign: "top",
     alpha: hIn,
     set: "07.1:makings",
@@ -148,7 +167,7 @@ export function makings(s, t, a) {
   const cIn = a * named(t, checkAt),
     lIn = a * named(t, listAt);
   declaredCheck(OX, R1, cIn);
-  nameText(CHECK_NAME(), OX, R1 + OWNER[1] / 2 + NAME_GAP, {
+  nameText(CHECK_NAME(), OX, top1, {
     valign: "top",
     width: 300,
     alpha: cIn,
@@ -162,28 +181,34 @@ export function makings(s, t, a) {
     done: ticks,
     last: ticks < 4 || held < 4.4 ? Math.min(1, (held - 1.2 * (ticks - 1)) / 0.4) : 1,
   });
-  nameText(
-    L("正式变更里的任务清单", "the official Change's task list"),
-    OX,
-    R2 + LIST[1] / 2 + NAME_GAP,
-    { valign: "top", width: 300, alpha: lIn, set: "07.1:owners" },
-  );
+  nameText(L("正式变更里的任务清单", "the official Change's task list"), OX, top2, {
+    valign: "top",
+    width: 300,
+    alpha: lIn,
+    set: "07.1:owners",
+  });
   // Each obligation passes from its making to its owner along a link under its name; when the makings retire, the
-  // link draws back to a short lead into its owner, and its name follows it.
+  // links draw back to short leads into their owners that start in one column, and their names follow them.
   const rows = [
     [R1, MX + SCRIPT[0] / 2, OX - OWNER[0] / 2, dedupAt, L("去重", "deduplicate")],
     [R2, MX + SHEET[0] / 2, OX - LIST[0] / 2, progressAt, L("进度", "progress")],
   ];
-  rows.forEach(([y, from, to, at, name], i) => {
-    const shown = a * named(t, at),
-      start = mix(from + 12, to - 150, settle);
-    link(start, y, to - 12, y, {
+  const lead = Math.min(...rows.map(([, , to]) => to)) - 150,
+    spans = rows.map(([, from, to]) => [mix(from + 12, lead, settle), to - 12]);
+  // The two names stand one above the other on one axis, the middle of their links, and stop short of the owners'
+  // edges.
+  const axis = Math.min(
+    (spans[0][0] + spans[0][1] + spans[1][0] + spans[1][1]) / 4,
+    ...rows.map(([, , to, , name]) => to - 20 - measure(name) / 2),
+  );
+  rows.forEach(([y, , , at, name], i) => {
+    const shown = a * named(t, at);
+    link(spans[i][0], y, spans[i][1], y, {
       alpha: shown,
       upto: soon(t, at + 0.05, 0.6),
       flow: (flow + 0.5 * i) % 1,
     });
-    // The name stands over its link and stops short of the owner's edge.
-    nameText(name, Math.min((start + to - 12) / 2, to - 20 - measure(name) / 2), y - 26, {
+    nameText(name, axis, y - 26, {
       valign: "bottom",
       alpha: shown,
       set: "07.1:duties",
@@ -216,9 +241,15 @@ function ghostScript(x, y, alpha) {
   );
 }
 
+/* The width of a name as nameText sets it: its widest line once wrapped to `width`. */
+export const nameWidth = (v, width = Infinity, size = LABEL) =>
+  Math.max(...wrapName(v, width, size).map((line) => measure(line, size)));
+
 /* 07.2. The declared check keeps its name and steps right; the script, kept, comes back as a ghost on its words,
  * months passing on a clock at its corner, and someone takes it up. Each result stands under its source, the second
- * named as differing, and a question between them asks which to trust. */
+ * named as differing, and a question between them asks which to trust. The finished picture is centred on the frame
+ * by its outer names, the finder's on the left and the check's on the right, so the check steps from where 07.1 left
+ * it to its place in that centred picture. */
 export function ghost(s, t, a) {
   if (a <= 0) return;
   const [backAt, monthsAt, foundAt, resultAt, differAt, trustAt] = cues(s, [
@@ -229,10 +260,16 @@ export function ghost(s, t, a) {
     ["不一样", "differ"],
     ["该信哪一个", "which to trust"],
   ]);
+  const FOUND = L("又被人翻出来用", "someone may find it"),
+    left = Math.min(390 - 30, 390 - nameWidth(FOUND, 220) / 2),
+    right = Math.max(1310 + OWNER[0] / 2, 1310 + nameWidth(CHECK_NAME(), 300) / 2),
+    DX = 960 - (left + right) / 2;
   const step = soon(t, backAt + 0.2, 0.9),
-    CX = mix(1150, 1310, step),
+    CX = mix(1150, 1310 + DX, step),
     CY = mix(R1, 380, step),
-    GX = 640,
+    GX = 640 + DX,
+    FX = 390 + DX,
+    QX = 975 + DX,
     Y = 380,
     RY = 625;
   declaredCheck(CX, CY, a);
@@ -255,9 +292,9 @@ export function ghost(s, t, a) {
   });
   // Someone takes the script up.
   const f = a * named(t, foundAt);
-  person(390, Y + 8, { size: 1.3, alpha: f });
-  link(430, Y, GX - SCRIPT[0] / 2 - 10, Y, { alpha: f, upto: soon(t, foundAt + 0.05, 0.5) });
-  nameText(L("又被人翻出来用", "someone may find it"), 390, Y + 60 + NAME_GAP, {
+  person(FX, Y + 8, { size: 1.3, alpha: f });
+  link(FX + 40, Y, GX - SCRIPT[0] / 2 - 10, Y, { alpha: f, upto: soon(t, foundAt + 0.05, 0.5) });
+  nameText(FOUND, FX, Y + 60 + NAME_GAP, {
     valign: "top",
     width: 220,
     alpha: f,
@@ -270,6 +307,6 @@ export function ghost(s, t, a) {
   nameText(L("它算出的结果", "its results"), GX, RY + 60 + NAME_GAP, { valign: "top", alpha: r1 });
   resultCard(CX, RY, 4, { alpha: r2 });
   nameText(L("不一样", "differ"), CX, RY + 60 + NAME_GAP, { valign: "top", alpha: r2 });
-  askIcon(975, RY - 6, 30, { alpha: q, color: P.ink });
-  nameText(L("该信哪一个", "which to trust"), 975, RY + 60 + NAME_GAP, { valign: "top", alpha: q });
+  askIcon(QX, RY - 6, 30, { alpha: q, color: P.ink });
+  nameText(L("该信哪一个", "which to trust"), QX, RY + 60 + NAME_GAP, { valign: "top", alpha: q });
 }

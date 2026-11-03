@@ -5,18 +5,18 @@
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { measure, stroke } from "../../drawing/strokes.js";
+import { labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check, cross, documentIcon, person, seal, stopSign } from "../../drawing/symbols.js";
 import { bubble, kernelIcon, layersIcon } from "../../drawing/workspace.js";
 import { beats, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { QUOTE } from "./example.js";
 import { card, linkSet, recordRows, valueCell, verdictMark } from "./marks.js";
-import { centredRow, ruleOneHeading } from "./rule-one.js";
+import { ruleOneHeading } from "./rule-one.js";
 
 /* An example card: two records; in the second example the second record carries a corrected value. */
 const EX_W = 260,
@@ -40,65 +40,70 @@ function exampleCard(x, y, corrected, a) {
 }
 
 /* 04.5 The examples: an exact repeat goes and a correction to the same stock on the same day stays, each card named
- * on its words with its verdict; the summary is tried against both and fails the second at a stop, and the corrected
- * value flashes as it is saved. */
+ * on its words with its verdict, a cross or a check before it; the summary is tried against both and fails the second
+ * at a stop, and the corrected value flashes as it is saved. The heading centres on the frame from its first word,
+ * its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. */
 export function examplesStage(s, t, c, g) {
   const bottom = ruleOneHeading(t, c, g),
-    Y = 450,
-    X1 = 960 - 300,
-    X2 = 960 + 300,
+    heading = termRow(
+      t,
+      L(["正例和反例"], ["Positive and negative examples"]),
+      [c.examples],
+      L(["来考一考对它的理解"], ["test how it has been understood"]),
+      [c.understood],
+      960,
+      bottom + 50,
+      { alpha: g, align: "center" },
+    ),
+    em = labelSize(LABEL),
+    // The cards' names stand one gap above them and 40 px under the heading.
+    Y = heading.bottom + 40 + em + NAME_GAP,
+    X1 = 960 - 280,
+    X2 = 960 + 280,
+    vy = Y + 72,
     q = (voiceTime(t) * 0.5) % 1;
-  centredRow(
-    t,
-    L(["正例和反例"], ["Positive and negative examples"]),
-    c.examples,
-    L(["来考一考对它的理解"], ["test how it has been understood"]),
-    c.understood,
-    960,
-    bottom + 50,
-    { alpha: g, width: 1100 },
-  );
   // The repeat: its second record is struck as it goes.
   const one = g * named(t, c.exact),
-    goes = soon(t, c.goes + 0.05, 0.5);
+    goes = soon(t, c.goes + 0.05, 0.5),
+    gone = g * named(t, c.goes);
   exampleCard(X1, Y, false, one);
   stroke(
     () => {
-      ctx.moveTo(X1 - EX_W / 2 + 26, Y + 72);
-      ctx.lineTo(mix(X1 - EX_W / 2 + 26, X1 + EX_W / 2 - 26, goes), Y + 72);
+      ctx.moveTo(X1 - EX_W / 2 + 26, vy);
+      ctx.lineTo(mix(X1 - EX_W / 2 + 26, X1 + EX_W / 2 - 26, goes), vy);
     },
     { color: P.ink, alpha: g * ramp(t, c.goes - 0.15, 0.3), width: 3 },
   );
   nameText(L("一模一样的重复", "Exact repeat"), X1, Y - NAME_GAP, { valign: "bottom", alpha: one });
-  nameText(L("要去掉", "goes"), X1 + EX_W / 2 + NAME_GAP, Y + 72, {
-    align: "left",
-    alpha: g * named(t, c.goes),
-  });
-  // The correction: its new value is kept, with a check, and saved once the summary fails it.
+  // The two verdicts stand alike: a mark one gap right of the card, its word after it.
+  cross(X1 + EX_W / 2 + NAME_GAP + 12, vy, 20, { color: P.ink, alpha: gone, width: 3.5 });
+  nameText(L("要去掉", "goes"), X1 + EX_W / 2 + NAME_GAP + 36, vy, { align: "left", alpha: gone });
+  // The correction: its new value is kept, with a check, and saved once the summary fails it. Its name and qualifier
+  // arrive together, so they share one line, centred on the card on the baseline of the first card's name.
   const two = g * named(t, c.correction),
     stays = g * named(t, c.stays);
   exampleCard(X2, Y, true, two);
-  centredRow(
+  termRow(
     t,
     L(["同一只股票的更正"], ["A correction"]),
-    c.correction,
+    [c.correction],
     L(["同一天"], ["same stock, same day"]),
-    c.correction,
+    [c.correction],
     X2,
-    Y - NAME_GAP - 30,
-    { alpha: g, width: 480 },
+    Y - NAME_GAP - em,
+    { alpha: g, align: "center", inline: true },
   );
-  check(X2 + EX_W / 2 + NAME_GAP + 12, Y + 72, 22, { color: P.ink, alpha: stays });
-  nameText(L("要留下", "stays"), X2 + EX_W / 2 + NAME_GAP + 36, Y + 72, {
+  check(X2 + EX_W / 2 + NAME_GAP + 12, vy, 22, { color: P.ink, alpha: stays });
+  nameText(L("要留下", "stays"), X2 + EX_W / 2 + NAME_GAP + 36, vy, {
     align: "left",
     alpha: stays,
   });
   // Saved: the corrected value itself flashes once the summary has failed it.
   const [v0, v1] = valueCell(X2 - EX_W / 2 + 34, EX_W - 68);
-  beats(t, (v0 + v1) / 2, Y + 72, 22, [c.saved], { alpha: g });
+  beats(t, (v0 + v1) / 2, vy, 22, [c.saved], { alpha: g });
   // The summary, the understanding under test, stands below; tried against both examples, it fails the second, at a
   // stop on its way there.
-  const qy = 730,
+  const qy = Y + 280,
     qw = measure(QUOTE()) + 56,
     tried = g * named(t, c.quote2),
     draw = soon(t, c.quote2 + 0.05, 0.6);
@@ -143,15 +148,15 @@ export function constraintsStage(s, t, c, g) {
     valign: "bottom",
     alpha: g,
   });
-  centredRow(
+  termRow(
     t,
     L(["每一条约束"], ["Every relevant constraint"]),
-    c.constraint,
+    [c.constraint],
     L(["都要有个交代"], ["accounted for"]),
-    c.accounted,
+    [c.accounted],
     CX + CW / 2,
     CY + CH + NAME_GAP,
-    { alpha: g, width: 420 },
+    { alpha: g, align: "center" },
   );
   const MX = CX + CW + 150;
   names.forEach((v, i) => {
@@ -169,36 +174,45 @@ export function constraintsStage(s, t, c, g) {
 
 /* 04.6 What is compiled: the interpretation stays open to challenge; only what a person has confirmed and accepted
  * passes, sealed, into the kernel, which compiles it by fixed rules into checks. The same input gives the same checks
- * again, but a dashed relation from the checks back to the interpretation is refused: they cannot prove it right. */
+ * again, but a dashed relation from the checks back to the interpretation is refused: they cannot prove it right. The
+ * four stand at one pitch with their names centred under them on one line, the two names above the row share one
+ * line over its tallest marks, and the refused relation crosses at the middle of the row, under the same input. */
 export function compileStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const Y = 580,
-    xs = [460, 774, 1120, 1522],
+    xs = [430, 784, 1138, 1492],
+    mid = (xs[0] + xs[3]) / 2,
+    under = Y + 64 + NAME_GAP,
+    over = Y - 64 - NAME_GAP,
     q = (voiceTime(t) * 0.45) % 1;
   // The interpretation: a card with an open question.
   const meant = g * named(t, c.interpretation);
   documentIcon(xs[0] - 50, Y - 64, 100, 128, { alpha: meant, rows: 3 });
   verdictMark("unknown", xs[0] + 78, Y - 72, 20, { alpha: meant });
-  centredRow(
-    t,
-    L(["理解"], ["The interpretation"]),
-    c.interpretation,
-    L(["可以被质疑"], ["open to challenge"]),
-    c.challenge,
-    xs[0],
-    Y + 64 + NAME_GAP,
-    { alpha: g, width: 300 },
-  );
+  const names = [
+    termRow(
+      t,
+      L(["理解"], ["The interpretation"]),
+      [c.interpretation],
+      L(["可以被质疑"], ["open to challenge"]),
+      [c.challenge],
+      xs[0],
+      under,
+      { alpha: g, align: "center" },
+    ),
+  ];
   // Confirmed and accepted by a person: the seal is stamped on the words.
   const who = g * named(t, c.confirmed);
   person(xs[1], Y - 6, { alpha: who, size: 1.2 });
   // The seal touches the figure's head, so the two read as one mark under one name.
   seal(xs[1] + 32, Y - 46, 16, { color: P.ink, alpha: who, stamp: g * ramp(t, c.accepted, 0.4) });
-  nameText(L("人确认过、采纳了", "Confirmed and accepted"), xs[1], Y + 64 + NAME_GAP, {
-    valign: "top",
-    width: 260,
-    alpha: who,
-  });
+  names.push(
+    nameText(L("人确认过、采纳了", "Confirmed and accepted"), xs[1], under, {
+      valign: "top",
+      width: 260,
+      alpha: who,
+    }),
+  );
   link(xs[0] + 70, Y, xs[1] - 44, Y, { alpha: who });
   // Compiled by fixed rules: the kernel turns while it compiles and on the repeat.
   const rules = g * named(t, c.compiled);
@@ -208,15 +222,17 @@ export function compileStage(s, t, c, g) {
     beat: ramp(t, c.compiled, 0.3) * (1 - ramp(t, c.compiled + 0.6, 0.4)),
   });
   link(xs[1] + 44, Y, xs[2] - 52, Y, { alpha: rules, flow: q });
-  centredRow(
-    t,
-    L(["按固定的规则编译"], ["Compiled"]),
-    c.compiled,
-    L([], ["by fixed rules"]),
-    c.fixed,
-    xs[2],
-    Y + 64 + NAME_GAP,
-    { alpha: g, width: 300 },
+  names.push(
+    termRow(
+      t,
+      L(["按固定的规则编译"], ["Compiled"]),
+      [c.compiled],
+      L([], ["by fixed rules"]),
+      [c.fixed],
+      xs[2],
+      under,
+      { alpha: g, align: "center" },
+    ),
   );
   // The checks, one column; the same input yields them again, each lighting in turn.
   const made = g * named(t, c.checks);
@@ -233,26 +249,27 @@ export function compileStage(s, t, c, g) {
     { color: P.ink, alpha: made, width: 3.5 },
   );
   beats(t, xs[3], Y, 64, [c.sameChecks], { alpha: g });
-  nameText(L("检查", "Checks"), xs[3], Y + 64 + NAME_GAP, { valign: "top", alpha: made });
-  nameText(L("同样的输入", "The same input"), (xs[1] + xs[2]) / 2 + 20, Y - 40, {
+  names.push(nameText(L("检查", "Checks"), xs[3], under, { valign: "top", alpha: made }));
+  nameText(L("同样的输入", "The same input"), mid, over, {
     valign: "bottom",
     alpha: g * named(t, c.sameInput),
   });
-  nameText(L("同样的检查", "The same checks"), xs[3], Y - 64 - NAME_GAP, {
+  nameText(L("同样的检查", "The same checks"), xs[3], over, {
     valign: "bottom",
     alpha: g * named(t, c.sameChecks),
   });
-  // The checks cannot prove the interpretation right: the relation back to it is dashed and refused.
+  // The checks cannot prove the interpretation right: the relation back to it is dashed and refused. It runs 47 px
+  // under the lowest name of the row.
   const refused = g * named(t, c.cannot),
-    by = Y + 64 + NAME_GAP + 30 + 96;
-  link(xs[3], by - 50, xs[0], by - 50, {
+    ry = Math.max(...names.map((v) => v.bottom)) + 47;
+  link(xs[3], ry, xs[0], ry, {
     alpha: refused,
     dash: [8, 9],
     upto: soon(t, c.cannot + 0.05, 0.6),
     route: "straight",
   });
-  cross((xs[0] + xs[3]) / 2, by - 50, 20, { color: P.ink, alpha: refused, width: 3 });
-  nameText(L("证明不了", "Cannot prove"), (xs[0] + xs[3]) / 2, by - 50 + NAME_GAP + 6, {
+  cross(mid, ry, 20, { color: P.ink, alpha: refused, width: 3 });
+  nameText(L("证明不了", "Cannot prove"), mid, ry + NAME_GAP + 6, {
     valign: "top",
     alpha: refused,
   });

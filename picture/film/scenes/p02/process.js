@@ -2,10 +2,10 @@
  * keeping up; over time they go stale, contradict each other and become a burden of their own. */
 
 import { ctx } from "../../canvas.js";
-import { box, line, measure, stroke } from "../../drawing/strokes.js";
+import { box, line, stroke } from "../../drawing/strokes.js";
 import { cross, documentIcon } from "../../drawing/symbols.js";
 import { listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, growName, growTexts, nameText } from "../../naming/names.js";
+import { NAME_GAP, growName, nameText } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -82,18 +82,17 @@ export function stageLedgers(t, a, c) {
       width: 3.5,
     }),
   );
-  // The name stands centred by its widest line, each part arriving on its own words.
+  // The name stands centred under the shelf's name, each line on the same axis, each part arriving on its own words.
+  // A part carries the space before it rather than after it, so a wrapped line ends on its last word.
   const parts = L(
-      ["过期，", "互相打架，", "成了新的负担"],
-      ["Go stale, ", "contradict each other, ", "a burden of their own"],
-    ),
-    widest = Math.max(
-      ...growTexts(parts, 640).map((row) => measure(row.map(([, v]) => v).join(""))),
-    );
-  growName(t, parts, [c.stale, c.fight, c.burden], 960 - widest / 2, 806, {
+    ["过期，", "互相打架，", "成了新的负担"],
+    ["Go stale,", " contradict each other,", " a burden of their own"],
+  );
+  growName(t, parts, [c.stale, c.fight, c.burden], 960, 806, {
     width: 640,
     valign: "top",
     alpha: a,
     build: true,
+    align: "center",
   });
 }
