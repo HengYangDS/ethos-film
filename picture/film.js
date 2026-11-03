@@ -972,7 +972,8 @@ function termRow(t, term, termAts, qual, qualAts, x, y, {
   set = null,
   build = false,
   inline = null,
-  align = "left"
+  align = "left",
+  qualLeft = null
 } = {}) {
   const whole = [...term, ...qual].join(" "), { one } = termRowLayout(term, qual, width, inline ?? (align === "left" ? null : false)), shared = one && qual.length, span = measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE), left = shared ? align === "center" ? x - span / 2 : align === "right" ? x - span : x : x, head = growName(t, term, termAts, left, y, {
     width,
@@ -983,7 +984,7 @@ function termRow(t, term, termAts, qual, qualAts, x, y, {
     align: shared ? "left" : align
   });
   if (!qual.length) return head;
-  const after = left + measure(term.join(""), LABEL) + TERM_GAP;
+  const after = qualLeft !== null && align === "left" ? qualLeft : left + measure(term.join(""), LABEL) + TERM_GAP;
   const tail = growName(
     t,
     qual,
@@ -4238,7 +4239,7 @@ function outcomesStage(s, t, c, g) {
   const top = mix(TOP, 340, soon(t, c.first4 + 0.05, 0.7)), LX = ASIDE + PLANE_W + 80, em = labelSize(LABEL), names = L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]), quals = L(
     [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
     [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]]
-  ), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i));
+  ), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i)), qualLeft = LX + 18 + NAME_GAP + Math.max(...names.map((v) => measure(v, LABEL))) + TERM_GAP;
   planeStack(t, ASIDE, top, { alpha: g });
   termRow(
     t,
@@ -4257,7 +4258,8 @@ function outcomesStage(s, t, c, g) {
     termRow(t, [names[i]], [at], quals[i], [qualAts[i]], LX + 18 + NAME_GAP, ys[i] - em / 2, {
       alpha: g * listLevel(t, ats, i),
       set: "outcomes",
-      width: 1800 - LX
+      width: 1800 - LX,
+      qualLeft
     });
   });
   nameText(L("不等于可以", "Never permission"), LX + 18 + NAME_GAP, rowOf(top, 4), {

@@ -8,10 +8,10 @@
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
 import { cross } from "../../drawing/symbols.js";
-import { dot, labelSize, stroke } from "../../drawing/strokes.js";
+import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listLevel, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
+import { NAME_GAP, TERM_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
@@ -124,7 +124,9 @@ export function outcomesStage(s, t, c, g) {
     kinds = ["pass", "block", "unknown"],
     ats = [c.pass, c.block, c.unknown],
     qualAts = [c.ahead, c.conflict, c.missing],
-    ys = [1, 2, 3].map((i) => rowOf(top, i));
+    ys = [1, 2, 3].map((i) => rowOf(top, i)),
+    // The conditions stand in one column after the widest outcome's name.
+    qualLeft = LX + 18 + NAME_GAP + Math.max(...names.map((v) => measure(v, LABEL))) + TERM_GAP;
   planeStack(t, ASIDE, top, { alpha: g });
   termRow(
     t,
@@ -144,6 +146,7 @@ export function outcomesStage(s, t, c, g) {
       alpha: g * listLevel(t, ats, i),
       set: "outcomes",
       width: 1800 - LX,
+      qualLeft,
     });
   });
   nameText(L("不等于可以", "Never permission"), LX + 18 + NAME_GAP, rowOf(top, 4), {

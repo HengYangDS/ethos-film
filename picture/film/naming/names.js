@@ -248,8 +248,11 @@ export function termRow(
     build = false,
     inline = null,
     align = "left",
+    qualLeft = null,
   } = {},
 ) {
+  // A left-aligned list whose terms differ in width passes `qualLeft`, one x for every inline qualifier after its widest
+  // term, so the qualifiers form a column instead of following each term at its own width.
   // A row centred or ended on x sets its qualifier under the term unless `inline` says otherwise, so the term stands on
   // x from its first word and does not move when the qualifier joins. When the two share a line, they centre or end on
   // x together; when the qualifier stands under the term, each line centres or ends on x.
@@ -267,7 +270,10 @@ export function termRow(
       align: shared ? "left" : align,
     });
   if (!qual.length) return head;
-  const after = left + measure(term.join(""), LABEL) + TERM_GAP;
+  const after =
+    qualLeft !== null && align === "left"
+      ? qualLeft
+      : left + measure(term.join(""), LABEL) + TERM_GAP;
   const tail = growName(
     t,
     qual,
