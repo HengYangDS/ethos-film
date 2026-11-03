@@ -25,6 +25,16 @@
         "9": {
           "seed": 99713,
           "text_sha256": "52bff83bb7b59ebd93b335195dbf08a660ccf86a0622cf8114c5971ca28e9ed8"
+        },
+        "3": {
+          "seed": 99713,
+          "text_sha256": "fb81f222208f643f5f37816b1f25477ad63d2f2b8a7a98f7e2154b81fd82b234",
+          "spoken_sha256": "05d3c9e7f8390d73cd11351ff3cb33b4653ab178d0633bf9456ec135e1b8e8f2"
+        },
+        "4": {
+          "seed": 91794,
+          "text_sha256": "549589d687378e79354fd242f2cf2bf207a5ae6bc76912d9edbef9f8a0172caf",
+          "spoken_sha256": "549589d687378e79354fd242f2cf2bf207a5ae6bc76912d9edbef9f8a0172caf"
         }
       }
     },
@@ -41,6 +51,47 @@
         "1": {
           "seed": 115549,
           "text_sha256": "884e2fcaceb667cbe6d0a8f5006b32d257b6632ff650b9771e442d113bf3487f"
+        }
+      }
+    },
+    "02": {
+      "groups": {
+        "1": {
+          "seed": 99707,
+          "text_sha256": "6ea68577b263cf6f7b09b6b2addb48cb9b51cd1bf95dbb4a5ed2349a0fd1a628",
+          "spoken_sha256": "6ea68577b263cf6f7b09b6b2addb48cb9b51cd1bf95dbb4a5ed2349a0fd1a628"
+        }
+      }
+    },
+    "03": {
+      "groups": {
+        "3": {
+          "seed": 91789,
+          "text_sha256": "427a4a8b3999a4c52ec604c973bef325c66b10841f23e67636c64a0589aebc73",
+          "spoken_sha256": "427a4a8b3999a4c52ec604c973bef325c66b10841f23e67636c64a0589aebc73"
+        },
+        "7": {
+          "seed": 91789,
+          "text_sha256": "e8c9b4bf15e308255d11e747a5fb75689bf11e54ca90bf8043b18da20e90c1ba",
+          "spoken_sha256": "f7597739c3f6da7ad813c7fef6672426acd1b29d2e9ca3dae42b806567c81b98"
+        }
+      }
+    },
+    "07": {
+      "groups": {
+        "4": {
+          "seed": 99712,
+          "text_sha256": "0c4f7e00c22fcaa081cb81f1bcd6d8447e31ba5e48b40085fca70e5d9f1ee3dd",
+          "spoken_sha256": "b2b19c2a1266e8c44cb824211a3001636da1c4a057046f896ac0883da7580f64"
+        }
+      }
+    },
+    "09": {
+      "groups": {
+        "4": {
+          "seed": 91795,
+          "text_sha256": "a80ee8a261866f52dd5c1e6296242c41b4c4fa84545b8f78e736ac2bab06e1e1",
+          "spoken_sha256": "b5de0911264a8e6d336e379c4c81084cf9f9b414ff90bd07c4068b60d49e898e"
         }
       }
     }
