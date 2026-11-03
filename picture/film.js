@@ -6733,6 +6733,7 @@ function judged(s, t, a, cutAt2) {
   const refused = REFUSED(), conditions = CONDITIONS(), A = Math.max(...refused.map((v) => measure(v))) + 16 + 26, B = 36 + 20 + Math.max(...conditions.map((v) => measure(v))), GUTTER = 200, left = 960 - (A + GUTTER + B) / 2, axis = left + A + GUTTER / 2, alone = 960 - (left + axis + claimWidth() / 2 + CLAIM_DATUM) / 2, shift = mix(alone, 0, soon(t, meaningAt + 0.05, 0.9)), RX = left + A - 42 + shift, BX2 = left + A + GUTTER + shift;
   const q = soon(t, Math.max(trustAt + 0.05, cutAt2), 1), PX = mix(BOUND_X + boundShift(), axis + shift, q), PY = mix(470, 380, q), conds = [meaningAt, withinAt, backAt], rows = [545, 630, 715];
   claimPanel(t, PX, PY, { alpha: a });
+  line(axis + shift, rows[0] - 40, axis + shift, rows[2] + 30, { alpha: a });
   nameText(L("这句话能不能信", "can be trusted"), PX, PY + CLAIM_H / 2 + 18, {
     valign: "top",
     size: NOTE,
@@ -6843,7 +6844,7 @@ function close(s, t, a) {
 }
 scenes["09"] = function(s, t) {
   const [judgeAt, markAt] = cues(s, [
-    ["不看是谁说的", "Whether that sentence"],
+    ["不看是谁说的", "does not depend on"],
     ["ETHOS 的标志", "The ETHOS mark"]
   ]);
   const a1 = stageOut(t, judgeAt), a2 = stageIn(t, judgeAt) * stageOut(t, markAt), a3 = stageIn(t, markAt);

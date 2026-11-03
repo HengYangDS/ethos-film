@@ -89,8 +89,8 @@ function bound(s, t, a) {
     color: P.muted,
     alpha: clear * ramp(t, beganAt - (en ? 0.6 : 0.15), 0.4),
   });
-  // Chinese asks whether the sentence can be trusted in a clause of its own, while it still stands with its
-  // attestations; the question rises with it when the judgement takes the picture.
+  // The question whether the sentence can be trusted is put while it still stands with its attestations, and rises
+  // with it when the judgement takes the picture.
   nameText(L("这句话能不能信", "can be trusted"), PX, Y + CLAIM_H / 2 + 18, {
     valign: "top",
     size: NOTE,
@@ -153,13 +153,14 @@ function bound(s, t, a) {
   });
 }
 
-/* 09.3. The sentence rises to the top as the question of whether it can be trusted is put; what it does not depend on
- * is refused on the left, who said it and how much process, and what it does depend on builds on the right, the three
+/* 09.3. The sentence rises to the top with the question of whether it can be trusted; what it does not depend on is
+ * refused on the left, who said it and how much process, and what it does depend on builds on the right, the three
  * conditions the rules give, each a box that is ticked on its words. The two lists are centred on each other, the two
- * refusals midway between the three conditions' rows, and stand low enough to clear the question where the Chinese
- * sentence starts its rise. The table they make is centred on the frame, and the sentence heads it from above its
- * gutter, the axis between the two lists. While the refusals stand alone, the sentence and the refusals are centred
- * on the frame together, and the table glides to its place on the words that bring the first condition. */
+ * refusals midway between the three conditions' rows, and stand low enough to clear the question where the sentence
+ * starts its rise. The table they make is centred on the frame, and the sentence heads it from above its gutter, the
+ * axis between the two lists, which a rule marks as the judgement takes the picture, so the two lists stand as the two
+ * sides of one judgement before the second arrives. While the refusals stand alone, the sentence and the refusals are
+ * centred on the frame together, and the table glides to its place on the words that bring the first condition. */
 const REFUSED = () => [L("谁说的", "who said it"), L("走了多少流程", "how much process")],
   CONDITIONS = () => [
     L("原意是不是有一处可查", "the meaning can be found in one place"),
@@ -191,14 +192,16 @@ function judged(s, t, a, cutAt) {
     shift = mix(alone, 0, soon(t, meaningAt + 0.05, 0.9)),
     RX = left + A - 42 + shift,
     BX = left + A + GUTTER + shift;
-  // The sentence rises as the question is put, or from the cut where the question was put before it, over a second,
-  // so its longest rise, in English, keeps a step between frames that reads as one mark moving.
+  // The sentence rises from the cut, the question having been put before it, over a second, so its longest rise, in
+  // English, keeps a step between frames that reads as one mark moving.
   const q = soon(t, Math.max(trustAt + 0.05, cutAt), 1.0),
     PX = mix(BOUND_X + boundShift(), axis + shift, q),
     PY = mix(470, 380, q),
     conds = [meaningAt, withinAt, backAt],
     rows = [545, 630, 715];
   claimPanel(t, PX, PY, { alpha: a });
+  // The gutter's rule, from under the question to below the last condition, comes with the judgement.
+  line(axis + shift, rows[0] - 40, axis + shift, rows[2] + 30, { alpha: a });
   nameText(L("这句话能不能信", "can be trusted"), PX, PY + CLAIM_H / 2 + 18, {
     valign: "top",
     size: NOTE,
@@ -346,10 +349,10 @@ function close(s, t, a) {
 }
 
 scenes["09"] = function (s, t) {
-  // The judgement takes the picture on its first refusal in Chinese, whose question has a clause of its own, and on
-  // the question in English, which puts it in the refusals' clause.
+  // The judgement takes the picture on its first refusal: the question is put over the sentence and its
+  // attestations, in a clause of its own in Chinese and in the first half of the refusals' clause in English.
   const [judgeAt, markAt] = cues(s, [
-    ["不看是谁说的", "Whether that sentence"],
+    ["不看是谁说的", "does not depend on"],
     ["ETHOS 的标志", "The ETHOS mark"],
   ]);
   const a1 = stageOut(t, judgeAt),
