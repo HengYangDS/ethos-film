@@ -17,6 +17,7 @@ import { L } from "../../timeline.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { agents, card, recordRows, valueCell } from "./marks.js";
+import { reachAt } from "./rule-one.js";
 
 /* The request in the researcher's words and the line two handoffs leave of it. The Chinese lines drop a particle of the
  * spoken words, since the verbatim lines would repeat their captions; the quote does so for the same reason. */
@@ -80,8 +81,9 @@ export function exampleStage(s, t, c, g) {
 }
 
 /* 04.2 The pipeline rises to make room; its rerun loop draws on "run again", and below it the researcher's request
- * builds as two lines, each on its words. The lines start clear of the researcher's name as well as the figure, and
- * the figure, its name and the lines stand centred together. */
+ * builds as two lines, each on its words. The lines start clear of the researcher's name as well as the figure. The
+ * researcher stands centred under the pipeline while alone; on the words of each line that reaches further than those
+ * before it, the figure glides with its name and lines as one unit to where what stands is centred. */
 export function requestStage(s, t, c, g) {
   const Y = mix(470, 400, soon(t, c.researcher + 0.05, 0.6));
   const m = pipelineMark(960, Y, 900, {
@@ -99,7 +101,6 @@ export function requestStage(s, t, c, g) {
   });
   const lines = REQUEST(),
     ats = [c.dup, c.corrected],
-    lw = Math.max(...lines.map((v) => measure(v))),
     who = L("研究员", "A researcher"),
     // The figure's half width, its shoulders' arc, and its name's: the lines keep 36 px from the one and 30 px from
     // the other.
@@ -107,7 +108,13 @@ export function requestStage(s, t, c, g) {
     nameHalf = measure(who) / 2,
     unit = Math.max(figure, nameHalf),
     lead = Math.max(figure + 36, nameHalf + 30),
-    PX = 960 - (lead + lw - unit) / 2,
+    // The group reaches `unit` left of the figure and, as the lines arrive, to the end of the widest of them.
+    reach = reachAt(
+      t,
+      unit,
+      lines.map((v, i) => [ats[i], lead + measure(v)]),
+    ),
+    PX = 960 - (reach - unit) / 2,
     RY = 690,
     on = g * named(t, c.researcher);
   person(PX, RY, { alpha: on, size: 1.2 });

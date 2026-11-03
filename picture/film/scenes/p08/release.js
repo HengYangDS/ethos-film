@@ -159,7 +159,8 @@ function needMark(i, x, y, alpha) {
 const NEEDS = () => [
   L("上线的那个版本", "the version"),
   L("真实运行的环境", "the environment"),
-  L("和原来的做法比", "how things were done before"),
+  // Authored as its lines, so the English breaks between its phrases rather than after "were".
+  L("和原来的做法比", ["how things", "were done before"]),
   L("一段时间", "a set period"),
 ];
 const NEED_Y = [350, 450, 550, 650],

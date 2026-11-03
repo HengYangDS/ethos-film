@@ -68,8 +68,9 @@ export function stageLedgers(t, a, c) {
         width: 3,
       });
   });
+  // The third name breaks before the phrase that qualifies it, so no line ends on "of" or "the".
   railNames(
-    L(["登记表", "台账", "重复的规定"], ["Register", "Ledger", "Copy of the same rule"]),
+    L(["登记表", "台账", "重复的规定"], ["Register", "Ledger", ["Copy", "of the same rule"]]),
     xs,
     SY - 4 - H,
     { side: -1, gap: NAME_GAP, alpha: (i) => a * listIn(t, ats, i), set: "process" },

@@ -153,7 +153,9 @@ const JUDGED = () => [
   ],
   [
     L("提出的补救办法", "the proposed remedy"),
-    L("按厂商给的修订编号来区分记录", "tell records apart by the revision number"),
+    // Authored as its lines, each edition breaking between its phrases: the automatic break would split 修订编号, and
+    // the English one would end its first line on "by".
+    L(["按厂商给的修订编号", "来区分记录"], ["tell records apart", "by the revision number"]),
   ],
 ];
 const PANEL_W = 400,

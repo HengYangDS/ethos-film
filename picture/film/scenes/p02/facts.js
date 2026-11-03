@@ -1,9 +1,20 @@
 /* 02.5 Changes are made before the facts are checked: an Agent writes from an outdated memory over another's work, a
  * version lands on one platform and not the other, and neither a retry nor an error message settles what happened. */
 
+import { centring, glide } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { box, dashed, dot, fill, line, ring, stroke, text } from "../../drawing/strokes.js";
+import {
+  box,
+  dashed,
+  dot,
+  fill,
+  line,
+  measure,
+  ring,
+  stroke,
+  text,
+} from "../../drawing/strokes.js";
 import { check, cross, stopSign } from "../../drawing/symbols.js";
 import { commitRow } from "../../drawing/history.js";
 import { commitDot, tagIcon } from "../../drawing/workspace.js";
@@ -45,6 +56,22 @@ function unknownMark(x, y, alpha) {
   if (alpha < 0.01) return;
   ring(x, y, UNKNOWN_R, { color: P.ink, alpha, width: 3 });
   text("?", x, y + 1, UNKNOWN_R * 1.25, { role: "mark", align: "center", alpha });
+}
+/* Where a stage built part by part stands: centred on what stands. Each part is [the word that brings it, its left,
+ * its right]; the first stands from the cut, and each later part that widens what stands glides the stage as one to
+ * centre the new extent, from just after its words. Returns the stage's shift. */
+function standing(t, parts) {
+  const [[, x0, x1], ...rest] = parts;
+  let left = x0,
+    right = x1;
+  const steps = [];
+  for (const [at, l, r] of rest.sort((p, q) => p[0] - q[0])) {
+    if (l >= left && r <= right) continue;
+    left = Math.min(left, l);
+    right = Math.max(right, r);
+    steps.push([at, centring(left, right)]);
+  }
+  return glide(t, centring(x0, x1), steps);
 }
 
 /* 02.5 Two Agents work on the same branch. One keeps a memory of the branch as it was, three commits; it writes from
@@ -111,7 +138,9 @@ export function stageBranch(t, a, c) {
 }
 
 /* 02.5 The same version pushed to two platforms: one succeeds, the other fails, and between them the state nobody can
- * name; trying again adds a second push that ends in the same question. */
+ * name; trying again adds a second push that ends in the same question. The row grows to the right as it is told, so it
+ * stands centred on what stands: the version alone from the cut, then the version with its platforms, its results and
+ * the state between them, gliding as one on the words of each part that widens it. */
 export function stagePlatforms(t, a, c) {
   if (a <= 0) return;
   const VX = 470,
@@ -121,17 +150,34 @@ export function stagePlatforms(t, a, c) {
     W = 220,
     H = 84,
     q = (voiceTime(t) * 0.4) % 1;
-  tagIcon(VX, VY, 140, 56, { alpha: a, color: P.ink });
-  nameText(L("同一个版本", "The same version"), VX + 70, VY - 28 - NAME_GAP, {
-    valign: "bottom",
-    alpha: a * named(t, c.vCut),
-  });
+  const versionName = L("同一个版本", "The same version"),
+    resultNames = L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"]),
+    unclearName = L("说不清现在到底是什么状态", "Nobody can say"),
+    retryName = L("再试一遍", "Trying again");
   // Each platform arrives with its name. The English names the platforms before it names them, and its clause
   // already runs, so each arrives on the words that bring it and its name may stand that far ahead of its words.
   const hosts = [c.gitlab, c.github],
     come = L(hosts, [c.platforms, c.platforms2]),
     calls = hosts.map((at, i) => L(at, Math.max(come[i], at - 1.4))),
     results = [c.ok, c.fail];
+  const from = Math.min(VX, VX + 70 - measure(versionName) / 2),
+    after = PX + W / 2 + 76;
+  ctx.save();
+  ctx.translate(
+    standing(t, [
+      [-Infinity, from, Math.max(VX + 140, VX + 70 + measure(versionName) / 2)],
+      [come[0], from, PX + W / 2],
+      ...results.map((at, i) => [at, from, after + measure(resultNames[i])]),
+      [c.unclear, from, after + measure(unclearName)],
+      [c.retry, from, VX + 70 + 330 + UNKNOWN_R + 16 + measure(retryName)],
+    ]),
+    0,
+  );
+  tagIcon(VX, VY, 140, 56, { alpha: a, color: P.ink });
+  nameText(versionName, VX + 70, VY - 28 - NAME_GAP, {
+    valign: "bottom",
+    alpha: a * named(t, c.vCut),
+  });
   ys.forEach((y, i) => {
     const on = a * ramp(t, come[i] - 0.15, 0.4);
     link(VX + 140, VY, PX - W / 2, y, {
@@ -146,18 +192,17 @@ export function stagePlatforms(t, a, c) {
     const done = a * ramp(t, results[i] - 0.15, 0.4);
     if (i === 0) check(PX + W / 2 + 40, y, 30, { color: P.ink, alpha: done, width: 4 });
     else stopSign(PX + W / 2 + 40, y, 20, { color: P.ink, alpha: done });
-    nameText(
-      L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"])[i],
-      PX + W / 2 + 76,
-      y,
-      { align: "left", alpha: a * listIn(t, results, i), set: "results" },
-    );
+    nameText(resultNames[i], after, y, {
+      align: "left",
+      alpha: a * listIn(t, results, i),
+      set: "results",
+    });
   });
   // Between the two, the state of the version: unknown.
   const unknown = a * ramp(t, c.unclear - 0.15, 0.4),
     UY = (ys[0] + ys[1]) / 2;
   unknownMark(PX + W / 2 + 40, UY, unknown);
-  nameText(L("说不清现在到底是什么状态", "Nobody can say"), PX + W / 2 + 76, UY, {
+  nameText(unclearName, after, UY, {
     align: "left",
     alpha: a * named(t, c.unclear),
   });
@@ -171,14 +216,17 @@ export function stagePlatforms(t, a, c) {
   });
   unknownMark(VX + 70 + 330, 800, again * soon(t, c.retry + 0.55, 0.3));
   // Its name stands as far from its mark as the results' names stand from theirs.
-  nameText(L("再试一遍", "Trying again"), VX + 70 + 330 + UNKNOWN_R + 16, 800, {
+  nameText(retryName, VX + 70 + 330 + UNKNOWN_R + 16, 800, {
     align: "left",
     alpha: a * named(t, c.retry),
   });
+  ctx.restore();
 }
 
 /* 02.5 A request that was sent may not have been received, and an error does not mean nothing happened: each pair a
- * link that stops at a question, so the far end cannot be read from the near one. */
+ * link that stops at a question, so the far end cannot be read from the near one. The pairs stand centred on what
+ * stands: the first pair's near half from the cut, its link run out to the question's place, and each half that
+ * widens the pairs glides them as one on its words. */
 export function stageSent(t, a, c) {
   if (a <= 0) return;
   const X0 = 760,
@@ -188,6 +236,20 @@ export function stageSent(t, a, c) {
     near = [c.sent, c.error],
     far = [c.received, c.nothing],
     q = (voiceTime(t) * 0.4) % 1;
+  const nearNames = L(["请求发出去了", "看到报错"], ["Sent", "An error message"]),
+    farNames = L(["对方收下了", "什么都没发生"], ["Received", "Nothing happened"]),
+    nearLeft = (i) => X0 - 10 - NAME_GAP - measure(nearNames[i]),
+    farRight = (i) => X1 + 14 + NAME_GAP + measure(farNames[i]);
+  ctx.save();
+  ctx.translate(
+    standing(t, [
+      [-Infinity, nearLeft(0), 930],
+      [far[0], nearLeft(0), farRight(0)],
+      [near[1], nearLeft(1), 930],
+      [far[1], nearLeft(1), farRight(1)],
+    ]),
+    0,
+  );
   ys.forEach((y, i) => {
     // The first pair stands from the cut, its clause already begun.
     const on = a * ramp(t, (i ? near[i] : c.s2Cut) - 0.15, 0.4),
@@ -202,17 +264,16 @@ export function stageSent(t, a, c) {
     unknownMark(960, y, off);
     dashed(990, y, X1 - 14, y, { color: P.line, alpha: off, width: 2.5 });
     ring(X1, y, 14, { color: P.ink, alpha: off, width: 2.5 });
-    nameText(
-      L(["请求发出去了", "看到报错"], ["Sent", "An error message"])[i],
-      X0 - 10 - NAME_GAP,
-      y,
-      { align: "right", alpha: a * listIn(t, [c.s2Cut, near[1]], i), set: "near" },
-    );
-    nameText(
-      L(["对方收下了", "什么都没发生"], ["Received", "Nothing happened"])[i],
-      X1 + 14 + NAME_GAP,
-      y,
-      { align: "left", alpha: a * listIn(t, far, i), set: "far" },
-    );
+    nameText(nearNames[i], X0 - 10 - NAME_GAP, y, {
+      align: "right",
+      alpha: a * listIn(t, [c.s2Cut, near[1]], i),
+      set: "near",
+    });
+    nameText(farNames[i], X1 + 14 + NAME_GAP, y, {
+      align: "left",
+      alpha: a * listIn(t, far, i),
+      set: "far",
+    });
   });
+  ctx.restore();
 }

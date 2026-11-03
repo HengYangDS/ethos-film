@@ -75,12 +75,14 @@ function declaredCheck(x, y, alpha) {
 }
 const CHECK_NAME = () => L("仓库自己声明的检查", "own declared check");
 
-/* 07.1. The first Agent stands from the cut in its place, its two makings arriving on their words, and the picture
- * steps left as the owners arrive. Each obligation passes from its making to its owner along a link on its words, a
- * point flowing along it under the obligation's name. The makings and the Agent retire together on their word, each
- * link drawing back to a short lead into its owner, the owners settle to the centre, and keeping the makings just in
- * case is refused where they stood. Each of the three pictures, the Agent with its makings, the same with the owners,
- * and the owners with the refusal, is centred on the frame by its outer names. */
+/* 07.1. The first Agent stands from the cut with the links to its makings' places, its two makings arriving on their
+ * words, and the picture steps left as the owners arrive. Each obligation passes from its making to its owner along a
+ * link on its words, a point flowing along it under the obligation's name. The makings and the Agent retire together
+ * on their word, each link drawing back to a short lead into its owner, the owners settle to the centre, and keeping
+ * the makings just in case is refused where they stood. Each of the three pictures, the Agent with its makings, the
+ * same with the owners, and the owners with the refusal, is centred on the frame by its outer names; until the first
+ * making arrives, the Agent and its links stand centred by their own ends, and the picture glides left, as one unit,
+ * on the words that bring the script. */
 export function makings(s, t, a) {
   if (a <= 0) return;
   const [agentAt, scriptAt, sheetAt, checkAt, dedupAt, listAt, progressAt, retireAt, caseAt] = cues(
@@ -113,9 +115,12 @@ export function makings(s, t, a) {
       nameWidth(L("正式变更里的任务清单", "the official Change's task list"), 300) / 2,
     ),
     first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2,
-    owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2;
-  const AX = mix(640 + first, 400 + owned, lift),
-    MX = mix(1040 + first, 760 + owned, lift),
+    owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2,
+    // Before its makings arrive, the Agent's picture ends where its longer link does, at the sheet's place.
+    links = 960 - (640 - agentHalf + 1040 - SHEET[0] / 2 - 10) / 2,
+    start = mix(links, first, soon(t, scriptAt + 0.05, 0.7));
+  const AX = mix(640 + start, 400 + owned, lift),
+    MX = mix(1040 + start, 760 + owned, lift),
     OX = mix(1330 + owned, 1150, settle),
     AY = 495,
     flow = (voiceTime(t) * 0.35) % 1;

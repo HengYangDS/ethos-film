@@ -20,16 +20,18 @@ import { voiceTime } from "../../timing/pauses.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
  * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once as the
- * meaning is said to be kept. Returns the heading's bottom. */
+ * meaning is said to be kept. The English statement is authored in two lines that break before its relative clause,
+ * so no line ends on "the" and its left edge stays clear of the centred heading of the examples below. Returns the
+ * heading's bottom. */
 export function ruleOneHeading(t, c, g) {
   const on = g * named(t, c.first4),
     h = ruleHeading(t, {
       number: L("第一条准则", "Rule one"),
       numberAt: c.first4,
-      statement: L(
-        "用刚好够用的模型，留住原意",
-        "Preserve meaning with the smallest model that is enough",
-      ),
+      statement: L("用刚好够用的模型，留住原意", [
+        "Preserve meaning with the smallest model",
+        "that is enough",
+      ]),
       statementAt: c.statement,
       size: 560,
       glyph: { datum: 1, passages: 0, boundary: 0 },
@@ -141,6 +143,20 @@ export function modelStage(s, t, c, g) {
 export const rowHalf = (term, qual = []) =>
   Math.max(measure(term.join("")), qual.length ? measure(qual.join(""), NOTE) : 0) / 2;
 
+/* How far a group that builds part by part reaches at t, so it can stand centred on what it shows: from `base`, the
+ * reach of what stands first, each part that reaches further than those before it widens the group, gliding from just
+ * after its words. `parts` are [at, reach] pairs. */
+export function reachAt(t, base, parts, duration = 0.7) {
+  let reach = base,
+    now = base;
+  for (const [at, v] of [...parts].sort((a, b) => a[0] - b[0])) {
+    if (v <= reach) continue;
+    now += (v - reach) * soon(t, at + 0.05, duration);
+    reach = v;
+  }
+  return now;
+}
+
 /* The Change: a document that holds the intent at its head and, on their words, its three fields. */
 export const CHANGE_W = 150,
   CHANGE_H = 240;
@@ -167,21 +183,27 @@ export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1
 
 /* 04.4 One Change: the intent, named, moves into a Change, which is named with "only there"; then its three fields
  * arrive on their words, each a row of the document linked to its name at the right. The Change stands centred while
- * it is alone, the intent named at its left and moving into it; as its first field is named, the Change glides with
- * its name to stand centred together with its field names. */
+ * it is alone, the intent named at its left and moving into it; as each field name that reaches further than those
+ * before it is named, the Change glides with its name to stand centred together with the field names that stand. */
 export function changeStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = fieldNames(),
-    nw = Math.max(...names.map((v) => measure(v))),
     term = L(["正式变更"], ["One official Change"]),
     qual = L(["只写在这一处"], ["only there"]),
-    // With its fields the group spans the Change's name where it is wider than the document, and the field names.
+    ats = [c.f1, c.f2, c.f3],
+    // The group spans the Change's name where it is wider than the document, at either side, and the field names
+    // that stand: it reaches `over` left of the Change and right to the end of its name or, once they stand, of the
+    // widest field name.
     over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2),
     alone = 960 - CHANGE_W / 2,
-    DX = mix(alone, 960 - (CHANGE_W + 90 + nw - over) / 2, soon(t, c.f1 + 0.05, 0.7)),
+    reach = reachAt(
+      t,
+      CHANGE_W + over,
+      names.map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)]),
+    ),
+    DX = 960 - (reach - over) / 2,
     DY = 440,
     FX = DX + CHANGE_W + 90,
-    ats = [c.f1, c.f2, c.f3],
     into = soon(t, c.change + 0.05, 0.7),
     fields = ats.map((at) => ramp(t, at - 0.15, 0.4));
   changeDocument(DX, DY, { alpha: g * named(t, c.change), fields, intent: 0 });
@@ -215,7 +237,8 @@ export function changeStage(s, t, c, g) {
  * on what they read as well when it is named. */
 export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const readers = L("后面接手的人和 Agent", "Everyone who picks up the work"),
+  // The English readers' name is authored as its phrases, so its first line does not end on "who".
+  const readers = L("后面接手的人和 Agent", ["Everyone", "who picks up the work"]),
     same = L("读到的都是同一份", "Reads the same thing"),
     term = L(["正式变更"], ["The Change"]),
     qual = L(["只写在一处"], ["one copy"]),

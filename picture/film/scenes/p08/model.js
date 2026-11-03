@@ -114,9 +114,10 @@ export function modelRevision(s, t, a) {
     RECORD = L("同一条记录", "the same record"),
     DIM = L("少了一个维度", ["missing", "a dimension"]),
     BOUND = L("受影响的最小范围", "the smallest boundary"),
-    CHANGE = L("新的正式变更", ["a new official", "Change"]),
+    // The English names are authored as their lines, so each breaks before the word that opens its phrase.
+    CHANGE = L("新的正式变更", ["a new", "official Change"]),
     REVISES = L("修订模型", "revises the model"),
-    DEP = L("依赖它的检查", "every check that depends on it"),
+    DEP = L("依赖它的检查", ["every check", "that depends on it"]),
     COMPILE = L("重新编译", "compiled again");
   const left = -22 - nameWidth(DIM, 200),
     right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2),
@@ -279,7 +280,8 @@ export function meanwhile(s, t, a) {
     ["和它无关的工作", "work unrelated to it"],
     ["照常进行", "goes on as usual"],
   ]);
-  const DEPEND = L("依赖这个概念的改动", "changes that depend on that idea"),
+  // The English name is authored as its lines, so it breaks before "that" rather than after it.
+  const DEPEND = L("依赖这个概念的改动", ["changes", "that depend on that idea"]),
     WAIT = L("先停下", "wait"),
     OTHER = L("和它无关的工作", "work unrelated to it"),
     ON = L("照常进行", "goes on as usual"),
@@ -370,7 +372,8 @@ export function goalKept(s, t, a) {
   // The records the goal keeps free of duplicates, under the level.
   link(AXIS, 482, AXIS, LY + 12, { alpha: a, flow });
   resultCard(AXIS, 545, 4, { alpha: a, w: 170, h: 120 });
-  nameText(L("一个字也没有放宽", "not relaxed in the slightest"), (AXIS + LOCK) / 2, LY + 28, {
+  // The English name is authored as its lines, so it breaks before "in" rather than after it.
+  nameText(L("一个字也没有放宽", ["not relaxed", "in the slightest"]), (AXIS + LOCK) / 2, LY + 28, {
     valign: "top",
     width: 300,
     alpha: a * named(t, notAt),

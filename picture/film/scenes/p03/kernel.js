@@ -46,8 +46,8 @@ import { voiceTime } from "../../timing/pauses.js";
  * past the gate; as the record is announced it glides back to its finished place, so the record arrives there. The
  * inputs' names end on one edge, the English intent's qualifier under its term. The names under the kernel, the plan,
  * the gate and the new attestation hang from one baseline, one gap under the tallest of them, the kernel. What the
- * kernel records stands over the new attestation, one clause to a line, each line centred on it; the loop turns down
- * clear of the new attestation's name. */
+ * kernel records stands over the new attestation, one clause to a line, each line centred on it, and grows upward from
+ * one gap over it as its clauses are said; the loop turns down clear of the new attestation's name. */
 const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
 /* The shift that centres the extent from x0 to x1 on the frame. */
 export const centring = (x0, x1) => 960 - (x0 + x1) / 2;
@@ -211,7 +211,17 @@ export function stageKernel(t, a, c) {
   });
   link(GX + 30, KY, SX - 34, KY, { alpha: rec, upto: soon(t, c.rec1 + 0.05, 0.4) });
   seal(SX, KY, 34, { color: P.ink, alpha: rec, stamp: stamped });
-  growName(t, parts, [c.rec1, c.rec2, c.rec3], SX, KY - 34 - NAME_GAP, {
+  // The record grows from its place over the new attestation: its last line stands one gap over the seal, and in the
+  // half second before each next line's words the lines already there lift one line, so the new line arrives in its
+  // place under them and the record never stands away from what it names.
+  const recordAts = [c.rec1, c.rec2, c.rec3],
+    lift =
+      labelSize(LABEL) *
+      LEADING *
+      growTexts(parts, recordWidth)
+        .slice(1)
+        .reduce((v, line) => v + 1 - soon(t, recordAts[line[0][0]] - 0.5, 0.5), 0);
+  growName(t, parts, recordAts, SX, KY - 34 - NAME_GAP + lift, {
     width: recordWidth,
     valign: "bottom",
     align: "center",

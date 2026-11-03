@@ -12,11 +12,20 @@ import { cross } from "../../drawing/symbols.js";
 import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listLevel, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, TERM_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
+import {
+  LEADING,
+  NAME_GAP,
+  NOTE,
+  TERM_GAP,
+  nameText,
+  rejectedName,
+  termRow,
+} from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
+import { STAGE_CUT } from "../../timing/stages.js";
 import { card, linkSet, verdictMark } from "../p04/marks.js";
 import { claimPanel, claimWidth } from "../claim.js";
 import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack } from "./planes.js";
@@ -24,6 +33,18 @@ import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack } from "./planes.j
 const TOP = PLANES_TOP,
   ASIDE = 400;
 const rowOf = (top, i) => top + i * PLANE_STEP + PLANE_H / 2;
+
+/* The planes' next steps: each plane's step stands `STEPS[i]` px beyond the stack's right edge on its row, a ring of
+ * STEP_R, so the steps descend as a staircase. Their heading hangs over the first step, left-aligned on its left edge
+ * as the stack's heading is on the stack's, on the same line. */
+const STEPS = [80, 130, 180, 230, 280],
+  STEP_R = 12;
+const stepsName = () => L("下一步都不一样", "A different next step");
+/* How far right of the stack's right edge the staircase and its heading reach. */
+const stepsReach = () => Math.max(STEPS.at(-1) + STEP_R, STEPS[0] - STEP_R + measure(stepsName()));
+/* Where the stack stands once its steps stand beside it: the stack, the steps and their headings centred together on
+ * the content centre. */
+const separateX = () => 960 - (PLANE_W + stepsReach()) / 2;
 
 /* A judgment's three outcomes and their conditions, in each edition. */
 const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]),
@@ -48,7 +69,7 @@ function outcomesColumns() {
 const columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
 /* The parts of the outcomes list, each with how far right it reaches from the stack's left edge: the heading, its term
  * and qualifier taken as one, its qualifier again once it joins the conditions' column, then each name, each condition
- * and "never permission". `c` gives when each arrives. */
+ * and "never permission", a second line of unknown's condition. `c` gives when each arrives. */
 function outcomesParts(c = {}) {
   const col = outcomesColumns(),
     names = outcomeNames(),
@@ -62,7 +83,7 @@ function outcomesParts(c = {}) {
       at,
       col.quals + measure(quals[i].join(""), NOTE),
     ]),
-    [c.never, col.names + measure(L("不等于可以", "Never permission"))],
+    [c.never, col.quals + measure(L("不等于可以", "Never permission"), NOTE)],
   ];
 }
 /* How far right the outcomes reach at t as they build: a part that reaches further than those before it widens the
@@ -99,13 +120,14 @@ export function ruleTwoHeading(t, c, g) {
   });
 }
 
-/* 05.3 Separate planes of evidence: on "a different next step" the stack moves aside and each plane gains its own step
- * at a different reach, one mark of links; the local proof's step, the one that passed, is open. */
+/* 05.3 Separate planes of evidence: on "a different next step" each plane gains its own step at a different reach, one
+ * mark of links, and the stack moves aside with its steps to where the two stand centred together; the local proof's
+ * step, the one that passed, is open. */
 export function separateStage(s, t, c, g) {
   ruleTwoHeading(t, c, g);
-  const x = mix(960 - PLANE_W / 2, ASIDE, soon(t, c.nextStep + 0.05, 0.7)),
+  const x = mix(960 - PLANE_W / 2, separateX(), soon(t, c.nextStep + 0.05, 0.7)),
     nx = x + PLANE_W,
-    reach = [80, 130, 180, 230, 280],
+    reach = STEPS,
     steps = g * named(t, c.nextStep),
     q = (voiceTime(t) * 0.45) % 1;
   planeStack(t, x, TOP, { alpha: g });
@@ -115,14 +137,14 @@ export function separateStage(s, t, c, g) {
     alpha: g * named(t, c.separate),
   });
   linkSet(
-    reach.map((d, i) => [nx, rowOf(TOP, i), nx + d - 12, rowOf(TOP, i), "hv"]),
+    reach.map((d, i) => [nx, rowOf(TOP, i), nx + d - STEP_R, rowOf(TOP, i), "hv"]),
     { alpha: steps, upto: soon(t, c.nextStep + 0.05, 0.6), flow: q, end: false },
   );
   stroke(
     () =>
       reach.forEach((d, i) => {
-        ctx.moveTo(nx + d + 12, rowOf(TOP, i));
-        ctx.arc(nx + d, rowOf(TOP, i), 12, 0, Math.PI * 2);
+        ctx.moveTo(nx + d + STEP_R, rowOf(TOP, i));
+        ctx.arc(nx + d, rowOf(TOP, i), STEP_R, 0, Math.PI * 2);
       }),
     { color: P.ink, alpha: steps * ramp(t, c.nextStep + 0.3, 0.3), width: 2.5 },
   );
@@ -130,7 +152,7 @@ export function separateStage(s, t, c, g) {
     color: P.ink,
     alpha: steps * ramp(t, c.nextStep + 0.6, 0.3),
   });
-  nameText(L("下一步都不一样", "A different next step"), nx + 40, TOP - NAME_GAP, {
+  nameText(stepsName(), nx + reach[0] - STEP_R, TOP - NAME_GAP, {
     align: "left",
     valign: "bottom",
     alpha: steps,
@@ -138,25 +160,31 @@ export function separateStage(s, t, c, g) {
 }
 
 /* 05.3 One passing never means another has: the sentence that says "done" stands beside the stack, the local proof's
- * check beats and the inference to another plane is refused; the sentence is then linked to the one plane verified. */
+ * check beats and the inference to another plane is refused; the sentence is then linked to the one plane verified.
+ * The stack comes from where its steps left it, and from the cut it and the sentence glide aside together as one
+ * group. */
 export function verifiedStage(s, t, c, g) {
   ruleTwoHeading(t, c, g);
-  const one = rowOf(TOP, 0);
-  planeStack(t, ASIDE, TOP, { alpha: g });
-  beats(t, ASIDE + PLANE_W - 36, one, 24, [c.first3b], { alpha: g });
+  const x = mix(separateX(), ASIDE, soon(t, c.first3b + STAGE_CUT, 0.7)),
+    one = rowOf(TOP, 0);
+  planeStack(t, x, TOP, { alpha: g });
+  beats(t, x + PLANE_W - 36, one, 24, [c.first3b], { alpha: g });
   rejectedName(
     L("另一样也通过", "Another has passed"),
-    ASIDE + PLANE_W / 2,
+    x + PLANE_W / 2,
     TOP + 5 * PLANE_STEP + 18,
-    { alpha: g * named(t, c.another), mark: ramp(t, c.another + 0.35, 0.35) },
+    {
+      alpha: g * named(t, c.another),
+      mark: ramp(t, c.another + 0.35, 0.35),
+    },
   );
   // The sentence stands a short link's run right of the stack, so the two stand as one group about the centre.
-  const PX = ASIDE + PLANE_W + 70 + claimWidth() / 2,
+  const PX = x + PLANE_W + 70 + claimWidth() / 2,
     PY = rowOf(TOP, 2),
     edge = claimPanel(t, PX, PY, { alpha: g }),
     verified = g * named(t, c.verified);
   beats(t, edge.right, PY, 20, [c.saysDone], { alpha: g });
-  link(edge.left, PY, ASIDE + PLANE_W, one, {
+  link(edge.left, PY, x + PLANE_W, one, {
     route: "hvh",
     alpha: g * named(t, c.tell),
     upto: soon(t, c.tell + 0.05, 0.6),
@@ -170,8 +198,9 @@ export function verifiedStage(s, t, c, g) {
 
 /* 05.4 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
  * with what it alone permits and block and unknown with their conditions; unknown is never permission. The list keeps
- * the stack's rows, so the two columns read on one grid: its heading on the first plane's row, the outcomes on the
- * next three, and "never permission" on the last, a row of its own after unknown. The checks with no result are linked
+ * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
+ * next three. "Never permission" is said of unknown, so it stands as a second line of unknown's condition, in the
+ * condition's note style and column, rather than as a fourth row of the list. The checks with no result are linked
  * to unknown, and "no problem" is refused. The stack rises a little and moves to where the stack and the list,
  * together, stand on the content centre, and it shifts on the words of each condition that widens the list. */
 export function outcomesStage(s, t, c, g) {
@@ -215,8 +244,10 @@ export function outcomesStage(s, t, c, g) {
       qualLeft,
     });
   });
-  nameText(L("不等于可以", "Never permission"), LX + 18 + NAME_GAP, rowOf(top, 4), {
+  nameText(L("不等于可以", "Never permission"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
     align: "left",
+    size: NOTE,
+    color: P.muted,
     alpha: g * named(t, c.never),
   });
   // The example: the checks on GitLab and GitHub, with no result yet, are unknown.

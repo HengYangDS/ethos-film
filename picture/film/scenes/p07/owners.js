@@ -58,7 +58,8 @@ export function repoGroup(xs, y, w, h, { alpha = 1, checks = 0 } = {}) {
 /* Rule four's heading: its glyph is the complete mark. At rest it stands in the rules' shared place (framing/rules.js)
  * with the rule's illustration below; `q` brings it there from its opening state, where it stands alone in the middle of
  * the band, larger, while the rule is spoken. The complete mark at the rule one heading's size of 560 would reach above
- * the action-safe area at the top, so the glyph at rest is 240. */
+ * the action-safe area at the top, so the glyph at rest is 240. Opening, the glyph and the rule's number stand centred
+ * by themselves until the statement's words, and the heading glides left, as one unit, to take the statement in. */
 const GLYPH = 240,
   OPENING = 500,
   FULL = { datum: 1, passages: 1, boundary: 1 };
@@ -67,7 +68,10 @@ function ruleHeading(t, q, { kick, kickAt, rule, ruleAt, alpha }) {
   // and text centred together there too.
   const rest = ruleHeadingLayout(kick, rule, GLYPH, FULL),
     lift = 500 - (rest.top + rest.bottom) / 2,
-    open = ruleHeadingLayout(kick, rule, OPENING, FULL, { dy: lift }),
+    // While only the number stands beside the glyph, the heading stands right by half of what the statement adds.
+    wider = Math.max(0, Math.max(...rest.lines.map((v) => measure(v))) - measure(kick, NOTE)),
+    aside = (wider / 2) * (1 - soon(t, ruleAt + 0.05, 0.7)),
+    open = ruleHeadingLayout(kick, rule, OPENING, FULL, { dy: lift, cx: 960 + aside }),
     dy = mix(lift, 0, q),
     TX = mix(open.tx, rest.tx, q);
   ethosMark(mix(open.mx, rest.mx, q), mix(open.my, rest.my, q), mix(OPENING, GLYPH, q), { alpha });
@@ -158,8 +162,9 @@ export function ruleFour(s, t, a) {
     alpha: a * listIn(t, heads, 1),
     set: "07.3:heads",
   });
-  // The obligation the same for every repository, owned by ETHOS.
-  const d1 = nameText(L("对所有仓库都一样的规则", "the same for every repository"), C1, DUTY, {
+  // The obligation the same for every repository, owned by ETHOS. English breaks the two duties before the phrases
+  // "for every repository" and "that are its own", so no line ends on "for" or "that".
+  const d1 = nameText(L("对所有仓库都一样的规则", ["the same", "for every repository"]), C1, DUTY, {
     width: 330,
     alpha: a * listIn(t, duties, 0),
     set: "07.3:duties",
@@ -176,7 +181,7 @@ export function ruleFour(s, t, a) {
     set: "07.3:owners",
   });
   // Each repository's own checks, owned by the repositories.
-  const d2 = nameText(L("自己特有的检查", "the checks that are its own"), C2, DUTY, {
+  const d2 = nameText(L("自己特有的检查", ["the checks", "that are its own"]), C2, DUTY, {
     width: 330,
     alpha: a * listIn(t, duties, 1),
     set: "07.3:duties",
@@ -271,7 +276,10 @@ function wayBox(x, y, rows, { alpha = 1, more = 1, extra = 0 } = {}) {
 
 /* 07.4, second: a replacement takes the old way's place on its words; it holds every check the old one held, and the
  * rule that it may never be weaker is named as its extra check arrives: Chinese states it beneath both ways, comparing
- * them, and English, whose words continue the replacement's own name, sets them as that name's second line. */
+ * them, and English, whose words continue the replacement's own name, sets them as that name's second line. English
+ * names what it replaces last, after the rule, so its new way stands alone for more than a second: it stands centred
+ * until the old way's words, and the two ways then glide, as one unit, to their places either side of the axis.
+ * Chinese names both ways in one clause, half a second apart, so they stand in their places from the first. */
 export function replacement(s, t, a) {
   if (a <= 0) return;
   const [newAt, weakAt, oldAt] = cues(s, [
@@ -281,21 +289,24 @@ export function replacement(s, t, a) {
   ]);
   const n = a * named(t, newAt),
     w = a * named(t, weakAt),
-    o = a * named(t, oldAt);
-  wayBox(700, 430, 3, { alpha: o });
-  nameText(L("旧做法", "what it replaces"), 700, 505 + NAME_GAP, { valign: "top", alpha: o });
-  wayBox(1220, 430, 4, { alpha: n, more: w, extra: 1 });
-  const named2 = nameText(L("新做法", "A replacement"), 1220, 505 + NAME_GAP, {
+    o = a * named(t, oldAt),
+    S = mix(L(0, 960 - 1220), 0, soon(t, oldAt + 0.05, 0.8));
+  wayBox(700 + S, 430, 3, { alpha: o });
+  nameText(L("旧做法", "what it replaces"), 700 + S, 505 + NAME_GAP, { valign: "top", alpha: o });
+  wayBox(1220 + S, 430, 4, { alpha: n, more: w, extra: 1 });
+  const named2 = nameText(L("新做法", "A replacement"), 1220 + S, 505 + NAME_GAP, {
     valign: "top",
     alpha: n,
   });
-  link(827, 430, 1093, 430, {
+  // The relation draws on from the old way to the new; in English it waits until the glide has passed its fastest
+  // part, so the line never grows while its ends slide fast.
+  link(827 + S, 430, 1093 + S, 430, {
     alpha: Math.min(n, o),
-    upto: soon(t, Math.max(newAt, oldAt) + 0.05, 0.6),
+    upto: soon(t, Math.max(newAt, oldAt) + L(0.05, 0.35), 0.6),
     flow: (voiceTime(t) * 0.4) % 1,
   });
   if (en)
-    nameText("may never be weaker", 1220, named2.top + LEADING * labelSize(LABEL), {
+    nameText("may never be weaker", 1220 + S, named2.top + LEADING * labelSize(LABEL), {
       valign: "top",
       alpha: w,
     });
@@ -305,8 +316,10 @@ export function replacement(s, t, a) {
 /* 07.4, third: an official Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
  * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. The Change and the
  * record hang their names from one baseline. The Change stands from its words where it and its delivered rows,
- * arriving a moment later, stand balanced on the frame; on the words that bring the record the picture glides, as one
- * unit, to where the whole is centred by its outer edges, the Change on the left and the record on the right. */
+ * arriving a moment later, stand balanced on the frame (English, whose delivered rows come more than a second later,
+ * stands the Change alone centred until their words and glides there with them); on the words that bring the record
+ * the picture glides, as one unit, to where the whole is centred by its outer edges, the Change on the left and the
+ * record on the right. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
@@ -330,8 +343,11 @@ export function closing(s, t, a) {
     // rows still stand within 50 px of the centre there.
     centred = 960 - (left + delivered) / 2,
     held = L(Math.min(30, centred), centred),
+    // English: the Change alone, centred by its list and its name, until its delivered rows' words.
+    alone = 960 - (left + Math.max(700 + 100, 1400 - left)) / 2,
+    first = mix(L(held, alone), held, soon(t, deliveredAt + 0.05, 0.7)),
     // The picture's offset: that place, then, on the record's words, where the whole is centred.
-    S = mix(held, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)),
+    S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)),
     LX = 700 + S,
     RX = 1240 + S,
     top = rowNameTop([DY + H / 2, DY + 70 + 70]);

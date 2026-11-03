@@ -71,7 +71,9 @@ export function stageTools(t, a, c) {
     { color: P.muted, alpha: a * 0.8, width: 2.5 },
   );
   nameText("Git", gx + 20, gy, { alpha: a * named(t, c.git) });
-  nameText(L("现成、成熟的工具", "Mature tools that already exist"), KX, 760, {
+  // The tools' name hangs one gap under the pair, centred between them and clear of both corners: in English it takes
+  // two lines, broken before its relative clause, since on one line it would run under Git's corner.
+  nameText(L("现成、成熟的工具", ["Mature tools", "that already exist"]), KX, 760, {
     valign: "top",
     alpha: a * named(t, c.mature),
   });

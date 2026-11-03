@@ -1,10 +1,11 @@
 /* 02.4 Claims go beyond their evidence: three steps whose claims overrun what they proved, and the opening sentence's
  * "all tests pass", which shows only that the tests someone wrote have passed. */
 
-import { claimPanel } from "../claim.js";
+import { CLAIM_DATUM, claimPanel, claimWidth } from "../claim.js";
+import { centring, glide } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { box, stroke } from "../../drawing/strokes.js";
+import { box, measure, stroke } from "../../drawing/strokes.js";
 import { illustrative } from "../../framing/chapters.js";
 import { building, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText } from "../../naming/names.js";
@@ -87,19 +88,27 @@ export function stageClaims(t, a, c) {
 
 /* 02.4 Even "all tests pass" shows only that the tests someone wrote have passed: the opening sentence, linked down to
  * the requirement's cells, which stand with it from the cut as one mark; on its words a block of them fills with the
- * checks of the tests written, and the words that ask whether they are enough name the whole grid. */
+ * checks of the tests written, and the words that ask whether they are enough name the whole grid. The sentence and its
+ * grid stand centred on the frame from the cut; the tests' name hangs one gap left of the grid, on the axis of the
+ * block it names, so as it is said the whole stage glides as one to centre what then stands, from that name to the
+ * sentence's datum. */
 export function stageTests(t, a, c) {
   if (a <= 0) return;
   illustrative(a);
-  const PY = 380,
-    GX = 960,
-    GY = 650,
-    S = 46,
+  const S = 46,
     cols = 8,
     rows = 4,
+    writtenName = L("已经写好的那些测试", "The tests someone wrote"),
+    enoughName = L("这些测试够不够", "Whether those tests are enough"),
+    reachLeft = (cols * S) / 2 + NAME_GAP + measure(writtenName),
+    reachRight = Math.max((cols * S) / 2, claimWidth() / 2 + CLAIM_DATUM, measure(enoughName) / 2),
+    dx = glide(t, 0, [[c.written, centring(960 - reachLeft, 960 + reachRight)]]),
+    PY = 380,
+    GX = 960 + dx,
+    GY = 650,
     left = GX - (cols * S) / 2,
     top = GY - (rows * S) / 2;
-  claimPanel(t, 960, PY, { alpha: a });
+  claimPanel(t, GX, PY, { alpha: a });
   const tests = a * ramp(t, c.written - 0.15, 0.4),
     q = (voiceTime(t) * 0.45) % 1;
   // The cells: the tests written are the first three of the first two rows, the rest of the requirement around them.
@@ -128,17 +137,17 @@ export function stageTests(t, a, c) {
     { color: P.line, alpha: a, width: 2 },
   );
   stroke(cells(written), { color: P.line, alpha: a * (1 - tests), width: 2 });
-  link(960, PY + 42, left + 1.5 * S, top + 4, {
+  link(GX, PY + 42, left + 1.5 * S, top + 4, {
     route: "vhv",
     mid: (PY + 42 + top) / 2,
     alpha: a,
     flow: q,
   });
-  nameText(L("已经写好的那些测试", "The tests someone wrote"), left - NAME_GAP, top + S, {
+  nameText(writtenName, left - NAME_GAP, top + S, {
     align: "right",
     alpha: a * named(t, c.written),
   });
-  nameText(L("这些测试够不够", "Whether those tests are enough"), GX, top + rows * S + NAME_GAP, {
+  nameText(enoughName, GX, top + rows * S + NAME_GAP, {
     valign: "top",
     alpha: a * named(t, c.enough),
   });

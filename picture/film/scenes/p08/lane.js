@@ -177,9 +177,11 @@ function sourceMark(i, x, y, alpha) {
  * Agent dims, and the Agent that takes over arrives on its words as the work passes to it. The last one's memory is
  * refused between them. Until the reading begins the handover is centred on the frame, the rail reaching about as far
  * either side of it; then it steps left and the rail draws back to the new Agent as the three sources arrive on the
- * right in ETHOS's order, each linked from the new Agent with what it tells, and the finished picture, from the rail's
- * start to the longest of what the sources tell, is centred on the frame. Each source's term stands on its marker's
- * line from its first word, and what it tells hangs beneath. */
+ * right in ETHOS's order, each linked from the new Agent with what it tells. The picture, from the rail's start to the
+ * furthest of the sources' words that stand, is centred on the frame from the first source on: each term or tell that
+ * reaches further than those before it widens the picture, and the whole glides to its new centre just after its
+ * words, so the finished picture, to the longest of what the sources tell, is centred too. Each source's term stands
+ * on its marker's line from its first word, and what it tells hangs beneath. */
 export function handoff(s, t, a) {
   if (a <= 0) return;
   const [halfAt, endsAt, overAt, memoryAt, factsAt, nowAt, changeAt, doneAt, attestAt, passedAt] =
@@ -196,10 +198,25 @@ export function handoff(s, t, a) {
       ["哪些核验已经通过", "which proofs have passed"],
     ]);
   const sources = SOURCES(),
-    widest = Math.max(
-      ...sources.map(([term, tell]) => Math.max(measure(term), measure(tell, NOTE))),
-    ),
-    S = 960 - (560 - 320 - 2 + TEXT_X + widest) / 2,
+    terms = [factsAt, changeAt, attestAt],
+    tells = [nowAt, doneAt, passedAt],
+    // The sources' words in the order they are said, each with how far right of the sources' text column it reaches.
+    parts = sources
+      .flatMap(([term, tell], i) => [
+        [terms[i], measure(term)],
+        [tells[i], measure(tell, NOTE)],
+      ])
+      .sort((p, q) => p[0] - q[0]);
+  // How far the sources reach at t: a part that reaches further than those before it widens them, gliding from just
+  // after its words.
+  let reach = parts[0][1],
+    widest = reach;
+  for (const [at, w] of parts.slice(1)) {
+    if (w <= widest) continue;
+    reach += (w - widest) * soon(t, at + 0.05, 0.7);
+    widest = w;
+  }
+  const S = 960 - (560 - 320 - 2 + TEXT_X + reach) / 2,
     reading = soon(t, factsAt - 0.4, 0.8),
     off = mix(960 - (560 + 820) / 2, S, reading),
     AX = 560 + off,
@@ -232,7 +249,8 @@ export function handoff(s, t, a) {
   });
   agent(BX, AY, { size: 1.1, alpha: b });
   link(BX, AY + 28, BX, RAIL_Y - 20, { alpha: b * passed, upto: passed });
-  nameText(L("接手的 Agent", "the Agent that takes over"), BX, AY - 40, {
+  // Authored as its lines, so the English breaks before "that" rather than after it.
+  nameText(L("接手的 Agent", ["the Agent", "that takes over"]), BX, AY - 40, {
     valign: "bottom",
     width: 320,
     alpha: b,
@@ -244,8 +262,6 @@ export function handoff(s, t, a) {
     mark: ramp(t, memoryAt + 0.3, 0.4),
   });
   // What the Agent taking over reads, in order, each on its words.
-  const terms = [factsAt, changeAt, attestAt],
-    tells = [nowAt, doneAt, passedAt];
   sources.forEach(([term, tell], i) => {
     const y = ROWS[i],
       r = a * named(t, terms[i]);

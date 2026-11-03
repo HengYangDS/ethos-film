@@ -9,7 +9,7 @@ import { labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check, cross, documentIcon, person, seal, stopSign } from "../../drawing/symbols.js";
 import { bubble, kernelIcon, layersIcon } from "../../drawing/workspace.js";
 import { beats, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, TERM_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
@@ -44,8 +44,10 @@ function exampleCard(x, y, corrected, a) {
  * at a stop on its way there, and the corrected value flashes as it is saved. The heading centres on the frame from its
  * first word, its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. The
  * first card stands alone on the frame's axis; the second joins at its right and the pair glides as one unit to centre
- * on the axis. Each verdict stands one gap outside its card, the repeat's at its left and the correction's at its
- * right, so the pair and its verdicts stay balanced about the axis. */
+ * what stands, the repeat's verdict at its left included, and on the correction's verdict it settles centred on the
+ * axis, over the summary, before the summary is tried against the two. Each verdict stands one gap outside its card,
+ * the repeat's at its left and the correction's at its right, so the pair and its verdicts stay balanced about the
+ * axis. */
 export function examplesStage(s, t, c, g) {
   const bottom = ruleOneHeading(t, c, g),
     heading = termRow(
@@ -61,9 +63,19 @@ export function examplesStage(s, t, c, g) {
     em = labelSize(LABEL),
     // The cards' names stand one gap above them and 40 px under the heading.
     Y = heading.bottom + 40 + em + NAME_GAP,
-    pair = 280 * (1 - soon(t, c.correction + 0.05, 0.9)),
-    X1 = 960 - 280 + pair,
-    X2 = 960 + 280 + pair,
+    goesName = L("要去掉", "goes"),
+    corrTerm = L(["同一只股票的更正"], ["A correction"]),
+    corrQual = L(["同一天"], ["same stock, same day"]),
+    // Until the correction's verdict the pair reaches from the repeat's cross at its left to the end of the second
+    // card or of its name at its right, and stands right of the axis by half their difference to centre them.
+    reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10,
+    reachRight =
+      280 +
+      Math.max(EX_W, measure(corrTerm.join("")) + TERM_GAP + measure(corrQual.join(""), NOTE)) / 2,
+    joined = soon(t, c.correction + 0.05, 0.9),
+    lean = ((reachLeft - reachRight) / 2) * joined * (1 - soon(t, c.stays + 0.05, 0.7)),
+    X1 = 960 + lean - 280 * joined,
+    X2 = X1 + 560,
     vy = Y + 72,
     q = (voiceTime(t) * 0.5) % 1;
   // The repeat: its second record is struck as it goes.
@@ -81,8 +93,7 @@ export function examplesStage(s, t, c, g) {
   nameText(L("一模一样的重复", "Exact repeat"), X1, Y - NAME_GAP, { valign: "bottom", alpha: one });
   // The two verdicts stand alike, each a mark and its word after it, one gap outside the card: the repeat's ends one
   // gap left of its card, the correction's begins one gap right of its card.
-  const goesName = L("要去掉", "goes"),
-    gx = X1 - EX_W / 2 - NAME_GAP;
+  const gx = X1 - EX_W / 2 - NAME_GAP;
   cross(gx - measure(goesName) - 24, vy, 20, { color: P.ink, alpha: gone, width: 3.5 });
   nameText(goesName, gx, vy, { align: "right", alpha: gone });
   // The correction: its new value is kept, with a check, and saved once the summary fails it. Its name and qualifier
@@ -90,16 +101,11 @@ export function examplesStage(s, t, c, g) {
   const two = g * named(t, c.correction),
     stays = g * named(t, c.stays);
   exampleCard(X2, Y, true, two);
-  termRow(
-    t,
-    L(["同一只股票的更正"], ["A correction"]),
-    [c.correction],
-    L(["同一天"], ["same stock, same day"]),
-    [c.correction],
-    X2,
-    Y - NAME_GAP - em,
-    { alpha: g, align: "center", inline: true },
-  );
+  termRow(t, corrTerm, [c.correction], corrQual, [c.correction], X2, Y - NAME_GAP - em, {
+    alpha: g,
+    align: "center",
+    inline: true,
+  });
   check(X2 + EX_W / 2 + NAME_GAP + 12, vy, 22, { color: P.ink, alpha: stays });
   nameText(L("要留下", "stays"), X2 + EX_W / 2 + NAME_GAP + 36, vy, {
     align: "left",
@@ -291,12 +297,16 @@ export function compileStage(s, t, c, g) {
   });
 }
 
-/* 04.6 Only leads: a conversation, a memory and a summary build as a list, then step back as leads. */
+/* 04.6 Only leads: a conversation, a memory and a summary build as a list, then step back as leads. The row builds
+ * from its left and stays centred on what it shows, as the compiled chain before it does: it stands half a pitch to the
+ * right for each member still to come, and glides that half pitch as one unit on the words of each further member. */
+const LEADS_PITCH = 300;
 export function leadsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]),
     ats = [c.talk, c.memory, c.summaries],
-    xs = [960 - 300, 960, 960 + 300],
+    come = ats.slice(1).reduce((v, at) => v + 1 - soon(t, at + 0.05, 0.7), 0),
+    xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * k + (LEADS_PITCH / 2) * come),
     Y = 620,
     back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
   ats.forEach((at, i) => {

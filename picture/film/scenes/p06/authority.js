@@ -84,12 +84,17 @@ function authorityPlace() {
 /* The views beyond the opening: a summary, a dashboard, status output and an Agent's report, each an icon with its
  * name, linked from inside through the opening. The icons stand on one column VIEW_RUN px beyond the opening, centred
  * on it; their names start VIEW_TEXT px from it, 16 px clear of the widest icon, the terminal; the dashboard, the view
- * kept on alone in 06.5, stands on the mark's axis. The opening sentence stands under them as a report, its panel's
- * left edge PANEL_LEFT px from the icons' column. */
+ * kept on alone in 06.5, stands on the mark's axis. The opening sentence stands under them as a report, hung from the
+ * report's icon by a link down the icons' column; its panel's left edge stands panelLeft() px from that column. In
+ * English the panel starts on the column's left edge, where the views' heading starts, so the link meets it near
+ * its start rather than a third of the way along; centred on the link it would come within about 20 px of the
+ * boundary's lower end. The Chinese names are short, so there the panel stands under the list of views, centred on
+ * it within 10 px; set on the column it would reach about 160 px past the names, widening the views by 88 px, and the
+ * mark, which keeps its place into 06.5, would stand 44 px further left in the stages after it. */
 const VIEW_RUN = 213,
   VIEW_TEXT = 48,
   VIEW_STEP = 90,
-  PANEL_LEFT = -120;
+  panelLeft = () => L(-120, -32);
 const VIEWS = () =>
   L(
     ["摘要", "看板", "状态输出", "Agent 的汇报"],
@@ -109,7 +114,7 @@ function viewsParts(c = {}) {
     [c.views?.[0], run + VIEW_TEXT + Math.max(...names.map((v) => measure(v)))],
     [c.areViews, run - 32 + measure(VIEWS_NAME())],
     [c.thatGreen, run + VIEW_TEXT + measure(names[1]) + TERM_GAP + measure(GREEN()[0], NOTE)],
-    [c.sentence, run + PANEL_LEFT + claimWidth()],
+    [c.sentence, run + panelLeft() + claimWidth()],
   ];
 }
 /* How far right the views reach at t as they build: a part that reaches further than those before it widens the
@@ -267,7 +272,7 @@ export function viewsStage(s, t, c, g) {
   });
   const report = g * named(t, c.sentence),
     py = v.ys[3] + 95,
-    panel = claimPanel(t, v.vx + PANEL_LEFT + claimWidth() / 2, py, { alpha: report });
+    panel = claimPanel(t, v.vx + panelLeft() + claimWidth() / 2, py, { alpha: report });
   link(v.vx, v.ys[3] + 26, v.vx, panel.top, { alpha: report });
   beats(t, v.vx, v.ys[3], 34, [c.suchReport], { alpha: g });
 }
@@ -335,7 +340,8 @@ export function notAuthorityStage(s, t, c, g) {
   // view carries it on to the new commit, which it would overwrite.
   const refused = g * named(t, c.never),
     reach = mix(0.45, 1, soon(t, c.act + 0.05, 0.9)) * soon(t, c.never + 0.05, 0.5),
-    counts = L("当权威依据", "Counts as authority"),
+    // English breaks before the phrase "as authority", so no line ends on "as".
+    counts = L("当权威依据", ["Counts", "as authority"]),
     // The cross stands in the gap between the opening and the view, its words centred under it within that gap,
     // ending at least 20 px before the view, so they stay clear of the passages inside.
     room = v.vx - 30 - 20 - v.open,

@@ -28,30 +28,42 @@ import { stageIn, stageOut } from "../../timing/stages.js";
  * both directions, so the heading never goes unread. `levels` gives each name's ink: the difficulty being told at full
  * ink, the others at the second level. */
 const INDEX_XS = [420, 960, 1500],
+  CENTRE_POINT = 12,
+  CENTRE_R = 54,
   DOCK_Y = 166,
   DOCK_GAP = 12,
   DOCK_POINT = 6,
   DOCK_R = 16,
   WRAP = 460;
+const halfName = (v) => Math.max(...wrapName(v, WRAP).map((line) => measure(line))) / 2;
 /* How far the docked index reaches past its first and last stations: a named station's name or ring, an unnamed
  * station's point, and over the first station the kicker. */
 function dockReach(heading, names, shown) {
-  const half = (v) => Math.max(...wrapName(v, WRAP).map((line) => measure(line))) / 2,
-    past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, half(names[i])), shown[i]));
+  const past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, halfName(names[i])), shown[i]));
   return [Math.max(past[0], measure(heading, NOTE) / 2), past[1]];
 }
+/* How far the centred index reaches past its first and last stations: a named station's name or ring, an unnamed
+ * station's point; its heading stands over the middle station, inside the rail. */
+const centreReach = (names, shown) =>
+  [0, 2].map((i) => mix(CENTRE_POINT, Math.max(CENTRE_R, halfName(names[i])), shown[i]));
 function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
   const Y = mix(540, DOCK_Y, k),
-    R = mix(54, DOCK_R, k),
-    pointR = mix(12, DOCK_POINT, k),
+    R = mix(CENTRE_R, DOCK_R, k),
+    pointR = mix(CENTRE_POINT, DOCK_POINT, k),
     gap = mix(NAME_GAP, DOCK_GAP, k),
     shown = ats.map((at) => ramp(t, at - 0.15, 0.4)),
     reach = shown.map((v) => Math.max(pointR * (1 - v), R * v));
   // Docked, the index is balanced on what it shows: the first station's name hangs past it, the last station is a bare
   // point until it is named, so the index stands off the frame's centre by half the difference of the two reaches. It
-  // takes that place as it rises and leaves it as it comes down, so it never moves sideways while it is docked.
+  // takes that place as it rises and leaves it as it comes down, so it never moves sideways while it is docked. At the
+  // centre it is balanced the same way, heading and all: a name that reaches past the first or last station moves the
+  // whole index as one, gliding from just after the words that name that station.
   const [before, after] = dockReach(heading, names, shown),
-    xs = INDEX_XS.map((x) => x + (k * (before - after)) / 2);
+    [from, to] = centreReach(
+      names,
+      ats.map((at) => soon(t, at + 0.05, 0.7)),
+    ),
+    xs = INDEX_XS.map((x) => x + mix((from - to) / 2, (before - after) / 2, k));
   stroke(
     () =>
       [0, 1].forEach((i) => {
