@@ -148,22 +148,20 @@ export function stageSystems(t, a, c) {
   });
 }
 
-/* 03.7 What every repository shares, ETHOS owns in one place: three repositories of three sizes, each its own mark,
- * standing on one shared layer from the cut, a point running along it, the layer named on the words that give it
- * to ETHOS; each repository's own purpose arrives inside it as its own shape. The repositories stand at equal gaps,
- * the row and the layer under it centred on the frame; the layer's name centres on the layer, and the heading over
- * the row centres on it from its first word, its qualifier joining under it. */
-const REPO_WIDTHS = [220, 260, 300],
+/* 03.7 What every repository shares, ETHOS owns in one place: three repositories, cards of one size, standing on one
+ * shared layer from the cut, a point running along it, the layer named on the words that give it to ETHOS; each
+ * repository's own purpose arrives inside it as its own shape, each at the same place in its card. The repositories
+ * stand at equal gaps, the row and the layer under it centred on the frame, so the middle card stands on the axis of
+ * the layer's name and of the heading over the row, which centres on it from its first word, its qualifier joining
+ * under it. */
+const REPO_W = 260,
   REPO_GAP = 140;
 export function stageLayer(t, a, c) {
   if (a <= 0) return;
-  const total = REPO_WIDTHS.reduce((sum, w) => sum + w, 0) + REPO_GAP * (REPO_WIDTHS.length - 1),
+  const total = 3 * REPO_W + 2 * REPO_GAP,
     x0 = 960 - total / 2,
     x1 = x0 + total,
-    repos = REPO_WIDTHS.map((w, i) => [
-      x0 + REPO_WIDTHS.slice(0, i).reduce((sum, v) => sum + v + REPO_GAP, 0) + w / 2,
-      w,
-    ]),
+    repos = [0, 1, 2].map((i) => [x0 + REPO_W / 2 + i * (REPO_W + REPO_GAP), REPO_W]),
     RH = 150,
     RY = 520,
     LY = RY + RH / 2 + 50,
@@ -196,20 +194,22 @@ export function stageLayer(t, a, c) {
   nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), (x0 + x1) / 2, LY - 6, {
     alpha: a * named(t, c.owns),
   });
-  // Each repository's own purpose: a shape of its own inside it.
+  // Each repository's own purpose: a shape of its own inside it, each centred on the same point of its card, right of
+  // the card's centre and clear of its branch.
   const own = a * ramp(t, c.own - 0.15, 0.4),
-    [[ax], [bx], [cx]] = repos;
-  ring(ax + 26, RY + 10, 26, { color: P.ink, alpha: own, width: 3 });
+    [ax, bx, cx] = repos.map(([x]) => x + 30),
+    SY = RY + 8;
+  ring(ax, SY, 26, { color: P.ink, alpha: own, width: 3 });
   stroke(
     () => {
-      ctx.moveTo(bx + 30, RY - 18);
-      ctx.lineTo(bx + 58, RY + 30);
-      ctx.lineTo(bx + 2, RY + 30);
+      ctx.moveTo(bx, SY - 24);
+      ctx.lineTo(bx + 28, SY + 24);
+      ctx.lineTo(bx - 28, SY + 24);
       ctx.closePath();
     },
     { color: P.ink, alpha: own, width: 3 },
   );
-  box(cx + 16, RY - 16, 48, 48, { stroke: P.ink, alpha: own, radius: 6, width: 3 });
+  box(cx - 24, SY - 24, 48, 48, { stroke: P.ink, alpha: own, radius: 6, width: 3 });
   const term = [L("每个仓库", "Each repository")],
     qual = [L("自己特有的事", "its own purpose")],
     { height } = termRowLayout(term, qual, 520, false);

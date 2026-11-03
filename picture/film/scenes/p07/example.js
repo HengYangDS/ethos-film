@@ -248,8 +248,10 @@ export const nameWidth = (v, width = Infinity, size = LABEL) =>
 /* 07.2. The declared check keeps its name and steps right; the script, kept, comes back as a ghost on its words,
  * months passing on a clock at its corner, and someone takes it up. Each result stands under its source, the second
  * named as differing, and a question between them asks which to trust. The finished picture is centred on the frame
- * by its outer names, the finder's on the left and the check's on the right, so the check steps from where 07.1 left
- * it to its place in that centred picture. */
+ * by its outer names, the finder's on the left and the check's on the right. Until the finder comes, the script and
+ * the check stand alone in their places of that picture, the two centred on the frame: the check steps there from
+ * where 07.1 left it as the script returns, rising to the script's row so their names share one baseline, and the
+ * picture glides to its own centre, as one unit, on the words that bring the finder. */
 export function ghost(s, t, a) {
   if (a <= 0) return;
   const [backAt, monthsAt, foundAt, resultAt, differAt, trustAt] = cues(s, [
@@ -263,13 +265,17 @@ export function ghost(s, t, a) {
   const FOUND = L("又被人翻出来用", "someone may find it"),
     left = Math.min(390 - 30, 390 - nameWidth(FOUND, 220) / 2),
     right = Math.max(1310 + OWNER[0] / 2, 1310 + nameWidth(CHECK_NAME(), 300) / 2),
-    DX = 960 - (left + right) / 2;
-  const step = soon(t, backAt + 0.2, 0.9),
-    CX = mix(1150, 1310 + DX, step),
-    CY = mix(R1, 380, step),
-    GX = 640 + DX,
-    FX = 390 + DX,
-    QX = 975 + DX,
+    DX = 960 - (left + right) / 2,
+    // Until the finder comes, the script and the check stand alone in their places of the finished picture, the two
+    // together centred on the frame, from the script's left edge to the check's outer edge.
+    ALONE = 960 - (640 - SCRIPT[0] / 2 + right) / 2;
+  const rise = soon(t, backAt + 0.2, 0.9),
+    off = mix(ALONE, DX, soon(t, foundAt + 0.05, 0.9)),
+    CX = mix(1150, 1310 + off, rise),
+    CY = mix(R1, 380, rise),
+    GX = 640 + off,
+    FX = 390 + off,
+    QX = 975 + off,
     Y = 380,
     RY = 625;
   declaredCheck(CX, CY, a);

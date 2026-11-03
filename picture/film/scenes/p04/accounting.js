@@ -16,7 +16,7 @@ import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { QUOTE } from "./example.js";
 import { card, linkSet, recordRows, valueCell, verdictMark } from "./marks.js";
-import { ruleOneHeading } from "./rule-one.js";
+import { ruleOneHeading, rowHalf } from "./rule-one.js";
 
 /* An example card: two records; in the second example the second record carries a corrected value. */
 const EX_W = 260,
@@ -41,8 +41,11 @@ function exampleCard(x, y, corrected, a) {
 
 /* 04.5 The examples: an exact repeat goes and a correction to the same stock on the same day stays, each card named
  * on its words with its verdict, a cross or a check before it; the summary is tried against both and fails the second
- * at a stop, and the corrected value flashes as it is saved. The heading centres on the frame from its first word,
- * its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. */
+ * at a stop on its way there, and the corrected value flashes as it is saved. The heading centres on the frame from its
+ * first word, its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. The
+ * first card stands alone on the frame's axis; the second joins at its right and the pair glides as one unit to centre
+ * on the axis. Each verdict stands one gap outside its card, the repeat's at its left and the correction's at its
+ * right, so the pair and its verdicts stay balanced about the axis. */
 export function examplesStage(s, t, c, g) {
   const bottom = ruleOneHeading(t, c, g),
     heading = termRow(
@@ -58,8 +61,9 @@ export function examplesStage(s, t, c, g) {
     em = labelSize(LABEL),
     // The cards' names stand one gap above them and 40 px under the heading.
     Y = heading.bottom + 40 + em + NAME_GAP,
-    X1 = 960 - 280,
-    X2 = 960 + 280,
+    pair = 280 * (1 - soon(t, c.correction + 0.05, 0.9)),
+    X1 = 960 - 280 + pair,
+    X2 = 960 + 280 + pair,
     vy = Y + 72,
     q = (voiceTime(t) * 0.5) % 1;
   // The repeat: its second record is struck as it goes.
@@ -75,9 +79,12 @@ export function examplesStage(s, t, c, g) {
     { color: P.ink, alpha: g * ramp(t, c.goes - 0.15, 0.3), width: 3 },
   );
   nameText(L("一模一样的重复", "Exact repeat"), X1, Y - NAME_GAP, { valign: "bottom", alpha: one });
-  // The two verdicts stand alike: a mark one gap right of the card, its word after it.
-  cross(X1 + EX_W / 2 + NAME_GAP + 12, vy, 20, { color: P.ink, alpha: gone, width: 3.5 });
-  nameText(L("要去掉", "goes"), X1 + EX_W / 2 + NAME_GAP + 36, vy, { align: "left", alpha: gone });
+  // The two verdicts stand alike, each a mark and its word after it, one gap outside the card: the repeat's ends one
+  // gap left of its card, the correction's begins one gap right of its card.
+  const goesName = L("要去掉", "goes"),
+    gx = X1 - EX_W / 2 - NAME_GAP;
+  cross(gx - measure(goesName) - 24, vy, 20, { color: P.ink, alpha: gone, width: 3.5 });
+  nameText(goesName, gx, vy, { align: "right", alpha: gone });
   // The correction: its new value is kept, with a check, and saved once the summary fails it. Its name and qualifier
   // arrive together, so they share one line, centred on the card on the baseline of the first card's name.
   const two = g * named(t, c.correction),
@@ -101,32 +108,36 @@ export function examplesStage(s, t, c, g) {
   // Saved: the corrected value itself flashes once the summary has failed it.
   const [v0, v1] = valueCell(X2 - EX_W / 2 + 34, EX_W - 68);
   beats(t, (v0 + v1) / 2, vy, 22, [c.saved], { alpha: g });
-  // The summary, the understanding under test, stands below; tried against both examples, it fails the second, at a
-  // stop on its way there.
+  // The summary, the understanding under test, stands below; tried against both examples, it fails the second at a
+  // stop on its way there, on the leg that rises from the summary toward the second card. The links turn 40 px under
+  // the cards, so the stop and its name stand clear of the turn and of the summary.
   const qy = Y + 280,
     qw = measure(QUOTE()) + 56,
+    turn = Y + EX_H + 40,
     tried = g * named(t, c.quote2),
     draw = soon(t, c.quote2 + 0.05, 0.6);
   card(960 - qw / 2, qy - 32, qw, 64, { alpha: g, color: P.ink });
   nameText(QUOTE(), 960, qy, { alpha: g });
   linkSet(
     [
-      [960 - qw / 2 + 40, qy - 32, X1, Y + EX_H, "vhv"],
-      [960 + qw / 2 - 40, qy - 32, X2, Y + EX_H, "vhv"],
+      [960 - qw / 2 + 40, qy - 32, X1, Y + EX_H, "vhv", turn],
+      [960 + qw / 2 - 40, qy - 32, X2, Y + EX_H, "vhv", turn],
     ],
     { alpha: tried, upto: draw, flow: q },
   );
   const fails = g * named(t, c.fails),
-    sy = (Y + EX_H + qy - 32) / 2;
-  stopSign(X2, sy, 18, { color: P.ink, alpha: fails });
-  nameText(L("过不了第二个例子", "Fails that second example"), X2 + 18 + NAME_GAP, sy, {
+    sx = 960 + qw / 2 - 40,
+    fy = (turn + qy - 32) / 2;
+  stopSign(sx, fy, 18, { color: P.ink, alpha: fails });
+  nameText(L("过不了第二个例子", "Fails that second example"), sx + 18 + NAME_GAP, fy, {
     align: "left",
     alpha: fails,
   });
 }
 
 /* 04.6 Every relevant constraint of the original words is accounted for: each row of the original is linked to one of
- * three dispositions, built as a list on their words. */
+ * three dispositions, built as a list on their words. The original stands centred alone, with its name and the
+ * constraint's, and glides as one unit with them to centre the whole list when the first disposition is named. */
 export function constraintsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(
@@ -135,11 +146,15 @@ export function constraintsStage(s, t, c, g) {
     ),
     kinds = ["pass", "cross", "unknown"],
     ats = [c.kept, c.excluded, c.unresolved],
+    term = L(["每一条约束"], ["Every relevant constraint"]),
+    qual = L(["都要有个交代"], ["accounted for"]),
     CW = 280,
     CH = 190,
     nw = Math.max(...names.map((v) => measure(v))),
     W = CW + 150 + 26 + NAME_GAP + nw,
-    CX = 960 - W / 2,
+    // The whole spans the constraint's name where it is wider than the card, and the dispositions' names.
+    over = Math.max(0, rowHalf(term, qual) - CW / 2),
+    CX = mix(960 - CW / 2, 960 - (W - over) / 2, soon(t, c.kept + 0.05, 0.9)),
     CY = 470,
     rows = [0, 1, 2].map((i) => CY + 50 + i * 45);
   card(CX, CY, CW, CH, { alpha: g });
@@ -148,16 +163,10 @@ export function constraintsStage(s, t, c, g) {
     valign: "bottom",
     alpha: g,
   });
-  termRow(
-    t,
-    L(["每一条约束"], ["Every relevant constraint"]),
-    [c.constraint],
-    L(["都要有个交代"], ["accounted for"]),
-    [c.accounted],
-    CX + CW / 2,
-    CY + CH + NAME_GAP,
-    { alpha: g, align: "center" },
-  );
+  termRow(t, term, [c.constraint], qual, [c.accounted], CX + CW / 2, CY + CH + NAME_GAP, {
+    alpha: g,
+    align: "center",
+  });
   const MX = CX + CW + 150;
   names.forEach((v, i) => {
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
@@ -176,11 +185,18 @@ export function constraintsStage(s, t, c, g) {
  * passes, sealed, into the kernel, which compiles it by fixed rules into checks. The same input gives the same checks
  * again, but a dashed relation from the checks back to the interpretation is refused: they cannot prove it right. The
  * four stand at one pitch with their names centred under them on one line, the two names above the row share one
- * line over its tallest marks, and the refused relation crosses at the middle of the row, under the same input. */
+ * line over its tallest marks, and the refused relation crosses at the middle of the row, under the same input. The
+ * row builds from its left and stays centred on what it shows: it stands half a pitch to the right for each member
+ * still to come, and glides that half pitch as one unit on the words of each further member. */
+const COMPILE_PITCH = 354;
 export function compileStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const Y = 580,
-    xs = [430, 784, 1138, 1492],
+    come = [c.confirmed, c.compiled, c.checks].reduce(
+      (v, at) => v + 1 - soon(t, at + 0.05, 0.7),
+      0,
+    ),
+    xs = [430, 784, 1138, 1492].map((x) => x + (COMPILE_PITCH / 2) * come),
     mid = (xs[0] + xs[3]) / 2,
     under = Y + 64 + NAME_GAP,
     over = Y - 64 - NAME_GAP,

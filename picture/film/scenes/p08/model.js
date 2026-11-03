@@ -85,10 +85,10 @@ function checkGroup(t, x, ys, { alpha = 1, at = Infinity } = {}) {
 
 /* 08.8, second: the model with its concept of the same record, a cell that lacks a dimension and grows one on its
  * words; a new Change revises the model at the smallest boundary drawn around that cell, and the checks that depend
- * on the model are compiled again, re-lighting one after another. The Change is drawn as tall as the model, so the
- * names over the row end on one line and the names under it hang from one line, and neighbouring names keep a word's
- * space between them. The stage steps left twice, as the Change and then the checks arrive, so each state stands
- * centred on the frame by its outer names. */
+ * on the model are compiled again, re-lighting one after another. The Change and the checks are drawn as tall as the
+ * model, so the names over the row end on one line and the names under it hang from one line, one gap under each of
+ * their marks whichever has arrived, and neighbouring names keep a word's space between them. The stage steps left
+ * twice, as the Change and then the checks arrive, so each state stands centred on the frame by its outer names. */
 export function modelRevision(s, t, a) {
   if (a <= 0) return;
   const [recordAt, dimAt, changeAt, boundAt, revisesAt, checksAt, compileAt] = cues(s, [
@@ -107,10 +107,12 @@ export function modelRevision(s, t, a) {
     DOC = [150, GH],
     DOC_X = 700,
     CHK = 960,
-    CELL = GW - 5,
+    // The concept's cell, the last of the middle row, and its axis once it has grown a dimension.
+    CELL0 = 3.5 * (GW / 4),
+    CELL = CELL0 + 0.45 * (GW / 4),
     MID = GY + GH / 2,
     RECORD = L("同一条记录", "the same record"),
-    DIM = L("少了一个维度", "missing a dimension"),
+    DIM = L("少了一个维度", ["missing", "a dimension"]),
     BOUND = L("受影响的最小范围", "the smallest boundary"),
     CHANGE = L("新的正式变更", ["a new official", "Change"]),
     REVISES = L("修订模型", "revises the model"),
@@ -139,10 +141,13 @@ export function modelRevision(s, t, a) {
     k = a * named(t, checksAt),
     flow = (voiceTime(t) * 0.4) % 1,
     above = GY - NAME_GAP,
-    below = rowNameTop([GY + GH, GY + GH - 10 + 22]);
+    // The checks' frames, 44 px tall, span the model's height from its top to its bottom.
+    ys = [GY + 22, MID, GY + GH - 22],
+    below = rowNameTop([GY + GH, ys.at(-1) + 22]);
   modelGrid(0, GY, GW, GH, { alpha: a, cell: [3, 1], lit: 1, grow });
-  // The concept's name stands over its cell, on the axis of the smallest boundary drawn round it.
-  nameText(RECORD, CELL, above, {
+  // The concept's name stands over its cell on the cell's axis, moving with it as it grows, so it ends on the axis of
+  // the smallest boundary drawn round it.
+  nameText(RECORD, mix(CELL0, CELL, grow), above, {
     valign: "bottom",
     alpha: a * named(t, recordAt),
   });
@@ -177,7 +182,6 @@ export function modelRevision(s, t, a) {
     alpha: a * named(t, revisesAt),
   });
   // The checks that depend on the model, compiled again one after another.
-  const ys = [GY + 10, MID, GY + GH - 10];
   ys.forEach((y, i) =>
     link(DOC_X + DOC[0] / 2 + 12, MID, CHK - 38, y, {
       route: "hvh",
@@ -263,8 +267,10 @@ function workLane(x0, x1, y, { alpha = 1, flow = null, held = null, gate = null 
 }
 
 /* 08.8, last: meanwhile two lanes: the changes that depend on the concept wait at a closed gate under the model being
- * revised, linked to it, and the work unrelated to it keeps flowing below. The picture, from the lanes' folders to
- * the name of the work going on, is centred on the frame. */
+ * revised, linked to it, and the work unrelated to it keeps flowing below. Each lane's outcome is named on the lane's
+ * own axis, one gap after its track. Until the second lane comes, the first stands alone, centred on the frame from its
+ * folder to its outcome; the whole picture glides as the second arrives, so the finished picture, from the lanes'
+ * folders to the name of the work going on, is centred on the frame. */
 export function meanwhile(s, t, a) {
   if (a <= 0) return;
   const [dependAt, waitAt, otherAt, onAt] = cues(s, [
@@ -280,19 +286,19 @@ export function meanwhile(s, t, a) {
     Y1 = 520,
     Y2 = 670,
     GATE = 1200,
-    right = Math.max(
-      1440 + measure(ON),
-      GATE + 50 + measure(WAIT),
-      600 + nameWidth(DEPEND, 420),
-      600 + measure(OTHER),
-    ),
-    S = 960 - (520 + right) / 2,
+    // Where each lane's track ends, and the gap from a track's end to its outcome's name.
+    END1 = 1260,
+    END2 = 1420,
+    OUT = 20,
+    first = Math.max(GATE + 70, END1 + OUT + measure(WAIT), 600 + nameWidth(DEPEND, 420)),
+    right = Math.max(first, END2 + OUT + measure(ON), 600 + measure(OTHER)),
+    S = mix(960 - (520 + first) / 2, 960 - (520 + right) / 2, soon(t, otherAt + 0.05, 0.7)),
     d = a * named(t, dependAt),
     o = a * named(t, otherAt);
   ctx.save();
   ctx.translate(S, 0);
   // The two tracks differ in length, so they are read as two lanes rather than two items of one list.
-  workLane(520, 1260, Y1, {
+  workLane(520, END1, Y1, {
     alpha: d,
     gate: GATE,
     held: mix(700, 1140, soon(t, dependAt + 0.1, 1.4)),
@@ -310,18 +316,17 @@ export function meanwhile(s, t, a) {
     width: 420,
     alpha: d,
   });
-  nameText(WAIT, GATE + 50, Y1 - 40, {
+  nameText(WAIT, END1 + OUT, Y1, {
     align: "left",
-    valign: "bottom",
     alpha: a * named(t, waitAt),
   });
-  workLane(520, 1420, Y2, { alpha: o, flow: (voiceTime(t) * 0.35) % 1 });
+  workLane(520, END2, Y2, { alpha: o, flow: (voiceTime(t) * 0.35) % 1 });
   nameText(OTHER, 600, Y2 + 40, {
     align: "left",
     valign: "top",
     alpha: o,
   });
-  nameText(ON, 1440, Y2, {
+  nameText(ON, END2 + OUT, Y2, {
     align: "left",
     alpha: a * named(t, onAt),
   });

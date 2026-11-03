@@ -49,6 +49,7 @@ scenes["03"] = function (s, t) {
     plan: ["一份计划", "a plan"],
     writeAt: ["真要写入的那一刻", "At the moment it writes"],
     check: ["再核对一遍", "checks again"],
+    recCut: ["最后把", "Then it records"],
     rec1: ["看到了什么", "what it observed"],
     rec2: ["判断了什么", "what it decided"],
     rec3: ["做了什么", "and what it did"],

@@ -4,6 +4,7 @@
 
 import { datumMark } from "../claim.js";
 import { paper } from "../p02/drift.js";
+import { centring } from "./kernel.js";
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
 import { dot, flowDot, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
@@ -47,6 +48,8 @@ function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
 /* The path's three stations: a problem, a repository, real use, each a ring with its glyph. */
 const STATION_NAMES = () =>
   L(["弄清一个问题", "改动代码仓库", "用起来到底怎么样"], ["A problem", "A repository", "In use"]);
+/* The height of 03.1's path: in English it stands lower, so its name keeps clear of the last initial's word. */
+const NAME_PATH_Y = () => L(560, 600);
 function station(x, y, i, alpha) {
   if (alpha < 0.01) return;
   dot(x, y, 28, { color: P.ground, alpha });
@@ -79,7 +82,7 @@ export function stageName(s, t, a, c) {
     xs = [560, 760, 960, 1160, 1360],
     LY = 430,
     LR = 40,
-    Y = L(560, 600),
+    Y = NAME_PATH_Y(),
     X0 = (xs[0] + xs[1]) / 2,
     X1 = (xs[3] + xs[4]) / 2,
     lights = [c.w1, c.w2, c.w3, c.w4, c.w5],
@@ -141,19 +144,26 @@ export function stageName(s, t, a, c) {
 /* 03.2 One reliable path for people and interchangeable Agents: the travellers at its start from the cut, its three
  * stations on their words and its name at its end. On the words that say it promises three things the path rises and
  * the promises build under it, each with its mark; more governance stands under them, refused. The path and the name
- * at its end stand centred on the frame; the travellers' heading starts on the person's left edge. The promises hang
- * from the first station's name, their markers' left edge on its left edge, one and a half pitches below the stations'
- * names, so that name does not read as the list's heading; the refusal shares that left edge, one and a half pitches
- * after the last promise, so it reads as set apart from the list rather than as a fourth promise. The path is long
- * enough that, while the travellers stand on it alone before its name arrives, the picture still spans a tenth of the
- * content band. */
+ * at its end stand centred on the frame. Until that name arrives, the path and its travellers stand where 03.1's path
+ * stood, centred on the frame at its height, so the cut keeps the path in place; as the name arrives they glide as one
+ * to their own place. The travellers' heading starts on the person's left edge. The promises hang from the first
+ * station's name, their markers' left edge on its left edge, one and a half pitches below the stations' names, so that
+ * name does not read as the list's heading; the refusal shares that left edge, one and a half pitches after the last
+ * promise, so it reads as set apart from the list rather than as a fourth promise. The path is long enough that, while
+ * the travellers stand on it alone before its name arrives, the picture still spans a tenth of the content band. */
 const PATH_LEN = 1080,
   PROMISE_PITCH = 80;
 export function stagePath(t, a, c) {
   if (a <= 0) return;
-  const PY = mix(560, 380, soon(t, c.three + 0.05, 0.7)),
+  // Chinese says the path at the end of the travellers' long clause, so it is named within that clause, about a second
+  // ahead of its words; English says it right after them.
+  const nameAt = L(c.reliable - 0.95, c.reliable),
+    settle = soon(t, nameAt + 0.05, 0.7),
     endName = L("一条靠得住的路", "One reliable path"),
-    X0 = 960 - (PATH_LEN + 7 + NAME_GAP + measure(endName)) / 2,
+    // Where the path starts when it stands centred with its name, and how far right of that it stands centred alone.
+    home = 960 - (PATH_LEN + 7 + NAME_GAP + measure(endName)) / 2,
+    X0 = home + mix(centring(home, home + PATH_LEN + 7), 0, settle),
+    PY = mix(mix(NAME_PATH_Y(), 560, settle), 380, soon(t, c.three + 0.05, 0.7)),
     X1 = X0 + PATH_LEN,
     q = (voiceTime(t) * 0.35) % 1,
     names = STATION_NAMES(),
@@ -168,11 +178,9 @@ export function stagePath(t, a, c) {
   );
   dot(X1, PY, 7, { color: P.ink, alpha: a });
   flowDot(mix(X0, X1, q), PY, 6, q, { color: P.ink, alpha: a });
-  // Chinese says the path at the end of the travellers' long clause, so it is named within that clause, about a second
-  // ahead of its words; English says it right after them.
   nameText(endName, X1 + 7 + NAME_GAP, PY, {
     align: "left",
-    alpha: a * (en ? named(t, c.reliable) : ramp(t, c.reliable - 1.1, 0.4)),
+    alpha: a * named(t, nameAt),
   });
   // The travellers stand at the path's start; their clause has begun, so they are named from the cut.
   const TX = X0 + 40;
@@ -224,14 +232,16 @@ export function stagePath(t, a, c) {
 
 /* 03.8 These are design aims: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
  * kernel holds up only the path's start, and ETHOS's own documents say the kernel alone does not prove the whole path
- * has been delivered. The kernel's and the documents' names stand on one baseline, under the taller of the two, and
- * the whole picture stands centred on the frame by its extent. */
+ * has been delivered. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
+ * over the middle one, the stretch's centre; the solid start is centred on the kernel. The kernel's and the
+ * documents' names stand on one baseline, under the taller of the two, and the whole picture stands centred on the
+ * frame by its extent. */
 export function stageAims(t, a, c) {
   if (a <= 0) return;
   const names = STATION_NAMES(),
     kernelName = L("光有这个内核", "The kernel alone"),
     deliveredName = L("已经走通", "Delivered"),
-    base = railStations(names, 840, 1380),
+    base = railStations(names, 850, 1390),
     // The rejected name's cross stands 16 px after its words and is 26 px wide.
     left = Math.min(600, 700 - measure(kernelName) / 2),
     right = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1282 + measure(deliveredName) + 42),
@@ -246,7 +256,7 @@ export function stageAims(t, a, c) {
   dot(X1, PY, 7, { color: P.ink, alpha: a });
   xs.forEach((x, i) => station(x, PY, i, a));
   railNames(names, xs, PY + 28, { gap: NAME_GAP, alpha: () => a, set: "aims stations" });
-  nameText(L("设计目标", "Design aims"), (split + X1) / 2, PY - 28 - NAME_GAP, {
+  nameText(L("设计目标", "Design aims"), xs[1], PY - 28 - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.aimsCut + 0.15),
   });

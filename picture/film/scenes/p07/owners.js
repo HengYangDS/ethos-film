@@ -89,8 +89,9 @@ function ruleHeading(t, q, { kick, kickAt, rule, ruleAt, alpha }) {
  * every obligation linked to exactly one owner, and above it the obligation that is the same for every repository in
  * the first column, owned by ETHOS (the kernel, so the mark keeps its single place in the heading), and each
  * repository's own checks in the second, owned by the repositories. Heading and key frame the columns from the
- * start, so the picture keeps its centre while the columns build: the heading and the key are centred on the frame,
- * and the two columns stand at one distance either side of it. */
+ * start, centred on the frame. The table of the two columns builds as one unit: while its first column stands alone
+ * it stands on the frame's axis under the heading, and on the words that bring the second owner the table glides to
+ * its place, the two columns at one distance either side of the axis. */
 export function ruleFour(s, t, a) {
   if (a <= 0) return;
   const [kickAt, ruleAt, everyAt, oneAt, sharedAt, ethosAt, eachAt, ownAt] = cues(s, [
@@ -104,11 +105,12 @@ export function ruleFour(s, t, a) {
     ["只声明自己特有的检查", "declares only the checks"],
   ]);
   // While the rule is spoken the heading drifts slowly toward its place in voice time; it settles on the next words.
+  // English breaks its statement between the act and its condition, so neither line ends inside a phrase.
   const drift = 0.12 * clamp((voiceTime(t) - voiceTime(kickAt)) / 4);
   ruleHeading(t, drift + (1 - drift) * soon(t, everyAt + 0.05, 0.9), {
     kick: L("第四条准则", "Rule four"),
     kickAt,
-    rule: L("义务没了，机制就退场", "Retire a mechanism when its obligation disappears"),
+    rule: L("义务没了，机制就退场", ["Retire a mechanism", "when its obligation disappears"]),
     ruleAt,
     alpha: a,
   });
@@ -120,8 +122,10 @@ export function ruleFour(s, t, a) {
     LEG = 730,
     DUTY = 410,
     OWN = 580,
-    C1 = 690,
-    C2 = 1230,
+    // The columns' axes: the first on the frame's axis while it stands alone, then both either side of it.
+    shift = mix(960 - 690, 0, soon(t, eachAt + 0.05, 0.9)),
+    C1 = 690 + shift,
+    C2 = 1230 + shift,
     G = [C2 - 110, C2, C2 + 110],
     KERNEL = 34,
     REPO = [96, 76],
@@ -300,8 +304,9 @@ export function replacement(s, t, a) {
 
 /* 07.4, third: an official Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
  * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. The Change and the
- * record hang their names from one baseline, and the picture is centred on the frame by its outer edges, the Change on
- * the left and the record on the right. */
+ * record hang their names from one baseline. The Change stands from its words where it and its delivered rows,
+ * arriving a moment later, stand balanced on the frame; on the words that bring the record the picture glides, as one
+ * unit, to where the whole is centred by its outer edges, the Change on the left and the record on the right. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
@@ -317,12 +322,16 @@ export function closing(s, t, a) {
     left = Math.min(700 - 100, 700 - nameWidth(L("一项正式变更", "an official Change")) / 2),
     // English sets the delivered rows' name on two lines beside their bracket; the Chinese name fits on one.
     DELIVERED_WIDTH = L(330, 300),
-    right = Math.max(
-      1240 + 55,
-      1240 + nameWidth(RECORD, 300) / 2,
-      700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH),
-    ),
-    S = 960 - (left + right) / 2,
+    delivered = 700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH),
+    right = Math.max(1240 + 55, 1240 + nameWidth(RECORD, 300) / 2, delivered),
+    // Where the Change stands from its words: where it and its delivered rows, arriving a moment later, are centred.
+    // Chinese, whose delivered name is one wide line, keeps the Change within 30 px of the place of the way the stage
+    // before showed on the left, so the cut between them reads as one card changing rather than a jump; its delivered
+    // rows still stand within 50 px of the centre there.
+    centred = 960 - (left + delivered) / 2,
+    held = L(Math.min(30, centred), centred),
+    // The picture's offset: that place, then, on the record's words, where the whole is centred.
+    S = mix(held, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)),
     LX = 700 + S,
     RX = 1240 + S,
     top = rowNameTop([DY + H / 2, DY + 70 + 70]);

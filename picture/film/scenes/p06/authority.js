@@ -95,19 +95,41 @@ const VIEWS = () =>
     ["摘要", "看板", "状态输出", "Agent 的汇报"],
     ["Summaries", "Dashboards", "Status output", "An Agent's report"],
   );
-const GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
+const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
+  VIEWS_NAME = () => L("给人看的视图", "Views");
 /* The opening's place for a mark at `size`, from its origin. */
 const openingOf = (size) => 0.82 * 164 * (size / 512);
-function viewsPlace() {
-  const e = markExtent(VIEWS_SIZE, FULL),
-    widths = VIEWS().map(
-      (v, i) => measure(v) + (i === 1 ? TERM_GAP + measure(GREEN()[0], NOTE) : 0),
-    ),
-    right =
-      openingOf(VIEWS_SIZE) +
-      VIEW_RUN +
-      Math.max(VIEW_TEXT + Math.max(...widths), PANEL_LEFT + claimWidth());
-  return { x: 960 - (e.left + right) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
+/* The parts beyond the opening, each with how far right of the mark's origin it reaches: the list of the four views,
+ * laid out whole from its first word since its members join it within a few seconds; its heading; the dashboard's
+ * qualifier after its name; and the report's panel under the list. `c` gives when each arrives. */
+function viewsParts(c = {}) {
+  const run = openingOf(VIEWS_SIZE) + VIEW_RUN,
+    names = VIEWS();
+  return [
+    [c.views?.[0], run + VIEW_TEXT + Math.max(...names.map((v) => measure(v)))],
+    [c.areViews, run - 32 + measure(VIEWS_NAME())],
+    [c.thatGreen, run + VIEW_TEXT + measure(names[1]) + TERM_GAP + measure(GREEN()[0], NOTE)],
+    [c.sentence, run + PANEL_LEFT + claimWidth()],
+  ];
+}
+/* How far right the views reach at t as they build: a part that reaches further than those before it widens the
+ * whole, gliding from just after its words. */
+function viewsReach(t, c) {
+  const parts = viewsParts(c).sort((a, b) => a[0] - b[0]);
+  let reach = parts[0][1],
+    now = reach;
+  for (const [at, right] of parts.slice(1)) {
+    if (right <= reach) continue;
+    now += (right - reach) * soon(t, at + 0.05, 0.8);
+    reach = right;
+  }
+  return now;
+}
+/* The mark's place from 06.4: the mark and what beyond its opening reaches `reach` px right of its origin, centred
+ * together; by default, once every part stands. */
+function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right))) {
+  const e = markExtent(VIEWS_SIZE, FULL);
+  return { x: 960 - (e.left + reach) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
 }
 /* Where the views stand for the mark at `place`. */
 function viewsOf({ x, y, size }) {
@@ -231,13 +253,14 @@ function views(t, c, g, place, { only = null, flow = null, linked = true } = {})
 
 /* 06.4 Views outside: each view arrives on its words, linked from inside through the opening; the links carry their
  * derivation, the views are named under a heading on the icons' column, the dashboard is that green one, and the
- * opening sentence joins them as a report, its panel under the report's bubble. */
+ * opening sentence joins them as a report, its panel under the report's bubble. The mark and the views stand centred
+ * on what of them stands, and glide left as a wider part joins them. */
 export function viewsStage(s, t, c, g) {
-  const place = viewsPlace(),
+  const place = viewsPlace(viewsReach(t, c)),
     v = viewsOf(place);
   boundaryMark(t, c, g, place);
   views(t, c, g, place, { flow: ramp(t, c.derived, 0.4) > 0.5 ? flowOf(t) : null });
-  nameText(L("给人看的视图", "Views"), v.vx - 32, v.ys[0] - 40 - NAME_GAP, {
+  nameText(VIEWS_NAME(), v.vx - 32, v.ys[0] - 40 - NAME_GAP, {
     align: "left",
     valign: "bottom",
     alpha: g * named(t, c.areViews),
@@ -333,13 +356,11 @@ export function notAuthorityStage(s, t, c, g) {
   const over = g * named(t, c.overwrite);
   cross(b.end, b.by, 14, { color: P.ink, alpha: over, width: 3 });
   nameText(
-    L("覆盖掉别人的工作", "Overwrite someone else's work"),
+    L("覆盖掉别人的工作", ["Overwrite", "someone else's work"]),
     b.mid,
     b.by - 22 - NAME_GAP + 8,
     {
       valign: "bottom",
-      size: NOTE,
-      width: 260,
       alpha: over,
     },
   );

@@ -4,7 +4,7 @@
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { box, dashed, dot, flowDot, line, ring, stroke } from "../../drawing/strokes.js";
+import { box, dashed, dot, flowDot, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, cross, person, token } from "../../drawing/symbols.js";
 import { beats, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText } from "../../naming/names.js";
@@ -71,8 +71,8 @@ function railLine(alpha) {
 }
 /* The rail of a request's handoffs, shared by its two stages: the request at its start, three handlers standing over
  * it (a person, an Agent and a person, `heads` their tops; at this size a figure's head and shoulders read as one) and
- * its end. */
-const RAIL = { y: 690, x0: 400, x1: 1520, xs: [700, 960, 1220], heads: [604, 624, 604] };
+ * its end, the five stations at one pitch. */
+const RAIL = { y: 690, x0: 440, x1: 1480, xs: [700, 960, 1220], heads: [604, 624, 604] };
 function handlers(seen) {
   const { xs } = RAIL;
   person(xs[0], 640, { size: 1.1, alpha: seen[0] });
@@ -80,7 +80,10 @@ function handlers(seen) {
   person(xs[2], 640, { size: 1.1, alpha: seen[2] });
 }
 /* The request: a document whose foot stands on the rail's start; the rail's end, a target point. */
-const requestDoc = (alpha) => paper(RAIL.x0 - 36, RAIL.y - 100, 72, 96, { alpha, rows: 4 });
+const DOC_W = 72,
+  DOC_H = 96,
+  DOC_TOP = RAIL.y - 4 - DOC_H;
+const requestDoc = (alpha) => paper(RAIL.x0 - DOC_W / 2, DOC_TOP, DOC_W, DOC_H, { alpha, rows: 4 });
 function railEnd(alpha) {
   ring(RAIL.x1, RAIL.y, 14, { color: P.ink, alpha, width: 2.5 });
   dot(RAIL.x1, RAIL.y, 5, { color: P.ink, alpha });
@@ -185,32 +188,38 @@ export function stageRail(t, a, c) {
 /* 02.3 At every handoff a summary takes the place of the words before it: on each handler a shorter copy than the
  * last, the original at the start. What drops out stands under the rail as it is named, in the order it is said: a
  * constraint never written down, which turns to an outline as its session ends, a constraint on what must not be done,
- * the benefit. */
+ * the benefit. The names over the rail, the original's and the summaries', hang on one baseline one gap over the
+ * row's tallest mark, the first summary. */
 export function stageSummaries(t, a, c) {
   if (a <= 0) return;
   const { y, x0, x1, xs, heads } = RAIL;
+  // The summaries: each shorter than the one before, standing on its handler's head or on the rail's end, all one
+  // mark with what holds them, named by the words that say a summary takes the place.
+  const sheets = [
+      [xs[0], 56, 3, heads[0] - 4],
+      [xs[1], 48, 2, heads[1] - 4],
+      [xs[2], 40, 1, heads[2] - 4],
+      [x1, 32, 1, y - 18],
+    ].map(([x, w, rows, foot]) => [x - w / 2, foot - w * 1.27, w, w * 1.27, rows]),
+    above = Math.min(DOC_TOP, ...sheets.map(([, top]) => top)) - NAME_GAP;
+  // The original's name reaches past the request's sheet in English: on its words the stage glides right by half
+  // that overhang, so the picture keeps the balance it had.
+  const original = L("原话", "The words before it"),
+    overhang = Math.max(0, measure(original) / 2 - DOC_W / 2);
+  ctx.save();
+  ctx.translate((overhang / 2) * soon(t, c.orig + 0.05, 0.7), 0);
   railLine(a);
   requestDoc(a);
   railEnd(a);
   handlers([a, a, a]);
   const q = (voiceTime(t) * 0.3) % 1;
   flowDot(mix(x0 + 44, x1 - 20, q), y, 7, q, { color: P.ink, alpha: a });
-  nameText(L("原话", "The words before it"), x0, y - 100 - NAME_GAP, {
+  nameText(original, x0, above, {
     valign: "bottom",
     alpha: a * named(t, c.orig - 0.1),
   });
-  // The summaries: each shorter than the one before, standing on its handler's head or on the rail's end, all one
-  // mark with what holds them, named by the words that say a summary takes the place.
-  papers(
-    [
-      [xs[0], 56, 3, heads[0] - 4],
-      [xs[1], 48, 2, heads[1] - 4],
-      [xs[2], 40, 1, heads[2] - 4],
-      [x1, 32, 1, y - 18],
-    ].map(([x, w, rows, foot]) => [x - w / 2, foot - w * 1.27, w, w * 1.27, rows]),
-    a * ramp(t, c.summary - 0.15, 0.4),
-  );
-  nameText(L("一份总结顶替一次", "A summary takes the place"), (xs[0] + x1) / 2, 507, {
+  papers(sheets, a * ramp(t, c.summary - 0.15, 0.4));
+  nameText(L("一份总结顶替一次", "A summary takes the place"), (xs[0] + x1) / 2, above, {
     valign: "bottom",
     alpha: a * named(t, c.summary),
   });
@@ -232,6 +241,7 @@ export function stageSummaries(t, a, c) {
     LY,
     { gap: NAME_GAP, alpha: (i) => a * listIn(t, lost, i), set: "lost" },
   );
+  ctx.restore();
 }
 
 /* 02.3 A specification can be complete and well formed and still aim at the wrong goal: a full document with its check,

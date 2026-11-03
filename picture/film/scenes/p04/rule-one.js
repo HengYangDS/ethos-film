@@ -11,7 +11,7 @@ import { box, dot, flowDot, measure, stroke } from "../../drawing/strokes.js";
 import { agent, documentIcon, person } from "../../drawing/symbols.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, termRow, wrapName } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -26,7 +26,10 @@ export function ruleOneHeading(t, c, g) {
     h = ruleHeading(t, {
       number: L("第一条准则", "Rule one"),
       numberAt: c.first4,
-      statement: L("用刚好够用的模型，留住原意", "Preserve meaning with the smallest model that is enough"),
+      statement: L(
+        "用刚好够用的模型，留住原意",
+        "Preserve meaning with the smallest model that is enough",
+      ),
       statementAt: c.statement,
       size: 560,
       glyph: { datum: 1, passages: 0, boundary: 0 },
@@ -133,6 +136,11 @@ export function modelStage(s, t, c, g) {
   );
 }
 
+/* Half the width of a term row centred on its mark, its qualifier under the term: what a group's centring takes for a
+ * name wider than its mark. */
+export const rowHalf = (term, qual = []) =>
+  Math.max(measure(term.join("")), qual.length ? measure(qual.join(""), NOTE) : 0) / 2;
+
 /* The Change: a document that holds the intent at its head and, on their words, its three fields. */
 export const CHANGE_W = 150,
   CHANGE_H = 240;
@@ -158,12 +166,19 @@ export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1
 }
 
 /* 04.4 One Change: the intent, named, moves into a Change, which is named with "only there"; then its three fields
- * arrive on their words, each a row of the document linked to its name at the right. */
+ * arrive on their words, each a row of the document linked to its name at the right. The Change stands centred while
+ * it is alone, the intent named at its left and moving into it; as its first field is named, the Change glides with
+ * its name to stand centred together with its field names. */
 export function changeStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = fieldNames(),
     nw = Math.max(...names.map((v) => measure(v))),
-    DX = 960 - (190 + CHANGE_W + 90 + nw) / 2 + 190,
+    term = L(["正式变更"], ["One official Change"]),
+    qual = L(["只写在这一处"], ["only there"]),
+    // With its fields the group spans the Change's name where it is wider than the document, and the field names.
+    over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2),
+    alone = 960 - CHANGE_W / 2,
+    DX = mix(alone, 960 - (CHANGE_W + 90 + nw - over) / 2, soon(t, c.f1 + 0.05, 0.7)),
     DY = 440,
     FX = DX + CHANGE_W + 90,
     ats = [c.f1, c.f2, c.f3],
@@ -171,26 +186,20 @@ export function changeStage(s, t, c, g) {
     fields = ats.map((at) => ramp(t, at - 0.15, 0.4));
   changeDocument(DX, DY, { alpha: g * named(t, c.change), fields, intent: 0 });
   // The intent travels from its place into the head of the Change.
-  const ix = mix(DX - 190, DX + 52, into),
+  const ix = mix(alone - 190, DX + 52, into),
     iy = mix(DY + 150, DY + 26, into),
     meant = g * named(t, c.intent);
   documentIcon(ix, iy, 46, 58, { alpha: meant, rows: 2, fold: false });
   // Its name stays where the intent was named and leaves as the intent goes in.
-  nameText(L("意图", "The intent"), DX - 190 + 23, DY + 150 + 58 + NAME_GAP, {
+  nameText(L("意图", "The intent"), alone - 190 + 23, DY + 150 + 58 + NAME_GAP, {
     valign: "top",
     alpha: meant * (1 - ramp(t, c.change + 0.05, 0.3)),
   });
   // The Change is named under it from its first word; "only there" joins under its name.
-  termRow(
-    t,
-    L(["正式变更"], ["One official Change"]),
-    [c.change],
-    L(["只写在这一处"], ["only there"]),
-    [c.only],
-    DX + CHANGE_W / 2,
-    DY + CHANGE_H + NAME_GAP,
-    { alpha: g, align: "center" },
-  );
+  termRow(t, term, [c.change], qual, [c.only], DX + CHANGE_W / 2, DY + CHANGE_H + NAME_GAP, {
+    alpha: g,
+    align: "center",
+  });
   names.forEach((v, i) => {
     link(DX + CHANGE_W, fieldY(DY, i), FX - 14, fieldY(DY, i), {
       alpha: g * fields[i],
@@ -200,12 +209,22 @@ export function changeStage(s, t, c, g) {
   });
 }
 
-/* 04.5 One copy: the Change at the centre and, at its left, a person and an Agent who pick the work up later; each
- * reads it along a link, and what they read is the same. The readers' name and the Change's hang from one line under
- * the lower of their marks, the Agent. */
+/* 04.5 One copy: the Change and, at its left, a person and an Agent who pick the work up later; each reads it along
+ * a link, and what they read is the same. The readers' name and the Change's hang from one line under the lower of
+ * their marks, the Agent. The readers and the Change stand centred together, and the group glides as one unit to centre
+ * on what they read as well when it is named. */
 export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const DX = 960 - CHANGE_W / 2 - 60,
+  const readers = L("后面接手的人和 Agent", "Everyone who picks up the work"),
+    same = L("读到的都是同一份", "Reads the same thing"),
+    term = L(["正式变更"], ["The Change"]),
+    qual = L(["只写在一处"], ["one copy"]),
+    // The group's reach from the Change's left edge: the readers' name to the left, the Change or its name to the
+    // right, and what they read beyond it.
+    left = 250 + Math.max(...wrapName(readers, 300).map((v) => measure(v))) / 2,
+    right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)),
+    read = CHANGE_W + NAME_GAP + 10 + measure(same),
+    DX = 960 + mix(left - right, left - read, soon(t, c.same + 0.05, 0.7)) / 2,
     DY = 440,
     RX = DX - 250,
     AY = 666,
@@ -214,23 +233,13 @@ export function readersStage(s, t, c, g) {
     reading = g * named(t, c.same),
     q = (voiceTime(t) * 0.5) % 1;
   changeDocument(DX, DY, { alpha: g });
-  termRow(
-    t,
-    L(["正式变更"], ["The Change"]),
-    [c.first5],
-    L(["只写在一处"], ["one copy"]),
-    [c.first5],
-    DX + CHANGE_W / 2,
-    names,
-    { alpha: g, align: "center" },
-  );
+  termRow(t, term, [c.first5], qual, [c.first5], DX + CHANGE_W / 2, names, {
+    alpha: g,
+    align: "center",
+  });
   person(RX, 540, { alpha: who, size: 1.1 });
   agent(RX, AY, { alpha: who });
-  nameText(L("后面接手的人和 Agent", "Everyone who picks up the work"), RX, names, {
-    valign: "top",
-    width: 300,
-    alpha: who,
-  });
+  nameText(readers, RX, names, { valign: "top", width: 300, alpha: who });
   // The person's link runs level into the Change; the Agent's turns up to its lower row.
   for (const [x, y, to, k] of [
     [RX + 34, DY + 90, DY + 90, 0],
@@ -242,8 +251,5 @@ export function readersStage(s, t, c, g) {
       upto: soon(t, c.same + 0.05, 0.5),
       flow: (q + k) % 1,
     });
-  nameText(L("读到的都是同一份", "Reads the same thing"), DX + CHANGE_W + NAME_GAP + 10, DY + 120, {
-    align: "left",
-    alpha: reading,
-  });
+  nameText(same, DX + CHANGE_W + NAME_GAP + 10, DY + 120, { align: "left", alpha: reading });
 }

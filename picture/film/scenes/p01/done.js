@@ -9,6 +9,7 @@ import {
   dot,
   fill,
   flowDot,
+  labelSize,
   line,
   measure,
   path,
@@ -20,8 +21,8 @@ import { commitDot, recoverIcon, repoIcon } from "../../drawing/workspace.js";
 import { illustrative } from "../../framing/chapters.js";
 import { beats, building, listIn, named, speaking } from "../../naming/lists.js";
 import { NAME_GAP, growName, nameText } from "../../naming/names.js";
-import { railNames, railStations } from "../../naming/placement.js";
-import { P } from "../../palette.js";
+import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
+import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L, en } from "../../timeline.js";
 import { cue, cues } from "../../timing/cues.js";
@@ -263,8 +264,11 @@ scenes["01"] = function (s, t) {
       RW = 260,
       RH = 200;
     // The row and its link stand from the cut, joined to the code they change, so the code's name names them until
-    // their own name arrives.
+    // their own name arrives. The whole stage stands centred on the frame, from the session frame's left edge to the
+    // repository's right.
     const row = stageB;
+    ctx.save();
+    ctx.translate(960 - (xs[0] - S + RX + RW / 2) / 2, 0);
     repoIcon(RX, Y, RW, RH, { alpha: stageB });
     stroke(
       () =>
@@ -280,17 +284,21 @@ scenes["01"] = function (s, t) {
       flow: q,
       width: 2.5,
     });
+    // The names under the row hang on one baseline under its tallest mark: in English the code is named under the
+    // repository, so the Agents' name hangs beside it; in Chinese the change is named over the link, and the Agents'
+    // name, the row's only name beneath, hangs under the session frame.
+    const namesTop = en ? rowNameTop([Y + S, Y + RH / 2]) : Y + S + NAME_GAP;
     if (!en)
       nameText("改代码", (xs[2] + R + RX - RW / 2) / 2, Y - NAME_GAP, {
         valign: "bottom",
         alpha: stageB * named(t, codeAt),
       });
     else
-      nameText("Our code", RX, Y + RH / 2 + NAME_GAP, {
+      nameText("Our code", RX, namesTop, {
         valign: "top",
         alpha: stageB * named(t, codeAt),
       });
-    nameText(L("可以互相替换的 Agent", "Interchangeable Agents"), xs[1], Y + S + NAME_GAP, {
+    nameText(L("可以互相替换的 Agent", "Interchangeable Agents"), xs[1], namesTop, {
       valign: "top",
       alpha: stageB * named(t, inter),
     });
@@ -312,13 +320,20 @@ scenes["01"] = function (s, t) {
       width: 2.5,
       dash: [7, 7],
     });
+    // The session's name stands over its frame: as the session ends, its first part is centred on the dashed frame,
+    // a final comma hung; as another Agent picks up the work, the whole name glides with the frame and stands centred
+    // over it at the next Agent, the middle of the row.
     const parts = L(["会话结束了，", "换一个"], ["Session ends, ", "another picks up"]),
-      wide = measure(parts.join(""));
-    growName(t, parts, [ends, pick], (xs[0] + xs[1]) / 2 - wide / 2, Y - S - NAME_GAP, {
+      ending = parts[0].trimEnd(),
+      hung = /[、，。；：！？]$/u.test(ending) ? 0.3 * labelSize(LABEL) : 0,
+      alone = xs[0] - measure(ending) / 2 + hung,
+      whole = xs[1] - measure(parts.join("")) / 2;
+    growName(t, parts, [ends, pick], mix(alone, whole, moved), Y - S - NAME_GAP, {
       valign: "bottom",
       alpha: stageB,
       build: true,
     });
+    ctx.restore();
   }
   // 4. Writing a change keeps getting easier: a line from one origin, named at its end, that steepens on the words
   // that say so and keeps rising while the voice speaks. Whether you can rely on it stays where it was: a flat line

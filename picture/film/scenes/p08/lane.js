@@ -29,21 +29,26 @@ const REQ = [120, 150],
 const requirement = (alpha) =>
   docMark(REQ_X - REQ[0] / 2, RAIL_Y - REQ[1] / 2, REQ[0], REQ[1], { alpha, rows: 4 });
 
-/* 08.1. The requirement stands at the start of the rail as the chapter title rises clear of it, and the rail draws
- * on from it across the band on the first words, named for the requirement's whole life. A point then travels the
- * rail in voice time. */
+/* 08.1. The requirement stands as the chapter title rises clear of it, and the rail draws on from it across the band
+ * on the first words, named for the requirement's whole life. A point then travels the rail in voice time. Until the
+ * rail draws on, the requirement and its name stand alone, centred on the frame; they glide to the rail's start as
+ * the rail draws on beside them, the glide following the drawing a moment behind, so the picture keeps its centre
+ * while the band fills and the requirement reaches its place in 08.2 before the cut. */
 export function lifeStart(s, t, a) {
   if (a <= 0) return;
   const [firstAt, thisAt] = cues(s, [
     ["把这项需求", "Now follow"],
     ["这项需求的一生", "this requirement"],
   ]);
+  const NAME = L("这项需求的一生", "this requirement"),
+    nameX = REQ_X + REQ[0] / 2 + 24,
+    alone = 960 - (REQ_X - REQ[0] / 2 + nameX + measure(NAME)) / 2 - LIFE_DX;
   ctx.save();
-  ctx.translate(LIFE_DX, 0);
+  ctx.translate(LIFE_DX + alone * (1 - soon(t, firstAt + 0.13, 1.55)), 0);
   requirement(a * clearOfTitle(s, t, RAIL_Y - REQ[1] / 2));
   journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a, upto: soon(t, firstAt + 0.05, 1.6) });
   // The name may lead its clause a little, so the chapter's first thought is named on its first words.
-  nameText(L("这项需求的一生", "this requirement"), REQ_X + REQ[0] / 2 + 24, RAIL_Y - 34, {
+  nameText(NAME, nameX, RAIL_Y - 34, {
     align: "left",
     valign: "bottom",
     alpha: a * ramp(t, thisAt - 0.4, 0.4),

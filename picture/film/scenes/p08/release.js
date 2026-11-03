@@ -5,8 +5,8 @@
 
 import { link } from "../../drawing/links.js";
 import { ctx } from "../../canvas.js";
-import { box, line, measure, ring, stroke } from "../../drawing/strokes.js";
-import { agent, check, clock, documentIcon, lock, person, seal } from "../../drawing/symbols.js";
+import { box, line, ring, stroke } from "../../drawing/strokes.js";
+import { agent, check, clock, lock, person, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot, tagIcon } from "../../drawing/workspace.js";
 import { commitRow } from "../../drawing/history.js";
 import { listIn, named } from "../../naming/lists.js";
@@ -18,7 +18,7 @@ import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
-import { RAIL_Y, journeyRail, platforms, railFlow, work } from "./rail.js";
+import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
 /* The proof: a check in its ring, the executed check of one commit. */
 function proofMark(x, y, alpha) {
@@ -32,7 +32,8 @@ function proofMark(x, y, alpha) {
  * one group, and each platform's result is ticked on its own, one after the other. The names over the upper row, the
  * proof's, the attestation's and the maintainer's, end on one line clear of the tallest of their marks, the names
  * under the rail hang from one line clear of the commit's ring, and neighbouring names keep at least a word's space
- * between them. The picture, from the finished work's name to the platforms', is centred on the frame. */
+ * between them. The finished work's name leaves with the Agent it stands under. The picture, from that name, as it
+ * stands at the start, to the platforms', is centred on the frame. */
 export function release(s, t, a) {
   if (a <= 0) return;
   const [doneAt, commitAt, proofAt, attestAt, reviewAt, branchAt, publishAt, ownAt] = cues(s, [
@@ -75,7 +76,7 @@ export function release(s, t, a) {
   journeyRail(220 + S, end, { alpha: a });
   railFlow(t, 220 + S, end, { alpha: a });
   // The finished work under the Agent that finished it, then the commit it became, proved and attested; the Agent
-  // steps back as the proof begins.
+  // steps back as the proof begins and the work moves on, and the name of the finished work leaves with them.
   const finisher = a * (1 - ramp(t, proofAt + 0.3, 0.5));
   // Its diamond is sized apart from the rings of the commit, proof and seal, so it is not read as one of them.
   agent(WX, UP, { size: 1.45, alpha: finisher });
@@ -83,7 +84,7 @@ export function release(s, t, a) {
   nameText(DONE, WX, below, {
     valign: "top",
     width: 300,
-    alpha: a * named(t, doneAt),
+    alpha: finisher * named(t, doneAt),
   });
   // The commit is larger than the work's point, so the two are never read as one list of points.
   commitDot(CX, RAIL_Y, { alpha: c, r: 14, picked: c });
@@ -244,8 +245,8 @@ const STRETCHES = [
 
 /* 08.5, second: the whole journey on one rail, the work at the start of its last stretch, named "from here on" over
  * it; from here on the path is the one ETHOS is designed for, drawn dashed, and the handover between Agents turns
- * dashed on its words. Its own documents, on their words, and one name beside them say neither has yet completed
- * acceptance, linked to both. */
+ * dashed on its words. Its own documents, on their words, stand centred between the two stretches and are linked up
+ * to the name of each, and what they say, that neither has yet completed acceptance, hangs under them on its words. */
 export function overview(s, t, a) {
   if (a <= 0) return;
   const [hereAt, pathAt, docsAt, handoverAt, acceptAt] = cues(s, [
@@ -299,19 +300,34 @@ export function overview(s, t, a) {
       alpha: h,
     },
   );
-  // Neither stretch has completed acceptance, as its own documents say: the documents on their words, then one name
-  // beside them, the two as one row linked up to the names of both stretches.
+  // Neither stretch has completed acceptance, as its own documents say. The documents stand midway between the two
+  // stretches, linked up to the name of each: to the stretch ETHOS is designed for, already named, as they arrive, and
+  // to the handover as it is named, so they never stand alone; each link leaves them as the rail's links leave their
+  // marks, so the two are one mark. What they say hangs one gap under them on its words.
   const NY = 700,
-    accept = L("尚未完成验收", "has not yet completed acceptance"),
+    BX = (B[0] + B[1]) / 2,
+    DX = (D[0] + D[1]) / 2,
+    AXIS = (BX + DX) / 2,
     DOC = [40, 52],
-    row = DOC[0] + NAME_GAP + measure(accept),
-    x0 = 1100 - row / 2;
-  documentIcon(x0, NY - DOC[1] / 2, DOC[0], DOC[1], { alpha: a * named(t, docsAt), rows: 3 });
-  nameText(accept, x0 + DOC[0] + NAME_GAP, NY, { align: "left", alpha: acc });
-  [
-    [x0 - 14, (B[0] + B[1]) / 2, hb.bottom + 12],
-    [x0 + row + 14, (D[0] + D[1]) / 2, db.bottom + 12],
-  ].forEach(([x1, x2, y2]) =>
-    link(x1, NY, x2, y2, { route: "hv", alpha: acc, upto: soon(t, acceptAt + 0.05, 0.6) }),
+    docs = a * named(t, docsAt);
+  docMark(AXIS - DOC[0] / 2, NY - DOC[1] / 2, DOC[0], DOC[1], { alpha: docs, rows: 3 });
+  link(AXIS + DOC[0] / 2 + 10, NY, DX, db.bottom + 12, {
+    route: "hv",
+    alpha: docs,
+    upto: soon(t, docsAt + 0.05, 0.6),
+  });
+  link(AXIS - DOC[0] / 2 - 10, NY, BX, hb.bottom + 12, {
+    route: "hv",
+    alpha: h,
+    upto: soon(t, handoverAt + 0.05, 0.6),
+  });
+  nameText(
+    L("尚未完成验收", "has not yet completed acceptance"),
+    AXIS,
+    NY + DOC[1] / 2 + NAME_GAP,
+    {
+      valign: "top",
+      alpha: acc,
+    },
   );
 }

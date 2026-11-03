@@ -4,7 +4,7 @@
 
 import { link } from "../../drawing/links.js";
 import { ethosMark, markExtent } from "../../drawing/mark.js";
-import { box, flowDot, measure, ring } from "../../drawing/strokes.js";
+import { box, flowDot, line, measure, ring } from "../../drawing/strokes.js";
 import { agent, check, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot } from "../../drawing/workspace.js";
 import { clearOfTitle, illustrative } from "../../framing/chapters.js";
@@ -16,17 +16,19 @@ import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { STAGE_CUT, stageIn, stageOut } from "../../timing/stages.js";
-import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
+import { CLAIM_DATUM, CLAIM_H, claimPanel, claimWidth } from "../claim.js";
+import { nameWidth } from "../p07/example.js";
 import { scenes } from "../registry.js";
 
 /* 09.1-09.2. The opening sentence returns where it began, said by its Agent, its datum reaching along a dashed link to
  * an empty place; in ETHOS the link holds, and the sentence's attestations stand at its end, each row on its words:
  * which commit, what the proof checked, what still has no result, all to be looked up. The attestations' list hangs
  * from a fan wide enough that the seal's name keeps clear of its markers, and what can all be looked up, the predicate
- * of the three rows rather than a fourth, stands apart below them: half a row further down than a next row would,
- * and starting at the markers' edge rather than the rows' text. The picture stands centred on the frame until ETHOS's
- * way is named, the Agent and its sentence on the left and the empty place on the right, then steps left, and the
- * finished picture is centred too. */
+ * of the three rows rather than a fourth, stands apart below them: under a rule that closes the rows, half a row
+ * further down than a next row would, and starting at the markers' edge rather than the rows' text. The picture
+ * stands centred on the frame, the Agent and its sentence on the left and the empty place on the right, while ETHOS's
+ * way is named; as the attestations take the place it eases left only as far as its first row needs to stand inside
+ * the frame, it glides left on the words of the first row, and the finished picture is centred too. */
 const BOUND_X = 700,
   BOUND_END = 1140,
   // The empty place at the link's end, where the attestations will stand.
@@ -57,9 +59,16 @@ function bound(s, t, a) {
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"],
   ]);
-  // Before ETHOS's way is named the picture runs from the Agent to the empty place at the link's end.
+  // Before its rows arrive the picture runs from the Agent to the empty place at the link's end, which the seal takes.
+  // As it does, the picture eases left as far as the first row, arriving next, needs to stand inside the frame's safe
+  // area (to 1824, with room for the camera's push); on the first row's words it glides to its finished place.
   const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE) / 2,
-    off = mix(before, boundShift(), soon(t, wayAt + 0.05, 0.9)),
+    ready = Math.min(before, 1824 - 12 - (BOUND_END + FAN + 30 + measure(ATTESTED()[0]))),
+    off = mix(
+      mix(before, ready, soon(t, attestAt + 0.05, 0.9)),
+      boundShift(),
+      soon(t, commitAt + 0.05, 0.9),
+    ),
     PX = BOUND_X + off,
     Y = 470,
     clear = a * clearOfTitle(s, t, Y - 60),
@@ -130,10 +139,17 @@ function bound(s, t, a) {
       set: "09.2:attested",
     }),
   );
-  const pitch = rows[1] - rows[0];
+  // The predicate stands under a rule that closes the three rows: the rule midway between the last row and the
+  // predicate, from the markers' edge to the longest row's end, and the two arrive together on the predicate's words.
+  const pitch = rows[1] - rows[0],
+    look = a * named(t, lookAt),
+    ruleY = rows[2] + 0.75 * pitch;
+  line(x - 16, ruleY, x + 30 + Math.max(...ATTESTED().map((v) => measure(v))), ruleY, {
+    alpha: look,
+  });
   nameText(L("都找得到", "can all be looked up"), x - 16, rows[2] + 1.5 * pitch, {
     align: "left",
-    alpha: a * named(t, lookAt),
+    alpha: look,
   });
 }
 
@@ -141,7 +157,9 @@ function bound(s, t, a) {
  * is refused on the left, who said it and how much process, and what it does depend on builds on the right, the three
  * conditions the rules give, each a box that is ticked on its words. The two lists are centred on each other, the two
  * refusals midway between the three conditions' rows, and stand low enough to clear the question where the Chinese
- * sentence starts its rise; the table they make is balanced under the sentence. */
+ * sentence starts its rise. The table they make is centred on the frame, and the sentence heads it from above its
+ * gutter, the axis between the two lists. While the refusals stand alone, the sentence and the refusals are centred
+ * on the frame together, and the table glides to its place on the words that bring the first condition. */
 const REFUSED = () => [L("谁说的", "who said it"), L("走了多少流程", "how much process")],
   CONDITIONS = () => [
     L("原意是不是有一处可查", "the meaning can be found in one place"),
@@ -165,12 +183,18 @@ function judged(s, t, a, cutAt) {
     A = Math.max(...refused.map((v) => measure(v))) + 16 + 26,
     B = 36 + 20 + Math.max(...conditions.map((v) => measure(v))),
     GUTTER = 200,
-    // The table is centred on the frame, under the sentence that heads it.
-    RX = 960 - (A + GUTTER + B) / 2 + A - 42,
-    BX = RX + 42 + GUTTER;
-  // The sentence rises as the question is put, or from the cut where the question was put before it.
-  const q = soon(t, Math.max(trustAt + 0.05, cutAt), 0.9),
-    PX = mix(BOUND_X + boundShift(), 960, q),
+    // The table's left edge, centred on the frame, and its axis, the middle of the gutter, under the sentence.
+    left = 960 - (A + GUTTER + B) / 2,
+    axis = left + A + GUTTER / 2,
+    // The refusals and the sentence, with its datum, are centred on the frame while they stand alone.
+    alone = 960 - (left + axis + claimWidth() / 2 + CLAIM_DATUM) / 2,
+    shift = mix(alone, 0, soon(t, meaningAt + 0.05, 0.9)),
+    RX = left + A - 42 + shift,
+    BX = left + A + GUTTER + shift;
+  // The sentence rises as the question is put, or from the cut where the question was put before it, over a second,
+  // so its longest rise, in English, keeps a step between frames that reads as one mark moving.
+  const q = soon(t, Math.max(trustAt + 0.05, cutAt), 1.0),
+    PX = mix(BOUND_X + boundShift(), axis + shift, q),
     PY = mix(470, 380, q),
     conds = [meaningAt, withinAt, backAt],
     rows = [545, 630, 715];
@@ -216,7 +240,9 @@ const MARK = [960, 470, 640];
  * at the lower right. A point travels the boundary in voice time until the boundary is named. The names on the right
  * keep the same clearance from the mark's ink as those on the left, the two lower names stand on one line as the two
  * upper ones do, and the Chinese origin's note breaks at its comma, as the English one breaks, so the close is centred
- * on the frame with the datum at its centre. */
+ * on the frame with the datum at its centre. While the origin's names are the only ones beside it, the mark and its
+ * names stand as one unit centred on the frame, the mark right of the centre by half their reach; they glide there on
+ * the origin's words and back on the passages' words. */
 function close(s, t, a) {
   if (a <= 0) return;
   const [cutAt, markAt, originAt, beforeAt, twoAt, whereAt, boundaryAt, scopeAt, pointAt, boundAt] =
@@ -232,9 +258,17 @@ function close(s, t, a) {
       ["那一点朱红", "cinnabarred point"],
       ["结论必须落到证据上的地方", "bound to its evidence"],
     ]);
-  const [X, Y, S] = MARK,
+  const [CX, Y, S] = MARK,
     k = S / 512,
     r = 164 * k,
+    ORIGIN = L("一个起点", "One origin"),
+    ORIGIN_NOTE = L("在变成改动之前，先划清边界", "bounded before it becomes a change"),
+    ORIGIN_WIDTH = L(220, 380),
+    // The origin's names reach this far left of the boundary, and the boundary's ends this far right of the origin.
+    reach = 50 + Math.max(nameWidth(ORIGIN), nameWidth(ORIGIN_NOTE, ORIGIN_WIDTH, NOTE)),
+    ends = markExtent(S, { datum: 0, passages: 0 }).right,
+    X =
+      CX + ((r + reach - ends) / 2) * (soon(t, originAt + 0.05, 0.9) - soon(t, twoAt + 0.05, 0.9)),
     lit = ramp(t, boundaryAt - 0.15, 0.5),
     o = a * named(t, originAt),
     datum = named(t, pointAt),
@@ -281,16 +315,7 @@ function close(s, t, a) {
         set: "09.4:said",
       });
     };
-  pair(
-    L("一个起点", "One origin"),
-    originAt,
-    L("在变成改动之前，先划清边界", "bounded before it becomes a change"),
-    beforeAt,
-    LEFT,
-    Y - 96,
-    "right",
-    L(220, 380),
-  );
+  pair(ORIGIN, originAt, ORIGIN_NOTE, beforeAt, LEFT, Y - 96, "right", ORIGIN_WIDTH);
   pair(
     L("两条路径", "Two passages"),
     twoAt,

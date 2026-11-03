@@ -3,7 +3,8 @@
  * permitting its own next step; one passing never means another has; a "done" names what was verified. A judgment has
  * three outcomes and only pass lets the work go ahead; the checks with no result are unknown, which is not "no
  * problem". A sixth distinction that changes no action is never added. The stack of planes moves aside once and then
- * only shifts as each stage settles beside it, so the argument reads as one picture changing on its words. */
+ * only shifts as each stage builds beside it, so what stands is balanced on the content centre and the argument reads
+ * as one picture changing on its words. */
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
@@ -11,13 +12,13 @@ import { cross } from "../../drawing/symbols.js";
 import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listLevel, named } from "../../naming/lists.js";
-import { NAME_GAP, TERM_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, TERM_GAP, nameText, rejectedName, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { card, linkSet, verdictMark } from "../p04/marks.js";
-import { claimPanel } from "../claim.js";
+import { claimPanel, claimWidth } from "../claim.js";
 import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack } from "./planes.js";
 
 const TOP = PLANES_TOP,
@@ -32,24 +33,59 @@ const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "
       [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]],
     );
 
-/* Where the stack stands while the outcomes are listed beside it: the stack, the list and its widest condition, taken
- * together, centred on the content centre. The conditions stand in one column after the widest outcome's name, so the
- * whole is as wide as the stack, the list's mark and that name, and the widest condition. */
-function outcomesX() {
-  const widest = (list) => Math.max(...list.map((v) => measure(v, LABEL))),
-    width =
-      PLANE_W +
-      80 +
-      18 +
-      NAME_GAP +
-      widest(outcomeNames()) +
-      TERM_GAP +
-      widest(outcomeQuals().map((q) => q.join("")));
-  return 960 - width / 2;
+/* The outcomes list's columns, from the stack's left edge: the list's mark at `mark`, the names after it, and the
+ * conditions in one column after the widest name. The heading's qualifier follows its term (`natural`) and, once the
+ * conditions form their column, joins it (`heading`) when its term ends before it, so the heading row reads on the
+ * list's grid without waiting on a column that has not formed. */
+function outcomesColumns() {
+  const mark = PLANE_W + 80,
+    names = mark + 18 + NAME_GAP,
+    quals = names + Math.max(...outcomeNames().map((v) => measure(v, LABEL))) + TERM_GAP,
+    natural = mark - 18 + measure(L("一次判断的结果", "A judgment")) + TERM_GAP;
+  return { mark, names, quals, natural, heading: Math.max(quals, natural) };
 }
+/* When the conditions' column forms: with the first condition's words. */
+const columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
+/* The parts of the outcomes list, each with how far right it reaches from the stack's left edge: the heading, its term
+ * and qualifier taken as one, its qualifier again once it joins the conditions' column, then each name, each condition
+ * and "never permission". `c` gives when each arrives. */
+function outcomesParts(c = {}) {
+  const col = outcomesColumns(),
+    names = outcomeNames(),
+    quals = outcomeQuals(),
+    qualifier = measure(L("只分三种", "only three outcomes"), NOTE);
+  return [
+    [c.first4, col.natural + qualifier],
+    [columnAt(c), col.heading + qualifier],
+    ...[c.pass, c.block, c.unknown].map((at, i) => [at, col.names + measure(names[i])]),
+    ...[c.ahead, c.conflict, c.missing].map((at, i) => [
+      at,
+      col.quals + measure(quals[i].join(""), NOTE),
+    ]),
+    [c.never, col.names + measure(L("不等于可以", "Never permission"))],
+  ];
+}
+/* How far right the outcomes reach at t as they build: a part that reaches further than those before it widens the
+ * whole, gliding from just after its words. */
+function outcomesReach(t, c) {
+  const parts = outcomesParts(c).sort((a, b) => a[0] - b[0]);
+  let reach = parts[0][1],
+    now = reach;
+  for (const [at, right] of parts.slice(1)) {
+    if (right <= reach) continue;
+    now += (right - reach) * soon(t, at + 0.05, 0.7);
+    reach = right;
+  }
+  return now;
+}
+/* Where the stack stands while the outcomes are listed beside it: the stack and what of the list stands, taken
+ * together, centred on the content centre; outcomesX() is that place once the whole list stands. */
+const outcomesAt = (t, c) => 960 - outcomesReach(t, c) / 2,
+  outcomesX = () => 960 - Math.max(...outcomesParts().map(([, right]) => right)) / 2;
 
 /* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the
- * rule is stated. */
+ * rule is named, from the heading's first frame, so the glyph stands whole beside its number before the statement
+ * arrives and the two never stand apart. */
 export function ruleTwoHeading(t, c, g) {
   ruleHeading(t, {
     number: L("第二条准则", "Rule two"),
@@ -58,7 +94,7 @@ export function ruleTwoHeading(t, c, g) {
     statementAt: c.statement,
     size: 560,
     glyph: { datum: 1, passages: 1, boundary: 0 },
-    shares: { datum: g, hole: 1, passages: soon(t, c.statement + 0.05, 1.1), boundary: 0 },
+    shares: { datum: g, hole: 1, passages: soon(t, c.first3 + 0.2, 1.1), boundary: 0 },
     alpha: g,
   });
 }
@@ -114,7 +150,8 @@ export function verifiedStage(s, t, c, g) {
     TOP + 5 * PLANE_STEP + 18,
     { alpha: g * named(t, c.another), mark: ramp(t, c.another + 0.35, 0.35) },
   );
-  const PX = 1400,
+  // The sentence stands a short link's run right of the stack, so the two stand as one group about the centre.
+  const PX = ASIDE + PLANE_W + 70 + claimWidth() / 2,
     PY = rowOf(TOP, 2),
     edge = claimPanel(t, PX, PY, { alpha: g }),
     verified = g * named(t, c.verified);
@@ -136,12 +173,13 @@ export function verifiedStage(s, t, c, g) {
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row, the outcomes on the
  * next three, and "never permission" on the last, a row of its own after unknown. The checks with no result are linked
  * to unknown, and "no problem" is refused. The stack rises a little and moves to where the stack and the list,
- * together, stand on the content centre. */
+ * together, stand on the content centre, and it shifts on the words of each condition that widens the list. */
 export function outcomesStage(s, t, c, g) {
   const settle = soon(t, c.first4 + 0.05, 0.7),
     top = mix(TOP, 340, settle),
-    x = mix(ASIDE, outcomesX(), settle),
-    LX = x + PLANE_W + 80,
+    x = mix(ASIDE, outcomesAt(t, c), settle),
+    col = outcomesColumns(),
+    LX = x + col.mark,
     em = labelSize(LABEL),
     names = outcomeNames(),
     quals = outcomeQuals(),
@@ -150,7 +188,7 @@ export function outcomesStage(s, t, c, g) {
     qualAts = [c.ahead, c.conflict, c.missing],
     ys = [1, 2, 3].map((i) => rowOf(top, i)),
     // The conditions stand in one column after the widest outcome's name.
-    qualLeft = LX + 18 + NAME_GAP + Math.max(...names.map((v) => measure(v, LABEL))) + TERM_GAP;
+    qualLeft = x + col.quals;
   planeStack(t, x, top, { alpha: g });
   termRow(
     t,
@@ -160,7 +198,11 @@ export function outcomesStage(s, t, c, g) {
     [c.three],
     LX - 18,
     rowOf(top, 0) - em / 2,
-    { alpha: g, width: 1824 - LX },
+    {
+      alpha: g,
+      width: 1824 - LX,
+      qualLeft: x + mix(col.natural, col.heading, soon(t, columnAt(c) + 0.05, 0.6)),
+    },
   );
   const restated = [[c.onlyPass], [c.isBlock], [c.isUnknownToo]];
   ats.forEach((at, i) => {
@@ -194,11 +236,16 @@ export function outcomesStage(s, t, c, g) {
 }
 
 /* 05.5 A distinction that changes no action is never added: a sixth plane is offered under the five, refused and left
- * dashed, one more thing to keep track of; the five that matter stand bracketed. */
+ * dashed, one more thing to keep track of; the five that matter stand bracketed. The stack stands centred while the
+ * sixth plane is weighed under it, and moves left as the bracket and its name join it, to where the three stand
+ * centred together. */
 export function refusedStage(s, t, c, g) {
-  const settle = soon(t, c.first5 + 0.05, 0.7),
+  const matterName = L("真正要紧的那几个", "The ones that matter"),
+    settle = soon(t, c.first5 + 0.05, 0.8),
     top = mix(340, 320, settle),
-    x = mix(outcomesX(), 480, settle),
+    alone = 960 - PLANE_W / 2,
+    bracketed = 960 - (PLANE_W + 24 + NAME_GAP + measure(matterName)) / 2,
+    x = mix(mix(outcomesX(), alone, settle), bracketed, soon(t, c.matter + 0.05, 0.7)),
     sy = top + 5 * PLANE_STEP,
     offered = g * named(t, c.distinction),
     refused = soon(t, c.never2 + 0.05, 0.5);
@@ -237,7 +284,7 @@ export function refusedStage(s, t, c, g) {
     },
     { color: P.ink, alpha: matter, width: 2.5 },
   );
-  nameText(L("真正要紧的那几个", "The ones that matter"), bx + NAME_GAP, rowOf(top, 2), {
+  nameText(matterName, bx + NAME_GAP, rowOf(top, 2), {
     align: "left",
     alpha: matter,
   });

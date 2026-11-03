@@ -22,6 +22,7 @@ import {
   LEADING,
   NAME_GAP,
   NOTE,
+  TERM_GAP,
   growName,
   growTexts,
   nameText,
@@ -39,23 +40,22 @@ import { voiceTime } from "../../timing/pauses.js";
  * By fixed rules it compiles a plan; at the moment it writes, the write passes a gate that checks again; and what it
  * observed, decided and did becomes a new attestation, which returns to the inputs.
  *
- * Layout. The diagram moves toward the frame's centre by its extent, from the inputs' names to the loop that returns
- * the new attestation, as far as its build-up allows (balancedShift). The inputs' names end on one edge, the English
- * intent's qualifier under its term. The names under the kernel, the plan, the gate and the new attestation hang from
- * one baseline, one gap under the tallest of them, the kernel. What the kernel records stands over the new attestation,
- * one clause to a line, each line centred on it; the loop turns down clear of the new attestation's name. */
+ * Layout. The diagram is balanced on what is on screen and moves as one unit. While the path and the kernel stand with
+ * the inputs' places, it stands centred by its finished extent, from the inputs' names to the loop that returns the
+ * new attestation; as the first input is said it glides right, centring the inputs' names with the path, which ends
+ * past the gate; as the record is announced it glides back to its finished place, so the record arrives there. The
+ * inputs' names end on one edge, the English intent's qualifier under its term. The names under the kernel, the plan,
+ * the gate and the new attestation hang from one baseline, one gap under the tallest of them, the kernel. What the
+ * kernel records stands over the new attestation, one clause to a line, each line centred on it; the loop turns down
+ * clear of the new attestation's name. */
 const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
-/* A picture built left to right stands off the centre until its last marks arrive. It shifts toward centring its
- * finished extent [f0, f1], but no further than keeps the extent [e0, e1] that stands before those marks within 7% of
- * the frame's width of the centre, so it stays balanced while it builds. Returns the shift. */
-const BUILD_REACH = 0.07 * 1920;
-function balancedShift([e0, e1], [f0, f1]) {
-  const centred = 960 - (f0 + f1) / 2,
-    early = (e0 + e1) / 2;
-  return centred < 0
-    ? Math.max(centred, 960 - BUILD_REACH - early)
-    : Math.min(centred, 960 + BUILD_REACH - early);
-}
+/* The shift that centres the extent from x0 to x1 on the frame. */
+export const centring = (x0, x1) => 960 - (x0 + x1) / 2;
+/* A picture built part by part stands centred on what is on screen: it stands at the shift `first` and glides as one
+ * to each next shift, over 0.7 s from just after the word that brings the part that changes its extent. Each step is
+ * [that word's time, the shift]. */
+export const glide = (t, first, steps) =>
+  steps.reduce((x, [at, to]) => mix(x, to, soon(t, at + 0.05, 0.7)), first);
 export function stageKernel(t, a, c) {
   if (a <= 0) return;
   const PY = 380,
@@ -87,11 +87,15 @@ export function stageKernel(t, a, c) {
     loopX = KERNEL.SX + Math.max(120, measure(newName) / 2 + 24),
     left = KERNEL.IX - 34 - NAME_GAP - inputsWide,
     right = Math.max(loopX + 1.25, KERNEL.SX + recordWide / 2),
-    // The path runs over the diagram from above the inputs to past the gate, so until the new attestation arrives the
-    // diagram ends at the path's end.
+    // The path runs over the diagram from above the inputs to past the gate, so until the record arrives the diagram
+    // ends at the path's end.
     pathFrom = KERNEL.KX - 260,
     pathTo = KERNEL.GX + 90,
-    dx = balancedShift([left, pathTo + 7], [left, right]);
+    whole = centring(left, right),
+    dx = glide(t, whole, [
+      [c.in1, centring(left, pathTo + 7)],
+      [c.recCut, whole],
+    ]);
   const IX = KERNEL.IX + dx,
     KX = KERNEL.KX + dx,
     PX = KERNEL.PX + dx,
@@ -234,7 +238,7 @@ export function stageKernel(t, a, c) {
  * not kept, and a new one is compiled again. Each row's marks touch its line, so the rows are one mark with the
  * lines; a point runs along each row once its term is said. The lines stand centred on the frame; the heading shares
  * their left edge with the rows' terms, one line height above the first term, so it heads the rows rather than the
- * intent's folder under the frame's centre. */
+ * intent's folder under the frame's centre; the qualifiers stand in one column after the widest term. */
 export function stageLifetimes(t, a, c) {
   if (a <= 0) return;
   const ys = [440, 590, 740],
@@ -343,12 +347,15 @@ export function stageLifetimes(t, a, c) {
     alpha: p3,
     width: 6,
   });
+  // The qualifiers on the terms' lines stand in one column after the widest term.
+  const qualLeft = X0 + Math.max(...rows.map(([term]) => measure(term.join("")))) + TERM_GAP;
   rows.forEach(([term, termAts, qual, qualAts], i) => {
     termRow(t, term, termAts, qual, qualAts, X0, termTops[i], {
       width: 640,
       alpha: a * listLevel(t, starts, i),
       set: "lifetimes",
       build: true,
+      qualLeft,
     });
   });
 }
@@ -356,10 +363,13 @@ export function stageLifetimes(t, a, c) {
 /* 03.5 The kernel keeps one thing for the long term: from the cut the kernel at the left, linked to what it keeps, a
  * card with its seal, the attestation. Its two fields fill in on their words, who verified it and where it holds, and
  * its scope is drawn around it; someone later checks it from below; a copy outside the scope fades and is struck: it
- * does not count. The picture moves toward the frame's centre by its extent, from the kernel to the copy, as far as its
- * build-up allows (balancedShift); the copy stands 100 px outside the scope. "For the long term" and the attestation's
- * name read as one heading of two lines at the normal leading; the kernel's and the copy's names stand on one baseline;
- * the reader and the check it makes from below are named from one left edge. */
+ * does not count. The kernel and its card stand alone centred with the scope that is drawn round the card, and as the
+ * copy is said the picture glides as one to centre the whole, from the kernel to the copy; the copy stands 100 px
+ * outside the scope. "For the long term" and the attestation's name read as one heading of two lines at the normal
+ * leading, one gap above what it heads: the card, then the scope, which it lifts clear of in the half second before the
+ * scope arrives. A first line that would stand alone 1.5 s or more takes the second line's place until that line's
+ * name joins it, and lifts one line in the half second before. The kernel's and the copy's names stand on one
+ * baseline; the reader and the check it makes from below are named from one left edge. */
 export function stageScope(t, a, c) {
   if (a <= 0) return;
   // The card pads its content equally on both sides: 24 px, the seal, 24 px, the fields, 24 px.
@@ -371,14 +381,14 @@ export function stageScope(t, a, c) {
     copyAt = scopeEnd + 100,
     left = Math.min(600 - 44, 600 - measure(kernelName) / 2),
     right = Math.max(copyAt + 180, copyAt + 90 + measure(voidName) / 2),
-    // Until the copy arrives the picture ends at the scope.
-    dx = balancedShift([left, scopeEnd], [left, right]);
+    dx = glide(t, centring(left, scopeEnd), [[c.outside, centring(left, right)]]);
   const CX = 1000 + dx,
     CY = 520,
     H = 150,
     KX = 600 + dx,
     namesTop = rowNameTop([CY + 44, CY + 50]),
-    headBottom = CY - H / 2 - 40 - NAME_GAP,
+    headBottom = CY - H / 2 - NAME_GAP - 40 * soon(t, c.scope - 0.5, 0.5),
+    joins = c.att - c.aCut >= 1.5 ? soon(t, c.att - 0.5, 0.5) : 1,
     q = (voiceTime(t) * 0.4) % 1;
   kernelIcon(KX, CY, 44, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
   nameText(kernelName, KX, namesTop, {
@@ -386,10 +396,15 @@ export function stageScope(t, a, c) {
     alpha: a * named(t, c.aCut + 0.1),
   });
   link(KX + 44 * 0.87, CY, CX - W / 2, CY, { alpha: a, flow: q });
-  nameText(L("长期留下的", "For the long term"), CX, headBottom - labelSize(LABEL) * LEADING, {
-    valign: "bottom",
-    alpha: a * named(t, c.aCut + 0.15),
-  });
+  nameText(
+    L("长期留下的", "For the long term"),
+    CX,
+    headBottom - labelSize(LABEL) * LEADING * joins,
+    {
+      valign: "bottom",
+      alpha: a * named(t, c.aCut + 0.15),
+    },
+  );
   box(CX - W / 2, CY - H / 2, W, H, { stroke: P.ink, alpha: a, radius: 14, width: 2.5 });
   seal(CX - W / 2 + 60, CY, 36, { color: P.ink, alpha: a, stamp: a * ramp(t, c.att - 0.15, 0.4) });
   // The card is named over its scope, outside the boundary drawn round it.

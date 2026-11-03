@@ -5,11 +5,11 @@ import { stagePerson, stageRail, stageSummaries, stageWrongGoal } from "./drift.
 import { stageBranch, stagePlatforms, stageSent } from "./facts.js";
 import { stageLedgers } from "./process.js";
 import { ctx } from "../../canvas.js";
-import { fill, labelSize, measure, ring, stroke, text } from "../../drawing/strokes.js";
+import { fill, measure, ring, stroke, text } from "../../drawing/strokes.js";
 import { named } from "../../naming/lists.js";
-import { NAME_GAP, nameText } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, wrapName } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
-import { LABEL, P } from "../../palette.js";
+import { P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
@@ -17,32 +17,53 @@ import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
 /* The index: a rail of three stations under its heading. While a difficulty is introduced the index stands at the
- * centre with large rings (`k` 0); while it is shown the index stands at the top with small rings and its heading at
- * the rail's left (`k` 1), and the illustration fills the band below. A station stays a plain point until its
- * difficulty is named, the points of the unnamed ones one fill under the heading's name, within the reach of a name
- * above its row; a named station is a numbered ring with its name beneath. The rail runs between the stations, never
- * under a number. The heading never travels across the rings: it rises with the rail as it fades from the centre,
- * and fades in at the rail's left as the index lands, the two overlapping in time so the heading never goes unread.
- * `levels` gives each name's ink: the difficulty being told at full ink, the others at the second level. */
-const INDEX_XS = [420, 960, 1500];
-function hardIndex(t, k, { heading, headAt, names, ats, levels }) {
-  const Y = mix(540, 156, k),
-    R = mix(54, 16, k),
-    pointR = mix(12, 6, k),
+ * centre with large rings (`k` 0); while it is shown the index stands at the top with small rings (`k` 1), and the
+ * illustration fills the band below. A station stays a plain point until its difficulty is named, the points of the
+ * unnamed ones one fill under the heading's name, within the reach of a name above its row; a named station is a
+ * numbered ring with its name beneath. The rail runs between the stations, never under a number. The heading never
+ * travels across the rings: it rises with the rail as it fades from the centre, and as the index lands it fades in as
+ * the docked index's kicker, small and muted over the first station, where the index begins, so it reads as the
+ * index's heading rather than as a second name stepped beside the first station's. `kicker` is the kicker's presence,
+ * which the scene times so that it fades only while the rail moves slowly and overlaps the heading at the centre in
+ * both directions, so the heading never goes unread. `levels` gives each name's ink: the difficulty being told at full
+ * ink, the others at the second level. */
+const INDEX_XS = [420, 960, 1500],
+  DOCK_Y = 166,
+  DOCK_GAP = 12,
+  DOCK_POINT = 6,
+  DOCK_R = 16,
+  WRAP = 460;
+/* How far the docked index reaches past its first and last stations: a named station's name or ring, an unnamed
+ * station's point, and over the first station the kicker. */
+function dockReach(heading, names, shown) {
+  const half = (v) => Math.max(...wrapName(v, WRAP).map((line) => measure(line))) / 2,
+    past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, half(names[i])), shown[i]));
+  return [Math.max(past[0], measure(heading, NOTE) / 2), past[1]];
+}
+function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
+  const Y = mix(540, DOCK_Y, k),
+    R = mix(54, DOCK_R, k),
+    pointR = mix(12, DOCK_POINT, k),
+    gap = mix(NAME_GAP, DOCK_GAP, k),
     shown = ats.map((at) => ramp(t, at - 0.15, 0.4)),
     reach = shown.map((v) => Math.max(pointR * (1 - v), R * v));
+  // Docked, the index is balanced on what it shows: the first station's name hangs past it, the last station is a bare
+  // point until it is named, so the index stands off the frame's centre by half the difference of the two reaches. It
+  // takes that place as it rises and leaves it as it comes down, so it never moves sideways while it is docked.
+  const [before, after] = dockReach(heading, names, shown),
+    xs = INDEX_XS.map((x) => x + (k * (before - after)) / 2);
   stroke(
     () =>
       [0, 1].forEach((i) => {
-        ctx.moveTo(INDEX_XS[i] + reach[i], Y);
-        ctx.lineTo(INDEX_XS[i + 1] - reach[i + 1], Y);
+        ctx.moveTo(xs[i] + reach[i], Y);
+        ctx.lineTo(xs[i + 1] - reach[i + 1], Y);
       }),
     { color: P.line, width: 2.5 },
   );
   // The points of the stations not yet named: one fill, so they read as one mark with the rail.
   fill(
     () =>
-      INDEX_XS.forEach((x, i) => {
+      xs.forEach((x, i) => {
         if (shown[i] > 0) return;
         const r = pointR;
         ctx.moveTo(x + r, Y);
@@ -50,7 +71,7 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels }) {
       }),
     { color: P.ink },
   );
-  INDEX_XS.forEach((x, i) => {
+  xs.forEach((x, i) => {
     if (shown[i] <= 0) return;
     ring(x, Y, R * shown[i], { color: P.ink, alpha: shown[i], width: mix(2.5, 3.5, levels[i]) });
     text(String(i + 1), x, Y + 1, mix(30, 18, k), {
@@ -59,24 +80,22 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels }) {
       alpha: clamp((shown[i] - 0.4) / 0.6) * mix(0.58, 1, levels[i]),
     });
   });
-  railNames(names, INDEX_XS, Y + R, {
-    gap: mix(NAME_GAP, 12, k),
-    wrap: 460,
+  railNames(names, xs, Y + R, {
+    gap,
+    wrap: WRAP,
     alpha: (i) => named(t, ats[i]) * mix(0.58, 1, levels[i]),
     set: "hard",
   });
-  nameText(heading, 960, Y - 98, {
+  nameText(heading, xs[1], Y - 98, {
     valign: "bottom",
     alpha: named(t, headAt) * clamp(1.5 - 2 * k),
   });
-  // Docked, the heading ends one em before the first station's name begins, so the heading and the name hung under
-  // the first station read as two labels rather than one ragged two-line block; it never starts nearer the frame's
-  // edge than 120 px, inside the safe area wherever the camera drifts.
-  const clear = Math.max(16 + 24, measure(names[0]) / 2 + labelSize(LABEL)),
-    end = Math.max(INDEX_XS[0] - clear, 120 + measure(heading));
-  nameText(heading, end, 156, {
-    align: "right",
-    alpha: named(t, headAt) * clamp(2 * k - 0.5),
+  // The kicker stands one gap over the first station's ring, centred on it as the name beneath is, and moves with it.
+  nameText(heading, xs[0], Y - R - gap, {
+    valign: "bottom",
+    size: NOTE,
+    color: P.muted,
+    alpha: named(t, headAt) * kicker,
   });
 }
 
@@ -165,6 +184,14 @@ scenes["02"] = function (s, t) {
     soon(t, c.eCut + 0.05, 0.6) -
     soon(t, c.third + 0.2, 0.6) +
     soon(t, c.bCut + 0.05, 0.6);
+  // The kicker shows while the index is docked: it fades in over the slow end of each rise, as the heading leaves the
+  // centre, and out over the slow start of each descent, as the heading returns there.
+  const docked = (up, down = Infinity) =>
+    ramp(t, up + 0.2, 0.35) * (1 - ramp(t, down - 0.05, 0.25));
+  const kicker =
+    docked(c.pCut + 0.05, c.second + 0.2) +
+    docked(c.eCut + 0.05, c.third + 0.2) +
+    docked(c.bCut + 0.05);
   // The difficulty being told at full ink, the others at the second level; in the last thought all three step back.
   const told = [
     [c.n1, c.n2 - 0.15],
@@ -183,6 +210,7 @@ scenes["02"] = function (s, t) {
     ),
     ats: [c.n1, c.n2 - 0.15, c.n3 - 0.1],
     levels,
+    kicker,
   });
   // A stage that follows the index's rise cuts in on the same words once the index has passed above it.
   const stage = (from, to, after = 0) =>

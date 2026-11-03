@@ -57,7 +57,8 @@ export function contractStage(s, t, c, g) {
 }
 
 /* 04.1 The example: the pipeline at the centre, its data flowing; it is there only to show the idea, and a measured
- * case is refused. */
+ * case is refused. The idea stands centred under the pipeline while it is alone; the refusal joins it at its place in
+ * the row, and the row glides as one unit to centre on the pipeline's axis. */
 export function exampleStage(s, t, c, g) {
   const m = pipelineMark(960, 470, 900, { alpha: g, flow: flowOf(t) });
   nameText(L("一个例子", "One example"), 960, m.top - NAME_GAP, {
@@ -68,7 +69,7 @@ export function exampleStage(s, t, c, g) {
     refused = L("实测", "A measured case");
   const w1 = measure(idea),
     row = w1 + 80 + measure(refused) + 42,
-    x1 = 960 - row / 2,
+    x1 = mix(960 - w1 / 2, 960 - row / 2, soon(t, c.measured + 0.05, 0.6)),
     y = m.bottom + NAME_GAP + 18;
   nameText(idea, x1, y, { align: "left", alpha: g * named(t, c.idea) });
   rejectedName(refused, x1 + w1 + 80, y, {
@@ -141,11 +142,20 @@ function quoteCard(x, y, { alpha = 1, words = alpha } = {}) {
 }
 
 /* 04.3 Two handoffs: the request steps down through two Agents and leaves the second as one line, the summary. The
- * chain descends so the stage stands as a block, not a strip; the summary shows its words when they are said. */
+ * chain descends so the stage stands as a block, not a strip; the summary shows its words when they are said. While it
+ * shows only the card and the two Agents the chain stands centred on them; as the summary is named it glides as one
+ * unit to its place, centred on the whole, before its last line arrives. */
 export function handoffStage(s, t, c, g) {
   const cw = requestWidth(),
     qw = quoteWidth(),
-    x0 = 960 - (cw + 120 + 180 + 120 + qw) / 2,
+    // The chain's reach from its card's left edge while it shows the card and the two Agents (to the second Agent's
+    // outline), and when it is whole (to the summary's outline).
+    first = cw + 323.25,
+    whole = cw + 421.25 + qw,
+    x0 =
+      960 -
+      (cw + 120 + 180 + 120 + qw) / 2 +
+      ((whole - first) / 2) * (1 - soon(t, c.summary + 0.05, 0.9)),
     a1 = x0 + cw + 120,
     a2 = a1 + 180,
     qx = a2 + 120,
@@ -196,8 +206,9 @@ export function deleteStage(s, t, c, g) {
   const TW = 560,
     TH = 226,
     keepName = L("最该留下的那些更正", "Corrections that had to stay"),
-    // The table stands centred and makes room on its right when the corrections are named or struck.
-    room = soon(t, Math.min(c.corrections, c.deleted) - 0.1, 0.5),
+    // The table stands centred and makes room on its right as the corrections are named there, gliding with the
+    // words under it and the strikes on it as one unit.
+    room = soon(t, c.corrections - 0.1, 0.8),
     tx = 960 - (TW + room * (40 + measure(keepName))) / 2,
     ty = 420,
     qw = quoteWidth(),

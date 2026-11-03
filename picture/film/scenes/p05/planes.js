@@ -4,10 +4,10 @@
  * arrives on its words with its state, and the stack builds from below so it stays balanced as it grows. */
 
 import { link } from "../../drawing/links.js";
-import { ring } from "../../drawing/strokes.js";
+import { labelSize, ring } from "../../drawing/strokes.js";
 import { building, listLevel } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
@@ -78,6 +78,12 @@ export function claimRow(
   else link(ax, ay - 22, edge.left, py, { route: "vh", alpha, flow });
   return edge;
 }
+/* On a middle anchor the Latin face's alphabetic baseline stands 0.1 em above the CJK face's (their typo boxes are
+ * 0.78/0.22 and 0.88/0.12 em), so a Latin name beside a name set in the CJK face drops by that much to share the
+ * baseline of its neighbour's Latin words. */
+const CJK = /[\u4e00-\u9fff]/u;
+const latinDrop = (name, neighbour) =>
+  CJK.test(neighbour) && !CJK.test(name) ? 0.1 * labelSize(LABEL) : 0;
 /* Where the claim stands: the Agent lower left of its panel while it is the whole picture, side by side at the top once
  * its first plane arrives. */
 function claimAt(t, c) {
@@ -95,28 +101,27 @@ function claimAt(t, c) {
  * with its state, the stack rising one step as each plane joins. */
 export function apartStage(s, t, c, g) {
   const { ax, ay, px, py, rise } = claimAt(t, c),
-    under = py + CLAIM_H / 2 + NAME_GAP;
+    under = py + CLAIM_H / 2 + NAME_GAP,
+    rule = L("按 ETHOS 的规则", "By ETHOS's rules");
   claimRow(t, ax, ay, px, py, {
     alpha: g,
     flow: (voiceTime(t) * 0.4) % 1,
-    // The Agent's name keeps its gap under the Agent while it rises and joins the panel's line as the two come level.
-    nameTop: Math.max(ay + 22, mix(ay + 22, py + CLAIM_H / 2, rise)) + NAME_GAP,
+    // The Agent's name keeps its gap under the Agent while it rises and joins the panel's line as the two come level,
+    // on the baseline of the rule's name beside it.
+    nameTop:
+      Math.max(ay + 22, mix(ay + 22, py + CLAIM_H / 2, rise)) +
+      NAME_GAP +
+      rise * latinDrop("Agent", rule),
   });
   // The first plane waits a moment on its words so the rising Agent has cleared its place.
   const ats = [c.local + 0.35, c.ci, c.release, c.use, c.benefit],
     stateAts = [c.passed, c.noResult, c.release, c.use, c.noObs],
     x = 960 - PLANE_W / 2,
     top = PLANES_TOP + building(t, ats, PLANE_STEP, 0.15);
-  termRow(
-    t,
-    L(["按 ETHOS 的规则"], ["By ETHOS's rules"]),
-    [c.first2],
-    L(["拆开来看"], ["taken apart"]),
-    [c.apart],
-    px,
-    under,
-    { alpha: g, align: "center" },
-  );
+  termRow(t, [rule], [c.first2], L(["拆开来看"], ["taken apart"]), [c.apart], px, under, {
+    alpha: g,
+    align: "center",
+  });
   ats.forEach((at, i) =>
     plane(t, i, x, top + i * PLANE_STEP, {
       alpha: g,

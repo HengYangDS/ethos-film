@@ -194,14 +194,16 @@ export function judgement(s, t, a) {
   ]);
   // The Chinese "要分开" first occurs in the rule's "三件事要分开判断", so it is taken after the remedy's words.
   const apartAt = cueFrom(s, "要分开", "They stay apart", remSays);
-  // The report stands on the centre line until the panels come, then rises to make room for them.
+  // The report stands on the centre line until the panels come, then rises to make room for them. The people stand on
+  // the report's bottom line, so the row's names hang one gap under each of their marks on one baseline.
   const p = a * named(t, peopleAt),
     b = a * named(t, backAt),
     TOP = mix(450, 300, soon(t, obsAt - 0.5, 0.8)),
     [PX, , DX] = PANEL_X,
     DOC = [84, 108],
-    names = rowNameTop([TOP + 22.7 * 1.5, TOP + DOC[1] / 2]);
-  person(PX, TOP, { size: 1.5, alpha: p });
+    PY = TOP + DOC[1] / 2 - 22.7 * 1.5,
+    names = rowNameTop([PY + 22.7 * 1.5, TOP + DOC[1] / 2]);
+  person(PX, PY, { size: 1.5, alpha: p });
   nameText(L("负责观察的人", ["The people watching", "the pipeline"]), PX, names, {
     valign: "top",
     alpha: p,
