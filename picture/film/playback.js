@@ -11,6 +11,15 @@ import { P } from "./palette.js";
 import { scenes } from "./scenes/registry.js";
 import { film } from "./timeline.js";
 import { ramp } from "./timing/easing.js";
+import "./scenes/p01/done.js";
+import "./scenes/p02/hard.js";
+import "./scenes/p03/what.js";
+import "./scenes/p04/scene.js";
+import "./scenes/p05/scene.js";
+import "./scenes/p06/scene.js";
+import "./scenes/p07/retire.js";
+import "./scenes/p08/life.js";
+import "./scenes/p09/close.js";
 
 /* Within a chapter the picture changes as the next voice begins, in the same cut as a stage within a scene: the
  * outgoing scene holds and the incoming one replaces it in one frame, so the change reads as one cut rather than a

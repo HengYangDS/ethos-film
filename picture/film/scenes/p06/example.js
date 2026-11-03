@@ -1,0 +1,322 @@
+/* Part 06 opening (06.1-06.2), back in the made-up example. A second Agent remembers the branch at yesterday's commit
+ * and its dashboard is all green; between compiling a plan and writing, someone else may have changed things. At the
+ * write, ETHOS checks again: the branch has moved on, so nothing is written and the plan is compiled again from fresh
+ * facts. Checking and writing are one step and the result is read back; a version pushed to several platforms has each
+ * platform's outcome recorded as it is, never one joint state. */
+
+import { ctx } from "../../canvas.js";
+import { pipelineMark } from "../../drawing/examples.js";
+import { commitRow } from "../../drawing/history.js";
+import { link } from "../../drawing/links.js";
+import { writeGate } from "../../drawing/lanes.js";
+import { dot, measure, ring, stroke } from "../../drawing/strokes.js";
+import { documentIcon, stopSign } from "../../drawing/symbols.js";
+import { commitDot, ledger, tagIcon } from "../../drawing/workspace.js";
+import { beats, listIn, named } from "../../naming/lists.js";
+import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
+import { P } from "../../palette.js";
+import { L } from "../../timeline.js";
+import { clamp, mix, ramp, soon } from "../../timing/easing.js";
+import { voiceTime } from "../../timing/pauses.js";
+import { agents, card, linkSet } from "../p04/marks.js";
+import { centredRow } from "../p04/rule-one.js";
+import { planeState } from "../p05/planes.js";
+
+/* The example's places: the Agent at the left, its plan, the write gate and the repository's branch to the right. */
+const AX = 440,
+  Y = 530,
+  PLAN_X = 860,
+  GATE_X = 1080,
+  BRANCH_X = 1200,
+  STEP = 100,
+  HEAD = BRANCH_X + 3 * STEP,
+  NEW = HEAD + STEP;
+const flowOf = (t) => (voiceTime(t) * 0.4) % 1;
+
+/* The example's context, the pipeline of part 04: large at the right while the second Agent is introduced, then
+ * small at the top as the Agent's view builds, named as the example. */
+function exampleContext(t, c, g, settle = 1) {
+  const m = pipelineMark(mix(1110, 1000, settle), mix(Y, 222, settle), mix(700, 400, settle), {
+    alpha: g,
+    flow: flowOf(t),
+  });
+  // The name stands above the large pipeline and slides to its left as it settles at the top.
+  const name = L("例子", "The example"),
+    w = measure(name);
+  nameText(
+    name,
+    mix(m.runX, m.feedX - 34 - w / 2, settle),
+    mix(m.top - NAME_GAP - 15, 222, settle),
+    {
+      alpha: g * named(t, c.example),
+    },
+  );
+}
+/* The Agent with its name at its left, arriving on its words. */
+function secondAgent(t, c, g) {
+  const a = g * ramp(t, c.agent - 0.25, 0.3);
+  agents([[AX, Y]], { alpha: a });
+  nameText(L("另一个 Agent", "A second Agent"), AX - 22 - NAME_GAP, Y, {
+    align: "right",
+    alpha: a,
+  });
+  return a;
+}
+/* The branch as the repository holds it: four commits, and a fifth once someone else has written. */
+function branch(t, g, { moved = 0, nameAlpha = g } = {}) {
+  commitRow(BRANCH_X, STEP, Y, 4, { alpha: g, single: true });
+  nameText(L("分支", "The branch"), BRANCH_X + 1.5 * STEP, Y + 22 + NAME_GAP, {
+    valign: "top",
+    alpha: nameAlpha,
+  });
+  if (moved <= 0.01) return;
+  stroke(
+    () => {
+      ctx.moveTo(HEAD + 9, Y);
+      ctx.lineTo(mix(HEAD + 9, NEW - 9, clamp(moved * 1.6)), Y);
+    },
+    { color: P.ink, alpha: g, width: 2.5 },
+  );
+  commitDot(NEW, Y, { alpha: g * ramp(moved, 0.5, 0.4) });
+}
+/* The plan: a document at its place between the Agent and the gate. */
+const plan = (a) => documentIcon(PLAN_X - 48, Y - 60, 96, 120, { alpha: a, rows: 3 });
+
+/* 06.1 The second Agent's view: what it remembers, the branch at yesterday's commit, above it, and its dashboard, all
+ * green, below it. To its right its plan, the write gate and the branch as it is, which moves on by one commit when
+ * someone else may have changed things. */
+export function staleStage(s, t, c, g) {
+  exampleContext(t, c, g, soon(t, c.remembers + 0.05, 0.8));
+  secondAgent(t, c, g);
+  // What it remembers: the branch standing at yesterday's commit.
+  const mem = g * named(t, c.yesterday);
+  const MY = Y - 118;
+  card(560, MY - 32, 210, 64, { alpha: mem });
+  commitRow(596, 70, MY, 3, { alpha: mem, single: true });
+  ring(736, MY, 17, { color: P.ink, alpha: mem, width: 2.5 });
+  nameText(L("昨天那次提交", "Yesterday's commit"), 665, MY - 32 - NAME_GAP + 6, {
+    valign: "bottom",
+    alpha: mem,
+  });
+  link(AX, Y - 22, 560, MY, { route: "vh", alpha: mem });
+  // Its dashboard: three checks, all green.
+  const board = g * named(t, c.dashboard);
+  const DY = Y + 122;
+  card(560, DY - 36, 210, 72, { alpha: board });
+  stroke(
+    () => {
+      for (let k = 0; k < 3; k++) {
+        const x = 610 + k * 55;
+        ctx.moveTo(x - 12, DY);
+        ctx.lineTo(x - 3, DY + 10);
+        ctx.lineTo(x + 14, DY - 10);
+      }
+    },
+    { color: P.ink, alpha: board, width: 3.5 },
+  );
+  link(AX, Y + 22, 560, DY, { route: "vh", alpha: board });
+  centredRow(
+    t,
+    L(["看板"], ["Its dashboard"]),
+    c.dashboard,
+    L(["一片绿灯"], ["all green"]),
+    c.green,
+    665,
+    DY + 36 + NAME_GAP,
+    { alpha: g, width: 340 },
+  );
+  // The plan, the write and the branch as it is, which someone else may have moved on.
+  const planned = g * named(t, c.plan),
+    write = g * named(t, c.write),
+    real = g * named(t, c.branch),
+    changed = g * named(t, c.changed);
+  plan(planned);
+  nameText(L("编好计划", "A plan"), PLAN_X, Y + 60 + NAME_GAP, { valign: "top", alpha: planned });
+  writeGate(GATE_X, Y, 150, { alpha: write, color: P.ink, single: true });
+  nameText(L("写入", "Writing"), GATE_X, Y + 75 + NAME_GAP, { valign: "top", alpha: write });
+  link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: write });
+  link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: real });
+  branch(t, real, { moved: soon(t, c.changed + 0.05, 0.8) });
+  nameText(L("别人可能已经改过了", "May have changed"), NEW + 20, Y - 22 - NAME_GAP, {
+    align: "right",
+    valign: "bottom",
+    alpha: changed,
+  });
+}
+
+/* 06.1 The moment of writing: the write is carried to the gate, ETHOS checks the branch again and finds it moved on,
+ * so the gate stays shut and nothing is written; fresh facts run back over the gate to the plan, which is compiled
+ * again. */
+export function checkStage(s, t, c, g) {
+  exampleContext(t, c, g);
+  secondAgent(t, c, g);
+  plan(g);
+  beats(t, PLAN_X, Y, 70, [c.expected, c.again], { alpha: g });
+  // The plan's name gives way to "compiled again" on those words, the one leaving before the other arrives.
+  nameText(L("编好计划", "A plan"), PLAN_X, Y + 60 + NAME_GAP, {
+    valign: "top",
+    alpha: g * (1 - ramp(t, c.again - 0.4, 0.25)),
+  });
+  nameText(L("重新编译", "Compiled again"), PLAN_X, Y + 60 + NAME_GAP, {
+    valign: "top",
+    alpha: g * named(t, c.again),
+  });
+  writeGate(GATE_X, Y, 150, { alpha: g, color: P.ink, single: true });
+  nameText(L("写入", "Writing"), GATE_X, Y + 75 + NAME_GAP, { valign: "top", alpha: g });
+  link(AX + 22, Y, PLAN_X - 48, Y, { alpha: g });
+  link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: g });
+  link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: g });
+  // The write is carried to the gate, which takes it in.
+  const p = clamp((t - c.first1b - 0.1) / 0.5);
+  if (p > 0 && p < 1) dot(mix(PLAN_X + 48, GATE_X - 36, p), Y, 9, { color: P.ink, alpha: g });
+  branch(t, g, { moved: 1 });
+  // ETHOS checks again: a dashed look from the gate along the branch to where the plan expected its head.
+  const look = g * named(t, c.checks);
+  link(GATE_X, Y - 75, HEAD, Y - 22, {
+    route: "hv",
+    alpha: look,
+    dash: [8, 9],
+    upto: soon(t, c.checks + 0.05, 0.6),
+  });
+  nameText(L("ETHOS 又核对了一遍", "ETHOS checks again"), GATE_X + 20, Y - 75 - NAME_GAP, {
+    align: "left",
+    valign: "bottom",
+    alpha: look,
+  });
+  // The branch has moved on: the ring on the expected head moves to the real one.
+  const moving = soon(t, c.movedOn + 0.05, 0.6);
+  ring(mix(HEAD, NEW, moving), Y, 18, { color: P.ink, alpha: look, width: 2.5 });
+  nameText(L("往前走了", "Moved on"), NEW + 30, Y + 22 + NAME_GAP, {
+    align: "right",
+    valign: "top",
+    alpha: g * named(t, c.movedOn),
+  });
+  // Nothing is written: a stop at the gate.
+  const stop = g * named(t, c.nothing);
+  stopSign(GATE_X, Y - 6, 22, { color: P.ink, alpha: stop });
+  nameText(L("什么都不写", "Nothing is written"), GATE_X, Y + 75 + NAME_GAP + 46, {
+    valign: "top",
+    alpha: stop,
+  });
+  // Fresh facts run from the branch's real head back over the gate to the plan.
+  const fresh = g * named(t, c.fresh);
+  link(NEW, Y - 22, PLAN_X, Y - 60, {
+    route: "vhv",
+    mid: 340,
+    alpha: fresh,
+    upto: soon(t, c.fresh + 0.05, 0.8),
+    flow: flowOf(t),
+  });
+  nameText(L("刚观察到的事实", "Fresh facts"), (PLAN_X + NEW) / 2, 340 - NAME_GAP + 6, {
+    valign: "bottom",
+    alpha: fresh,
+  });
+}
+
+/* The gate and the branch of 06.2, set further left so a written commit has room: checking and writing are one step,
+ * the written commit is read back to confirm what happened. */
+const GX = 700,
+  BX = 860,
+  BSTEP = 110;
+/* 06.2 One step, then read back: the check and the write stand in one outline; the gate lifts, a commit is written at
+ * the branch's head and its result runs back to a check. */
+export function oneStepStage(s, t, c, g) {
+  card(GX - 70, Y - 100, 140, 200, { alpha: g, color: P.ink });
+  writeGate(GX, Y, 150, {
+    alpha: g,
+    color: P.ink,
+    single: true,
+    open: soon(t, c.afterwards + 0.05, 0.6),
+  });
+  centredRow(
+    t,
+    L(["核对和写入"], ["Checking and writing"]),
+    c.first2,
+    L(["一步完成"], ["as one step"]),
+    c.oneStep,
+    GX,
+    Y + 100 + NAME_GAP,
+    { alpha: g, width: 420 },
+  );
+  commitRow(BX, BSTEP, Y, 5, { alpha: g, single: true });
+  link(GX + 70, Y, BX - 9, Y, { alpha: g });
+  nameText(L("分支", "The branch"), BX + 2 * BSTEP, Y + 22 + NAME_GAP, { valign: "top", alpha: g });
+  // The write lands as a new commit; its result is read back to a check above the step.
+  const wrote = soon(t, c.afterwards + 0.3, 0.6),
+    end = BX + 5 * BSTEP;
+  stroke(
+    () => {
+      ctx.moveTo(BX + 4 * BSTEP + 9, Y);
+      ctx.lineTo(mix(BX + 4 * BSTEP + 9, end - 9, wrote), Y);
+    },
+    { color: P.ink, alpha: g * ramp(wrote, 0, 0.1), width: 2.5 },
+  );
+  commitDot(end, Y, { alpha: g * ramp(wrote, 0.6, 0.4), picked: g * ramp(wrote, 0.6, 0.4) });
+  const back = g * named(t, c.readBack);
+  link(end, Y - 30, GX, Y - 100, {
+    route: "vhv",
+    mid: 330,
+    alpha: back,
+    upto: soon(t, c.readBack + 0.05, 0.8),
+    flow: flowOf(t),
+  });
+  planeState("pass", GX, 330, back * ramp(t, c.confirm - 0.15, 0.4));
+  nameText(L("读回来确认", "Read back to confirm"), (GX + end) / 2, 330 - NAME_GAP, {
+    valign: "bottom",
+    alpha: back,
+  });
+}
+
+/* 06.2 Several platforms, each recorded as it is: a version is pushed to three platforms, which succeed, fail or are
+ * still pending, each named on its words; all three are recorded, and one joint outcome is refused. */
+export function platformsStage(s, t, c, g) {
+  const VX = 540,
+    PX = 840,
+    PW = 330,
+    ys = [380, 500, 620],
+    states = ["pass", "block", "none"],
+    names = L(["成功", "失败", "还没推"], ["Succeeded", "Failed", "Still pending"]),
+    ats = [c.succeeded, c.failed, c.pending];
+  const version = g * named(t, c.version);
+  tagIcon(VX - 60, Y, 120, 52, { alpha: version, color: P.ink });
+  nameText(L("一个版本", "A version"), VX, Y + 26 + NAME_GAP, { valign: "top", alpha: version });
+  // The platforms arrive together, one mark of cards and links named "several platforms"; each one's outcome then
+  // stands in its card on its own words.
+  const several = g * named(t, c.several);
+  nameText(L("几个平台", "Several platforms"), PX + PW / 2, ys[0] - 30 - NAME_GAP, {
+    valign: "bottom",
+    alpha: several,
+  });
+  linkSet(
+    ys.map((y) => [VX + 60, Y, PX, y, "hvh"]),
+    { alpha: several, upto: soon(t, c.several + 0.05, 0.5) },
+  );
+  stroke(() => ys.forEach((y) => ctx.roundRect(PX, y - 30, PW, 60, 12)), {
+    color: P.line,
+    alpha: several,
+    width: 2.5,
+  });
+  ats.forEach((at, i) => {
+    const on = g * ramp(t, at - 0.15, 0.4);
+    if (states[i] === "block") stopSign(PX + PW - 36, ys[i], 15, { color: P.ink, alpha: on });
+    else planeState(states[i], PX + PW - 36, ys[i], on);
+    nameText(names[i], PX + 24, ys[i], {
+      align: "left",
+      alpha: g * listIn(t, ats, i),
+      set: "platforms",
+    });
+  });
+  // All recorded as they are: each platform's outcome runs into the record.
+  const LX = 1420,
+    kept = g * named(t, c.recorded);
+  linkSet(
+    ys.map((y) => [PX + PW, y, LX - 56, Y, "hvh"]),
+    { alpha: kept, upto: soon(t, c.recorded + 0.05, 0.6), flow: flowOf(t) },
+  );
+  ledger(LX, Y, 100, 130, { alpha: kept });
+  nameText(L("照实记下", "All recorded"), LX, Y + 65 + NAME_GAP, { valign: "top", alpha: kept });
+  rejectedName(L("同时成功、同时失败", "All succeed or fail together"), 960, ys[2] + 30 + 70, {
+    alpha: g * named(t, c.together),
+    mark: ramp(t, c.together + 0.35, 0.35),
+  });
+}

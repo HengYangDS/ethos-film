@@ -1,0 +1,301 @@
+/* 09 one origin, two passages, one boundary: back to the opening sentence, now bound to its attestations, judged by
+ * the three conditions the rules give rather than by who said it; and the close, the whole ETHOS mark, each part
+ * named on its words and the cinnabar datum last. */
+
+import { link } from "../../drawing/links.js";
+import { ethosMark } from "../../drawing/mark.js";
+import { box, flowDot, ring } from "../../drawing/strokes.js";
+import { agent, check, seal } from "../../drawing/symbols.js";
+import { askIcon, commitDot } from "../../drawing/workspace.js";
+import { clearOfTitle, illustrative } from "../../framing/chapters.js";
+import { listIn, named } from "../../naming/lists.js";
+import { NAME_GAP, NOTE, nameText, rejectedName } from "../../naming/names.js";
+import { P } from "../../palette.js";
+import { L, en } from "../../timeline.js";
+import { cues } from "../../timing/cues.js";
+import { mix, ramp, soon } from "../../timing/easing.js";
+import { voiceTime } from "../../timing/pauses.js";
+import { STAGE_CUT, stageIn, stageOut } from "../../timing/stages.js";
+import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
+import { scenes } from "../registry.js";
+
+/* 09.1-09.2. The opening sentence returns where it began, said by its Agent, its datum reaching along a dashed link to
+ * an empty place; in ETHOS the link holds, and the sentence's attestations stand at its end, each row on its words:
+ * which commit, what the proof checked, what still has no result, all to be looked up. The picture stands right of
+ * centre until the attestations come, then steps left. */
+function bound(s, t, a) {
+  if (a <= 0) return;
+  const [beganAt, doneAt, wayAt, attestAt, commitAt, provedAt, openAt, lookAt, trustAt] = cues(s, [
+    ["开头那句", "where we began"],
+    ["做完了", "Done"],
+    ["按 ETHOS 的做法", "In ETHOS"],
+    ["跟着存证", "attestations behind it"],
+    ["哪一次提交", "which commit it means"],
+    ["核验了什么", "what the proof checked"],
+    ["哪里还没有结果", "what still has no result"],
+    ["都找得到", "can all be looked up"],
+    ["这句话能不能信", "can be trusted"],
+  ]);
+  const off = 100 * (1 - soon(t, wayAt + 0.05, 0.9)),
+    PX = 700 + off,
+    Y = 470,
+    clear = a * clearOfTitle(s, t, Y - 60),
+    way = ramp(t, wayAt - 0.15, 0.5),
+    at = a * named(t, attestAt),
+    end = 1180 + off,
+    rows = [395, 470, 545],
+    ats = [commitAt, provedAt, openAt];
+  agent(PX - 370, Y, { size: 1.5, alpha: clear });
+  link(PX - 334, Y, PX - claimWidth() / 2 - 2, Y, { alpha: clear, end: false });
+  const {
+    datum: [dx, dy],
+  } = claimPanel(t, PX, Y, { alpha: clear, words: clear * named(t, doneAt) });
+  // English names where the sentence began as its clause begins, so the thought is named in its first second.
+  nameText(L("开头那句", "where we began"), PX, Y - CLAIM_H / 2 - 44, {
+    valign: "bottom",
+    size: NOTE,
+    color: P.muted,
+    alpha: clear * ramp(t, beganAt - (en ? 0.6 : 0.15), 0.4),
+  });
+  // Chinese asks whether the sentence can be trusted in a clause of its own, while it still stands with its
+  // attestations; the question rises with it when the judgement takes the picture.
+  nameText(L("这句话能不能信", "can be trusted"), PX, Y + CLAIM_H / 2 + 18, {
+    valign: "top",
+    size: NOTE,
+    color: P.muted,
+    alpha: clear * named(t, trustAt),
+  });
+  // The claim's link: dashed toward an empty place, holding once ETHOS's way is named.
+  link(dx + 16, dy, end, dy, {
+    alpha: clear * (1 - way),
+    dash: [8, 8],
+    flow: way < 1 ? (voiceTime(t) * 0.4) % 1 : null,
+  });
+  link(dx + 16, dy, end, dy, { alpha: a * way, flow: (voiceTime(t) * 0.4) % 1 });
+  box(end + 6, dy - 45, 110, 90, {
+    stroke: P.line,
+    alpha: clear * (1 - at),
+    radius: 10,
+    dash: [8, 8],
+  });
+  nameText(L("ETHOS 的做法", "In ETHOS"), (dx + end) / 2, dy - 22, {
+    valign: "bottom",
+    size: NOTE,
+    color: P.muted,
+    alpha: a * way,
+  });
+  // Its attestations at the link's end, and each thing they let one look up.
+  seal(end + 36, dy, 26, { alpha: at, color: P.ink });
+  nameText(L("存证", "attestations"), end + 36, dy + 26 + NAME_GAP, { valign: "top", alpha: at });
+  rows.forEach((y, i) => {
+    const r = a * named(t, ats[i]),
+      x = end + 170;
+    link(end + 66, dy, x - 24, y, {
+      route: "hvh",
+      mid: end + 140,
+      alpha: r,
+      upto: soon(t, ats[i] + 0.05, 0.5),
+    });
+    if (i === 0) commitDot(x, y, { alpha: r, r: 11 });
+    else if (i === 1) check(x, y + 2, 26, { alpha: r, width: 3.5 });
+    else askIcon(x, y - 2, 16, { alpha: r, color: P.ink });
+  });
+  [
+    L("哪一次提交", "which commit it means"),
+    L("核验了什么", "what the proof checked"),
+    L("哪里还没有结果", "what still has no result"),
+  ].forEach((v, i) =>
+    nameText(v, end + 200, rows[i], {
+      align: "left",
+      alpha: a * listIn(t, ats, i),
+      set: "09.2:attested",
+    }),
+  );
+  nameText(L("都找得到", "can all be looked up"), end + 200, rows[2] + 46, {
+    align: "left",
+    valign: "top",
+    alpha: a * named(t, lookAt),
+  });
+}
+
+/* 09.3. The sentence rises to the top as the question of whether it can be trusted is put; what it does not depend on
+ * is refused on the left, who said it and how much process, and what it does depend on builds on the right, the three
+ * conditions the rules give, each a box that is ticked on its words. */
+function judged(s, t, a, cutAt) {
+  if (a <= 0) return;
+  const [trustAt, whoAt, processAt, alsoAt, meaningAt, withinAt, backAt] = cues(s, [
+    ["这句话能不能信", "can be trusted"],
+    ["谁说的", "who said it"],
+    ["走了多少流程", "how much process"],
+    ["也不看走了多少流程", "how much process"],
+    ["原意是不是有一处可查", "the meaning can be found in one place"],
+    ["结论有没有超出证据", "stays within its evidence"],
+    ["能不能退回去", "you can get back after a mistake"],
+  ]);
+  // The sentence rises as the question is put, or from the cut where the question was put before it.
+  const q = soon(t, Math.max(trustAt + 0.05, cutAt), 0.9),
+    PX = mix(700, 960, q),
+    PY = mix(470, 380, q),
+    conds = [meaningAt, withinAt, backAt],
+    rows = [530, 615, 700];
+  claimPanel(t, PX, PY, { alpha: a });
+  nameText(L("这句话能不能信", "can be trusted"), PX, PY + CLAIM_H / 2 + 18, {
+    valign: "top",
+    size: NOTE,
+    color: P.muted,
+    alpha: a * named(t, trustAt),
+  });
+  [L("谁说的", "who said it"), L("走了多少流程", "how much process")].forEach((v, i) =>
+    // Low enough to stay clear of the question where the Chinese sentence starts its rise.
+    rejectedName(v, 640, rows[i] + 60, {
+      align: "right",
+      // Each may lead its words within its clause: English says both in one clause with the question; Chinese opens
+      // a clause for each, so the second comes in on its own clause's first word.
+      alpha: a * (en || i === 0 ? ramp(t, [whoAt, processAt][i] - 0.6, 0.4) : ramp(t, alsoAt + 0.05, 0.4)),
+      mark: ramp(t, [whoAt, processAt][i] + 0.3, 0.4),
+      set: "09.3:refused",
+    }),
+  );
+  [
+    L("原意是不是有一处可查", "the meaning can be found in one place"),
+    L("结论有没有超出证据", "stays within its evidence"),
+    L("能不能退回去", "you can get back after a mistake"),
+  ].forEach((v, i) => {
+    const k = a * named(t, conds[i]);
+    box(980, rows[i] - 18, 36, 36, { stroke: P.ink, alpha: k, radius: 6, width: 2.5 });
+    check(998, rows[i] + 1, 22, { alpha: a * named(t, conds[i] + 0.5), width: 3.5 });
+    nameText(v, 1036, rows[i], {
+      align: "left",
+      width: 520,
+      alpha: a * listIn(t, conds, i),
+      set: "09.3:conditions",
+    });
+  });
+}
+
+/* The mark of the close, centred and large. */
+const MARK = [960, 470, 640];
+
+/* 09.4. The whole mark draws on as the ETHOS mark is named beneath it: its boundary first, in the second level of
+ * ink, as the mark's outline. Then each part on its words, its name and what it stands for beside the mark: the
+ * origin as a ring at the centre, named at the upper left; the two passages drawing out from it, named at the upper
+ * right; the boundary taking full ink, named at the lower left; and last the cinnabar datum filling the origin, named
+ * at the lower right. A point travels the boundary in voice time until the boundary is named. */
+function close(s, t, a) {
+  if (a <= 0) return;
+  const [cutAt, markAt, originAt, beforeAt, twoAt, whereAt, boundaryAt, scopeAt, pointAt, boundAt] =
+    cues(s, [
+      ["ETHOS 的标志", "That is what"],
+      ["ETHOS 的标志", "the ETHOS mark"],
+      ["一个起点", "One origin"],
+      ["在变成改动之前", "bounded before it becomes a change"],
+      ["两条路径", "Two passages"],
+      ["只在影响行动的地方分开", "only where they decide action"],
+      ["一道边界", "One boundary"],
+      ["各自守在自己的范围里", "each keeping to their scope"],
+      ["那一点朱红", "cinnabarred point"],
+      ["结论必须落到证据上的地方", "bound to its evidence"],
+    ]);
+  const [X, Y, S] = MARK,
+    k = S / 512,
+    r = 164 * k,
+    lit = ramp(t, boundaryAt - 0.15, 0.5),
+    o = a * named(t, originAt),
+    datum = named(t, pointAt),
+    passages = soon(t, twoAt + 0.05, 1.0);
+  // The boundary draws on from the cut at the second level, and takes full ink as it is named.
+  ethosMark(X, Y, S, {
+    datum: 0,
+    passages: 0,
+    boundary: soon(t, cutAt, 1.6),
+    alpha: a * mix(0.58, 1, lit),
+  });
+  ethosMark(X, Y, S, { datum: 0, boundary: 0, passages, alpha: a });
+  ring(X, Y, 14 * k, { color: P.ink, alpha: o * (1 - datum), width: 3 });
+  ethosMark(X, Y, S, { datum, hole: 1, passages: 0, boundary: 0, alpha: a });
+  // A point travels the boundary while the voice speaks, and once drawn, the passages.
+  const q = (voiceTime(t) * 0.18) % 1,
+    ang = -0.7 - q * (2 * Math.PI - 1.4);
+  flowDot(X + r * Math.cos(ang), Y + r * Math.sin(ang), 7, q, {
+    color: P.line,
+    alpha: a * (1 - lit),
+  });
+  // English names the mark as its clause begins, so the cut already shows the name with the drawing outline.
+  nameText(L("ETHOS 的标志", "the ETHOS mark"), X, Y + r + 16 * k + NAME_GAP, {
+    valign: "top",
+    alpha: a * ramp(t, markAt - (en ? 0.75 : 0.15), 0.4),
+  });
+  // Names: the origin's beside it inside the mark, the others outside, each with what it stands for.
+  const LEFT = X - r - 50,
+    RIGHT = X + 170,
+    pair = (term, termAt, said, saidAt, x, y, align) => {
+      nameText(term, x, y, {
+        align,
+        valign: "bottom",
+        alpha: a * named(t, termAt),
+        set: "09.4:parts",
+      });
+      nameText(said, x, y + 8, {
+        align,
+        valign: "top",
+        size: NOTE,
+        color: P.muted,
+        width: 380,
+        alpha: a * named(t, saidAt),
+        set: "09.4:said",
+      });
+    };
+  pair(
+    L("一个起点", "One origin"),
+    originAt,
+    L("在变成改动之前，先划清边界", "bounded before it becomes a change"),
+    beforeAt,
+    LEFT,
+    Y - 96,
+    "right",
+  );
+  pair(
+    L("两条路径", "Two passages"),
+    twoAt,
+    L("只在影响行动的地方分开", "only where they decide action"),
+    whereAt,
+    RIGHT,
+    Y - 96,
+    "left",
+  );
+  pair(
+    L("一道边界", "One boundary"),
+    boundaryAt,
+    L("各自守在自己的范围里", "each keeping to their scope"),
+    scopeAt,
+    LEFT,
+    Y + 70,
+    "right",
+  );
+  pair(
+    L("那一点朱红", "cinnabar-red point"),
+    pointAt,
+    L("结论必须落到证据上的地方", "bound to its evidence"),
+    boundAt,
+    RIGHT,
+    Y + 84,
+    "left",
+  );
+}
+
+scenes["09"] = function (s, t) {
+  // The judgement takes the picture on its first refusal in Chinese, whose question has a clause of its own, and on
+  // the question in English, which puts it in the refusals' clause.
+  const [judgeAt, markAt] = cues(s, [
+    ["不看是谁说的", "Whether that sentence"],
+    ["ETHOS 的标志", "That is what"],
+  ]);
+  const a1 = stageOut(t, judgeAt),
+    a2 = stageIn(t, judgeAt) * stageOut(t, markAt),
+    a3 = stageIn(t, markAt);
+  // The opening sentence's scenario is illustrative; the mark is ETHOS's own.
+  illustrative(a1 + a2);
+  bound(s, t, a1);
+  judged(s, t, a2, judgeAt + STAGE_CUT);
+  close(s, t, a3);
+};
