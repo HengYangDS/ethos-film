@@ -843,8 +843,9 @@ function wrapName(v, width, size = LABEL) {
 function nameText(v, x, y, { width = Infinity, size = LABEL, valign = "middle", align = "center", ...o } = {}) {
   const lines = Array.isArray(v) ? v : wrapName(v, width, size), em = labelSize(size), step = em * LEADING;
   const top = valign === "top" ? y + em / 2 : valign === "bottom" ? y - em / 2 - step * (lines.length - 1) : y - step * (lines.length - 1) / 2;
+  const hang = (line2) => /[、，。；：！？]$/u.test(line2) ? (align === "right" ? 0.5 : align === "center" ? 0.3 : 0) * em : 0;
   lines.forEach(
-    (line2, k) => text(line2, x, top + k * step, size, { align, ...o, whole: lines.join(" ") })
+    (line2, k) => text(line2, x + hang(line2), top + k * step, size, { align, ...o, whole: lines.join(" ") })
   );
   return { lines, top: top - em / 2, bottom: top + step * (lines.length - 1) + em / 2 };
 }
@@ -899,11 +900,20 @@ function growTexts(parts, width = Infinity, size = LABEL) {
   });
   return lines;
 }
-function growName(t, parts, ats, x, y, { width = Infinity, size = LABEL, valign = "top", alpha = 1, build = false, ...o } = {}) {
+function growName(t, parts, ats, x, y, {
+  width = Infinity,
+  size = LABEL,
+  valign = "top",
+  alpha = 1,
+  build = false,
+  align = "left",
+  ...o
+} = {}) {
   const em = labelSize(size), step = em * LEADING, lines = growTexts(parts, width, size);
   const top = valign === "top" ? y + em / 2 : valign === "bottom" ? y - em / 2 - step * (lines.length - 1) : y - step * (lines.length - 1) / 2;
   lines.forEach((line2, r) => {
-    let left = x;
+    const span = line2.reduce((w, [, v]) => w + measure(v, size), 0);
+    let left = align === "center" ? x - span / 2 : align === "right" ? x - span : x;
     line2.forEach(([k, v]) => {
       const at = build ? ats[k] ?? ats[0] : ats[0];
       text(v, left, top + r * step, size, {
@@ -923,25 +933,50 @@ function growName(t, parts, ats, x, y, { width = Infinity, size = LABEL, valign 
 }
 var NOTE = 22;
 var TERM_GAP = 16;
-function termRowLayout(term, qual, width = Infinity) {
-  const one = !qual.length || measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE) <= width;
+var TERM_STACK = 10;
+function termRowLayout(term, qual, width = Infinity, inline = null) {
+  const one = !qual.length || (inline ?? measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE) <= width);
   const head = blockHeight(growLines(term, width).length);
   return {
     one,
-    height: one ? head : head + 4 + blockHeight(growLines(qual, width, NOTE).length, NOTE)
+    height: one ? head : head + TERM_STACK + blockHeight(growLines(qual, width, NOTE).length, NOTE)
   };
 }
-function termRow(t, term, termAts, qual, qualAts, x, y, { width = Infinity, alpha = 1, color = P.ink, set = null, build = false } = {}) {
-  const whole = [...term, ...qual].join(" "), head = growName(t, term, termAts, x, y, { width, alpha, color, whole, set });
+function termRow(t, term, termAts, qual, qualAts, x, y, {
+  width = Infinity,
+  alpha = 1,
+  color = P.ink,
+  set = null,
+  build = false,
+  inline = null,
+  align = "left"
+} = {}) {
+  const whole = [...term, ...qual].join(" "), { one } = termRowLayout(term, qual, width, inline), shared = one && qual.length, left = shared && align === "center" ? x - (measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE)) / 2 : x, head = growName(t, term, termAts, left, y, {
+    width,
+    alpha,
+    color,
+    whole,
+    set,
+    align: shared ? "left" : align
+  });
   if (!qual.length) return head;
-  const { one } = termRowLayout(term, qual, width), after = x + measure(term.join(""), LABEL) + TERM_GAP;
+  const after = left + measure(term.join(""), LABEL) + TERM_GAP;
   const tail = growName(
     t,
     qual,
     qualAts,
     one ? after : x,
-    one ? head.top + (labelSize(LABEL) - labelSize(NOTE)) / 2 : head.bottom + 4,
-    { size: NOTE, alpha, color: P.muted, width: one ? Infinity : width, whole, set, build }
+    one ? head.top + (labelSize(LABEL) - labelSize(NOTE)) / 2 : head.bottom + TERM_STACK,
+    {
+      size: NOTE,
+      alpha,
+      color: P.muted,
+      width: one ? Infinity : width,
+      whole,
+      set,
+      build,
+      align: one ? "left" : align
+    }
   );
   return { top: head.top, bottom: Math.max(head.bottom, tail.bottom) };
 }
@@ -952,9 +987,11 @@ function rejectedName(v, x, y, {
   align = "center",
   valign = "middle",
   width = Infinity,
-  set = null
+  set = null,
+  markLeft = null
 } = {}) {
-  const block = nameText(v, x, y, {
+  const s = Math.min(26, labelSize(size) * 0.9), at = align === "center" && markLeft === null ? x - (16 + s) / 2 : x;
+  const block = nameText(v, at, y, {
     align,
     valign,
     width,
@@ -963,13 +1000,12 @@ function rejectedName(v, x, y, {
     alpha: alpha * mix(1, 0.7, clamp(mark)),
     set
   });
-  const w = Math.max(...block.lines.map((line2) => measure(line2, size))), left = align === "left" ? x : align === "right" ? x - w : x - w / 2;
-  const s = Math.min(26, labelSize(size) * 0.9);
-  cross(left + w + 16 + s / 2, (block.top + block.bottom) / 2, s, {
+  const w = Math.max(...block.lines.map((line2) => measure(line2, size))), left = align === "left" ? at : align === "right" ? at - w : at - w / 2, markAt = markLeft ?? left + w + 16;
+  cross(markAt + s / 2, (block.top + block.bottom) / 2, s, {
     alpha: alpha * mark,
     width: 3
   });
-  return { ...block, left, right: left + w + 16 + s };
+  return { ...block, left, right: markAt + s };
 }
 
 // picture/film/scenes/claim.js
@@ -1327,7 +1363,8 @@ function railStations(names, first, last, { size = LABEL, gap = 34, wrap = RAIL_
   const widths = names.map(
     (v) => Math.max(...wrapName(v, wrap, size).map((line2) => measure(line2, size)))
   );
-  const need = widths.slice(1).map((w, i) => (widths[i] + w) / 2 + gap);
+  const need = widths.slice(1).map((w, i) => (widths[i] + w) / 2 + gap), pitch = names.length > 1 ? (last - first) / (names.length - 1) : 0;
+  if (need.every((d) => d <= pitch)) return names.map((_, i) => first + i * pitch);
   const slack = Math.max(0, last - first - need.reduce((a, b) => a + b, 0)) / Math.max(1, need.length);
   return need.reduce((xs, d) => [...xs, xs.at(-1) + d + slack], [first]);
 }

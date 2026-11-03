@@ -40,9 +40,10 @@ export function railNames(
     });
   });
 }
-/* Stations along a rail, spaced from their names: neighbours stand at least half of each name's width plus a gap
- * apart, and the room left over is shared evenly, so a long name widens its own interval rather than leaving the
- * baseline. A name wider than the wrap width is measured as wrapped, as railNames sets it. */
+/* Stations along a rail: evenly pitched from the first to the last, as long as every pair of neighbours keeps half of
+ * each name's width plus a gap between them; otherwise each pair stands that far apart and the room left over is
+ * shared evenly, so a long name widens its own interval rather than leaving the baseline. A name wider than the wrap
+ * width is measured as wrapped, as railNames sets it. */
 const RAIL_WRAP = 240;
 export function railStations(
   names,
@@ -53,7 +54,9 @@ export function railStations(
   const widths = names.map((v) =>
     Math.max(...wrapName(v, wrap, size).map((line) => measure(line, size))),
   );
-  const need = widths.slice(1).map((w, i) => (widths[i] + w) / 2 + gap);
+  const need = widths.slice(1).map((w, i) => (widths[i] + w) / 2 + gap),
+    pitch = names.length > 1 ? (last - first) / (names.length - 1) : 0;
+  if (need.every((d) => d <= pitch)) return names.map((_, i) => first + i * pitch);
   const slack =
     Math.max(0, last - first - need.reduce((a, b) => a + b, 0)) / Math.max(1, need.length);
   return need.reduce((xs, d) => [...xs, xs.at(-1) + d + slack], [first]);

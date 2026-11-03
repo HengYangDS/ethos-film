@@ -73,8 +73,14 @@ export function nameText(
       : valign === "bottom"
         ? y - em / 2 - step * (lines.length - 1)
         : y - (step * (lines.length - 1)) / 2;
+  // The ink of a final 、，。；：！？ fills only the left of its em, so a right-aligned line hangs it half an em past
+  // the edge and a centred line moves 0.3 em right, and its ink keeps the edge or centre of the other lines.
+  const hang = (line) =>
+    /[、，。；：！？]$/u.test(line)
+      ? (align === "right" ? 0.5 : align === "center" ? 0.3 : 0) * em
+      : 0;
   lines.forEach((line, k) =>
-    text(line, x, top + k * step, size, { align, ...o, whole: lines.join(" ") }),
+    text(line, x + hang(line), top + k * step, size, { align, ...o, whole: lines.join(" ") }),
   );
   return { lines, top: top - em / 2, bottom: top + step * (lines.length - 1) + em / 2 };
 }
@@ -152,14 +158,23 @@ export function growTexts(parts, width = Infinity, size = LABEL) {
   return lines;
 }
 /* A name stands whole on the words of its first part; a name that lists what is said over several seconds may `build`,
- * each part joining it in its place on its own words, so the picture keeps changing while the list is spoken. */
+ * each part joining it in its place on its own words, so the picture keeps changing while the list is spoken. Its
+ * lines start at x, or centre or end on it by `align`. */
 export function growName(
   t,
   parts,
   ats,
   x,
   y,
-  { width = Infinity, size = LABEL, valign = "top", alpha = 1, build = false, ...o } = {},
+  {
+    width = Infinity,
+    size = LABEL,
+    valign = "top",
+    alpha = 1,
+    build = false,
+    align = "left",
+    ...o
+  } = {},
 ) {
   const em = labelSize(size),
     step = em * LEADING,
@@ -171,7 +186,8 @@ export function growName(
         ? y - em / 2 - step * (lines.length - 1)
         : y - (step * (lines.length - 1)) / 2;
   lines.forEach((line, r) => {
-    let left = x;
+    const span = line.reduce((w, [, v]) => w + measure(v, size), 0);
+    let left = align === "center" ? x - span / 2 : align === "right" ? x - span : x;
     line.forEach(([k, v]) => {
       const at = build ? (ats[k] ?? ats[0]) : ats[0];
       text(v, left, top + r * step, size, {
@@ -195,15 +211,19 @@ export function growName(
  * sentence; a qualifier that lists what is said over several seconds may `build`, each part on its own words. */
 export const NOTE = 22,
   TERM_GAP = 16;
-/* Whether a term row keeps its qualifier on the term's line, and the row's height. */
-export function termRowLayout(term, qual, width = Infinity) {
+/* A qualifier set under its term stands this far below the term's line, so at least 12 px of ground stays clear
+ * between their inks. */
+export const TERM_STACK = 10;
+/* Whether a term row keeps its qualifier on the term's line, and the row's height. A list sets every row's qualifier
+ * the same way: `inline` true or false decides it for the row, and null lets the row's own width decide. */
+export function termRowLayout(term, qual, width = Infinity, inline = null) {
   const one =
     !qual.length ||
-    measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE) <= width;
+    (inline ?? measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE) <= width);
   const head = blockHeight(growLines(term, width).length);
   return {
     one,
-    height: one ? head : head + 4 + blockHeight(growLines(qual, width, NOTE).length, NOTE),
+    height: one ? head : head + TERM_STACK + blockHeight(growLines(qual, width, NOTE).length, NOTE),
   };
 }
 export function termRow(
@@ -214,25 +234,58 @@ export function termRow(
   qualAts,
   x,
   y,
-  { width = Infinity, alpha = 1, color = P.ink, set = null, build = false } = {},
+  {
+    width = Infinity,
+    alpha = 1,
+    color = P.ink,
+    set = null,
+    build = false,
+    inline = null,
+    align = "left",
+  } = {},
 ) {
+  // A centred row stands its term and qualifier together on x when they share a line, and each of its lines on x
+  // when the qualifier stands under the term.
   const whole = [...term, ...qual].join(" "),
-    head = growName(t, term, termAts, x, y, { width, alpha, color, whole, set });
+    { one } = termRowLayout(term, qual, width, inline),
+    shared = one && qual.length,
+    left =
+      shared && align === "center"
+        ? x - (measure(term.join(""), LABEL) + TERM_GAP + measure(qual.join(""), NOTE)) / 2
+        : x,
+    head = growName(t, term, termAts, left, y, {
+      width,
+      alpha,
+      color,
+      whole,
+      set,
+      align: shared ? "left" : align,
+    });
   if (!qual.length) return head;
-  const { one } = termRowLayout(term, qual, width),
-    after = x + measure(term.join(""), LABEL) + TERM_GAP;
+  const after = left + measure(term.join(""), LABEL) + TERM_GAP;
   const tail = growName(
     t,
     qual,
     qualAts,
     one ? after : x,
-    one ? head.top + (labelSize(LABEL) - labelSize(NOTE)) / 2 : head.bottom + 4,
-    { size: NOTE, alpha, color: P.muted, width: one ? Infinity : width, whole, set, build },
+    one ? head.top + (labelSize(LABEL) - labelSize(NOTE)) / 2 : head.bottom + TERM_STACK,
+    {
+      size: NOTE,
+      alpha,
+      color: P.muted,
+      width: one ? Infinity : width,
+      whole,
+      set,
+      build,
+      align: one ? "left" : align,
+    },
   );
   return { top: head.top, bottom: Math.max(head.bottom, tail.bottom) };
 }
 /* A phrase the film rejects, set as a name: muted plain text that dims as it is refused, with a cross beside the
- * words rather than over them. */
+ * words rather than over them. A centred refusal centres its words and their cross together on x; `markLeft` stands
+ * the cross's left edge at one x instead, so the crosses of a list of refusals form one column after its longest
+ * name. */
 export function rejectedName(
   v,
   x,
@@ -245,9 +298,12 @@ export function rejectedName(
     valign = "middle",
     width = Infinity,
     set = null,
+    markLeft = null,
   } = {},
 ) {
-  const block = nameText(v, x, y, {
+  const s = Math.min(26, labelSize(size) * 0.9),
+    at = align === "center" && markLeft === null ? x - (16 + s) / 2 : x;
+  const block = nameText(v, at, y, {
     align,
     valign,
     width,
@@ -257,11 +313,11 @@ export function rejectedName(
     set,
   });
   const w = Math.max(...block.lines.map((line) => measure(line, size))),
-    left = align === "left" ? x : align === "right" ? x - w : x - w / 2;
-  const s = Math.min(26, labelSize(size) * 0.9);
-  cross(left + w + 16 + s / 2, (block.top + block.bottom) / 2, s, {
+    left = align === "left" ? at : align === "right" ? at - w : at - w / 2,
+    markAt = markLeft ?? left + w + 16;
+  cross(markAt + s / 2, (block.top + block.bottom) / 2, s, {
     alpha: alpha * mark,
     width: 3,
   });
-  return { ...block, left, right: left + w + 16 + s };
+  return { ...block, left, right: markAt + s };
 }
