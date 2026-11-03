@@ -19,7 +19,7 @@ The production SHALL explain ETHOS as the cited sections of its documents state 
 #### Scenario: Each sentence is faithful, clear on first hearing and idiomatic
 
 - **WHEN** an independent language review reads every thought and label of both editions against its cited sections and the concept contract
-- **THEN** fidelity, concept fidelity, first-hearing clarity and idiom each score at least 90, with no material finding
+- **THEN** fidelity, concept fidelity, first-hearing clarity and idiom each score at least 95, with no material finding
 - **AND** each concept keeps one term across an edition and is explained the first time it is heard
 - **AND** the Chinese reads as spoken Chinese, not as a translation of the English
 

@@ -5671,7 +5671,7 @@ function proofMark(x, y, alpha) {
 function release(s, t, a) {
   if (a <= 0) return;
   const [doneAt, commitAt, proofAt, attestAt, reviewAt, branchAt, publishAt, ownAt] = cues(s, [
-    ["改完以后", "Once the work is committed"],
+    ["改完以后", "When the work is committed"],
     ["这一次提交", "that exact commit"],
     ["完整的核验", "a full local proof"],
     ["留下存证", "leaves an attestation"],
@@ -5687,7 +5687,7 @@ function release(s, t, a) {
   const finisher = a * (1 - ramp(t, proofAt + 0.3, 0.5));
   agent(260, UP, { size: 1.45, alpha: finisher });
   link(260, UP + 36, 260, RAIL_Y - 22, { alpha: finisher, end: false });
-  nameText(L("改完以后", "Once the work is committed"), 260, RAIL_Y + 30, {
+  nameText(L("改完以后", "When the work is committed"), 260, RAIL_Y + 30, {
     valign: "top",
     width: 300,
     alpha: a * named(t, doneAt)
@@ -6298,7 +6298,7 @@ scenes["08"] = function(s, t) {
   const [laneAt, halfAt, proofAt, liveAt, hereAt, daysAt] = cues(s, [
     ["研究员的要求", "The researcher's request"],
     ["做到一半", "Halfway through"],
-    ["改完以后", "Once the work is committed"],
+    ["改完以后", "When the work is committed"],
     ["版本上线以后", "Once the version is live"],
     ["从这里往后", "From here on"],
     ["几天后", "A few days later"]
