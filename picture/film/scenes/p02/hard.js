@@ -80,7 +80,7 @@ scenes["02"] = function (s, t) {
   const take = (pairs) =>
     cues(s, Object.values(pairs)).forEach((v, i) => (c[Object.keys(pairs)[i]] = v));
   take({
-    head: ["难处", "three ways"],
+    head: ["难处", "three parts"],
     first: ["第一个", "The first"],
     n1: ["原意会走样", "meaning drifts"],
     pCut: ["一件事", "one person"],

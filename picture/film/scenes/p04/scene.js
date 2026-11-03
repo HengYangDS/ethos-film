@@ -44,7 +44,7 @@ function cuesOf(s) {
     follow: cue(s, "照这句话去做", "Followed to the letter"),
     corrections: cue(s, "最该留下的那些更正", "the corrections that had to stay"),
     deleted: cue(s, "恰好会被删掉", "would delete exactly"),
-    first3c: cue(s, "总结让人读得快", "The summary made reading faster"),
+    first3c: cue(s, "总结能让人读得快", "The summary made reading faster"),
     fast: cue(s, "读得快", "reading faster"),
     replace: cue(s, "顶替了原话", "takes the place"),
     original: cue(s, "顶替了原话", "the original words"),

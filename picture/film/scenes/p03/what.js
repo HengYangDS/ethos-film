@@ -1,5 +1,5 @@
-/* 03 What ETHOS is: a path and a small kernel. The name, the path it offers and its promises; the kernel that holds
- * the path up, what it keeps and for how long; the tools and systems it relies on rather than replaces; and that all of
+/* 03 What ETHOS is: a path and a small kernel. The name, the path it offers and its promises; the kernel that supports
+ * the path, what it keeps and for how long; the tools and systems it relies on rather than replaces; and that all of
  * this is a design aim. */
 
 import { stageKernel, stageLifetimes, stageScope } from "./kernel.js";
@@ -82,7 +82,7 @@ scenes["03"] = function (s, t) {
     mature: ["现成、成熟的工具", "mature tools that already exist"],
     git: ["Git", "Git"],
     less: ["就少得多", "much less"],
-    // 03.7 the systems it leaves as they are, and what it owns once.
+    // 03.7 the systems it leaves as they are, and what it owns in one place.
     sCut: ["ETHOS 也不接管", "ETHOS does not take over"],
     systems: ["原有的系统", "the systems you already have"],
     sys1: ["描述业务用的模型", "the model that describes your business"],
@@ -94,7 +94,7 @@ scenes["03"] = function (s, t) {
     connect: ["接进来的系统", "connecting a system"],
     truth: ["真相的来源", "a source of truth"],
     layerCut: ["所有仓库共有的部分", "What every repository shares"],
-    owns: ["归 ETHOS", "ETHOS owns once"],
+    owns: ["归 ETHOS", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "its own purpose"],
     // 03.8 design aims.

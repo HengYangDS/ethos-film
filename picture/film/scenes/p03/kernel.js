@@ -35,7 +35,7 @@ function termRowRight(t, term, termAts, qual, qualAts, right, y, o = {}) {
   termRow(t, term, termAts, qual, qualAts, right - wide, y - height / 2, { ...o, width });
 }
 
-/* 03.3 A small trust kernel holds the path up: the path at the top, the kernel under it on its words. Its three inputs
+/* 03.3 A small trust kernel supports the path: the path at the top, the kernel under it on its words. Its three inputs
  * stand at its left, each linked to it on its words: the accepted intent, the fresh facts, the attestations on record.
  * By fixed rules it compiles a plan; at the moment it writes, the write passes a gate that checks again; and what it
  * observed, decided and did becomes a new attestation, which returns to the inputs. */

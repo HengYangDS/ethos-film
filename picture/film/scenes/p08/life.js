@@ -15,7 +15,7 @@ scenes["08"] = function (s, t) {
   const [laneAt, halfAt, proofAt, liveAt, hereAt, daysAt] = cues(s, [
     ["研究员的要求", "The researcher's request"],
     ["做到一半", "Halfway through"],
-    ["改完以后", "When the work is finished"],
+    ["改完以后", "Once the work is committed"],
     ["版本上线以后", "Once the version is live"],
     ["从这里往后", "From here on"],
     ["几天后", "A few days later"],

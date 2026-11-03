@@ -1,5 +1,5 @@
 /* 03.6-03.7 ETHOS keeps its own code to the kernel and turns to mature tools for the rest; it leaves the systems already
- * in use as they are, works on the user's own machine and owns once what every repository shares. */
+ * in use as they are, works on the user's own machine and owns in one place what every repository shares. */
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
@@ -164,7 +164,7 @@ export function stageSystems(t, a, c) {
   });
 }
 
-/* 03.7 What every repository shares, ETHOS owns once: three repositories of three sizes, each its own mark, standing on
+/* 03.7 What every repository shares, ETHOS owns in one place: three repositories of three sizes, each its own mark, standing on
  * one shared layer named from the cut, a point running along it; each repository's own purpose arrives inside it as its
  * own shape. */
 export function stageLayer(t, a, c) {
@@ -205,7 +205,7 @@ export function stageLayer(t, a, c) {
     { color: P.ink, alpha: a, width: 2.5 },
   );
   flowDot(mix(x0 + 30, x1 - 30, q), LY + 22, 6, q, { color: P.ink, alpha: a });
-  nameText(L("共有的部分，归 ETHOS", "ETHOS owns once"), 960, LY - 6, {
+  nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), 960, LY - 6, {
     alpha: a * named(t, c.layerCut + 0.15),
   });
   // Each repository's own purpose: a shape of its own inside it.

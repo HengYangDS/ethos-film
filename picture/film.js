@@ -2227,7 +2227,7 @@ scenes["02"] = function(s, t) {
   const c = {};
   const take = (pairs) => cues(s, Object.values(pairs)).forEach((v, i) => c[Object.keys(pairs)[i]] = v);
   take({
-    head: ["难处", "three ways"],
+    head: ["难处", "three parts"],
     first: ["第一个", "The first"],
     n1: ["原意会走样", "meaning drifts"],
     pCut: ["一件事", "one person"],
@@ -2948,7 +2948,7 @@ function stageLayer(t, a, c) {
     { color: P.ink, alpha: a, width: 2.5 }
   );
   flowDot(mix(x0 + 30, x1 - 30, q), LY + 22, 6, q, { color: P.ink, alpha: a });
-  nameText(L("共有的部分，归 ETHOS", "ETHOS owns once"), 960, LY - 6, {
+  nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), 960, LY - 6, {
     alpha: a * named(t, c.layerCut + 0.15)
   });
   const own = a * ramp(t, c.own - 0.15, 0.4), [[ax], [bx], [cx]] = repos;
@@ -3048,7 +3048,7 @@ scenes["03"] = function(s, t) {
     mature: ["现成、成熟的工具", "mature tools that already exist"],
     git: ["Git", "Git"],
     less: ["就少得多", "much less"],
-    // 03.7 the systems it leaves as they are, and what it owns once.
+    // 03.7 the systems it leaves as they are, and what it owns in one place.
     sCut: ["ETHOS 也不接管", "ETHOS does not take over"],
     systems: ["原有的系统", "the systems you already have"],
     sys1: ["描述业务用的模型", "the model that describes your business"],
@@ -3060,7 +3060,7 @@ scenes["03"] = function(s, t) {
     connect: ["接进来的系统", "connecting a system"],
     truth: ["真相的来源", "a source of truth"],
     layerCut: ["所有仓库共有的部分", "What every repository shares"],
-    owns: ["归 ETHOS", "ETHOS owns once"],
+    owns: ["归 ETHOS", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "its own purpose"],
     // 03.8 design aims.
@@ -3891,7 +3891,7 @@ function cuesOf(s) {
     follow: cue(s, "照这句话去做", "Followed to the letter"),
     corrections: cue(s, "最该留下的那些更正", "the corrections that had to stay"),
     deleted: cue(s, "恰好会被删掉", "would delete exactly"),
-    first3c: cue(s, "总结让人读得快", "The summary made reading faster"),
+    first3c: cue(s, "总结能让人读得快", "The summary made reading faster"),
     fast: cue(s, "读得快", "reading faster"),
     replace: cue(s, "顶替了原话", "takes the place"),
     original: cue(s, "顶替了原话", "the original words"),
@@ -5243,14 +5243,17 @@ function replacement(s, t, a) {
 function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
-    ["一项正式变更", "And a Change"],
+    ["一项正式变更", "And an official Change"],
     ["做到哪儿", "what it actually delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"]
   ]);
   const c = a * named(t, changeAt), d = a * named(t, deliveredAt), r = a * named(t, recordAt), p = a * named(t, passAt), DX = 700, DY = 470, H = 270;
   taskList(DX, DY, 200, H, { alpha: c, done: 2, tick: d });
-  nameText(L("一项正式变更", "a Change"), DX, DY + H / 2 + NAME_GAP, { valign: "top", alpha: c });
+  nameText(L("一项正式变更", "an official Change"), DX, DY + H / 2 + NAME_GAP, {
+    valign: "top",
+    alpha: c
+  });
   stroke(
     () => {
       ctx.moveTo(DX + 118, 398);
@@ -5387,7 +5390,7 @@ scenes["07"] = function(s, t) {
     ["这就是第四条准则", "That is rule four"],
     ["ETHOS 判断", "ETHOS judges"],
     ["拿新做法", "A replacement"],
-    ["一项正式变更", "And a Change"],
+    ["一项正式变更", "And an official Change"],
     ["每个机制", "Every mechanism"],
     ["已经没有义务的机制", "Keep the ones"]
   ]);
@@ -5631,7 +5634,7 @@ function proofMark(x, y, alpha) {
 function release(s, t, a) {
   if (a <= 0) return;
   const [doneAt, commitAt, proofAt, attestAt, reviewAt, branchAt, publishAt, ownAt] = cues(s, [
-    ["改完以后", "When the work is finished"],
+    ["改完以后", "Once the work is committed"],
     ["这一次提交", "that exact commit"],
     ["完整的核验", "a full local proof"],
     ["留下存证", "leaves an attestation"],
@@ -5647,7 +5650,7 @@ function release(s, t, a) {
   const finisher = a * (1 - ramp(t, proofAt + 0.3, 0.5));
   agent(260, UP, { size: 1.45, alpha: finisher });
   link(260, UP + 36, 260, RAIL_Y - 22, { alpha: finisher, end: false });
-  nameText(L("改完以后", "When the work is finished"), 260, RAIL_Y + 30, {
+  nameText(L("改完以后", "Once the work is committed"), 260, RAIL_Y + 30, {
     valign: "top",
     width: 300,
     alpha: a * named(t, doneAt)
@@ -6258,7 +6261,7 @@ scenes["08"] = function(s, t) {
   const [laneAt, halfAt, proofAt, liveAt, hereAt, daysAt] = cues(s, [
     ["研究员的要求", "The researcher's request"],
     ["做到一半", "Halfway through"],
-    ["改完以后", "When the work is finished"],
+    ["改完以后", "Once the work is committed"],
     ["版本上线以后", "Once the version is live"],
     ["从这里往后", "From here on"],
     ["几天后", "A few days later"]
@@ -6421,7 +6424,7 @@ var MARK = [960, 470, 640];
 function close(s, t, a) {
   if (a <= 0) return;
   const [cutAt2, markAt, originAt, beforeAt, twoAt, whereAt, boundaryAt, scopeAt, pointAt, boundAt] = cues(s, [
-    ["ETHOS 的标志", "That is what"],
+    ["ETHOS 的标志", "The ETHOS mark"],
     ["ETHOS 的标志", "the ETHOS mark"],
     ["一个起点", "One origin"],
     ["在变成改动之前", "bounded before it becomes a change"],
@@ -6508,7 +6511,7 @@ function close(s, t, a) {
 scenes["09"] = function(s, t) {
   const [judgeAt, markAt] = cues(s, [
     ["不看是谁说的", "Whether that sentence"],
-    ["ETHOS 的标志", "That is what"]
+    ["ETHOS 的标志", "The ETHOS mark"]
   ]);
   const a1 = stageOut(t, judgeAt), a2 = stageIn(t, judgeAt) * stageOut(t, markAt), a3 = stageIn(t, markAt);
   illustrative(a1 + a2);

@@ -151,7 +151,9 @@ function judged(s, t, a, cutAt) {
       align: "right",
       // Each may lead its words within its clause: English says both in one clause with the question; Chinese opens
       // a clause for each, so the second comes in on its own clause's first word.
-      alpha: a * (en || i === 0 ? ramp(t, [whoAt, processAt][i] - 0.6, 0.4) : ramp(t, alsoAt + 0.05, 0.4)),
+      alpha:
+        a *
+        (en || i === 0 ? ramp(t, [whoAt, processAt][i] - 0.6, 0.4) : ramp(t, alsoAt + 0.05, 0.4)),
       mark: ramp(t, [whoAt, processAt][i] + 0.3, 0.4),
       set: "09.3:refused",
     }),
@@ -185,7 +187,7 @@ function close(s, t, a) {
   if (a <= 0) return;
   const [cutAt, markAt, originAt, beforeAt, twoAt, whereAt, boundaryAt, scopeAt, pointAt, boundAt] =
     cues(s, [
-      ["ETHOS 的标志", "That is what"],
+      ["ETHOS 的标志", "The ETHOS mark"],
       ["ETHOS 的标志", "the ETHOS mark"],
       ["一个起点", "One origin"],
       ["在变成改动之前", "bounded before it becomes a change"],
@@ -288,7 +290,7 @@ scenes["09"] = function (s, t) {
   // the question in English, which puts it in the refusals' clause.
   const [judgeAt, markAt] = cues(s, [
     ["不看是谁说的", "Whether that sentence"],
-    ["ETHOS 的标志", "That is what"],
+    ["ETHOS 的标志", "The ETHOS mark"],
   ]);
   const a1 = stageOut(t, judgeAt),
     a2 = stageIn(t, judgeAt) * stageOut(t, markAt),

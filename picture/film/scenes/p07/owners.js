@@ -273,12 +273,12 @@ export function replacement(s, t, a) {
   nameText(L("新的不能比旧的弱", "may never be weaker"), 960, 650, { alpha: w });
 }
 
-/* 07.4, third: a Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
+/* 07.4, third: an official Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
  * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
-    ["一项正式变更", "And a Change"],
+    ["一项正式变更", "And an official Change"],
     ["做到哪儿", "what it actually delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
@@ -291,7 +291,10 @@ export function closing(s, t, a) {
     DY = 470,
     H = 270;
   taskList(DX, DY, 200, H, { alpha: c, done: 2, tick: d });
-  nameText(L("一项正式变更", "a Change"), DX, DY + H / 2 + NAME_GAP, { valign: "top", alpha: c });
+  nameText(L("一项正式变更", "an official Change"), DX, DY + H / 2 + NAME_GAP, {
+    valign: "top",
+    alpha: c,
+  });
   // The bracket of the delivered rows, and their name beside it.
   stroke(
     () => {
