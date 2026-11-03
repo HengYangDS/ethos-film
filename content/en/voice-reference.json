@@ -22,10 +22,6 @@
   "retakes": {
     "08": {
       "groups": {
-        "4": {
-          "seed": 99713,
-          "text_sha256": "0f123bd324ff37e0f522fce8de988df09f59af869309a6b7c774173e85d47fdf"
-        },
         "9": {
           "seed": 99713,
           "text_sha256": "52bff83bb7b59ebd93b335195dbf08a660ccf86a0622cf8114c5971ca28e9ed8"
