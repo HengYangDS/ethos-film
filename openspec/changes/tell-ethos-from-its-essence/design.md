@@ -96,7 +96,7 @@ The casts' retakes therefore give 23 Chinese thoughts and both English ones an a
 
 The English thoughts 04.1 and 06.1 open their recordings, and their takes began above heard quiet, which the assembly also refuses. Both take auditioned seeds that begin in quiet. With whole endings, the Chinese narration ran 1.66 s past 840 s at 2.3 s between parts and 2.6 s between chapters. The Chinese gaps are therefore 2.0 s between parts and 2.4 s between chapters, and its thought pauses keep their 1.62 s mean. Both editions now last exactly 840 s at −16.5 LUFS.
 
-The repairs of the 95 review were narrated the same way on 2026-11-03. The seven English thoughts took auditioned seeds that end on their own. The Chinese 04.3 runs on into 04.4, and the film's last thought, 09.4, which has no thought to run on into, took one of the 6 of 24 further seeds whose take ends on its own. Both editions again last exactly 840 s at −16.5 LUFS; the Chinese spreads the time its shorter 04.3 returned over its gaps.
+The repairs of the 95 review were narrated the same way on 2026-11-03. The seven English thoughts took auditioned seeds that end on their own. The Chinese 04.3 runs on into 04.4, with the take whose 去虫 its minimal pairs judge as chóng, and the film's last thought, 09.4, which has no thought to run on into, took one of the 6 of 24 further seeds whose take ends on its own. Both editions again last exactly 840 s at −16.5 LUFS; the Chinese spreads the time its shorter 04.3 returned over its gaps.
 
 ### 3. The running story
 
