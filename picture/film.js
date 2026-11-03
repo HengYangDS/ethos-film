@@ -4169,6 +4169,15 @@ function apartStage(s, t, c, g) {
 var TOP = PLANES_TOP;
 var ASIDE = 400;
 var rowOf = (top, i) => top + i * PLANE_STEP + PLANE_H / 2;
+var outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]);
+var outcomeQuals = () => L(
+  [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
+  [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]]
+);
+function outcomesX() {
+  const widest = (list) => Math.max(...list.map((v) => measure(v, LABEL))), width = PLANE_W + 80 + 18 + NAME_GAP + widest(outcomeNames()) + TERM_GAP + widest(outcomeQuals().map((q) => q.join("")));
+  return 960 - width / 2;
+}
 function ruleTwoHeading(t, c, g) {
   ruleHeading(t, {
     number: L("第二条准则", "Rule two"),
@@ -4236,11 +4245,8 @@ function verifiedStage(s, t, c, g) {
   });
 }
 function outcomesStage(s, t, c, g) {
-  const top = mix(TOP, 340, soon(t, c.first4 + 0.05, 0.7)), LX = ASIDE + PLANE_W + 80, em = labelSize(LABEL), names = L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]), quals = L(
-    [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
-    [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]]
-  ), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i)), qualLeft = LX + 18 + NAME_GAP + Math.max(...names.map((v) => measure(v, LABEL))) + TERM_GAP;
-  planeStack(t, ASIDE, top, { alpha: g });
+  const settle = soon(t, c.first4 + 0.05, 0.7), top = mix(TOP, 340, settle), x = mix(ASIDE, outcomesX(), settle), LX = x + PLANE_W + 80, em = labelSize(LABEL), names = outcomeNames(), quals = outcomeQuals(), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i)), qualLeft = LX + 18 + NAME_GAP + Math.max(...names.map((v) => measure(v, LABEL))) + TERM_GAP;
+  planeStack(t, x, top, { alpha: g });
   termRow(
     t,
     L(["一次判断的结果"], ["A judgment"]),
@@ -4267,20 +4273,20 @@ function outcomesStage(s, t, c, g) {
     alpha: g * named(t, c.never)
   });
   const two = rowOf(top, 1), example = g * named(t, c.isUnknown);
-  beats(t, ASIDE + PLANE_W - 36, two, 22, [c.example, c.notYet], { alpha: g });
-  link(ASIDE + PLANE_W, two, LX - 26, ys[2], {
+  beats(t, x + PLANE_W - 36, two, 22, [c.example, c.notYet], { alpha: g });
+  link(x + PLANE_W, two, LX - 26, ys[2], {
     route: "hvh",
     alpha: example,
     upto: soon(t, c.isUnknown + 0.05, 0.5),
     flow: voiceTime(t) * 0.45 % 1
   });
-  rejectedName(L("没有问题", "No problem"), ASIDE + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
+  rejectedName(L("没有问题", "No problem"), x + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
     alpha: g * named(t, c.noProblem),
     mark: ramp(t, c.noProblem + 0.35, 0.35)
   });
 }
 function refusedStage(s, t, c, g) {
-  const settle = soon(t, c.first5 + 0.05, 0.7), top = mix(340, 320, settle), x = mix(ASIDE, 480, settle), sy = top + 5 * PLANE_STEP, offered = g * named(t, c.distinction), refused = soon(t, c.never2 + 0.05, 0.5);
+  const settle = soon(t, c.first5 + 0.05, 0.7), top = mix(340, 320, settle), x = mix(outcomesX(), 480, settle), sy = top + 5 * PLANE_STEP, offered = g * named(t, c.distinction), refused = soon(t, c.never2 + 0.05, 0.5);
   planeStack(t, x, top, { alpha: g });
   card(x, sy, PLANE_W, PLANE_H, { alpha: offered * mix(1, 0.7, refused), dash: [8, 9] });
   termRow(

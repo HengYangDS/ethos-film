@@ -2,8 +2,8 @@
  * drawn out from the origin on its words, one per kind of next step. The planes are separate planes of evidence, each
  * permitting its own next step; one passing never means another has; a "done" names what was verified. A judgment has
  * three outcomes and only pass lets the work go ahead; the checks with no result are unknown, which is not "no
- * problem". A sixth distinction that changes no action is never added. The stack of planes stays in one place from
- * the moment it moves aside, so the argument reads as one picture changing on its words. */
+ * problem". A sixth distinction that changes no action is never added. The stack of planes moves aside once and then
+ * only shifts as each stage settles beside it, so the argument reads as one picture changing on its words. */
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
@@ -23,6 +23,30 @@ import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack } from "./planes.j
 const TOP = PLANES_TOP,
   ASIDE = 400;
 const rowOf = (top, i) => top + i * PLANE_STEP + PLANE_H / 2;
+
+/* A judgment's three outcomes and their conditions, in each edition. */
+const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]),
+  outcomeQuals = () =>
+    L(
+      [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
+      [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]],
+    );
+
+/* Where the stack stands while the outcomes are listed beside it: the stack, the list and its widest condition, taken
+ * together, centred on the content centre. The conditions stand in one column after the widest outcome's name, so the
+ * whole is as wide as the stack, the list's mark and that name, and the widest condition. */
+function outcomesX() {
+  const widest = (list) => Math.max(...list.map((v) => measure(v, LABEL))),
+    width =
+      PLANE_W +
+      80 +
+      18 +
+      NAME_GAP +
+      widest(outcomeNames()) +
+      TERM_GAP +
+      widest(outcomeQuals().map((q) => q.join("")));
+  return 960 - width / 2;
+}
 
 /* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the
  * rule is stated. */
@@ -111,23 +135,23 @@ export function verifiedStage(s, t, c, g) {
  * with what it alone permits and block and unknown with their conditions; unknown is never permission. The list keeps
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row, the outcomes on the
  * next three, and "never permission" on the last, a row of its own after unknown. The checks with no result are linked
- * to unknown, and "no problem" is refused. The stack rises a little to keep the balance. */
+ * to unknown, and "no problem" is refused. The stack rises a little and moves to where the stack and the list,
+ * together, stand on the content centre. */
 export function outcomesStage(s, t, c, g) {
-  const top = mix(TOP, 340, soon(t, c.first4 + 0.05, 0.7)),
-    LX = ASIDE + PLANE_W + 80,
+  const settle = soon(t, c.first4 + 0.05, 0.7),
+    top = mix(TOP, 340, settle),
+    x = mix(ASIDE, outcomesX(), settle),
+    LX = x + PLANE_W + 80,
     em = labelSize(LABEL),
-    names = L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]),
-    quals = L(
-      [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
-      [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]],
-    ),
+    names = outcomeNames(),
+    quals = outcomeQuals(),
     kinds = ["pass", "block", "unknown"],
     ats = [c.pass, c.block, c.unknown],
     qualAts = [c.ahead, c.conflict, c.missing],
     ys = [1, 2, 3].map((i) => rowOf(top, i)),
     // The conditions stand in one column after the widest outcome's name.
     qualLeft = LX + 18 + NAME_GAP + Math.max(...names.map((v) => measure(v, LABEL))) + TERM_GAP;
-  planeStack(t, ASIDE, top, { alpha: g });
+  planeStack(t, x, top, { alpha: g });
   termRow(
     t,
     L(["一次判断的结果"], ["A judgment"]),
@@ -156,14 +180,14 @@ export function outcomesStage(s, t, c, g) {
   // The example: the checks on GitLab and GitHub, with no result yet, are unknown.
   const two = rowOf(top, 1),
     example = g * named(t, c.isUnknown);
-  beats(t, ASIDE + PLANE_W - 36, two, 22, [c.example, c.notYet], { alpha: g });
-  link(ASIDE + PLANE_W, two, LX - 26, ys[2], {
+  beats(t, x + PLANE_W - 36, two, 22, [c.example, c.notYet], { alpha: g });
+  link(x + PLANE_W, two, LX - 26, ys[2], {
     route: "hvh",
     alpha: example,
     upto: soon(t, c.isUnknown + 0.05, 0.5),
     flow: (voiceTime(t) * 0.45) % 1,
   });
-  rejectedName(L("没有问题", "No problem"), ASIDE + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
+  rejectedName(L("没有问题", "No problem"), x + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
     alpha: g * named(t, c.noProblem),
     mark: ramp(t, c.noProblem + 0.35, 0.35),
   });
@@ -174,7 +198,7 @@ export function outcomesStage(s, t, c, g) {
 export function refusedStage(s, t, c, g) {
   const settle = soon(t, c.first5 + 0.05, 0.7),
     top = mix(340, 320, settle),
-    x = mix(ASIDE, 480, settle),
+    x = mix(outcomesX(), 480, settle),
     sy = top + 5 * PLANE_STEP,
     offered = g * named(t, c.distinction),
     refused = soon(t, c.never2 + 0.05, 0.5);
