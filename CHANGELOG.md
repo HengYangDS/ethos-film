@@ -10,8 +10,8 @@ All notable changes to the ETHOS introduction films and their build are recorded
 
 ### Changed
 
-- The repository runs ETHOS 0.2.0-alpha.28, and its CI workflow uses `jdx/mise-action` 5.2.5.
-- The films are built by `filmkit` 0.8.1, which renders with HyperFrames 0.9.9, checks each edition's picture, including how its text lines up and how it stands as the reviewers measure balance, with the film's own fonts, before it renders, sets each caption's quotation marks as the picture sets them and narrates with mlx-audio 0.6.4, and the supply moves to its latest stable releases: Node 26.13.0, uv 0.13.6, esbuild 0.28.2, hatchling 1.33.0, coverage 7.17.0, pytest 9.2.0 and Mise 2026.10.25 in CI, with both locks at the newest releases their declarations admit.
+- The repository runs ETHOS 0.2.0-alpha.29, and its CI workflow uses `jdx/mise-action` 5.2.6.
+- The films are built by `filmkit` 0.8.1, which renders with HyperFrames 0.9.9, checks each edition's picture, including how its text lines up and how it stands as the reviewers measure balance, with the film's own fonts, before it renders, sets each caption's quotation marks as the picture sets them and narrates with mlx-audio 0.6.4, and the supply moves to its latest stable releases: Node 26.13.0, uv 0.13.7, esbuild 0.28.2, hatchling 1.33.0, coverage 7.17.0, pytest 9.2.0 and Mise 2026.10.25 in CI, with both locks at the newest releases their declarations admit.
 
 ## [1.0.1] - 2026-11-02
 
