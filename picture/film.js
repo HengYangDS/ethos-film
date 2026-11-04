@@ -1453,6 +1453,10 @@ function checksGrid(x, y, n, { alpha = 1, step = 46 } = {}) {
   draw(whole, whole + 1, alpha * part);
 }
 scenes["01"] = function(s, t) {
+  if (t < s.words[0].start - 0.12) {
+    titleSignature(1);
+    return;
+  }
   const first = s.words[0].start;
   const [hand, done, pass2, landed, much] = cues(s, [
     ["交回来", "hands back"],

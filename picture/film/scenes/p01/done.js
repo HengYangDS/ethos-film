@@ -1,5 +1,7 @@
 /* 01 "Done": an Agent hands back one sentence, the sentence leaves four questions open, the work is now done by
- * interchangeable Agents, and the two usual answers to such a sentence both fail; ETHOS is built for that. */
+ * interchangeable Agents, and the two usual answers to such a sentence both fail; ETHOS is built for that. The opening
+ * quiet shows the title signature, as the first edition's opening did, and hands the picture to the Agent in one cut
+ * just before the first word. */
 
 import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 import { ctx } from "../../canvas.js";
@@ -19,6 +21,7 @@ import {
 import { agent, check, documentIcon, person } from "../../drawing/symbols.js";
 import { commitDot, recoverIcon, repoIcon } from "../../drawing/workspace.js";
 import { illustrative } from "../../framing/chapters.js";
+import { titleSignature } from "../../framing/titles.js";
 import { beats, building, listIn, named, speaking } from "../../naming/lists.js";
 import { NAME_GAP, growName, nameText, wrapName } from "../../naming/names.js";
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
@@ -102,6 +105,11 @@ function checksGrid(x, y, n, { alpha = 1, step = 46 } = {}) {
 }
 
 scenes["01"] = function (s, t) {
+  // The opening quiet: the title signature stands until one cut hands the picture to the Agent.
+  if (t < s.words[0].start - 0.12) {
+    titleSignature(1);
+    return;
+  }
   const first = s.words[0].start;
   const [hand, done, pass, landed, much] = cues(s, [
     ["交回来", "hands back"],
