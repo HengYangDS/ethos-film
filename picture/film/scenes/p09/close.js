@@ -28,15 +28,18 @@ import { scenes } from "../registry.js";
  * further down than a next row would, and starting at the markers' edge rather than the rows' text. The names under the
  * chain, the seal's and the question put later under the sentence, stand on one baseline under its deepest mark, the
  * sentence's panel. The picture stands centred on the frame, the Agent and its sentence on the left and the empty
- * place on the right, while ETHOS's way is named; as the seal takes the place, the Agent, the sentence and the seal
- * with its name glide to stand centred together, as far as the first row, arriving next, allows while it stands inside
- * the frame; on the words of the first row the picture glides to its finished place, which is centred too. */
+ * place on the right, while ETHOS's way is named, and keeps that place as the seal takes the empty place: the place
+ * is as wide as lets the seal and its name stand near the centre there, and the first row, arriving next, inside the
+ * frame. On the words of the first row the picture glides left to its finished place, which is centred too, so the
+ * stage only ever moves one way. */
 const BOUND_X = 700,
   BOUND_END = 1140,
-  // The empty place at the link's end, where the attestations will stand.
-  PLACE = 200,
+  // The empty place at the link's end, where the attestations will stand. Taking it, the seal and its name stand 36 px
+  // left of the centre in both editions without the picture moving: the place is narrower in Chinese, whose seal's
+  // name is short, and in English it is as narrow as lets the first row arrive inside the frame.
+  PLACE = () => L(130, 180),
   // English hangs its rows 20 px nearer the seal than Chinese, so its first row can arrive inside the frame while the
-  // seal and the sentence stand centred; its longer seal name still keeps 46 px clear of the fan's trunk.
+  // seal and the sentence stand near the centre; its longer seal name still keeps 46 px clear of the fan's trunk.
   FAN = () => L(210, 190),
   // The rows stand a pitch apart that keeps the seal's name, under the middle row, clear of the last row's line.
   BOUND_ROWS = [385, 470, 555],
@@ -65,14 +68,11 @@ function bound(s, t, a) {
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"],
   ]);
-  // Before its rows arrive the picture runs from the Agent to the empty place at the link's end, which the seal takes.
-  // As it does, the picture glides to where the Agent and the seal with its name stand centred, as far as the first
-  // row, arriving next, can still stand inside the frame's safe area (to 1824, with room for the camera's push); on the
-  // first row's words it glides to its finished place.
-  const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE) / 2,
-    sealed =
-      960 - (BOUND_X - 370 - 34 + BOUND_END + 36 + Math.max(28, measure(SEAL_NAME()) / 2)) / 2,
-    ready = Math.min(sealed, 1824 - 12 - (BOUND_END + FAN() + 30 + measure(ATTESTED()[0]))),
+  // Before its rows arrive the picture runs from the Agent to the empty place at the link's end, which the seal takes,
+  // and it stays there, unless the first row, arriving next, would not stand inside the frame's safe area (to 1824,
+  // with room for the camera's push); on the first row's words it glides left to its finished place.
+  const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE()) / 2,
+    ready = Math.min(before, 1824 - 12 - (BOUND_END + FAN() + 30 + measure(ATTESTED()[0]))),
     off = mix(
       mix(before, ready, soon(t, attestAt + 0.05, 0.9)),
       boundShift(),
@@ -115,7 +115,7 @@ function bound(s, t, a) {
     flow: way < 1 ? (voiceTime(t) * 0.4) % 1 : null,
   });
   link(dx + 16, dy, end, dy, { alpha: a * way, flow: (voiceTime(t) * 0.4) % 1 });
-  box(end + 6, dy - 45, PLACE, 90, {
+  box(end + 6, dy - 45, PLACE(), 90, {
     stroke: P.line,
     alpha: clear * (1 - at),
     radius: 10,

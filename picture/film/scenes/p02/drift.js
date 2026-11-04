@@ -232,10 +232,11 @@ export function stageSummaries(t, a, c) {
     line(x - 44, LY, x + 44, LY, { color: P.ink, alpha: on * (1 - gone), width: 3 });
     dashed(x - 44, LY, x + 44, LY, { color: P.ink, alpha: on * gone * 0.85, width: 3 });
   });
+  // The second name keeps "must not" on one line, so its first line never reads as an obligation.
   railNames(
     L(
       ["没写下来的约束", "不能做什么", "想要得到的好处"],
-      ["Never written down", "What must not be done", "The benefit"],
+      ["Never written down", ["What must not", "be done"], "The benefit"],
     ),
     xs,
     LY,

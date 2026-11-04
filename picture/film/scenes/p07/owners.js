@@ -319,7 +319,9 @@ export function replacement(s, t, a) {
  * arriving a moment later, stand balanced on the frame (English, whose delivered rows come more than a second later,
  * stands the Change alone centred until their words and glides there with them); on the words that bring the record
  * the picture glides, as one unit, to where the whole is centred by its outer edges, the Change on the left and the
- * record on the right. */
+ * record on the right. The record's ledger stands a fixed run right of the Change, or further where the delivered
+ * rows' name would come within two gaps of its edge, so that name, one gap from its own bracket, reads with the
+ * bracket alone. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
@@ -328,15 +330,19 @@ export function closing(s, t, a) {
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
   ]);
-  const DELIVERED = L("做到哪儿，就按哪儿收尾", "what it actually delivered"),
+  // English sets the delivered rows' name on two lines beside their bracket, breaking before "actually delivered" so
+  // no word stands alone on a line; the Chinese name fits on one.
+  const DELIVERED = L("做到哪儿，就按哪儿收尾", ["what it", "actually delivered"]),
     RECORD = L("没做完的留下记录", "unfinished work stays on the record"),
     DY = 440,
     H = 270,
     left = Math.min(700 - 100, 700 - nameWidth(L("一项正式变更", "an official Change")) / 2),
-    // English sets the delivered rows' name on two lines beside their bracket; the Chinese name fits on one.
     DELIVERED_WIDTH = L(330, 300),
     delivered = 700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH),
-    right = Math.max(1240 + 55, 1240 + nameWidth(RECORD, 300) / 2, delivered),
+    // The record's ledger, 110 px wide, stands RECORD_DX right of the Change: 540 px, or as far as keeps two gaps of
+    // ground between the delivered rows' name and the ledger's edge.
+    RECORD_DX = Math.max(540, delivered - 700 + 2 * NAME_GAP + 55),
+    right = Math.max(700 + RECORD_DX + 55, 700 + RECORD_DX + nameWidth(RECORD, 300) / 2, delivered),
     // Where the Change stands from its words: where it and its delivered rows, arriving a moment later, are centred.
     // Chinese, whose delivered name is one wide line, keeps the Change within 30 px of the place of the way the stage
     // before showed on the left, so the cut between them reads as one card changing rather than a jump; its delivered
@@ -349,7 +355,7 @@ export function closing(s, t, a) {
     // The picture's offset: that place, then, on the record's words, where the whole is centred.
     S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)),
     LX = 700 + S,
-    RX = 1240 + S,
+    RX = 700 + RECORD_DX + S,
     top = rowNameTop([DY + H / 2, DY + 70 + 70]);
   const c = a * named(t, changeAt),
     d = a * named(t, deliveredAt),

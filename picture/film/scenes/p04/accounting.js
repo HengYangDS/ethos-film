@@ -298,15 +298,16 @@ export function compileStage(s, t, c, g) {
 }
 
 /* 04.6 Only leads: a conversation, a memory and a summary build as a list, then step back as leads. The row builds
- * from its left and stays centred on what it shows, as the compiled chain before it does: it stands half a pitch to the
- * right for each member still to come, and glides that half pitch as one unit on the words of each further member. */
+ * from its left and stays centred on what it shows: the conversation stands alone on the axis, a pitch to the right of
+ * its place, and as the memory and the summary are named, half a second apart, the row makes room for both in one
+ * eased glide, from just after the memory's words to 0.7 s after the summary's, so it never pauses between them. */
 const LEADS_PITCH = 300;
 export function leadsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]),
     ats = [c.talk, c.memory, c.summaries],
-    come = ats.slice(1).reduce((v, at) => v + 1 - soon(t, at + 0.05, 0.7), 0),
-    xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * k + (LEADS_PITCH / 2) * come),
+    room = soon(t, c.memory + 0.05, c.summaries - c.memory + 0.7),
+    xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * (k + 1 - room)),
     Y = 620,
     back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
   ats.forEach((at, i) => {

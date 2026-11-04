@@ -57,21 +57,33 @@ function unknownMark(x, y, alpha) {
   ring(x, y, UNKNOWN_R, { color: P.ink, alpha, width: 3 });
   text("?", x, y + 1, UNKNOWN_R * 1.25, { role: "mark", align: "center", alpha });
 }
-/* Where a stage built part by part stands: centred on what stands. Each part is [the word that brings it, its left,
- * its right]; the first stands from the cut, and each later part that widens what stands glides the stage as one to
- * centre the new extent, from just after its words. Returns the stage's shift. */
+/* Where a stage built part by part stands: centred on what stands, travelling one way only. Each part is [the word that
+ * brings it, its left, its right]; the first stands from the cut, and each later part that widens what stands glides
+ * the stage as one, from just after its words, toward the place that centres the new extent, but never past the
+ * stage's finished place and never back: where parts arrive on alternate sides, the stage stops at its finished place
+ * and the later parts fill it, so no glide reverses the one before it. Returns the stage's shift. */
 function standing(t, parts) {
   const [[, x0, x1], ...rest] = parts;
   let left = x0,
     right = x1;
-  const steps = [];
+  const states = [];
   for (const [at, l, r] of rest.sort((p, q) => p[0] - q[0])) {
     if (l >= left && r <= right) continue;
     left = Math.min(left, l);
     right = Math.max(right, r);
-    steps.push([at, centring(left, right)]);
+    states.push([at, centring(left, right)]);
   }
-  return glide(t, centring(x0, x1), steps);
+  const first = centring(x0, x1),
+    last = states.at(-1)?.[1] ?? first,
+    way = Math.sign(last - first),
+    steps = [];
+  let shift = first;
+  for (const [at, v] of states) {
+    const next = way < 0 ? Math.max(last, Math.min(shift, v)) : Math.min(last, Math.max(shift, v));
+    if (next !== shift) steps.push([at, next]);
+    shift = next;
+  }
+  return glide(t, first, steps);
 }
 
 /* 02.5 Two Agents work on the same branch. One keeps a memory of the branch as it was, three commits; it writes from

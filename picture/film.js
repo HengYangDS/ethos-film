@@ -1882,7 +1882,7 @@ function stageSummaries(t, a, c) {
   railNames(
     L(
       ["没写下来的约束", "不能做什么", "想要得到的好处"],
-      ["Never written down", "What must not be done", "The benefit"]
+      ["Never written down", ["What must not", "be done"], "The benefit"]
     ),
     xs,
     LY,
@@ -2397,14 +2397,21 @@ function unknownMark(x, y, alpha) {
 function standing(t, parts) {
   const [[, x0, x1], ...rest] = parts;
   let left = x0, right = x1;
-  const steps = [];
+  const states = [];
   for (const [at, l, r] of rest.sort((p, q) => p[0] - q[0])) {
     if (l >= left && r <= right) continue;
     left = Math.min(left, l);
     right = Math.max(right, r);
-    steps.push([at, centring(left, right)]);
+    states.push([at, centring(left, right)]);
   }
-  return glide(t, centring(x0, x1), steps);
+  const first = centring(x0, x1), last = states.at(-1)?.[1] ?? first, way = Math.sign(last - first), steps = [];
+  let shift = first;
+  for (const [at, v] of states) {
+    const next = way < 0 ? Math.max(last, Math.min(shift, v)) : Math.min(last, Math.max(shift, v));
+    if (next !== shift) steps.push([at, next]);
+    shift = next;
+  }
+  return glide(t, first, steps);
 }
 function stageBranch(t, a, c) {
   if (a <= 0) return;
@@ -4040,7 +4047,7 @@ function compileStage(s, t, c, g) {
 var LEADS_PITCH = 300;
 function leadsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]), ats = [c.talk, c.memory, c.summaries], come = ats.slice(1).reduce((v, at) => v + 1 - soon(t, at + 0.05, 0.7), 0), xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * k + LEADS_PITCH / 2 * come), Y3 = 620, back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
+  const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]), ats = [c.talk, c.memory, c.summaries], room = soon(t, c.memory + 0.05, c.summaries - c.memory + 0.7), xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * (k + 1 - room)), Y3 = 620, back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
   ats.forEach((at, i) => {
     const on = g * ramp(t, at - 0.15, 0.4) * back;
     if (i === 0) bubble(xs[i], Y3, 40, { alpha: on, color: P.ink });
@@ -5565,7 +5572,7 @@ function closing(s, t, a) {
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"]
   ]);
-  const DELIVERED = L("做到哪儿，就按哪儿收尾", "what it actually delivered"), RECORD = L("没做完的留下记录", "unfinished work stays on the record"), DY = 440, H = 270, left = Math.min(700 - 100, 700 - nameWidth(L("一项正式变更", "an official Change")) / 2), DELIVERED_WIDTH = L(330, 300), delivered = 700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH), right = Math.max(1240 + 55, 1240 + nameWidth(RECORD, 300) / 2, delivered), centred = 960 - (left + delivered) / 2, held = L(Math.min(30, centred), centred), alone = 960 - (left + Math.max(700 + 100, 1400 - left)) / 2, first = mix(L(held, alone), held, soon(t, deliveredAt + 0.05, 0.7)), S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)), LX = 700 + S, RX = 1240 + S, top = rowNameTop([DY + H / 2, DY + 70 + 70]);
+  const DELIVERED = L("做到哪儿，就按哪儿收尾", ["what it", "actually delivered"]), RECORD = L("没做完的留下记录", "unfinished work stays on the record"), DY = 440, H = 270, left = Math.min(700 - 100, 700 - nameWidth(L("一项正式变更", "an official Change")) / 2), DELIVERED_WIDTH = L(330, 300), delivered = 700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH), RECORD_DX = Math.max(540, delivered - 700 + 2 * NAME_GAP + 55), right = Math.max(700 + RECORD_DX + 55, 700 + RECORD_DX + nameWidth(RECORD, 300) / 2, delivered), centred = 960 - (left + delivered) / 2, held = L(Math.min(30, centred), centred), alone = 960 - (left + Math.max(700 + 100, 1400 - left)) / 2, first = mix(L(held, alone), held, soon(t, deliveredAt + 0.05, 0.7)), S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)), LX = 700 + S, RX = 700 + RECORD_DX + S, top = rowNameTop([DY + H / 2, DY + 70 + 70]);
   const c = a * named(t, changeAt), d = a * named(t, deliveredAt), r = a * named(t, recordAt), p = a * named(t, passAt);
   taskList(LX, DY, 200, H, { alpha: c, done: 2, tick: d });
   nameText(L("一项正式变更", "an official Change"), LX, top, {
@@ -6696,7 +6703,7 @@ scenes["08"] = function(s, t) {
 // picture/film/scenes/p09/close.js
 var BOUND_X = 700;
 var BOUND_END = 1140;
-var PLACE = 200;
+var PLACE = () => L(130, 180);
 var FAN = () => L(210, 190);
 var BOUND_ROWS = [385, 470, 555];
 var SEAL_NAME = () => L("存证", "attestations");
@@ -6719,7 +6726,7 @@ function bound(s, t, a) {
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"]
   ]);
-  const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE) / 2, sealed = 960 - (BOUND_X - 370 - 34 + BOUND_END + 36 + Math.max(28, measure(SEAL_NAME()) / 2)) / 2, ready = Math.min(sealed, 1824 - 12 - (BOUND_END + FAN() + 30 + measure(ATTESTED()[0]))), off = mix(
+  const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE()) / 2, ready = Math.min(before, 1824 - 12 - (BOUND_END + FAN() + 30 + measure(ATTESTED()[0]))), off = mix(
     mix(before, ready, soon(t, attestAt + 0.05, 0.9)),
     boundShift(),
     soon(t, commitAt + 0.05, 0.9)
@@ -6747,7 +6754,7 @@ function bound(s, t, a) {
     flow: way < 1 ? voiceTime(t) * 0.4 % 1 : null
   });
   link(dx + 16, dy, end, dy, { alpha: a * way, flow: voiceTime(t) * 0.4 % 1 });
-  box(end + 6, dy - 45, PLACE, 90, {
+  box(end + 6, dy - 45, PLACE(), 90, {
     stroke: P.line,
     alpha: clear * (1 - at),
     radius: 10,
