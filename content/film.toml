@@ -66,35 +66,51 @@ readings = "content/review/readings.json"
 overall_minimum = 95
 dimension_minimum = 95
 
-# The scored dimensions in record order, with what each one asks reviewers to judge.
+# The scored dimensions in record order, with what each one asks reviewers to judge. Each states what an
+# excellent film shows; the verifier refuses a review that scores any of them below dimension_minimum.
 [review.dimensions]
 subject_and_faithfulness = """\
-  ETHOS remains the subject; every claim follows its cited sections with their conditions, \
-  modalities and scope; planned capabilities are stated as design; the pipeline and signal \
-  examples stay illustrative; human and Agent roles accurate."""
+  ETHOS remains the subject; what it is and why it is built as it is come before how, and the \
+  most important ideas of the pinned release are present; every claim follows its cited sections \
+  with their conditions, modalities and scope; planned capabilities are stated as design; the \
+  pipeline example stays illustrative; human and Agent roles accurate."""
 concept_fidelity = """\
   each concept the film names keeps its source meaning as the concept contract quotes it, in \
   the edition's one rendering through narration, captions, titles and picture; no rendering \
   narrows, personifies, substitutes or literally translates a concept."""
 narrative_and_clarity = """\
-  the real problem before the response; terms defined before use; connected argument; clear \
-  chapter boundaries; ending returns to the opening; the edition stands alone."""
-narration_identity_and_performance = """\
-  same voice identity across editions; delivery natural (not sleepy, rushed or theatrical); \
-  distinct thought pauses, paragraph boundaries and audible phrase tails; continuous and \
-  idiomatic."""
-pronunciation_and_bilingual_language = """\
-  tones and polyphones in context or English vowels and stress; idiomatic language (not \
-  translated); consistent terms."""
+  the real problem before the response; one running story carries the mechanisms; terms defined \
+  before use; connected argument; clear chapter boundaries; the ending returns to the opening; \
+  the edition stands alone for a first-time viewer."""
+language_quality = """\
+  faithful, clear and elegant (信、达、雅): plain spoken language a person would say, with no \
+  staged contrasts, one-line closers, forced triads, run-ups, translationese or stock phrases; the \
+  Chinese reads as spoken Chinese, not a translation of the English."""
+voice_quality = """\
+  a clear, warm and present voice, neither hoarse, breathy, strained, muffled nor metallic: \
+  cepstral peak prominence over the loud speech frames at least 18.5 dB in Chinese and 17 dB in \
+  English, near the clear reference narrations; one voice identity across both editions."""
+narration_performance = """\
+  delivery natural, neither sleepy, rushed nor theatrical; distinct thought pauses, paragraph \
+  boundaries and audible phrase tails, with no swallowed ending; continuous and idiomatic \
+  phrasing."""
+pronunciation = """\
+  tones and polyphones in context, English vowels and stress, and each name's declared spoken \
+  form; one consistent term for each concept."""
 visual_explanation_and_motion = """\
-  pictures explain relationships, operations, comparisons and consequences as narration \
+  pictures explain relationships, operations, comparisons and consequences as the narration \
   develops; restrained but varied, intentional 2D motion; text supports the visual argument."""
 composition_and_typography = """\
-  alignment guides, hierarchy, margins, density, modest single-line captions, consistent color \
-  and contrast; collisions or clipping with timecodes."""
+  the text on screen aligned, tidy and beautiful (文字的对齐、工整和美感): alignment guides, \
+  even pitch, hierarchy, margins, density and modest single-line captions; collisions or clipping \
+  with timecodes."""
+visual_aesthetics_and_color = """\
+  an elegant, coherent whole with taste: a calm ground without a colour cast, accents that carry \
+  meaning only, every text at least 4.5:1 against the ground, one palette from cover to credits."""
 sound_picture_continuity = """\
   speech, captions, diagrams and scene changes synchronized; complete thoughts survive the \
   edit; image stays purposeful through transitions and pauses."""
 credits_and_deliverable_craft = """\
-  covers and Yang HENG metadata; restrained signature; subtitles and transcript match the \
-  speech; chapters; player; opening, ending, covers and entry form one edition."""
+  the film opens on its title card and closes on its signature; covers match the title card; \
+  Yang HENG metadata; subtitles and transcript match the speech; chapters; player; a runtime that \
+  is a whole multiple of five minutes; opening, ending, covers and entry form one edition."""

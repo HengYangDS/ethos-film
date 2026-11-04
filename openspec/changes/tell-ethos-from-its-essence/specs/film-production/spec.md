@@ -82,6 +82,21 @@ Each selected take SHALL end on its own and SHALL read each context-dependent wo
 - **THEN** the last 10 ms of each thought before the silence that follows it lie at or below -55 dBFS before the program gain
 - **AND** the assembly record shows no released tail for any thought
 
+### Requirement: The final films earn an evidence-bound review
+
+The final films SHALL meet the review contract the declaration states: every declared dimension at least 95 and the overall score, the mean of the dimensions, at least 95, scored against the exact final files. The declared dimensions SHALL state what an excellent film shows and SHALL score, each on its own, faithfulness, concept fidelity, narrative clarity, language quality, voice quality, narration performance, pronunciation, visual explanation, typography, visual aesthetics and colour, sound-picture continuity, and credits and delivery craft. The reviewer SHALL check, one by one, every pattern the owner has rejected in an earlier edition, and any one found is a material finding. The review SHALL keep observed modalities separate from unassessed ones, and human listening SHALL be reported as recorded, never inferred from model review or measurements.
+
+#### Scenario: A review that binds the final films qualifies
+
+- **WHEN** the production review of both editions is verified
+- **THEN** it names both editions' movie hashes, the current scripts and the composition
+- **AND** a missing dimension, a mismatched mean, a score below its floor or a material finding refuses
+
+#### Scenario: A rejected pattern cannot pass
+
+- **WHEN** a reviewer finds in either edition a pattern the owner has rejected, such as a hoarse voice, a swallowed phrase tail, a ground with a colour cast or an opening without its title card
+- **THEN** the finding is material and the review refuses
+
 ## ADDED Requirements
 
 ### Requirement: Concepts keep their source definitions

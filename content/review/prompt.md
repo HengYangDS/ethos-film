@@ -34,6 +34,18 @@ Score each dimension 0-100:
 
 The overall score is the mean of the dimensions, rounded to one decimal.
 
+## What the owner has rejected
+The owner watched and heard earlier editions and rejected each of the following. Check every item explicitly on these media and say in the review what you checked. Any occurrence is a material finding in the dimension named:
+1. A spoken list that slides, erases or replaces items it has shown; words set by hand or staggered; plain lines with arrowheads (visual_explanation_and_motion, composition_and_typography).
+2. Text on screen that is ragged, misaligned, unevenly pitched or off balance (composition_and_typography).
+3. A swallowed or clipped phrase tail (narration_performance).
+4. A hoarse or breathy voice (voice_quality). Measure clarity yourself: decode the soundtrack to 16 kHz mono; take 1024-sample Hann frames with a 256-sample hop; keep the frames within 18 dB of the 95th-percentile frame energy; per frame, take the cepstrum of the log power spectrum, find its peak over quefrencies of 1/400 to 1/60 s and its prominence in dB above the straight line fitted to that range; report the median over the frames of each segment and of the whole soundtrack.
+5. A ground with a colour cast, or secondary text or an accent below 4.5:1 against the ground (visual_aesthetics_and_color).
+6. An opening without the title card, or a cover that does not match it (credits_and_deliverable_craft).
+7. A concept rendering that narrows, personifies or literally translates its concept, such as a person standing in for authority (concept_fidelity).
+8. Phrasing that sounds machine-written: staged not-X-but-Y contrasts, one-line closers, forced triads, roadmap run-ups, dashes, translationese or stock phrases (language_quality).
+9. A runtime that is not a whole multiple of five minutes (credits_and_deliverable_craft).
+
 ## Score anchors
 Every dimension and both editions use the same anchors:
 - Every point below 100 is accounted for by a cited finding with its location, what was observed or measured, its impact, the repair and an automated reverification. A deduction without a finding is not allowed.
