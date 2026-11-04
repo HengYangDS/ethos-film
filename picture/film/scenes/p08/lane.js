@@ -40,7 +40,7 @@ export function lifeStart(s, t, a) {
     ["把这项需求", "Now follow"],
     ["这项需求的一生", "this requirement"],
   ]);
-  const NAME = L("这项需求的一生", "this requirement"),
+  const NAME = L("这项需求的一生", "This requirement"),
     nameX = REQ_X + REQ[0] / 2 + 24,
     alone = 960 - (REQ_X - REQ[0] / 2 + nameX + measure(NAME)) / 2 - LIFE_DX;
   ctx.save();
@@ -54,7 +54,7 @@ export function lifeStart(s, t, a) {
     alpha: a * ramp(t, thisAt - 0.4, 0.4),
   });
   if (en)
-    nameText("its whole life", 1120, RAIL_Y - 34, {
+    nameText("Its whole life", 1120, RAIL_Y - 34, {
       valign: "bottom",
       alpha: a * named(t, cue(s, "这项需求的一生", "its whole life")),
     });
@@ -62,15 +62,19 @@ export function lifeStart(s, t, a) {
   ctx.restore();
 }
 
-/* The stations of 08.2 along the rail, and the Work Lane's span between its folder and its gate. */
-const XS = [REQ_X, 490, 680, 1180, 1460];
+/* The stations of 08.2 along the rail, and the Work Lane's span between its folder and its gate. English names are
+ * longer: its stations stand further apart, so that "Official Change" and the file's name each keep one line, the
+ * Change one pitch from the request's name, which breaks after its article, and the lane long enough for its two
+ * records' names to stand apart; its names wrap no narrower than the file's. */
+const XS = () => L([REQ_X, 490, 680, 1180, 1460], [REQ_X, 530, 760, 1190, 1556]),
+  STATION_WRAP = () => L(240, 340);
 const STATIONS = () => [
   // Authored as its lines: wrapped by measure, the English name would break onto three.
-  L("研究员的要求", ["The researcher's", "request"]),
-  L("正式变更", "official Change"),
+  L("研究员的要求", ["The", "researcher's request"]),
+  L("正式变更", "Official Change"),
   L("工作通道", "Work Lane"),
-  L("再查一次", "checks once more"),
-  L("受版本管理的文件", "file under version control"),
+  L("再查一次", "One more check"),
+  L("受版本管理的文件", "File under version control"),
 ];
 const LEASE_Y = 405;
 
@@ -93,7 +97,8 @@ export function lane(s, t, a) {
     spoken = [...ats].sort((p, q) => p - q),
     level = (i) => a * listIn(t, spoken, spoken.indexOf(ats[i])),
     shown = (i) => a * named(t, ats[i]),
-    [x0, x1, x2, x3, x4] = XS;
+    xs = XS(),
+    [x0, x1, x2, x3, x4] = xs;
   ctx.save();
   ctx.translate(LIFE_DX, 0);
   journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a });
@@ -111,11 +116,17 @@ export function lane(s, t, a) {
   });
   writeGate(x3, RAIL_Y, 110, { alpha: shown(3), open: soon(t, writeAt + 0.05, 0.6) });
   docMark(x4 - 45, RAIL_Y - 57, 90, 115, { alpha: shown(4), rows: 3 });
-  railNames(STATIONS(), XS, RAIL_Y + 85, { alpha: level, set: "08.2:stations" });
-  // Who holds the lane and until when, on record above it, each linked from the lane on its words.
+  railNames(STATIONS(), xs, RAIL_Y + 85, {
+    alpha: level,
+    set: "08.2:stations",
+    wrap: STATION_WRAP(),
+  });
+  // Who holds the lane and until when, on record above it, each linked from the lane on its words; the English names
+  // wrap within the distance between them, less a gap, and the Chinese ones stand on one line each.
   const lease = [holdAt, untilAt],
     hx = mix(x2, x3, 0.3),
     ux = mix(x2, x3, 0.7),
+    leaseWrap = L(230, Math.min(230, ux - hx - 30)),
     h = a * named(t, holdAt),
     u = a * named(t, untilAt);
   agent(hx, LEASE_Y, { size: 0.9, alpha: h });
@@ -131,15 +142,15 @@ export function lane(s, t, a) {
     upto: soon(t, untilAt + 0.05, 0.5),
     end: false,
   });
-  nameText(L("由谁持有", "who holds that lane"), hx, LEASE_Y - 34, {
+  nameText(L("由谁持有", "Who holds that lane"), hx, LEASE_Y - 34, {
     valign: "bottom",
-    width: 230,
+    width: leaseWrap,
     alpha: a * listIn(t, lease, 0),
     set: "08.2:lease",
   });
-  nameText(L("持有到什么时候", "until when"), ux, LEASE_Y - 34, {
+  nameText(L("持有到什么时候", "Until when"), ux, LEASE_Y - 34, {
     valign: "bottom",
-    width: 230,
+    width: leaseWrap,
     alpha: a * listIn(t, lease, 1),
     set: "08.2:lease",
   });
@@ -157,9 +168,9 @@ export function lane(s, t, a) {
 
 /* The sources the Agent taking over reads, in ETHOS's order: each a term with what it tells, and its mark. */
 const SOURCES = () => [
-  [L("刚观察到的事实", "fresh facts"), L("仓库现在是什么样子", "as it is now")],
-  [L("正式变更", "the Change"), L("要做什么、做到什么样才算完", "what counts as done")],
-  [L("已有的存证", "attestations"), L("做过了什么、哪些核验已经通过", "which proofs have passed")],
+  [L("刚观察到的事实", "Fresh facts"), L("现在是什么样子", "as it is now")],
+  [L("正式变更", "The Change"), L("做到什么样才算完", "what counts as done")],
+  [L("已有的存证", "Attestations"), L("哪些核验已经通过", "which proofs have passed")],
 ];
 const ROWS = [360, 500, 640],
   ORDER_X = 1140,
@@ -191,7 +202,7 @@ export function handoff(s, t, a) {
       ["接手的 Agent", "the Agent that takes over"],
       ["前一个的记忆", "the last one's memory"],
       ["刚观察到的事实", "fresh facts"],
-      ["仓库现在是什么样子", "as it is now"],
+      ["现在是什么样子", "as it is now"],
       ["再读正式变更", "reads the Change"],
       ["做到什么样才算完", "what counts as done"],
       ["已有的存证", "attestations already"],
@@ -243,21 +254,21 @@ export function handoff(s, t, a) {
   agent(AX, AY, { size: 1.1, alpha: a * (1 - 0.5 * ended) });
   ring(AX, AY, 34, { color: P.line, alpha: a * ended, width: 2, dash: [6, 6] });
   link(AX, AY + 28, AX, RAIL_Y - 20, { alpha: a * (1 - passed) });
-  nameText(L("会话结束了", "session ends"), AX, AY - 40, {
+  nameText(L("会话结束了", "Session ends"), AX, AY - 40, {
     valign: "bottom",
     alpha: a * named(t, endsAt),
   });
   agent(BX, AY, { size: 1.1, alpha: b });
   link(BX, AY + 28, BX, RAIL_Y - 20, { alpha: b * passed, upto: passed });
   // Authored as its lines, so the English breaks before "that" rather than after it.
-  nameText(L("接手的 Agent", ["the Agent", "that takes over"]), BX, AY - 40, {
+  nameText(L("接手的 Agent", ["The Agent", "that takes over"]), BX, AY - 40, {
     valign: "bottom",
     width: 320,
     alpha: b,
   });
   // The last one's memory, held between them under the rail and refused.
   bubble((AX + BX) / 2, RAIL_Y + 80, 18, { alpha: m, color: P.muted });
-  rejectedName(L("前一个的记忆", "the last one's memory"), (AX + BX) / 2, RAIL_Y + 130, {
+  rejectedName(L("前一个的记忆", "The last one's memory"), (AX + BX) / 2, RAIL_Y + 130, {
     alpha: m,
     mark: ramp(t, memoryAt + 0.3, 0.4),
   });

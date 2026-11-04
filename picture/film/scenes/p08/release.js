@@ -10,7 +10,7 @@ import { agent, check, clock, lock, person, seal } from "../../drawing/symbols.j
 import { askIcon, commitDot, tagIcon } from "../../drawing/workspace.js";
 import { commitRow } from "../../drawing/history.js";
 import { listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText } from "../../naming/names.js";
+import { NAME_GAP, nameText, termRow, termRowLayout } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { nameWidth } from "../p07/example.js";
 import { P } from "../../palette.js";
@@ -46,9 +46,9 @@ export function release(s, t, a) {
     ["分别发布", "published to each platform"],
     ["单独确认", "confirmed on its own"],
   ]);
-  const DONE = L("改完以后", "When the work is committed"),
-    OWN = L("单独确认", "confirmed on its own"),
-    EACH = L("每一个平台", "each platform"),
+  const DONE = L("改完以后", "The work"),
+    OWN = L("单独确认", "Confirmed on its own"),
+    EACH = L("每一个平台", "Each platform"),
     left = Math.min(220 - 2, 260 - nameWidth(DONE, 300) / 2),
     right = 1600 + Math.max(70, nameWidth(OWN) / 2, nameWidth(EACH) / 2),
     S = 960 - (left + right) / 2;
@@ -60,7 +60,7 @@ export function release(s, t, a) {
     PX = 1600 + S,
     UP = 410,
     // The two platforms stand well clear of the rail, one above it and one below.
-    PY = [360, 640],
+    PY = [345, 655],
     // The maintainer's head is the tallest of the upper row's marks; the commit's ring reaches lowest under the rail.
     above = Math.min(UP - 26, UP - 22, UP + 4 - 2.15 * 15 * 1.15) - NAME_GAP,
     below = rowNameTop([RAIL_Y + 23, RAIL_Y + 19]),
@@ -88,24 +88,31 @@ export function release(s, t, a) {
   });
   // The commit is larger than the work's point, so the two are never read as one list of points.
   commitDot(CX, RAIL_Y, { alpha: c, r: 14, picked: c });
-  nameText(L("这一次提交", "that exact commit"), CX, below, { valign: "top", alpha: c });
+  nameText(L("这一次提交", "That exact commit"), CX, below, { valign: "top", alpha: c });
   proofMark(CX, UP, p);
   link(CX, UP + 30, CX, RAIL_Y - 24, { alpha: p, upto: soon(t, proofAt + 0.05, 0.4) });
-  nameText(L("完整的核验", "a full local proof"), CX, above, { valign: "bottom", alpha: p });
+  nameText(L("完整的核验", "A full local proof"), CX, above, { valign: "bottom", alpha: p });
   link(CX + 30, UP, AX - 34, UP, { alpha: at, upto: soon(t, attestAt + 0.05, 0.5) });
   seal(AX, UP, 22, { alpha: at, color: P.ink });
-  nameText(L("存证", "attestation"), AX, above, { valign: "bottom", alpha: at });
+  nameText(L("存证", "Attestation"), AX, above, { valign: "bottom", alpha: at });
   // Review and authorization on the rail, then the protected branch.
   person(MX, UP + 4, { size: 1.15, alpha: m });
   link(MX, UP + 40, MX, RAIL_Y - 12, { alpha: m, upto: soon(t, reviewAt + 0.05, 0.5) });
-  nameText(L("维护者审阅、授权", ["A maintainer reviews", "and authorizes"]), MX, above, {
-    valign: "bottom",
-    width: 300,
-    alpha: m,
-  });
+  // English names the person and sets what the maintainer does as the name's qualifier, under it.
+  if (en) {
+    const term = ["A maintainer"],
+      qual = ["reviews and authorizes"],
+      { height } = termRowLayout(term, qual, 300, false);
+    termRow(t, term, [reviewAt], qual, [reviewAt], MX, above - height, {
+      width: 300,
+      alpha: a,
+      align: "center",
+      inline: false,
+    });
+  } else nameText("维护者审阅、授权", MX, above, { valign: "bottom", width: 300, alpha: m });
   commitRow(BX - 60, 40, RAIL_Y, 4, { alpha: br, single: true });
   lock(BX, RAIL_Y - 52, { alpha: br, color: P.ink, size: 0.9 });
-  nameText(L("受保护的开发分支", "the protected development branch"), BX, below, {
+  nameText(L("受保护的开发分支", "The protected development branch"), BX, below, {
     valign: "top",
     width: 300,
     alpha: br,
@@ -157,11 +164,10 @@ function needMark(i, x, y, alpha) {
   } else clock(x, y, 20, { hand: 0.3, alpha });
 }
 const NEEDS = () => [
-  L("上线的那个版本", "the version"),
-  L("真实运行的环境", "the environment"),
-  // Authored as its lines, so the English breaks between its phrases rather than after "were".
-  L("和原来的做法比", ["how things", "were done before"]),
-  L("一段时间", "a set period"),
+  L("上线的那个版本", "That version"),
+  L("真实运行的环境", "The environment"),
+  L("原来的做法", "The old way"),
+  L("一段时间", "A set period"),
 ];
 const NEED_Y = [350, 450, 550, 650],
   NEED_X = 1340;
@@ -180,7 +186,7 @@ export function liveUse(s, t, a) {
     ["实际使用", "real use"],
     ["上线的那个版本", "the version that went live"],
     ["真实运行的环境", "the environment"],
-    ["和原来的做法比", "how things were done before"],
+    ["原来的做法", "how things were done before"],
     ["一段时间", "a set period"],
   ]);
   const needs = NEEDS(),
@@ -205,16 +211,16 @@ export function liveUse(s, t, a) {
   journeyRail(QX + 40, mix(NEEDS_END - 20, QX + 40, back), { alpha: a });
   railFlow(t, 220, QX - 40, { alpha: a });
   tagIcon(TX - 30, RAIL_Y, 64, 34, { alpha: v, color: P.ink });
-  nameText(L("版本上线", "the version is live"), TX, NAMES, { alpha: v });
+  nameText(L("版本上线", "The version"), TX, NAMES, { alpha: v });
   person(UX, RAIL_Y - 66, { size: 1.15, alpha: u });
   link(UX, RAIL_Y - 30, UX, RAIL_Y - 10, { alpha: u, upto: soon(t, useAt + 0.05, 0.4) });
-  nameText(L("实际使用", "real use"), UX, NAMES, { alpha: u });
+  nameText(L("实际使用", "Real use"), UX, NAMES, { alpha: u });
   askIcon(QX, QY, 30, { alpha: q, color: P.ink });
-  nameText(L("管不管用", "whether it works"), QX, QY - 30 - NAME_GAP, {
+  nameText(L("管不管用", "Whether it works"), QX, QY - 30 - NAME_GAP, {
     valign: "bottom",
     alpha: q,
   });
-  nameText(L("实际效益", "actual benefit"), QX, NAMES, { alpha: a * named(t, benefitAt) });
+  nameText(L("实际效益", "Actual benefit"), QX, NAMES, { alpha: a * named(t, benefitAt) });
   needs.forEach((v2, i) => {
     const y = NEED_Y[i],
       n = a * named(t, ats[i]);
@@ -283,7 +289,7 @@ export function overview(s, t, a) {
   });
   // English names the path as its clause begins, within its words' lead, so the overview is full by 70% of 08.5.
   const db = nameText(
-    L("设计要走通的一段路", "ETHOS is designed for"),
+    L("设计要走通的一段路", "The path ETHOS is designed for"),
     (D[0] + D[1]) / 2,
     RAIL_Y + 30,
     {
@@ -292,7 +298,7 @@ export function overview(s, t, a) {
     },
   );
   const hb = nameText(
-    L("换 Agent 接手那一段", "the handover between Agents"),
+    L("换 Agent 接手那一段", "The handover between Agents"),
     (B[0] + B[1]) / 2,
     RAIL_Y + 30,
     {
@@ -322,13 +328,8 @@ export function overview(s, t, a) {
     alpha: h,
     upto: soon(t, handoverAt + 0.05, 0.6),
   });
-  nameText(
-    L("尚未完成验收", "has not yet completed acceptance"),
-    AXIS,
-    NY + DOC[1] / 2 + NAME_GAP,
-    {
-      valign: "top",
-      alpha: acc,
-    },
-  );
+  nameText(L("尚未完成验收", "Not yet accepted"), AXIS, NY + DOC[1] / 2 + NAME_GAP, {
+    valign: "top",
+    alpha: acc,
+  });
 }

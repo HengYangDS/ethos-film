@@ -23,7 +23,7 @@ import { reachAt } from "./rule-one.js";
  * spoken words, since the verbatim lines would repeat their captions; the quote does so for the same reason. */
 export const REQUEST = () =>
   L(["不能多出重复记录", "更正过的数据一定留下"], ["No duplicate records", "Corrections stay"]);
-export const QUOTE = () => L("按股票代码、日期去重", "Deduplicate by stock code and date");
+export const QUOTE = () => L("按股票代码和日期去重", "Deduplicate by stock code and date");
 const flowOf = (t) => (voiceTime(t) * 0.42) % 1;
 
 /* 04.1 The contract: a wide document whose four rows are its rules, named ETHOS's Product Design Contract; the rows
@@ -180,7 +180,7 @@ export function handoffStage(s, t, c, g) {
     { alpha: h },
   );
   nameText(L("两次交接", "Two handoffs"), a1, Y1 + 22 + NAME_GAP, { valign: "top", alpha: h });
-  nameText(L("一个 Agent 写的总结", "An Agent's summary"), a2 + 22 + NAME_GAP, Y2, {
+  nameText(L("总结", "An Agent's summary"), a2 + 22 + NAME_GAP, Y2, {
     align: "left",
     alpha: g * named(t, c.summary),
   });
@@ -201,7 +201,7 @@ export function handoffStage(s, t, c, g) {
   const q = g * named(t, c.single);
   link(a2, Y2 + 22, qx, Y3, { route: "vh", alpha: q, upto: soon(t, c.single + 0.05, 0.4) });
   quoteCard(qx, Y3, { alpha: q, words: g * named(t, c.quote) });
-  nameText(L("只剩下一句", "A single line"), qx + qw / 2, Y3 + 32 + NAME_GAP, {
+  nameText(L("只剩下一句", "One line"), qx + qw / 2, Y3 + 32 + NAME_GAP, {
     valign: "top",
     alpha: q,
   });
@@ -212,7 +212,7 @@ export function handoffStage(s, t, c, g) {
 export function deleteStage(s, t, c, g) {
   const TW = 560,
     TH = 226,
-    keepName = L("最该留下的那些更正", "Corrections that had to stay"),
+    keepName = L("要留下的更正", "Corrections that had to stay"),
     // The table stands centred and makes room on its right as the corrections are named there, gliding with the
     // words under it and the strikes on it as one unit.
     room = soon(t, c.corrections - 0.1, 0.8),
@@ -261,7 +261,7 @@ export function deleteStage(s, t, c, g) {
     { color: P.ink, alpha: g * ramp(t, c.deleted - 0.15, 0.3), width: 3 },
   );
   nameText(keepName, tx + TW + 40, ry + 3 * step, { align: "left", alpha: named2 });
-  nameText(L("恰好会被删掉", "Would delete exactly"), tx + TW / 2, ty + TH + NAME_GAP, {
+  nameText(L("被删掉", "Deleted"), tx + TW / 2, ty + TH + NAME_GAP, {
     valign: "top",
     alpha: g * named(t, c.deleted),
   });

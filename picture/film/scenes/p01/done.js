@@ -20,7 +20,7 @@ import { agent, check, documentIcon, person } from "../../drawing/symbols.js";
 import { commitDot, recoverIcon, repoIcon } from "../../drawing/workspace.js";
 import { illustrative } from "../../framing/chapters.js";
 import { beats, building, listIn, named, speaking } from "../../naming/lists.js";
-import { NAME_GAP, growName, nameText } from "../../naming/names.js";
+import { NAME_GAP, growName, nameText, wrapName } from "../../naming/names.js";
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
@@ -108,7 +108,7 @@ scenes["01"] = function (s, t) {
     ["做完了", "Done"],
     ["测试全过", "All tests pass"],
     ["全过", "pass"],
-    ["到底说明了多少", "How much"],
+    ["说明了多少", "How much"],
   ]);
   const opens = cue(s, "它说的是", "Which commit"),
     qs = cues(s, [
@@ -195,7 +195,7 @@ scenes["01"] = function (s, t) {
       datum: soon(t, landed + 0.05, 0.35),
     });
     const [DX, DY] = placed.datum;
-    nameText(L("到底说明了多少？", "How much?"), PX, PY - CLAIM_H / 2 - NAME_GAP, {
+    nameText(L("说明了多少？", "How much?"), PX, PY - CLAIM_H / 2 - NAME_GAP, {
       valign: "bottom",
       alpha: stageA * named(t, much),
     });
@@ -337,11 +337,22 @@ scenes["01"] = function (s, t) {
   }
   // 4. Writing a change keeps getting easier: a line from one origin, named at its end, that steepens on the words
   // that say so and keeps rising while the voice speaks. Whether you can rely on it stays where it was: a flat line
-  // from the same origin, lit once on the words that say it does not change.
+  // from the same origin, lit once on the words that say it does not change. The two lines stand centred with the names
+  // at their ends: the first with its own name, then, gliding on the words that name the second, with both.
   if (stageC > 0) {
     const X0 = 340,
       X1 = 1300,
       Y0 = 610,
+      writingName = L("写一个改动", "Writing code"),
+      relyName = L("能不能放心依靠它", "Whether you can rely on it"),
+      relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))),
+      ends = X1 + 7 + NAME_GAP,
+      centre = (w) => 960 - (X0 + ends + w) / 2,
+      shift = mix(
+        centre(measure(writingName)),
+        centre(Math.max(measure(writingName), relyWide)),
+        soon(t, rely + 0.05, 0.7),
+      ),
       climb =
         120 +
         160 * soon(t, easier + 0.05, 1.6) +
@@ -350,9 +361,11 @@ scenes["01"] = function (s, t) {
       points = [];
     for (let x = X0; x < X1; x += 12) points.push([x, rise(x)]);
     points.push([X1, rise(X1)]);
+    ctx.save();
+    ctx.translate(shift, 0);
     path(points, { color: P.ink, alpha: stageC, width: 4 });
     dot(X1, rise(X1), 7, { color: P.ink, alpha: stageC });
-    nameText(L("写一个改动越来越容易", "Writing code"), X1 + 7 + NAME_GAP, rise(X1), {
+    nameText(writingName, ends, rise(X1), {
       align: "left",
       alpha: stageC * named(t, writing),
     });
@@ -361,11 +374,12 @@ scenes["01"] = function (s, t) {
     line(X0, Y0, flatReach, Y0, { color: P.ink, alpha: flat, width: 4 });
     dot(flatReach, Y0, 7, { color: P.ink, alpha: flat });
     beats(t, X1, Y0, 22, [hard - 0.1], { alpha: flat });
-    nameText(L("能不能放心依靠它", "Whether you can rely on it"), X1 + 7 + NAME_GAP, Y0, {
+    nameText(relyName, ends, Y0, {
       align: "left",
       width: 300,
       alpha: stageC * named(t, rely),
     });
+    ctx.restore();
   }
   // 5-6. The sentence returns at the top and reaches a listener, who has two ways to answer it: take it on trust, a
   // gamble, or check everything again, which stops working as the Agents multiply and their checks with them. Until the
@@ -429,7 +443,9 @@ scenes["01"] = function (s, t) {
           { valign: "top", alpha: stageD * listIn(t, ways, i), set: "ways" },
         );
         const on = stageD * ramp(t, marks[i] - 0.15, 0.4);
-        link(x, BY + NAME_GAP + 40, x, GY - 32, { alpha: on, upto: soon(t, marks[i] - 0.1, 0.4) });
+        // Each way's short link ends with its point clear above its consequence's mark, so the checks' link does not
+        // land on the middle Agent of the row.
+        link(x, BY + NAME_GAP + 40, x, GY - 42, { alpha: on, upto: soon(t, marks[i] - 0.1, 0.4) });
       });
       die(XS[0], GY, 46, { alpha: stageD * ramp(t, luck - 0.15, 0.4) });
       nameText(L("靠的是运气", "A gamble"), XS[0], CY, {

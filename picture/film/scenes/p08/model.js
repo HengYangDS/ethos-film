@@ -49,13 +49,13 @@ export function faultApart(s, t, a) {
     alpha: a * named(t, codeAt),
   });
   modelGrid(MX - W / 2, Y0, W, H, { alpha: m, cell: [3, 1], lit: f });
-  nameText(L("模型的问题", "the model is wrong"), MX, Y0 + H + NAME_GAP, {
+  nameText(L("模型", "The model"), MX, Y0 + H + NAME_GAP, {
     valign: "top",
     alpha: m,
   });
   line(960, Y0, 960, Y0 + H, { color: P.line, alpha: d, dash: [8, 8] });
-  nameText(L("要先分清", "told apart first"), 960, Y0 - 20, { valign: "bottom", alpha: d });
-  nameText(L("问题出在模型上", "the fault is in the model"), MX, Y0 - 20, {
+  nameText(L("要先分清", "Told apart first"), 960, Y0 - 20, { valign: "bottom", alpha: d });
+  nameText(L("问题所在", "The fault"), MX, Y0 - 20, {
     valign: "bottom",
     width: 280,
     alpha: a * named(t, faultAt),
@@ -111,15 +111,16 @@ export function modelRevision(s, t, a) {
     CELL0 = 3.5 * (GW / 4),
     CELL = CELL0 + 0.45 * (GW / 4),
     MID = GY + GH / 2,
-    RECORD = L("同一条记录", "the same record"),
-    DIM = L("少了一个维度", ["missing", "a dimension"]),
-    BOUND = L("受影响的最小范围", "the smallest boundary"),
-    // The English names are authored as their lines, so each breaks before the word that opens its phrase.
-    CHANGE = L("新的正式变更", ["a new", "official Change"]),
-    REVISES = L("修订模型", "revises the model"),
-    DEP = L("依赖它的检查", ["every check", "that depends on it"]),
-    COMPILE = L("重新编译", "compiled again");
-  const left = -22 - nameWidth(DIM, 200),
+    RECORD = L("同一条记录", "The same record"),
+    DIM = L("少了一个维度", "Missing a dimension"),
+    BOUND = L("最小范围", "The smallest boundary"),
+    // The English name of the Change is authored as its lines, so it breaks before the concept's two words.
+    CHANGE = L("新的正式变更", ["A new", "official Change"]),
+    // The link is named by the contract's rendering of what it does; the checks by what they are.
+    REVISES = L("修订模型", "Revising the model"),
+    DEP = L("依赖它的检查", "Dependent checks"),
+    COMPILE = L("重新编译", "Compiled again");
+  const left = -22 - nameWidth(DIM, 260),
     right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2),
     right2 = Math.max(
       right1,
@@ -154,15 +155,16 @@ export function modelRevision(s, t, a) {
   });
   nameText(DIM, -22, MID, {
     align: "right",
-    width: 200,
+    width: 260,
     alpha: a * named(t, dimAt),
   });
-  // The smallest boundary the problem touches: a dashed outline around the grown cell.
+  // The smallest boundary the problem touches: a thin solid outline around the grown cell, since it is a valid scope
+  // and the film keeps dashes for what is unknown, missing or refused.
   const cx0 = 3 * (GW / 4) - 6,
     cx1 = GW + 0.9 * (GW / 4) * grow + 6,
     cy0 = GY + GH / 3 - (GH / 3) * 0.5 * grow - 6,
     cy1 = GY + (2 * GH) / 3 + (GH / 3) * 0.5 * grow + 6;
-  box(cx0, cy0, cx1 - cx0, cy1 - cy0, { stroke: P.line, alpha: bd, radius: 10, dash: [8, 7] });
+  box(cx0, cy0, cx1 - cx0, cy1 - cy0, { stroke: P.line, alpha: bd, radius: 10, width: 2 });
   nameText(BOUND, CELL, below, {
     valign: "top",
     alpha: bd,
@@ -216,9 +218,9 @@ export function noWayAround(s, t, a) {
     ["第二个真相来源", "second source of truth"],
   ]);
   const refused = [
-    L("例外", "exception"),
-    L("旁路", "side path"),
-    L("第二个真相来源", "second source of truth"),
+    L("例外", "Exception"),
+    L("旁路", "Side path"),
+    L("第二个真相来源", "Second source of truth"),
   ];
   // Each refusal is linked straight across from the model's edge to its name.
   const NX = 1130,
@@ -280,11 +282,11 @@ export function meanwhile(s, t, a) {
     ["和它无关的工作", "work unrelated to it"],
     ["照常进行", "goes on as usual"],
   ]);
-  // The English name is authored as its lines, so it breaks before "that" rather than after it.
-  const DEPEND = L("依赖这个概念的改动", ["changes", "that depend on that idea"]),
-    WAIT = L("先停下", "wait"),
-    OTHER = L("和它无关的工作", "work unrelated to it"),
-    ON = L("照常进行", "goes on as usual"),
+  // The lanes are named by what they carry, the outcomes by what happens to them.
+  const DEPEND = L("依赖它的改动", "Dependent changes"),
+    WAIT = L("先停下", "Wait"),
+    OTHER = L("不相关的工作", "Unrelated work"),
+    ON = L("照常进行", "Goes on as usual"),
     Y1 = 520,
     Y2 = 670,
     GATE = 1200,
@@ -364,16 +366,15 @@ export function goalKept(s, t, a) {
     flow = (voiceTime(t) * 0.4) % 1;
   line(x0, LY, x1, LY, { color: P.ink, alpha: a, width: 5 });
   lock(LOCK, LY, { alpha: a, color: P.ink });
-  nameText(L("不能多出重复记录", "no duplicate records"), AXIS, LY - NAME_GAP, {
+  nameText(L("不能多出重复记录", "No duplicate records"), AXIS, LY - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, goalAt),
   });
-  nameText(L("这个目标", "The goal"), x0 - 24, LY, { align: "right", alpha: a * named(t, keptAt) });
+  nameText(L("目标", "The goal"), x0 - 24, LY, { align: "right", alpha: a * named(t, keptAt) });
   // The records the goal keeps free of duplicates, under the level.
   link(AXIS, 482, AXIS, LY + 12, { alpha: a, flow });
   resultCard(AXIS, 545, 4, { alpha: a, w: 170, h: 120 });
-  // The English name is authored as its lines, so it breaks before "in" rather than after it.
-  nameText(L("一个字也没有放宽", ["not relaxed", "in the slightest"]), (AXIS + LOCK) / 2, LY + 28, {
+  nameText(L("没有放宽", "Not relaxed"), (AXIS + LOCK) / 2, LY + 28, {
     valign: "top",
     width: 300,
     alpha: a * named(t, notAt),
@@ -383,7 +384,7 @@ export function goalKept(s, t, a) {
   seal(LOCK, 620, 22, { alpha: al, color: P.ink });
   link(LOCK, 594, LOCK, LY + 22, { alpha: al, upto: soon(t, alignAt + 0.05, 0.6), flow });
   nameText(
-    L("经授权重新对齐意图", "authorized intent alignment"),
+    L("经授权重新对齐意图", "Authorized intent alignment"),
     (PX - 28 + LOCK + 22) / 2,
     rowNameTop([PY + 22.7 * 1.2, 620 + 22]),
     {
@@ -395,7 +396,7 @@ export function goalKept(s, t, a) {
   // A quiet lowering of the level's start, refused.
   const low = LY + mix(50, 110, sink);
   line(x0 + 20, low, 800, low, { color: P.line, alpha: q, width: 4, dash: [10, 9] });
-  rejectedName(L("悄悄放宽", "silently loosened"), (x0 + 20 + 800) / 2, low + 36, {
+  rejectedName(L("悄悄放宽", "Silently loosened"), (x0 + 20 + 800) / 2, low + 36, {
     alpha: q,
     mark: ramp(t, quietAt + 0.5, 0.4),
   });

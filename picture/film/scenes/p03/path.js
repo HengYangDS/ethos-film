@@ -4,7 +4,6 @@
 
 import { datumMark } from "../claim.js";
 import { paper } from "../p02/drift.js";
-import { centring } from "./kernel.js";
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
 import { dot, flowDot, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
@@ -47,9 +46,9 @@ function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
 }
 /* The path's three stations: a problem, a repository, real use, each a ring with its glyph. */
 const STATION_NAMES = () =>
-  L(["弄清一个问题", "改动代码仓库", "用起来到底怎么样"], ["A problem", "A repository", "In use"]);
-/* The height of 03.1's path: in English it stands lower, so its name keeps clear of the last initial's word. */
-const NAME_PATH_Y = () => L(560, 600);
+  L(["一个问题", "代码仓库", "用起来怎么样"], ["A problem", "A repository", "In use"]);
+/* The height of 03.1's path: it stands low enough that its name keeps clear of the last initial's word. */
+const NAME_PATH_Y = () => 600;
 function station(x, y, i, alpha) {
   if (alpha < 0.01) return;
   dot(x, y, 28, { color: P.ground, alpha });
@@ -70,10 +69,10 @@ function station(x, y, i, alpha) {
 
 /* 03.1 ETHOS takes a different path: the chapter opens on the first word with the name and its five initials, five
  * rings drawn as one mark; the path draws out on its words from the datum, the claim's point, and is named at its end.
- * In Chinese the name's meaning is said in two clauses that stand under the path, and each initial lights on the words
- * it stands for; in English each word stands under its initial as it is said. The path runs centred under the
- * letters, from the gap after the first to the gap before the last, and its name hangs past its end, so the picture
- * stays centred with it; in English it stands lower, so that name keeps clear of the last initial's word above it. */
+ * Each initial lights on the words it stands for and its word stands under it as it is said: in Chinese the words of
+ * the meaning, said in another order than the letters', so the list builds in the order it is spoken. The path runs
+ * centred under the letters, from the gap after the first to the gap before the last, and its name hangs past its end,
+ * so the picture stays centred with it; it stands low enough that that name keeps clear of the last initial's word. */
 export function stageName(s, t, a, c) {
   if (a <= 0) return;
   // The chapter opens on the first word: the name and its five initials, one mark of rings, stand together.
@@ -118,67 +117,71 @@ export function stageName(s, t, a, c) {
     align: "left",
     alpha: a * named(t, c.otherPath),
   });
-  if (en)
-    railNames(
+  const spoken = [...lights].sort((p, q) => p - q);
+  railNames(
+    L(
+      ["证据", "信任", "人和 Agent", "工作", "打理"],
       ["Evidence-grounded", "Trust", "Human-Agent", "Operational", "Stewardship"],
-      xs,
-      LY + LR,
-      { gap: NAME_GAP, alpha: (i) => a * listIn(t, lights, i), set: "initials" },
-    );
-  else {
-    nameText("几个英文词的首字母", 960, LY + LR + NAME_GAP, {
-      valign: "top",
-      alpha: a * named(t, c.initials),
-    });
-    nameText("人和 Agent 一起打理工作", 960, Y + 50, {
-      valign: "top",
-      alpha: a * named(t, c.gloss1),
-    });
-    nameText("信任要建立在证据上", 960, Y + 100, {
-      valign: "top",
-      alpha: a * named(t, c.gloss2),
-    });
-  }
+    ),
+    xs,
+    LY + LR,
+    {
+      gap: NAME_GAP,
+      alpha: (i) => a * listIn(t, spoken, spoken.indexOf(lights[i])),
+      set: "initials",
+    },
+  );
 }
 
-/* 03.2 One reliable path for people and interchangeable Agents: the travellers at its start from the cut, its three
- * stations on their words and its name at its end. On the words that say it promises three things the path rises and
- * the promises build under it, each with its mark; more governance stands under them, refused. The path and the name
- * at its end stand centred on the frame. Until that name arrives, the path and its travellers stand where 03.1's path
- * stood, centred on the frame at its height, so the cut keeps the path in place; as the name arrives they glide as one
- * to their own place. The travellers' heading starts on the person's left edge. The promises hang from the first
- * station's name, their markers' left edge on its left edge, one and a half pitches below the stations' names, so that
- * name does not read as the list's heading; the refusal shares that left edge, one and a half pitches after the last
- * promise, so it reads as set apart from the list rather than as a fourth promise. The path is long enough that, while
- * the travellers stand on it alone before its name arrives, the picture still spans a tenth of the content band. */
+/* 03.2 One reliable path for people and interchangeable Agents: the travellers from the cut, named there; on the words
+ * that say the path it draws out from under them to its end, as 03.1's path drew out, its name waiting at the end of
+ * the travellers' heading until that end reaches it and then riding it, and its three stations arrive on their words.
+ * On the words that say it promises three things the path rises and the promises build under it, each with its mark;
+ * more governance stands under them, refused. Each state stands centred on what it shows: the travellers alone, by
+ * their heading; then the path draws out under them, and once its end and name pass the heading's end the picture
+ * glides left as they move right, so the travellers, the path and the name at its end stand centred together
+ * throughout. The travellers' heading starts on the person's left edge. The promises hang from the first station's
+ * name, their markers' left edge on its left edge, one and a half pitches below the stations' names, so that name does
+ * not read as the list's heading; the refusal shares that left edge, one and a half pitches after the last promise, so
+ * it reads as set apart from the list rather than as a fourth promise. */
 const PATH_LEN = 1080,
   PROMISE_PITCH = 80;
 export function stagePath(t, a, c) {
   if (a <= 0) return;
-  // Chinese says the path at the end of the travellers' long clause, so it is named within that clause, about a second
-  // ahead of its words; English says it right after them.
-  const nameAt = L(c.reliable - 0.95, c.reliable),
-    settle = soon(t, nameAt + 0.05, 0.7),
-    endName = L("一条靠得住的路", "One reliable path"),
-    // Where the path starts when it stands centred with its name, and how far right of that it stands centred alone.
-    home = 960 - (PATH_LEN + 7 + NAME_GAP + measure(endName)) / 2,
-    X0 = home + mix(centring(home, home + PATH_LEN + 7), 0, settle),
-    PY = mix(mix(NAME_PATH_Y(), 560, settle), 380, soon(t, c.three + 0.05, 0.7)),
+  // The path is said at the end of the travellers' clause, so it is named within that clause, 1.2 s ahead of its
+  // words, which keeps the travellers' time alone short. It draws out over 1.8 s, and over 2.2 s in English, whose
+  // longer heading its end must pass alone before the picture glides, so that its end and its name, which travel
+  // furthest, never move more than about 32 px a frame and read as one mark moving.
+  const nameAt = c.reliable - 1.2,
+    drawn = soon(t, nameAt - 0.1, L(1.8, 2.2)),
+    on = a * ramp(t, nameAt - 0.15, 0.4),
+    endName = L("靠得住的路", "One reliable path"),
+    travellers = L("人和可以互相替换的 Agent", "People and interchangeable Agents"),
+    // Where the path starts: the picture spans from it to the end of the travellers' heading, which starts 10 px
+    // right of it, or to the end of the name at the path's end, whichever reaches further, and stands centred.
+    X0 =
+      960 -
+      Math.max(10 + measure(travellers), PATH_LEN * drawn + 7 + NAME_GAP + measure(endName)) / 2,
+    PY = mix(560, 380, soon(t, c.three + 0.05, 0.7)),
     X1 = X0 + PATH_LEN,
+    reach = mix(X0, X1, drawn),
+    // The name waits at the end of the travellers' heading, clear of the travellers, until the path's end reaches it.
+    nameX = Math.max(reach + 7 + NAME_GAP, X0 + 10 + measure(travellers) - measure(endName)),
     q = (voiceTime(t) * 0.35) % 1,
     names = STATION_NAMES(),
     xs = railStations(names, X0 + 240, X1 - 60),
     sts = [c.st1, c.st2, c.st3];
   pathLine(
     X0,
-    X1,
+    reach,
     PY,
-    xs.filter((x, i) => t > sts[i] - 0.15),
-    { alpha: a },
+    xs.filter((x, i) => t > sts[i] - 0.15 && x + 28 < reach),
+    { alpha: on },
   );
-  dot(X1, PY, 7, { color: P.ink, alpha: a });
-  flowDot(mix(X0, X1, q), PY, 6, q, { color: P.ink, alpha: a });
-  nameText(endName, X1 + 7 + NAME_GAP, PY, {
+  dot(reach, PY, 7, { color: P.ink, alpha: on });
+  // A point runs along the path as far as it is drawn, so it arrives with the path rather than when it is whole.
+  flowDot(mix(X0, reach, q), PY, 6, q, { color: P.ink, alpha: on });
+  nameText(endName, nameX, PY, {
     align: "left",
     alpha: a * named(t, nameAt),
   });
@@ -186,7 +189,7 @@ export function stagePath(t, a, c) {
   const TX = X0 + 40;
   person(TX, PY - 50, { size: 1.3, alpha: a });
   agent(TX + 64, PY - 44, { size: 1.1, alpha: a });
-  nameText(L("人和可以互相替换的 Agent", "People and interchangeable Agents"), TX - 30, PY - 114, {
+  nameText(travellers, TX - 30, PY - 114, {
     valign: "bottom",
     align: "left",
     alpha: a * named(t, c.pCut + 0.15),

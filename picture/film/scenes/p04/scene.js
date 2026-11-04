@@ -67,7 +67,7 @@ function cuesOf(s) {
     f1: cue(s, "要解决什么", "what is to be solved"),
     first5: cue(s, "只写在一处", "With one copy"),
     readers: cue(s, "后面接手的人和 Agent", "everyone who picks up"),
-    same: cue(s, "读到的都是同一份", "reads the same thing"),
+    same: cue(s, "同一份", "the same thing"),
     first5b: cue(s, "还要拿正例和反例", "Then positive and negative"),
     examples: cue(s, "正例和反例", "positive and negative examples"),
     understood: cue(s, "来考一考对它的理解", "test how it has been understood"),

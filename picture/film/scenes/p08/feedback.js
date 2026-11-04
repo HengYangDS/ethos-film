@@ -90,10 +90,10 @@ export function corrections(s, t, a) {
     ["第二次更正", "the second correction"],
     ["覆盖掉了", "overwrites the first"],
   ]);
-  const LATER = L("几天后", "A few days later"),
-    VENDOR = L("厂商", "the vendor"),
-    TWO = L("两次更正", "two corrections"),
-    OVER = L("覆盖掉了", "overwrites the first"),
+  const LATER = L("几天后", "Days later"),
+    VENDOR = L("厂商", "The vendor"),
+    TWO = L("两次更正", "Two corrections"),
+    OVER = L("覆盖掉了", "Overwritten"),
     left = Math.min(FEED - 38, FEED - measure(TWO) / 2, FEED - measure(VENDOR) / 2),
     before = Math.max(RUN + 110, FEED + 40 + measure(LATER)),
     after = Math.max(before, STORE[0] + STORE[2] / 2, STORE[0] + measure(OVER) / 2),
@@ -117,11 +117,11 @@ export function corrections(s, t, a) {
     valign: "bottom",
     alpha: a * named(t, pipeAt),
   });
-  nameText(L("原值", "an original value"), STORE[0] - 170, SLOTS[0], {
+  nameText(L("原值", "Original value"), STORE[0] - 170, SLOTS[0], {
     align: "left",
     alpha: a * named(t, origAt),
   });
-  nameText(L("一次更正", "a single correction"), STORE[0] - 170, SLOTS[1], {
+  nameText(L("一次更正", "Single correction"), STORE[0] - 170, SLOTS[1], {
     align: "left",
     alpha: a * named(t, singleAt),
   });
@@ -145,17 +145,15 @@ export function corrections(s, t, a) {
 }
 
 /* The three things judged apart: each a panel with its term and what it says, and the verdict it is given. */
+/* Each term is the concept as the contract renders it; what it says is a qualifier, short in Chinese, whose caption
+ * already carries the whole sentence. */
 const JUDGED = () => [
-  [L("观察到的", "The observation"), L("第一次更正不见了", "the first correction has disappeared")],
+  [L("观察到的", "Observation"), L("更正不见了", "the first correction has disappeared")],
+  [L("推断的原因", "Inference"), L("多次更正", "the vendor can correct a value more than once")],
   [
-    L("推断的原因", "The inference"),
-    L("厂商会多次更正", "the vendor can correct a value more than once"),
-  ],
-  [
-    L("提出的补救办法", "the proposed remedy"),
-    // Authored as its lines, each edition breaking between its phrases: the automatic break would split 修订编号, and
-    // the English one would end its first line on "by".
-    L(["按厂商给的修订编号", "来区分记录"], ["tell records apart", "by the revision number"]),
+    L("提出的补救办法", "Proposed remedy"),
+    // Authored as its lines in English, so its first line does not end on "by".
+    L("按修订编号区分记录", ["tell records apart", "by the revision number"]),
   ],
 ];
 const PANEL_W = 400,
@@ -180,11 +178,11 @@ export function judgement(s, t, a) {
   const [peopleAt, backAt, threeAt, obsAt, obsSays, infAt, infSays, remAt, remSays] = cues(s, [
     ["负责观察的人", "The people watching the pipeline"],
     ["把情况报了回来", "report this back"],
-    ["三件事要分开判断", "three things be judged separately"],
+    ["分开判断", "judged separately"],
     ["观察到的，是", "The observation is"],
-    ["第一次更正不见了", "the first correction has disappeared"],
+    ["更正不见了", "the first correction has disappeared"],
     ["推断的原因", "The inference"],
-    ["厂商会多次更正", "the vendor can correct"],
+    ["多次更正", "the vendor can correct"],
     ["提出的补救办法", "the proposed remedy"],
     ["按厂商给的修订编号", "tell records apart"],
   ]);
@@ -217,11 +215,11 @@ export function judgement(s, t, a) {
     flow: (voiceTime(t) * 0.4) % 1,
   });
   documentIcon(DX - DOC[0] / 2, TOP - DOC[1] / 2, DOC[0], DOC[1], { alpha: b, rows: 0 });
-  nameText(L("把情况报了回来", "report this back"), DX, names, {
+  nameText(L("报告", "The report"), DX, names, {
     valign: "top",
     alpha: b,
   });
-  nameText(L("三件事要分开判断", "three things be judged separately"), PANEL_X[1], names, {
+  nameText(L("分开判断", "Judged separately"), PANEL_X[1], names, {
     valign: "top",
     alpha: a * named(t, threeAt),
   });
@@ -271,7 +269,7 @@ export function judgement(s, t, a) {
     { alpha: apart, width: 4 },
   );
   // Why they stay apart: each verdict named under its panel on its words.
-  [L("照样成立", "still stands"), L("可能错", "can be wrong"), L("被否掉", "rejecting")].forEach(
+  [L("照样成立", "Still stands"), L("可能错", "Can be wrong"), L("被否掉", "Rejected")].forEach(
     (v, i) =>
       nameText(v, PANEL_X[i] + shift, PANEL_Y + PANEL_H / 2 + NAME_GAP, {
         valign: "top",

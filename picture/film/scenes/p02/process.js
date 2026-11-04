@@ -5,7 +5,7 @@ import { ctx } from "../../canvas.js";
 import { box, line, stroke } from "../../drawing/strokes.js";
 import { cross, documentIcon } from "../../drawing/symbols.js";
 import { listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, growName, nameText } from "../../naming/names.js";
+import { NAME_GAP, nameText } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -39,7 +39,7 @@ function record(x, y, w, h, { alpha = 1, stale = 0 } = {}) {
 
 /* The shelf the process stands on, named as more process from the cut; the three records arrive on it on their words,
  * each named over it. Kept up, each lights in turn; then the records go stale, cross each other where they meet and
- * press the shelf down, and what they have become grows as one name under the shelf. */
+ * press the shelf down, and what they have become is named under the shelf. */
 export function stageLedgers(t, a, c) {
   if (a <= 0) return;
   const xs = [720, 960, 1200],
@@ -83,17 +83,10 @@ export function stageLedgers(t, a, c) {
       width: 3.5,
     }),
   );
-  // The name stands centred under the shelf's name, each line on the same axis, each part arriving on its own words.
-  // A part carries the space before it rather than after it, so a wrapped line ends on its last word.
-  const parts = L(
-    ["过期，", "互相打架，", "成了新的负担"],
-    ["Go stale,", " contradict each other,", " a burden of their own"],
-  );
-  growName(t, parts, [c.stale, c.fight, c.burden], 960, 806, {
-    width: 640,
+  // Only the result is named, centred under the shelf's name: the records turned dashed and the crosses between them
+  // already show that they went stale and contradict each other, and the caption says so.
+  nameText(L("新的负担", "A burden of their own"), 960, 806, {
     valign: "top",
-    alpha: a,
-    build: true,
-    align: "center",
+    alpha: a * named(t, c.burden),
   });
 }

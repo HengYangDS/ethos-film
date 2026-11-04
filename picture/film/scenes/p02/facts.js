@@ -164,7 +164,7 @@ export function stagePlatforms(t, a, c) {
     q = (voiceTime(t) * 0.4) % 1;
   const versionName = L("同一个版本", "The same version"),
     resultNames = L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"]),
-    unclearName = L("说不清现在到底是什么状态", "Nobody can say"),
+    unclearName = L("谁也说不清", "Nobody can say"),
     retryName = L("再试一遍", "Trying again");
   // Each platform arrives with its name. The English names the platforms before it names them, and its clause
   // already runs, so each arrives on the words that bring it and its name may stand that far ahead of its words.

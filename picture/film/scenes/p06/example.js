@@ -35,6 +35,9 @@ const AX = 440,
   ROW_NAMES = rowNameTop([Y + 60, Y + 75, Y + 22]),
   // A commit's disc and rim reach this far either side of its point.
   COMMIT = 10.5;
+/* Once the context settles at the top, the example stands this much lower, so its picture, from the context to the
+ * dashboard under the row, is balanced on the content centre. */
+const DROP = 60;
 const flowOf = (t) => (voiceTime(t) * 0.4) % 1;
 const agentName = () => L("另一个 Agent", "A second Agent"),
   movedName = () => L("往前走了", "Moved on");
@@ -107,10 +110,11 @@ const plan = (a) => documentIcon(PLAN_X - 48, Y - 60, 96, 120, { alpha: a, rows:
  * someone else may have changed things. The branch arrives before the plan and the gate, so its name hangs one gap
  * under its commits until the plan's words bring the row's taller members, and then joins the row's line. */
 export function staleStage(s, t, c, g) {
-  const shift = exampleShift(t, c);
+  const shift = exampleShift(t, c),
+    settle = soon(t, c.remembers + 0.05, 0.8);
   ctx.save();
-  ctx.translate(shift, 0);
-  exampleContext(t, c, g, { settle: soon(t, c.remembers + 0.05, 0.8), alone: 960 - shift });
+  ctx.translate(shift, DROP * settle);
+  exampleContext(t, c, g, { settle, alone: 960 - shift });
   secondAgent(t, c, g);
   // What it remembers: the branch standing at yesterday's commit.
   const mem = g * named(t, c.yesterday);
@@ -177,7 +181,7 @@ export function staleStage(s, t, c, g) {
  * again. What ETHOS does is named over the middle of its dashed look, and "moved on" under the ring it names. */
 export function checkStage(s, t, c, g) {
   ctx.save();
-  ctx.translate(exampleShift(t, c), 0);
+  ctx.translate(exampleShift(t, c), DROP);
   exampleContext(t, c, g);
   secondAgent(t, c, g);
   plan(g);

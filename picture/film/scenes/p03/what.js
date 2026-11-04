@@ -16,14 +16,11 @@ scenes["03"] = function (s, t) {
   take({
     // 03.1 the name.
     otherPath: ["另一条路", "a different path"],
-    initials: ["几个英文词的首字母", "Evidence-grounded"],
     w1: ["证据", "Evidence-grounded"],
     w2: ["信任", "Trust"],
     w3: ["人和 Agent", "Human-Agent"],
     w4: ["工作", "Operational"],
     w5: ["打理", "Stewardship"],
-    gloss1: ["人和 Agent 一起打理工作", "Human-Agent"],
-    gloss2: ["信任要建立在证据上", "Trust"],
     // 03.2 the path and its promises.
     pCut: ["它想给", "It aims"],
     travellers: ["人和可以互相替换的 Agent", "people and interchangeable Agents"],
@@ -40,7 +37,6 @@ scenes["03"] = function (s, t) {
     // 03.3 the kernel.
     kCut: ["这条路", "A small trust kernel"],
     kernel: ["很小的信任内核", "a small trust kernel"],
-    inputs: ["三样东西", "three inputs"],
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
@@ -96,7 +92,8 @@ scenes["03"] = function (s, t) {
     connect: ["接进来的系统", "connecting a system"],
     truth: ["真相的来源", "a source of truth"],
     layerCut: ["所有仓库共有的部分", "What every repository shares"],
-    // The layer is named on its own words; in English they follow the clause that opens the stage.
+    // The layer's name is cued on its own words; in English they follow the words that open the stage, in the same
+    // clause, so the stage names it ahead of them (tools.js).
     owns: ["共有的部分", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "its own purpose"],

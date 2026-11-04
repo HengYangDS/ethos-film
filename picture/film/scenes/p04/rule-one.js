@@ -161,10 +161,7 @@ export function reachAt(t, base, parts, duration = 0.7) {
 export const CHANGE_W = 150,
   CHANGE_H = 240;
 const fieldNames = () =>
-  L(
-    ["要解决什么", "为什么要解决", "做到什么样才算解决"],
-    ["What is to be solved", "Why", "What counts as solved"],
-  );
+  L(["解决什么", "为什么", "怎样算解决"], ["What to solve", "Why", "What counts as solved"]);
 const fieldY = (y, i) => y + CHANGE_H * (0.42 + i * 0.19);
 export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1 } = {}) {
   documentIcon(x, y, CHANGE_W, CHANGE_H, { alpha, rows: 0 });
@@ -239,7 +236,7 @@ export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   // The English readers' name is authored as its phrases, so its first line does not end on "who".
   const readers = L("后面接手的人和 Agent", ["Everyone", "who picks up the work"]),
-    same = L("读到的都是同一份", "Reads the same thing"),
+    same = L("同一份", "The same thing"),
     term = L(["正式变更"], ["The Change"]),
     qual = L(["只写在一处"], ["one copy"]),
     // The group's reach from the Change's left edge: the readers' name to the left, the Change or its name to the

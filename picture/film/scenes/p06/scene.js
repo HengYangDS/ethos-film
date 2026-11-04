@@ -1,13 +1,20 @@
 /* 06 Rule three, authority and views. Back in the example, a second Agent's stale view meets ETHOS's check at the
- * write, and the platforms' outcomes are recorded as they are (06.1-06.2); rule three's heading closes the mark's
- * boundary around what a judgment may rest on, with the views derived from it outside (06.3-06.4); and a stale view is
- * refused as authority (06.5). The Illustrative chip stands while the example shows. */
+ * write, and the platforms' outcomes are recorded as they are (06.1-06.2); rule three is named over that example, and
+ * its statement closes the mark's boundary around what a judgment may rest on, with the views derived from it outside
+ * (06.3-06.4); and a stale view is refused as authority (06.5). The Illustrative chip stands while the example
+ * shows. */
 
 import { illustrative } from "../../framing/chapters.js";
 import { scenes } from "../registry.js";
 import { cue, cueFrom, cues } from "../../timing/cues.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
-import { authorityStage, notAuthorityStage, staleViewStage, viewsStage } from "./authority.js";
+import {
+  authorityStage,
+  notAuthorityStage,
+  ruleThreeHeading,
+  staleViewStage,
+  viewsStage,
+} from "./authority.js";
 import { checkStage, oneStepStage, platformsStage, staleStage } from "./example.js";
 
 /* The spoken cues, in the order they are said. */
@@ -67,6 +74,8 @@ function cuesOf(s) {
     stale: cue(s, "或者条件已经过时", "or a condition has gone stale"),
     cannotPass: cue(s, "判断就不能通过", "the judgment cannot pass"),
   };
+  // The branch moves on the word of the change, after the clause that names it has begun.
+  c.changes = cueFrom(s, "又变了", "change", c.change);
   c.sources = cues(s, [
     ["用户当下的指令", "current instruction"],
     ["仓库里的真实内容", "what the repository actually contains"],
@@ -90,8 +99,11 @@ scenes["06"] = function (s, t) {
   const J1 = stageOut(t, c.first1b),
     J2 = stageIn(t, c.first1b) * stageOut(t, c.first2),
     K1 = stageIn(t, c.first2) * stageOut(t, c.first2b),
-    K2 = stageIn(t, c.first2b) * stageOut(t, c.first3),
-    L3 = stageIn(t, c.first3) * stageOut(t, c.first4),
+    // Rule three is named over the example it names: the example stands until the rule's statement, on which the
+    // rule's stage, the mark, cuts in under the heading that has stood since the thought's first words.
+    K2 = stageIn(t, c.first2b) * stageOut(t, c.statement),
+    H3 = stageIn(t, c.first3) * stageOut(t, c.first4),
+    L3 = stageIn(t, c.statement) * stageOut(t, c.first4),
     M4 = stageIn(t, c.first4) * stageOut(t, c.first5),
     N1 = stageIn(t, c.first5) * stageOut(t, c.first5b),
     N2 = stageIn(t, c.first5b);
@@ -99,6 +111,7 @@ scenes["06"] = function (s, t) {
   if (J2 > 0) checkStage(s, t, c, J2);
   if (K1 > 0) oneStepStage(s, t, c, K1);
   if (K2 > 0) platformsStage(s, t, c, K2);
+  if (H3 > 0) ruleThreeHeading(t, c, H3);
   if (L3 > 0) authorityStage(s, t, c, L3);
   if (M4 > 0) viewsStage(s, t, c, M4);
   if (N1 > 0) staleViewStage(s, t, c, N1);

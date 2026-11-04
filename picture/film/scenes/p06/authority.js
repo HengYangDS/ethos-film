@@ -12,9 +12,9 @@ import { ctx } from "../../canvas.js";
 import { commitRow } from "../../drawing/history.js";
 import { link } from "../../drawing/links.js";
 import { ethosMark, markExtent } from "../../drawing/mark.js";
-import { labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { labelSize, measure, ring, stroke } from "../../drawing/strokes.js";
 import { cross, documentIcon, stopSign } from "../../drawing/symbols.js";
-import { bubble, commitDot, terminalIcon } from "../../drawing/workspace.js";
+import { bubble, terminalIcon } from "../../drawing/workspace.js";
 import { ruleHeading, ruleHeadingLayout } from "../../framing/rules.js";
 import { beats, listIn, listLevel, named } from "../../naming/lists.js";
 import {
@@ -31,6 +31,7 @@ import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
+import { STAGE_CUT } from "../../timing/stages.js";
 import { card } from "../p04/marks.js";
 import { claimPanel, claimWidth } from "../claim.js";
 
@@ -43,8 +44,10 @@ const RULE = () => ({
   statement: L("把权威依据和视图分开", "Keep authority separate from views"),
   note: L("一次判断可以凭借的东西", "What a judgment may rest on"),
 });
-/* The heading drawn in the rules' shared place, without a glyph; the note joins it on its own words. */
-function ruleThreeHeading(t, c, g) {
+/* The heading drawn in the rules' shared place, without a glyph; the note joins it on its own words. It stands from the
+ * thought's first words, its number arriving over the example it names, and stays while the mark is the rule's
+ * stage. */
+export function ruleThreeHeading(t, c, g) {
   const { number, statement, note } = RULE(),
     h = ruleHeading(t, {
       number,
@@ -144,23 +147,24 @@ function viewsOf({ x, y, size }) {
 }
 
 /* The six sources of authority, three above the passages and three below, centred in the bowl on the mark's ink
- * centre, which in 06.3 is the frame's axis and the heading's: a centred list, so its rows have no points before them. */
+ * centre, which in 06.3 is the frame's axis and the heading's: a centred list, so its rows have no points before them.
+ * Each is named as a short noun, so the list names the inputs rather than re-setting the sentence that reads them. */
 const SOURCES = () =>
   L(
     [
       "用户当下的指令",
-      "仓库里的真实内容",
+      "仓库内容",
       "已经采纳的正式变更",
       "刚观察到的事实",
-      "适用的规则",
+      "适用规则",
       "仍然有效的存证",
     ],
     [
       "Current instruction",
       "Repository contents",
-      "The accepted Change",
+      "Accepted Change",
       "Fresh facts",
-      "The applicable policy",
+      "Applicable policy",
       "Valid attestations",
     ],
   );
@@ -180,14 +184,16 @@ function sources(t, c, g, { x, y, size }) {
   );
 }
 
-/* The mark at `place`, its boundary closing on the rule's words, with authority named inside at the datum's left. */
+/* The mark at `place`, its boundary closing on the rule's words, with authority named inside at the datum's left. The
+ * boundary draws on from the cut on those words, where the mark arrives, so it grows from its start rather than
+ * appearing part drawn. */
 function boundaryMark(t, c, g, { x, y, size }) {
   const k = size / 512;
   ethosMark(x, y, size, {
     datum: g,
     hole: 1,
     passages: 1,
-    boundary: soon(t, c.statement + 0.05, 1.2),
+    boundary: soon(t, c.statement + STAGE_CUT, 1.2),
     alpha: g,
   });
   beats(t, x, y, 21 * k, [c.inEthos], { alpha: g });
@@ -197,10 +203,10 @@ function boundaryMark(t, c, g, { x, y, size }) {
   });
 }
 
-/* 06.3 Authority inside the boundary: the heading in the rules' place and the mark in its place under it, its boundary
- * closing on the statement; authority is named at the datum and its six sources build as a list on their words. */
+/* 06.3 Authority inside the boundary: from the statement's words the mark stands in its place under the heading, its
+ * boundary closing on them, so the mark arrives with the words that name it; authority is named at the datum and its
+ * six sources build as a list on their words. */
 export function authorityStage(s, t, c, g) {
-  ruleThreeHeading(t, c, g);
   const at = authorityPlace();
   boundaryMark(t, c, g, at);
   sources(t, c, g, at);
@@ -278,32 +284,35 @@ export function viewsStage(s, t, c, g) {
 }
 
 /* The branch inside the boundary, what the repository actually contains: four commits and, once things change, a
- * fifth, someone else's work, in the bowl above the passages; what is said of it centres over it. */
+ * fifth, someone else's work, in the bowl above the passages; what is said of it centres over it. The fifth commit is
+ * its rim alone, joined to the row by the line that reaches it, so the branch stays one mark under one name; nothing
+ * lies under it for a disc to cover. `a` is the branch's ink, and its name's when `says` names it. */
 const BSTEP = 70;
 function branchOf({ x, y }) {
   const bx = x - 180;
   return { bx, by: y - 126, end: bx + 4 * BSTEP, mid: bx + 2 * BSTEP };
 }
-function innerBranch(t, c, g, place, moved, { named: says = true } = {}) {
+function innerBranch(a, place, moved, says = null) {
   const b = branchOf(place);
-  commitRow(b.bx, BSTEP, b.by, 4, { alpha: g, single: true });
+  commitRow(b.bx, BSTEP, b.by, 4, { alpha: a, single: true });
   stroke(
     () => {
       ctx.moveTo(b.bx + 3 * BSTEP + 9, b.by);
       ctx.lineTo(mix(b.bx + 3 * BSTEP + 9, b.end - 9, moved), b.by);
     },
-    { color: P.ink, alpha: g * ramp(moved, 0, 0.1), width: 2.5 },
+    { color: P.ink, alpha: a * ramp(moved, 0, 0.1), width: 2.5 },
   );
-  commitDot(b.end, b.by, { alpha: g * ramp(moved, 0.6, 0.4) });
+  ring(b.end, b.by, 9, { color: P.ink, alpha: a * ramp(moved, 0.6, 0.4), width: 3 });
   if (says)
-    nameText(L("情况可能又变了", "Things can change"), b.mid, b.by - 22 - NAME_GAP + 8, {
+    nameText(says, b.mid, b.by - 22 - NAME_GAP + 8, {
       valign: "bottom",
-      alpha: g * named(t, c.change),
+      alpha: a,
     });
 }
 
-/* 06.5 A stale view: the dashboard was computed from inside; inside, the branch then moves on, and the view still
- * shows what it showed, without showing the change. What is said of the view stands on its names' column. */
+/* 06.5 A stale view: the dashboard was computed from inside; inside, the branch arrives with what is said of it, then
+ * moves on as the change is said, and the view still shows what it showed, without showing the change. What is said
+ * of the view stands on its names' column. */
 export function staleViewStage(s, t, c, g) {
   const place = viewsPlace(),
     v = viewsOf(place);
@@ -313,9 +322,14 @@ export function staleViewStage(s, t, c, g) {
     align: "left",
     alpha: g * named(t, c.first5),
   });
-  innerBranch(t, c, g, place, soon(t, c.change + 0.05, 0.7));
+  innerBranch(
+    g * named(t, c.change),
+    place,
+    soon(t, c.changes + 0.05, 0.7),
+    L("又变了", "A change"),
+  );
   beats(t, v.vx, v.ys[1], 36, [c.notShown, c.turnedGreen], { alpha: g });
-  nameText(L("看不出来", "Without the view showing it"), v.text, v.ys[1] + 46, {
+  nameText(L("看不出来", "Not shown"), v.text, v.ys[1] + 46, {
     align: "left",
     alpha: g * named(t, c.notShown),
   });
@@ -331,7 +345,7 @@ export function notAuthorityStage(s, t, c, g) {
     b = branchOf(place);
   boundaryMark(t, c, g, place);
   views(t, c, g, place, { only: 1, linked: false });
-  innerBranch(t, c, g, place, 1, { named: false });
+  innerBranch(g, place, 1);
   nameText(L("帮人看清楚", "Helps people see"), v.text, v.ys[1] - 46, {
     align: "left",
     alpha: g * named(t, c.first5b),

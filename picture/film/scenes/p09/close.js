@@ -20,81 +20,90 @@ import { CLAIM_DATUM, CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 import { nameWidth } from "../p07/example.js";
 import { scenes } from "../registry.js";
 
-/* 09.1-09.2. The opening sentence returns where it began, said by its Agent, its datum reaching along a dashed link to
- * an empty place; in ETHOS the link holds, and the sentence's attestations stand at its end, each row on its words:
- * which commit, what the proof checked, what still has no result, all to be looked up. The attestations' list hangs
- * from a fan wide enough that the seal's name keeps clear of its markers, and what can all be looked up, the predicate
- * of the three rows rather than a fourth, stands apart below them: under a rule that closes the rows, half a row
- * further down than a next row would, and starting at the markers' edge rather than the rows' text. The names under the
- * chain, the seal's and the question put later under the sentence, stand on one baseline under its deepest mark, the
- * sentence's panel. The picture stands centred on the frame, the Agent and its sentence on the left and the empty
- * place on the right, while ETHOS's way is named, and keeps that place as the seal takes the empty place: the place
- * is as wide as lets the seal and its name stand near the centre there, and the first row, arriving next, inside the
- * frame. On the words of the first row the picture glides left to its finished place, which is centred too, so the
- * stage only ever moves one way. */
+/* 09.1-09.2. The opening sentence returns as it began: said by its Agent, which stands below it and to its left, its
+ * link rising and turning into the panel as in 01, the two centred on the frame. In ETHOS the sentence has to come with
+ * attestations behind it: on the words that name ETHOS's way the picture steps left and a link draws out from the
+ * sentence's datum while that clause is said, reaching the attestations' seal as they are named, so nothing stands
+ * waiting at its end. Then each thing they let one look up arrives on its words, in rows fanned from the seal, and what
+ * can all be looked up stands apart below them, the predicate of the three rows rather than a fourth: under a rule that
+ * closes the rows, half a row further down than a next row would, and starting at the markers' edge rather than the
+ * rows' text. The names under the chain, the seal's and the question put later under the sentence, stand on one
+ * baseline under the sentence's panel. Each state is centred on the frame: the sentence with its Agent, the chain to
+ * the seal, and the finished picture to the longest row, so the stage only ever moves one way. */
 const BOUND_X = 700,
-  BOUND_END = 1140,
-  // The empty place at the link's end, where the attestations will stand. Taking it, the seal and its name stand 36 px
-  // left of the centre in both editions without the picture moving: the place is narrower in Chinese, whose seal's
-  // name is short, and in English it is as narrow as lets the first row arrive inside the frame.
-  PLACE = () => L(130, 180),
-  // English hangs its rows 20 px nearer the seal than Chinese, so its first row can arrive inside the frame while the
-  // seal and the sentence stand near the centre; its longer seal name still keeps 46 px clear of the fan's trunk.
+  // The datum's link ends this far right of the panel's centre, where the seal stands.
+  BOUND_RUN = 440,
+  // The Agent stands below the panel's left end, its link rising to the panel's left edge, as in 01, low enough that
+  // the sentence and its Agent alone fill the band's height as the reviewers measure a thought's picture.
+  AGENT_DX = 70,
+  AGENT_DY = 270,
+  // English hangs its rows 20 px nearer the seal than Chinese; the seal's longer name still keeps clear of the trunk.
   FAN = () => L(210, 190),
   // The rows stand a pitch apart that keeps the seal's name, under the middle row, clear of the last row's line.
   BOUND_ROWS = [385, 470, 555],
-  SEAL_NAME = () => L("存证", "attestations"),
+  SEAL_NAME = () => L("存证", "Attestations"),
   ATTESTED = () => [
-    L("哪一次提交", "which commit it means"),
-    L("核验了什么", "what the proof checked"),
-    L("哪里还没有结果", "what still has no result"),
+    L("哪一次提交", "The commit"),
+    L("核验了什么", "What the proof checked"),
+    L("哪里还没有结果", "What still has no result"),
   ];
+/* How far the sentence's picture reaches left of the panel's centre: the Agent's outline below its left end. */
+const boundLeft = () => -claimWidth() / 2 - AGENT_DX - 40;
 /* Where the sentence stands once its attestations have come: the finished picture, from the Agent to the longest row,
  * is centred on the frame. 09.3 takes the sentence up from here. */
 export const boundShift = () =>
   960 -
-  (BOUND_X - 370 - 34 + BOUND_END + FAN() + 30 + Math.max(...ATTESTED().map((v) => measure(v)))) /
+  (2 * BOUND_X +
+    boundLeft() +
+    BOUND_RUN +
+    FAN() +
+    30 +
+    Math.max(...ATTESTED().map((v) => measure(v)))) /
     2;
 function bound(s, t, a) {
   if (a <= 0) return;
-  const [beganAt, doneAt, wayAt, attestAt, commitAt, provedAt, openAt, lookAt, trustAt] = cues(s, [
+  const [beganAt, doneAt, wayAt, sealAt, commitAt, provedAt, openAt, lookAt, trustAt] = cues(s, [
     ["开头那句", "where we began"],
     ["做完了", "Done"],
     ["按 ETHOS 的做法", "In ETHOS"],
-    ["跟着存证", "attestations behind it"],
+    ["存证", "attestations"],
     ["哪一次提交", "which commit it means"],
     ["核验了什么", "what the proof checked"],
     ["哪里还没有结果", "what still has no result"],
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"],
   ]);
-  // Before its rows arrive the picture runs from the Agent to the empty place at the link's end, which the seal takes,
-  // and it stays there, unless the first row, arriving next, would not stand inside the frame's safe area (to 1824,
-  // with room for the camera's push); on the first row's words it glides left to its finished place.
-  const before = 960 - (BOUND_X - 370 - 34 + BOUND_END + 6 + PLACE()) / 2,
-    ready = Math.min(before, 1824 - 12 - (BOUND_END + FAN() + 30 + measure(ATTESTED()[0]))),
+  // The sentence with its Agent centred; then the chain to the seal, its name included; then the finished picture.
+  const W = claimWidth(),
+    alone = 960 - BOUND_X - (boundLeft() + W / 2 + CLAIM_DATUM) / 2,
+    chain =
+      960 - BOUND_X - (boundLeft() + BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2)) / 2,
     off = mix(
-      mix(before, ready, soon(t, attestAt + 0.05, 0.9)),
+      mix(alone, chain, soon(t, wayAt + 0.05, 0.9)),
       boundShift(),
       soon(t, commitAt + 0.05, 0.9),
     ),
     PX = BOUND_X + off,
     Y = 470,
+    AX = PX - W / 2 - AGENT_DX,
+    AY = Y + AGENT_DY,
     // The question's top, at its gap under the panel; the seal's name shares its baseline.
     under = Y + CLAIM_H / 2 + 18,
     clear = a * clearOfTitle(s, t, Y - 60),
-    way = ramp(t, wayAt - 0.15, 0.5),
-    at = a * named(t, attestAt),
-    end = BOUND_END + off,
+    way = a * ramp(t, wayAt - 0.15, 0.5),
+    at = a * named(t, sealAt),
+    end = PX + BOUND_RUN,
     rows = BOUND_ROWS,
-    ats = [commitAt, provedAt, openAt];
-  agent(PX - 370, Y, { size: 1.5, alpha: clear });
-  link(PX - 334, Y, PX - claimWidth() / 2 - 2, Y, { alpha: clear, end: false });
+    ats = [commitAt, provedAt, openAt],
+    flow = (voiceTime(t) * 0.4) % 1;
+  agent(AX, AY, { size: 1.5, alpha: clear });
+  // The Agent's link carries a point to the sentence while the voice speaks, and ends in its quiet point there.
+  link(AX, AY - 33, PX - W / 2 - 6, Y, { route: "vh", alpha: clear, flow });
   const {
     datum: [dx, dy],
   } = claimPanel(t, PX, Y, { alpha: clear, words: clear * named(t, doneAt) });
   // English names where the sentence began as its clause begins, so the thought is named in its first second.
-  nameText(L("开头那句", "where we began"), PX, Y - CLAIM_H / 2 - 44, {
+  nameText(L("开头的那句话", "Where we began"), PX, Y - CLAIM_H / 2 - 44, {
     valign: "bottom",
     size: NOTE,
     color: P.muted,
@@ -102,35 +111,25 @@ function bound(s, t, a) {
   });
   // The question whether the sentence can be trusted is put while it still stands with its attestations, and rises
   // with it when the judgement takes the picture.
-  nameText(L("这句话能不能信", "can be trusted"), PX, under, {
+  nameText(L("能不能信", "Can it be trusted?"), PX, under, {
     valign: "top",
     size: NOTE,
     color: P.muted,
     alpha: clear * named(t, trustAt),
   });
-  // The claim's link: dashed toward an empty place, holding once ETHOS's way is named.
-  link(dx + 16, dy, end, dy, {
-    alpha: clear * (1 - way),
-    dash: [8, 8],
-    flow: way < 1 ? (voiceTime(t) * 0.4) % 1 : null,
-  });
-  link(dx + 16, dy, end, dy, { alpha: a * way, flow: (voiceTime(t) * 0.4) % 1 });
-  box(end + 6, dy - 45, PLACE(), 90, {
-    stroke: P.line,
-    alpha: clear * (1 - at),
-    radius: 10,
-    dash: [8, 8],
-  });
+  // ETHOS's way: the datum's link draws out while its clause is said and reaches the seal as the attestations are
+  // named, its quiet point arriving under the seal.
+  const drawn = soon(t, wayAt + 0.05, Math.max(0.9, sealAt - wayAt));
+  link(dx + 16, dy, end, dy, { alpha: way, upto: drawn, flow: drawn >= 1 ? flow : null });
   nameText(L("ETHOS 的做法", "In ETHOS"), (dx + end) / 2, dy - 22, {
     valign: "bottom",
     size: NOTE,
     color: P.muted,
-    alpha: a * way,
+    alpha: way,
   });
   // Its attestations at the link's end, and each thing they let one look up. The seal's name hangs on the question's
-  // baseline under the panel, the chain's deepest mark: a name's alphabetic baseline stands its face's ascent below
-  // its top (0.88 em in the CJK face, 0.78 em in the Latin), so the seal's larger name starts higher by that share of
-  // the difference in size, 8 px further under the seal than one gap.
+  // baseline under the panel: a name's alphabetic baseline stands its face's ascent below its top (0.88 em in the CJK
+  // face, 0.78 em in the Latin), so the seal's larger name starts higher by that share of the difference in size.
   const x = end + FAN();
   seal(end + 36, dy, 26, { alpha: at, color: P.ink });
   nameText(SEAL_NAME(), end + 36, under - L(0.88, 0.78) * (labelSize(LABEL) - labelSize(NOTE)), {
@@ -164,7 +163,7 @@ function bound(s, t, a) {
   line(x - 16, ruleY, x + 30 + Math.max(...ATTESTED().map((v) => measure(v))), ruleY, {
     alpha: look,
   });
-  nameText(L("都找得到", "can all be looked up"), x - 16, rows[2] + 1.5 * pitch, {
+  nameText(L("查得到", "All on record"), x - 16, rows[2] + 1.5 * pitch, {
     align: "left",
     alpha: look,
   });
@@ -178,11 +177,13 @@ function bound(s, t, a) {
  * axis between the two lists, which a rule marks as the judgement takes the picture, so the two lists stand as the two
  * sides of one judgement before the second arrives. While the refusals stand alone, the sentence and the refusals are
  * centred on the frame together, and the table glides to its place on the words that bring the first condition. */
-const REFUSED = () => [L("谁说的", "who said it"), L("走了多少流程", "how much process")],
+/* The conditions are ticked, so each is set as the condition met, a short affirmative name, rather than as the
+ * question the narration asks. */
+const REFUSED = () => [L("谁说的", "Who said it"), L("走了多少流程", "How much process")],
   CONDITIONS = () => [
-    L("原意是不是有一处可查", "the meaning can be found in one place"),
-    L("结论有没有超出证据", "stays within its evidence"),
-    L("能不能退回去", "you can get back after a mistake"),
+    L("原意有一处可查", "Meaning found in one place"),
+    L("结论不超出证据", "Claim within its evidence"),
+    L("出了错能退回去", "A way back after a mistake"),
   ];
 function judged(s, t, a, cutAt) {
   if (a <= 0) return;
@@ -220,7 +221,7 @@ function judged(s, t, a, cutAt) {
   // The gutter's rule comes with the judgement: it overhangs the boxes of the first and last conditions, the ink at
   // either end of the two lists, by the same 12 px.
   line(axis + shift, rows[0] - 30, axis + shift, rows[2] + 30, { alpha: a });
-  nameText(L("这句话能不能信", "can be trusted"), PX, PY + CLAIM_H / 2 + 18, {
+  nameText(L("能不能信", "Can it be trusted?"), PX, PY + CLAIM_H / 2 + 18, {
     valign: "top",
     size: NOTE,
     color: P.muted,
@@ -260,9 +261,9 @@ const MARK = [960, 470, 640];
  * right; the boundary taking full ink, named at the lower left; and last the cinnabar datum filling the origin, named
  * at the lower right. A point travels the boundary in voice time until the boundary is named. The names on the right
  * keep the same clearance from the mark's ink as those on the left, the two lower names stand on one line as the two
- * upper ones do, and the Chinese origin's note breaks at its comma, as the English one breaks before its phrase, so the
- * close is centred on the frame with the datum at its centre. The mark, the film's emblem, stands on the frame's axis
- * throughout. While the origin's names are the only ones beside it, they stand above the mark, the name on the
+ * upper ones do, and each note is one short line, so the close is centred on the frame with the datum at its centre.
+ * The mark, the film's emblem, stands on the frame's axis throughout. While the origin's names are the only ones beside
+ * it, they stand above the mark, the name on the
  * origin's axis and the note under it, one gap clear of the boundary, so the picture is the mark's own, centred where
  * it stays; on the passages' words they glide round the boundary's upper left to their place, leftward first and then
  * down, keeping a gap clear of the boundary all the way. */
@@ -273,19 +274,19 @@ function close(s, t, a) {
       ["ETHOS 的标志", "The ETHOS mark"],
       ["ETHOS 的标志", "the ETHOS mark"],
       ["一个起点", "One origin"],
-      ["在变成改动之前", "bounded before it becomes a change"],
+      ["先划清边界", "bounded before it becomes a change"],
       ["两条路径", "Two passages"],
       ["只在影响行动的地方分开", "only where they decide action"],
       ["一道边界", "One boundary"],
-      ["各自守在自己的范围里", "each keeping to their scope"],
+      ["守在自己的范围里", "each keeping to their scope"],
       ["那一点朱红", "cinnabarred point"],
-      ["结论必须落到证据上的地方", "bound to its evidence"],
+      ["必须落到证据上", "bound to its evidence"],
     ]);
   const [X, Y, S] = MARK,
     k = S / 512,
     r = 164 * k,
     ORIGIN = L("一个起点", "One origin"),
-    ORIGIN_NOTE = L("在变成改动之前，先划清边界", ["bounded", "before it becomes a change"]),
+    ORIGIN_NOTE = L("先划清边界", "bounded before any change"),
     ORIGIN_WIDTH = L(220, 380),
     lit = ramp(t, boundaryAt - 0.15, 0.5),
     o = a * named(t, originAt),
@@ -309,7 +310,7 @@ function close(s, t, a) {
     alpha: a * (1 - lit),
   });
   // English names the mark as its clause begins, so the cut already shows the name with the drawing outline.
-  nameText(L("ETHOS 的标志", "the ETHOS mark"), X, Y + r + 16 * k + NAME_GAP, {
+  nameText(L("ETHOS 的标志", "The ETHOS mark"), X, Y + r + 16 * k + NAME_GAP, {
     valign: "top",
     alpha: a * ramp(t, markAt - (en ? 0.75 : 0.15), 0.4),
   });
@@ -350,7 +351,7 @@ function close(s, t, a) {
   pair(
     L("两条路径", "Two passages"),
     twoAt,
-    L("只在影响行动的地方分开", "only where they decide action"),
+    L("影响行动的地方", "only where they decide action"),
     whereAt - (en ? 0.45 : 0),
     RIGHT,
     Y - 96,
@@ -359,16 +360,16 @@ function close(s, t, a) {
   pair(
     L("一道边界", "One boundary"),
     boundaryAt,
-    L("各自守在自己的范围里", "each keeping to their scope"),
+    L("守在自己的范围里", "each keeping to their scope"),
     scopeAt,
     LEFT,
     Y + 70,
     "right",
   );
   pair(
-    L("那一点朱红", "cinnabar-red point"),
+    L("那一点朱红", "Cinnabar-red point"),
     pointAt,
-    L("结论必须落到证据上的地方", "bound to its evidence"),
+    L("必须落到证据上", "bound to its evidence"),
     boundAt,
     RIGHT,
     Y + 70,

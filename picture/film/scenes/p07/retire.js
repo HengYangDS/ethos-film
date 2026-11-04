@@ -53,10 +53,10 @@ function upkeep(s, t, a) {
     ["每个机制", "Every mechanism"],
     ["有人维护", "someone to maintain"],
     ["有人解释", "explain it"],
-    ["过期", "goes stale"],
+    ["过期", "stale"],
   ]);
   const GX = 960,
-    GY = 490,
+    GY = 455,
     R = 100,
     PY = GY + 10,
     top = rowNameTop([GY + R, personBottom(PY, 1.3)]),
@@ -77,20 +77,21 @@ function upkeep(s, t, a) {
     valign: "top",
     alpha: a * named(t, mechAt),
   });
-  nameText(L("过期", "goes stale"), GX, GY - R - NAME_GAP, {
+  nameText(L("过期", "Stale"), GX, GY - R - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, staleAt),
   });
   person(640, PY, { size: 1.3, alpha: m });
   link(678, GY, GX - R - 12, GY, { alpha: m, upto: soon(t, maintainAt + 0.05, 0.5), flow });
-  nameText(L("有人维护", "maintain it"), 640, top, { valign: "top", alpha: m });
+  // Each person is named as who they are, someone to maintain it and someone to explain it.
+  nameText(L("有人维护", "Someone to maintain it"), 640, top, { valign: "top", alpha: m });
   person(1280, PY, { size: 1.3, alpha: e });
   link(1242, GY, GX + R + 12, GY, {
     alpha: e,
     upto: soon(t, explainAt + 0.05, 0.5),
     flow: (flow + 0.5) % 1,
   });
-  nameText(L("有人解释", "explain it"), 1280, top, { valign: "top", alpha: e });
+  nameText(L("有人解释", "Someone to explain it"), 1280, top, { valign: "top", alpha: e });
 }
 
 /* The stale mechanisms of the pile, touching one another so the pile reads as one mark: their centres, sizes and
@@ -108,15 +109,16 @@ const PILE = [
 ];
 /* 07.5, second: the mechanisms whose obligation is gone are kept one after another on their words, piling row on row
  * on a shelf as one dashed mark; as governance becomes the burden, the shelf bends under them and the pile sinks with
- * it. The pile's name stands beside it at the height of its middle row and sinks with it, and the picture, the name
- * and the shelf, is centred on the frame. */
+ * it. The pile's name stands beside it at the height of its middle row and sinks with it, the shelf is named as
+ * governance itself under it, and the picture, the name and the shelf, is centred on the frame. */
 function burden(s, t, a) {
   if (a <= 0) return;
-  const [goneAt, burdenAt] = cues(s, [
+  const [goneAt, govAt, burdenAt] = cues(s, [
     ["已经没有义务的机制", "the ones whose obligation is gone"],
+    ["治理本身", "governance itself"],
     ["治理本身就成了负担", "becomes the burden"],
   ]);
-  const PILE_NAME = L("没有义务的机制", "whose obligation is gone"),
+  const PILE_NAME = L("没有义务的机制", "Mechanisms without an obligation"),
     [mx, my, mr] = PILE[4],
     NX = mx - mr - 30,
     // The shelf is centred on the pile, its ends 140 px beyond the outer mechanisms' axes.
@@ -127,7 +129,7 @@ function burden(s, t, a) {
     sag = 34 * soon(t, burdenAt + 0.05, 1.2),
     depth = (x) => sag * (1 - ((x - MIDX) / (MIDX - SHELF[0])) ** 2),
     g = a * named(t, goneAt),
-    b = a * named(t, burdenAt);
+    b = a * named(t, govAt);
   ctx.save();
   ctx.translate(S, 0);
   stroke(
@@ -152,7 +154,8 @@ function burden(s, t, a) {
     width: 300,
     alpha: g,
   });
-  nameText(L("治理本身就成了负担", "becomes the burden"), MIDX, 602 + sag + NAME_GAP + 8, {
+  // The shelf the pile bends is governance itself, named under it on its words.
+  nameText(L("治理本身", "Governance itself"), MIDX, 602 + sag + NAME_GAP + 8, {
     valign: "top",
     alpha: b,
   });

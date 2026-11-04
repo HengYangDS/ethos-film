@@ -118,23 +118,12 @@ export function stageKernel(t, a, c) {
     valign: "top",
     alpha: a * named(t, L(c.kernel - 0.55, c.kCut)),
   });
-  // The inputs, each with its mark, named at its left and linked to the kernel round its name. On the words that say
-  // the kernel takes three of them, their three places open, each a ring that its input fills on its own words; the
-  // rings are drawn firm enough to read in a frame seen small.
-  const ats = [c.in1, c.in2, c.in3],
-    places = a * ramp(t, c.inputs - 0.15, 0.4);
+  // The inputs, each with its mark, named at its left and linked to the kernel round its name. Each input draws on its
+  // own words with its name; no place stands open for it before, since an empty place would wait for its name.
+  const ats = [c.in1, c.in2, c.in3];
   ats.forEach((at, i) => {
     const on = a * ramp(t, at - 0.15, 0.4),
-      y = ys[i],
-      open = places * (1 - on / Math.max(a, 1e-6));
-    if (open > 0.01)
-      stroke(
-        () => {
-          ctx.moveTo(IX + 30, y);
-          ctx.arc(IX, y, 30, 0, Math.PI * 2);
-        },
-        { color: P.muted, alpha: open, width: 3 },
-      );
+      y = ys[i];
     if (on < 0.01) return;
     if (i === 0) paper(IX - 32, y - 40, 64, 80, { alpha: on, rows: 3 });
     if (i === 1)
@@ -269,7 +258,7 @@ export function stageLifetimes(t, a, c) {
   const rows = [
       [[L("意图", "Intent")], [c.intent], [L("一份正式变更", "one official Change")], [c.change]],
       [
-        [L("事实", "Facts")],
+        [L("刚观察到的事实", "Fresh facts")],
         [c.facts],
         L(["每次都重新去看，", "从不存下来"], ["observed again every time, ", "never stored"]),
         [c.again, c.never],
@@ -370,16 +359,20 @@ export function stageLifetimes(t, a, c) {
   });
 }
 
-/* 03.5 The kernel keeps one thing for the long term: from the cut the kernel at the left, linked to what it keeps, a
- * card with its seal, the attestation. Its two fields fill in on their words, who verified it and where it holds, and
- * its scope is drawn around it; someone later checks it from below; a copy outside the scope fades and is struck: it
- * does not count. The kernel and its card stand alone centred with the scope that is drawn round the card, and as the
- * copy is said the picture glides as one to centre the whole, from the kernel to the copy; the copy stands 100 px
- * outside the scope. "For the long term" and the attestation's name read as one heading of two lines at the normal
- * leading, one gap above what it heads: the card, then the scope, which it lifts clear of in the half second before the
- * scope arrives. A first line that would stand alone 1.5 s or more takes the second line's place until that line's
- * name joins it, and lifts one line in the half second before. The kernel's and the copy's names stand on one
- * baseline; the reader and the check it makes from below are named from one left edge. */
+/* 03.5 The kernel keeps one thing for the long term: from the cut the kernel at the left, and over the place of what
+ * it keeps, "for the long term"; what it keeps, a card with its seal, the attestation, arrives whole with its name,
+ * linked from the kernel, so no empty card or hollow seal waits for it. Its two fields fill in on their words, who
+ * verified it and where it holds, and its scope is drawn around it, a thin solid outline, since the film keeps dashes
+ * for what is unknown, missing or refused; someone later checks it from below; a copy outside the scope fades and is
+ * struck: it does not count. The kernel and the heading stand centred until the card comes; the picture then glides
+ * to centre the kernel and its card with the scope that is drawn round it, and as the copy is said it glides as one
+ * to centre the whole, from the kernel to the copy; the copy stands 100 px outside the scope. "For the long term" and
+ * the attestation's name read as one heading of two lines at the normal leading, one gap above what it heads: the card,
+ * then the scope, which it lifts clear of in the half second before the scope arrives. A first line that would stand
+ * alone 1.5 s or more takes the second line's place until that line's name joins it, and lifts one line in the half
+ * second before. The kernel's and the copy's names stand on one baseline; the reader and the check it makes from below
+ * are named from one left edge. English says the attestation's name 2.3 s into the thought, so its card comes 0.45 s
+ * ahead of the name, keeping the kernel and the heading alone under 2 s. */
 export function stageScope(t, a, c) {
   if (a <= 0) return;
   // The card pads its content equally on both sides: 24 px, the seal, 24 px, the fields, 24 px.
@@ -391,7 +384,12 @@ export function stageScope(t, a, c) {
     copyAt = scopeEnd + 100,
     left = Math.min(600 - 44, 600 - measure(kernelName) / 2),
     right = Math.max(copyAt + 180, copyAt + 90 + measure(voidName) / 2),
-    dx = glide(t, centring(left, scopeEnd), [[c.outside, centring(left, right)]]);
+    cardAt = c.att - L(0.15, 0.45),
+    headRight = 1000 + measure(L("长期留下的", "For the long term")) / 2,
+    dx = glide(t, centring(left, headRight), [
+      [cardAt, centring(left, scopeEnd)],
+      [c.outside, centring(left, right)],
+    ]);
   const CX = 1000 + dx,
     CY = 520,
     H = 150,
@@ -399,13 +397,18 @@ export function stageScope(t, a, c) {
     namesTop = rowNameTop([CY + 44, CY + 50]),
     headBottom = CY - H / 2 - NAME_GAP - 40 * soon(t, c.scope - 0.5, 0.5),
     joins = c.att - c.aCut >= 1.5 ? soon(t, c.att - 0.5, 0.5) : 1,
+    card = a * ramp(t, cardAt, 0.4),
     q = (voiceTime(t) * 0.4) % 1;
   kernelIcon(KX, CY, 44, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
   nameText(kernelName, KX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.aCut + 0.1),
   });
-  link(KX + 44 * 0.87, CY, CX - W / 2, CY, { alpha: a, flow: q });
+  link(KX + 44 * 0.87, CY, CX - W / 2, CY, {
+    alpha: card,
+    upto: soon(t, cardAt + 0.05, 0.4),
+    flow: q,
+  });
   nameText(
     L("长期留下的", "For the long term"),
     CX,
@@ -415,8 +418,8 @@ export function stageScope(t, a, c) {
       alpha: a * named(t, c.aCut + 0.15),
     },
   );
-  box(CX - W / 2, CY - H / 2, W, H, { stroke: P.ink, alpha: a, radius: 14, width: 2.5 });
-  seal(CX - W / 2 + 60, CY, 36, { color: P.ink, alpha: a, stamp: a * ramp(t, c.att - 0.15, 0.4) });
+  box(CX - W / 2, CY - H / 2, W, H, { stroke: P.ink, alpha: card, radius: 14, width: 2.5 });
+  seal(CX - W / 2 + 60, CY, 36, { color: P.ink, alpha: card, stamp: card });
   // The card is named over its scope, outside the boundary drawn round it.
   nameText(L("存证", "The attestation"), CX, headBottom, {
     valign: "bottom",
@@ -433,11 +436,10 @@ export function stageScope(t, a, c) {
   const scope = a * ramp(t, c.scope - 0.15, 0.4),
     bottom = CY + H / 2 + 40;
   box(CX - W / 2 - 40, CY - H / 2 - 40, W + 80, H + 80, {
-    stroke: P.ink,
-    alpha: scope * 0.85,
+    stroke: P.line,
+    alpha: scope,
     radius: 26,
-    width: 2.5,
-    dash: [9, 8],
+    width: 2,
   });
   // Someone later checks it, from below its scope.
   const later = a * ramp(t, c.reader - 0.15, 0.4),

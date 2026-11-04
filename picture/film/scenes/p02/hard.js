@@ -151,6 +151,7 @@ scenes["02"] = function (s, t) {
     deploy: ["部署成功了", "a deployment"],
     benefit2: ["实际效益", "actual benefit"],
     ownPart: ["只证明了它自己那一段", "proves only its own part"],
+    ownName: ["它自己那一段", "its own part"],
     tCut: ["就连", "Even"],
     allPass: ["测试全过", "all tests pass"],
     written: ["已经写好的那些测试", "the tests someone wrote"],

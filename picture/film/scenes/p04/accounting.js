@@ -54,7 +54,7 @@ export function examplesStage(s, t, c, g) {
       t,
       L(["正例和反例"], ["Positive and negative examples"]),
       [c.examples],
-      L(["来考一考对它的理解"], ["test how it has been understood"]),
+      L(["考对它的理解"], ["test how it has been understood"]),
       [c.understood],
       960,
       bottom + 50,
@@ -63,7 +63,7 @@ export function examplesStage(s, t, c, g) {
     em = labelSize(LABEL),
     // The cards' names stand one gap above them and 40 px under the heading.
     Y = heading.bottom + 40 + em + NAME_GAP,
-    goesName = L("要去掉", "goes"),
+    goesName = L("要去掉", "Goes"),
     corrTerm = L(["同一只股票的更正"], ["A correction"]),
     corrQual = L(["同一天"], ["same stock, same day"]),
     // Until the correction's verdict the pair reaches from the repeat's cross at its left to the end of the second
@@ -107,7 +107,7 @@ export function examplesStage(s, t, c, g) {
     inline: true,
   });
   check(X2 + EX_W / 2 + NAME_GAP + 12, vy, 22, { color: P.ink, alpha: stays });
-  nameText(L("要留下", "stays"), X2 + EX_W / 2 + NAME_GAP + 36, vy, {
+  nameText(L("要留下", "Stays"), X2 + EX_W / 2 + NAME_GAP + 36, vy, {
     align: "left",
     alpha: stays,
   });
@@ -148,7 +148,7 @@ export function constraintsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(
       ["留下", "经授权明确排除", "标明还没解决"],
-      ["Kept", "Excluded by an authorized decision", "Marked as unresolved"],
+      ["Kept", "Excluded by authorization", "Marked unresolved"],
     ),
     kinds = ["pass", "cross", "unknown"],
     ats = [c.kept, c.excluded, c.unresolved],
@@ -256,9 +256,10 @@ export function compileStage(s, t, c, g) {
       { alpha: g, align: "center" },
     ),
   );
-  // The checks, one column; the same input yields them again, each lighting in turn.
+  // The checks, one column; the same input yields them again, each lighting in turn. The relation into them ends
+  // 10 px short of the checks, over their name, as the relation into each step ends over that step's name.
   const made = g * named(t, c.checks);
-  link(xs[2] + 52, Y, xs[3] - 40, Y, { alpha: made });
+  link(xs[2] + 52, Y, xs[3] - 24, Y, { alpha: made });
   stroke(
     () => {
       for (let k = 0; k < 3; k++) {

@@ -5,19 +5,19 @@
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
 import { ethosMark } from "../../drawing/mark.js";
-import { box, fill, labelSize, line, measure, stroke } from "../../drawing/strokes.js";
+import { box, fill, line, measure, stroke } from "../../drawing/strokes.js";
 import { check } from "../../drawing/symbols.js";
 import { kernelIcon, ledger, repoIcon } from "../../drawing/workspace.js";
 import { KICK_Y, RULE_Y, ruleHeadingLayout } from "../../framing/rules.js";
 import { listIn, named } from "../../naming/lists.js";
-import { LEADING, NAME_GAP, NOTE, nameText, rejectedName } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, rejectedName, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
-import { LABEL, P } from "../../palette.js";
+import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
-import { nameWidth, taskList } from "./example.js";
+import { listRows, nameWidth, taskList } from "./example.js";
 
 /* Repositories of one group drawn as one mark: their stores one fill, their outlines and branch glyphs one stroke, so
  * one name names the group. `checks` ticks each with a check of its own, again in one stroke. */
@@ -118,8 +118,9 @@ export function ruleFour(s, t, a) {
     ruleAt,
     alpha: a,
   });
-  // The legend waits until the heading has settled past it, still within half a second of its words.
-  const heads = [everyAt + 0.85, Math.max(oneAt, everyAt + 0.85)],
+  // The legend waits until the heading's glyph has shrunk clear of it, under half a second, so its names stand within
+  // half a second of their words.
+  const heads = [everyAt + 0.45, Math.max(oneAt, everyAt + 0.45)],
     duties = [sharedAt, ownAt],
     owners = [ethosAt, eachAt],
     flow = (voiceTime(t) * 0.4) % 1,
@@ -138,11 +139,11 @@ export function ruleFour(s, t, a) {
     e = a * named(t, ethosAt),
     r = a * named(t, eachAt),
     o = a * named(t, ownAt);
-  // The table's key at its foot: every obligation, linked to exactly one owner. Standing below the columns from its
-  // words, it holds the picture on the centre while the columns above it build; its words and link are centred on the
-  // frame together.
-  const every = L("每一项义务", "Every obligation"),
-    one = L("只有一个归属", "exactly one owner"),
+  // The table's key at its foot: an obligation, linked to one owner, named by the two concepts rather than the sentence
+  // that states the rule. Standing below the columns from its words, it holds the picture on the centre while the
+  // columns above it build; its words and link are centred on the frame together.
+  const every = L("义务", "Obligation"),
+    one = L("一个归属", "One owner"),
     kx = (measure(every, NOTE) - measure(one, NOTE)) / 2;
   nameText(every, 900 + kx, LEG, {
     align: "right",
@@ -162,9 +163,9 @@ export function ruleFour(s, t, a) {
     alpha: a * listIn(t, heads, 1),
     set: "07.3:heads",
   });
-  // The obligation the same for every repository, owned by ETHOS. English breaks the two duties before the phrases
-  // "for every repository" and "that are its own", so no line ends on "for" or "that".
-  const d1 = nameText(L("对所有仓库都一样的规则", ["the same", "for every repository"]), C1, DUTY, {
+  // The obligation the same for every repository, owned by ETHOS. English breaks it before the phrase "for every
+  // repository", so no line ends on "for", and names the second duty as a noun, the repository's own checks.
+  const d1 = nameText(L("对所有仓库都一样的规则", ["The same", "for every repository"]), C1, DUTY, {
     width: 330,
     alpha: a * listIn(t, duties, 0),
     set: "07.3:duties",
@@ -181,7 +182,7 @@ export function ruleFour(s, t, a) {
     set: "07.3:owners",
   });
   // Each repository's own checks, owned by the repositories.
-  const d2 = nameText(L("自己特有的检查", ["the checks", "that are its own"]), C2, DUTY, {
+  const d2 = nameText(L("自己特有的检查", "Its own checks"), C2, DUTY, {
     width: 330,
     alpha: a * listIn(t, duties, 1),
     set: "07.3:duties",
@@ -192,7 +193,7 @@ export function ruleFour(s, t, a) {
     flow: (flow + 0.5) % 1,
   });
   repoGroup(G, OWN, REPO[0], REPO[1], { alpha: r, checks: o });
-  nameText(L("每个仓库", "each repository"), C2, ownerTop, {
+  nameText(L("每个仓库", "Each repository"), C2, ownerTop, {
     valign: "top",
     alpha: a * listIn(t, owners, 1),
     set: "07.3:owners",
@@ -246,14 +247,17 @@ export function ownRepository(s, t, a) {
     flow: (flow + 0.5) % 1,
   });
   ownRepo(OWNX, 330, o, named(t, sameAt + 0.4));
-  nameText(L("自己的仓库", "its own repository"), OWNX, 385 + NAME_GAP, {
+  nameText(L("自己的仓库", "Its own repository"), OWNX, 385 + NAME_GAP, {
     valign: "top",
     alpha: o,
   });
   repoGroup(G, 690, 100, 76, { alpha: g, checks: named(t, sameAt + 0.4) });
-  nameText(L("所有仓库", "every other one"), G[1], 728 + NAME_GAP, { valign: "top", alpha: g });
+  nameText(L("所有仓库", "Every other repository"), G[1], 728 + NAME_GAP, {
+    valign: "top",
+    alpha: g,
+  });
   ledger(LX, 500, 100, 130, { alpha: l });
-  nameText(L("同一套义务", "the same obligations"), LX, top, {
+  nameText(L("同一套义务", "The same obligations"), LX, top, {
     valign: "top",
     width: 230,
     alpha: l,
@@ -276,7 +280,7 @@ function wayBox(x, y, rows, { alpha = 1, more = 1, extra = 0 } = {}) {
 
 /* 07.4, second: a replacement takes the old way's place on its words; it holds every check the old one held, and the
  * rule that it may never be weaker is named as its extra check arrives: Chinese states it beneath both ways, comparing
- * them, and English, whose words continue the replacement's own name, sets them as that name's second line. English
+ * them, and English, whose words continue the replacement's own name, sets it as that name's qualifier. English
  * names what it replaces last, after the rule, so its new way stands alone for more than a second: it stands centred
  * until the old way's words, and the two ways then glide, as one unit, to their places either side of the axis.
  * Chinese names both ways in one clause, half a second apart, so they stand in their places from the first. */
@@ -292,12 +296,8 @@ export function replacement(s, t, a) {
     o = a * named(t, oldAt),
     S = mix(L(0, 960 - 1220), 0, soon(t, oldAt + 0.05, 0.8));
   wayBox(700 + S, 430, 3, { alpha: o });
-  nameText(L("旧做法", "what it replaces"), 700 + S, 505 + NAME_GAP, { valign: "top", alpha: o });
+  nameText(L("旧做法", "What it replaces"), 700 + S, 505 + NAME_GAP, { valign: "top", alpha: o });
   wayBox(1220 + S, 430, 4, { alpha: n, more: w, extra: 1 });
-  const named2 = nameText(L("新做法", "A replacement"), 1220 + S, 505 + NAME_GAP, {
-    valign: "top",
-    alpha: n,
-  });
   // The relation draws on from the old way to the new; in English it waits until the glide has passed its fastest
   // part, so the line never grows while its ends slide fast.
   link(827 + S, 430, 1093 + S, 430, {
@@ -306,11 +306,15 @@ export function replacement(s, t, a) {
     flow: (voiceTime(t) * 0.4) % 1,
   });
   if (en)
-    nameText("may never be weaker", 1220 + S, named2.top + LEADING * labelSize(LABEL), {
-      valign: "top",
-      alpha: w,
+    termRow(t, ["A replacement"], [newAt], ["never weaker"], [weakAt], 1220 + S, 505 + NAME_GAP, {
+      alpha: a,
+      align: "center",
+      inline: false,
     });
-  else nameText("新的不能比旧的弱", 960, 650, { alpha: w });
+  else {
+    nameText("新做法", 1220 + S, 505 + NAME_GAP, { valign: "top", alpha: n });
+    nameText("不能比旧的弱", 960, 650, { alpha: w });
+  }
 }
 
 /* 07.4, third: an official Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
@@ -321,79 +325,82 @@ export function replacement(s, t, a) {
  * the picture glides, as one unit, to where the whole is centred by its outer edges, the Change on the left and the
  * record on the right. The record's ledger stands a fixed run right of the Change, or further where the delivered
  * rows' name would come within two gaps of its edge, so that name, one gap from its own bracket, reads with the
- * bracket alone. */
+ * bracket alone. The Change is the stage's largest mark: with the short names of its parts it alone keeps the picture
+ * from thinning out before the record arrives. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
     ["一项正式变更", "And an official Change"],
-    ["做到哪儿", "what it actually delivered"],
+    ["做到哪儿", "actually delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
   ]);
-  // English sets the delivered rows' name on two lines beside their bracket, breaking before "actually delivered" so
-  // no word stands alone on a line; the Chinese name fits on one.
-  const DELIVERED = L("做到哪儿，就按哪儿收尾", ["what it", "actually delivered"]),
-    RECORD = L("没做完的留下记录", "unfinished work stays on the record"),
+  // The delivered rows and the record are named by what they hold, not by the sentence that states the rule.
+  const DELIVERED = L("做到哪儿", "Delivered"),
+    RECORD = L("没做完的", "Unfinished work"),
     DY = 440,
-    H = 270,
-    left = Math.min(700 - 100, 700 - nameWidth(L("一项正式变更", "an official Change")) / 2),
+    W = 250,
+    H = 340,
+    // The list's four rows, spread to fill a list this large, the bracket round the first two, their name at its
+    // middle, and the unfinished rows' link between the last two.
+    ROWS = { first: 0.24, span: 0.62, reach: 0.36 },
+    rowsY = listRows(DY, H, 4, ROWS.first, ROWS.span),
+    BX = W / 2 + 18,
+    left = Math.min(700 - W / 2, 700 - nameWidth(L("一项正式变更", "An official Change")) / 2),
     DELIVERED_WIDTH = L(330, 300),
-    delivered = 700 + 156 + nameWidth(DELIVERED, DELIVERED_WIDTH),
+    delivered = 700 + BX + 14 + 2 + NAME_GAP + nameWidth(DELIVERED, DELIVERED_WIDTH),
     // The record's ledger, 110 px wide, stands RECORD_DX right of the Change: 540 px, or as far as keeps two gaps of
     // ground between the delivered rows' name and the ledger's edge.
     RECORD_DX = Math.max(540, delivered - 700 + 2 * NAME_GAP + 55),
     right = Math.max(700 + RECORD_DX + 55, 700 + RECORD_DX + nameWidth(RECORD, 300) / 2, delivered),
     // Where the Change stands from its words: where it and its delivered rows, arriving a moment later, are centred.
-    // Chinese, whose delivered name is one wide line, keeps the Change within 30 px of the place of the way the stage
-    // before showed on the left, so the cut between them reads as one card changing rather than a jump; its delivered
-    // rows still stand within 50 px of the centre there.
     centred = 960 - (left + delivered) / 2,
-    held = L(Math.min(30, centred), centred),
     // English: the Change alone, centred by its list and its name, until its delivered rows' words.
-    alone = 960 - (left + Math.max(700 + 100, 1400 - left)) / 2,
-    first = mix(L(held, alone), held, soon(t, deliveredAt + 0.05, 0.7)),
+    alone = 960 - (left + Math.max(700 + W / 2, 1400 - left)) / 2,
+    first = mix(L(centred, alone), centred, soon(t, deliveredAt + 0.05, 0.7)),
     // The picture's offset: that place, then, on the record's words, where the whole is centred.
     S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)),
     LX = 700 + S,
     RX = 700 + RECORD_DX + S,
-    top = rowNameTop([DY + H / 2, DY + 70 + 70]);
+    RY = (rowsY[2] + rowsY[3]) / 2,
+    top = rowNameTop([DY + H / 2, RY + 70]);
   const c = a * named(t, changeAt),
     d = a * named(t, deliveredAt),
     r = a * named(t, recordAt),
     p = a * named(t, passAt);
-  taskList(LX, DY, 200, H, { alpha: c, done: 2, tick: d });
-  nameText(L("一项正式变更", "an official Change"), LX, top, {
+  taskList(LX, DY, W, H, { alpha: c, done: 2, tick: d, ...ROWS });
+  nameText(L("一项正式变更", "An official Change"), LX, top, {
     valign: "top",
     alpha: c,
   });
   // The bracket of the delivered rows, and their name beside it.
   stroke(
     () => {
-      ctx.moveTo(LX + 118, DY - 72);
-      ctx.lineTo(LX + 132, DY - 72);
-      ctx.lineTo(LX + 132, DY + 12);
-      ctx.lineTo(LX + 118, DY + 12);
+      ctx.moveTo(LX + BX, rowsY[0] - 21);
+      ctx.lineTo(LX + BX + 14, rowsY[0] - 21);
+      ctx.lineTo(LX + BX + 14, rowsY[1] + 21);
+      ctx.lineTo(LX + BX, rowsY[1] + 21);
     },
     { color: P.ink, alpha: d, width: 2.5 },
   );
-  nameText(DELIVERED, LX + 156, DY - 30, {
+  nameText(DELIVERED, LX + BX + 16 + NAME_GAP, (rowsY[0] + rowsY[1]) / 2, {
     align: "left",
     width: DELIVERED_WIDTH,
     alpha: d,
   });
   // The unfinished rows go on record.
-  link(LX + 122, DY + 70, RX - 62, DY + 70, {
+  link(LX + BX + 4, RY, RX - 62, RY, {
     alpha: r,
     upto: soon(t, recordAt + 0.05, 0.7),
     flow: (voiceTime(t) * 0.4) % 1,
   });
-  ledger(RX, DY + 70, 110, 140, { alpha: r });
+  ledger(RX, RY, 110, 140, { alpha: r });
   nameText(RECORD, RX, top, {
     valign: "top",
     width: 300,
     alpha: r,
   });
-  rejectedName(L("冒充做完了", "passing for done"), 960, DY + 290, {
+  rejectedName(L("冒充做完了", "Passing for done"), 960, top + 100, {
     alpha: p,
     mark: ramp(t, passAt + 0.3, 0.4),
   });

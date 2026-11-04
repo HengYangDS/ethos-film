@@ -24,26 +24,36 @@ const R1 = 370,
   LIST = [140, 170];
 
 /* A Change's task list: a document whose rows are tick boxes and lines, drawn as one stroke; its first `done` rows
- * are ticked at the ink `tick`, the last of them at `last`, so a list ticked one row at a time fades each tick in. */
+ * are ticked at the ink `tick`, the last of them at `last`, so a list ticked one row at a time fades each tick in. Its
+ * rows run from `first` of its height over `span` of it, and their lines end `reach` of its width right of its axis; a
+ * list as large as a panel spreads its rows further, so they fill it. */
+export const listRows = (y, h, rows = 4, first = 0.3, span = 0.55) =>
+  Array.from({ length: rows }, (_, i) => y - h / 2 + h * (first + (span * i) / (rows - 1)));
 export function taskList(
   x,
   y,
   w,
   h,
-  { alpha = 1, rows = 4, done = 0, tick = 1, last = tick } = {},
+  {
+    alpha = 1,
+    rows = 4,
+    done = 0,
+    tick = 1,
+    last = tick,
+    first = 0.3,
+    span = 0.55,
+    reach = 0.3,
+  } = {},
 ) {
   if (alpha < 0.01) return;
   documentIcon(x - w / 2, y - h / 2, w, h, { alpha, rows: 0 });
-  const ys = Array.from(
-    { length: rows },
-    (_, i) => y - h / 2 + h * (0.3 + (0.55 * i) / (rows - 1)),
-  );
+  const ys = listRows(y, h, rows, first, span);
   stroke(
     () =>
       ys.forEach((ry) => {
         ctx.roundRect(x - w * 0.32, ry - 7, 14, 14, 3);
         ctx.moveTo(x - w * 0.32 + 26, ry);
-        ctx.lineTo(x + w * 0.3, ry);
+        ctx.lineTo(x + w * reach, ry);
       }),
     { color: P.muted, alpha, width: 2 },
   );
@@ -73,7 +83,7 @@ function declaredCheck(x, y, alpha) {
   repoIcon(x, y, OWNER[0], OWNER[1], { alpha });
   check(x + 24, y + 10, 46, { alpha, width: 4 });
 }
-const CHECK_NAME = () => L("仓库自己声明的检查", "own declared check");
+const CHECK_NAME = () => L("仓库自己声明的检查", "Declared check");
 
 /* 07.1. The first Agent stands from the cut with the links to its makings' places, its two makings arriving on their
  * words, and the picture steps left as the owners arrive. Each obligation passes from its making to its owner along a
@@ -103,16 +113,16 @@ export function makings(s, t, a) {
     gone = a * (1 - ramp(t, retireAt + 0.05, 0.4)),
     settle = soon(t, retireAt + 0.05, 0.9);
   // How far each column's marks and names reach either side of its axis.
-  const agentHalf = Math.max(53, measure(L("最早那个 Agent", "the first Agent")) / 2),
+  const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2),
     makingHalf = Math.max(
       SCRIPT[0] / 2,
-      nameWidth(L("临时的去重脚本", "temporary deduplication script"), 350) / 2,
-      measure(L("进度表", "progress sheet")) / 2,
+      nameWidth(L("临时的去重脚本", "Temporary deduplication script"), 350) / 2,
+      measure(L("进度表", "Progress sheet")) / 2,
     ),
     ownerHalf = Math.max(
       OWNER[0] / 2,
       nameWidth(CHECK_NAME(), 300) / 2,
-      nameWidth(L("正式变更里的任务清单", "the official Change's task list"), 300) / 2,
+      nameWidth(L("正式变更里的任务清单", "The official Change's task list"), 300) / 2,
     ),
     first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2,
     owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2,
@@ -128,7 +138,7 @@ export function makings(s, t, a) {
   // is named within its first second.
   agent(AX, AY, { size: 1.5, alpha: gone });
   ring(AX, AY, 52, { color: P.line, alpha: gone, width: 2 });
-  nameText(L("最早那个 Agent", "the first Agent"), AX, AY + 52 + NAME_GAP, {
+  nameText(L("最早那个 Agent", "The first Agent"), AX, AY + 52 + NAME_GAP, {
     valign: "top",
     alpha: gone * ramp(t, agentAt - 0.35, 0.4),
     set: "07.1:makings",
@@ -156,14 +166,14 @@ export function makings(s, t, a) {
   const top1 = rowNameTop([R1 + SCRIPT[1] / 2, R1 + OWNER[1] / 2]),
     top2 = rowNameTop([R2 + SHEET[1] / 2, R2 + LIST[1] / 2]);
   terminalIcon(MX - SCRIPT[0] / 2, R1 - SCRIPT[1] / 2, SCRIPT[0], SCRIPT[1], { alpha: sIn });
-  nameText(L("临时的去重脚本", "temporary deduplication script"), MX, top1, {
+  nameText(L("临时的去重脚本", "Temporary deduplication script"), MX, top1, {
     valign: "top",
     width: 350,
     alpha: sIn,
     set: "07.1:makings",
   });
   ledger(MX, R2, SHEET[0], SHEET[1], { alpha: hIn });
-  nameText(L("进度表", "progress sheet"), MX, top2, {
+  nameText(L("进度表", "Progress sheet"), MX, top2, {
     valign: "top",
     alpha: hIn,
     set: "07.1:makings",
@@ -186,7 +196,7 @@ export function makings(s, t, a) {
     done: ticks,
     last: ticks < 4 || held < 4.4 ? Math.min(1, (held - 1.2 * (ticks - 1)) / 0.4) : 1,
   });
-  nameText(L("正式变更里的任务清单", "the official Change's task list"), OX, top2, {
+  nameText(L("正式变更里的任务清单", "The official Change's task list"), OX, top2, {
     valign: "top",
     width: 300,
     alpha: lIn,
@@ -195,8 +205,14 @@ export function makings(s, t, a) {
   // Each obligation passes from its making to its owner along a link under its name; when the makings retire, the
   // links draw back to short leads into their owners that start in one column, and their names follow them.
   const rows = [
-    [R1, MX + SCRIPT[0] / 2, OX - OWNER[0] / 2, dedupAt, L("去重", "deduplicate")],
-    [R2, MX + SHEET[0] / 2, OX - LIST[0] / 2, progressAt, L("进度", "progress")],
+    [
+      R1,
+      MX + SCRIPT[0] / 2,
+      OX - OWNER[0] / 2,
+      dedupAt,
+      L("去重", ["Obligation", "to deduplicate"]),
+    ],
+    [R2, MX + SHEET[0] / 2, OX - LIST[0] / 2, progressAt, L("进度", "Progress")],
   ];
   const lead = Math.min(...rows.map(([, , to]) => to)) - 150,
     spans = rows.map(([, from, to]) => [mix(from + 12, lead, settle), to - 12]);
@@ -204,7 +220,7 @@ export function makings(s, t, a) {
   // edges.
   const axis = Math.min(
     (spans[0][0] + spans[0][1] + spans[1][0] + spans[1][1]) / 4,
-    ...rows.map(([, , to, , name]) => to - 20 - measure(name) / 2),
+    ...rows.map(([, , to, , name]) => to - 20 - nameWidth(name) / 2),
   );
   rows.forEach(([y, , , at, name], i) => {
     const shown = a * named(t, at);
@@ -220,7 +236,7 @@ export function makings(s, t, a) {
     });
   });
   // Kept just in case: refused where the makings stood.
-  rejectedName(L("以防万一", "just in case"), 700, AY, {
+  rejectedName(L("以防万一", "Just in case"), 700, AY, {
     alpha: a * named(t, caseAt),
     mark: ramp(t, caseAt + 0.3, 0.4),
   });
@@ -267,7 +283,7 @@ export function ghost(s, t, a) {
     ["不一样", "differ"],
     ["该信哪一个", "which to trust"],
   ]);
-  const FOUND = L("又被人翻出来用", "someone may find it"),
+  const FOUND = L("又被人翻出来用", "Someone"),
     left = Math.min(390 - 30, 390 - nameWidth(FOUND, 220) / 2),
     right = Math.max(1310 + OWNER[0] / 2, 1310 + nameWidth(CHECK_NAME(), 300) / 2),
     DX = 960 - (left + right) / 2,
@@ -293,11 +309,11 @@ export function ghost(s, t, a) {
     hand: ((voiceTime(t) - voiceTime(monthsAt)) * 0.45) % 1,
     alpha: m,
   });
-  nameText(L("这个脚本", "the script"), GX, Y + SCRIPT[1] / 2 + NAME_GAP, {
+  nameText(L("这个脚本", "The script"), GX, Y + SCRIPT[1] / 2 + NAME_GAP, {
     valign: "top",
     alpha: g,
   });
-  nameText(L("过几个月", "months later"), GX + SCRIPT[0] / 2 + 38, Y - SCRIPT[1] / 2, {
+  nameText(L("过几个月", "Months later"), GX + SCRIPT[0] / 2 + 38, Y - SCRIPT[1] / 2, {
     align: "left",
     alpha: m,
   });
@@ -315,9 +331,12 @@ export function ghost(s, t, a) {
     r2 = a * named(t, differAt),
     q = a * named(t, trustAt);
   resultCard(GX, RY, 3, { alpha: r1 });
-  nameText(L("它算出的结果", "its results"), GX, RY + 60 + NAME_GAP, { valign: "top", alpha: r1 });
+  nameText(L("它算出的结果", "Its results"), GX, RY + 60 + NAME_GAP, { valign: "top", alpha: r1 });
   resultCard(CX, RY, 4, { alpha: r2 });
-  nameText(L("不一样", "differ"), CX, RY + 60 + NAME_GAP, { valign: "top", alpha: r2 });
+  nameText(L("不一样", "The check's results"), CX, RY + 60 + NAME_GAP, {
+    valign: "top",
+    alpha: r2,
+  });
   askIcon(QX, RY - 6, 30, { alpha: q, color: P.ink });
-  nameText(L("该信哪一个", "which to trust"), QX, RY + 60 + NAME_GAP, { valign: "top", alpha: q });
+  nameText(L("该信哪一个", "Which to trust?"), QX, RY + 60 + NAME_GAP, { valign: "top", alpha: q });
 }

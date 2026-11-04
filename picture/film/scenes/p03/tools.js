@@ -12,37 +12,63 @@ import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
-/* 03.6 ETHOS's own code does the kernel's one job: a small kernel named from the cut, its job under it. For everything
- * else it turns to mature tools, larger outlines of two sizes beside and below it, each holding its content (Git's
- * branch in one, a tool's features in the other), linked from the kernel on the words that turn to them and named on
- * theirs; so there is much less to verify, and the kernel lights once. */
+/* 03.6 ETHOS's own code does the kernel's one job: from the cut its code is a panel of lines round the kernel, named as
+ * ETHOS's code; on the words that give the kernel its one job the panel draws in to the kernel and its lines go, so
+ * the kernel alone is what ETHOS's code does, named under it. For everything else it turns to tools: on those words two
+ * tools, larger outlines of two sizes below the kernel, each holding its content (Git's branch in one, a tool's
+ * features in the other), are linked from the kernel and named as everything else between them; Git is named on its
+ * word and the pair as mature tools under them; so there is much less to verify, and the kernel lights once. The
+ * panel's names ride its top and bottom edges as it draws in, so each stays one gap from what it names. */
 export function stageTools(t, a, c) {
   if (a <= 0) return;
   const KX = 960,
     KY = 420,
     KR = 36,
     q = (voiceTime(t) * 0.4) % 1,
+    // The panel draws in over the time until the tools are said, so the kernel stands alone only a moment.
+    gather = soon(t, c.oneJob + 0.05, Math.max(0.9, c.elseAt - c.oneJob - 0.2)),
+    PW = mix(560, 2 * KR, gather),
+    PH = mix(240, 2 * KR, gather),
+    code = a * (1 - gather),
     turnTo = a * ramp(t, c.elseAt - 0.15, 0.4),
     tools = [
       [620, 640, 300, 190],
       [1300, 640, 260, 166],
     ];
+  // ETHOS's own code: a panel whose rows of code stand either side of the kernel, drawing in with the panel.
+  box(KX - PW / 2, KY - PH / 2, PW, PH, { stroke: P.ink, alpha: code, radius: 16, width: 2.5 });
+  stroke(
+    () =>
+      [-0.34, -0.17, 0, 0.17, 0.34].forEach((k, i) => {
+        const y = KY + k * PH,
+          inner = KR + 20,
+          outer = PW / 2 - 26;
+        if (outer <= inner) return;
+        ctx.moveTo(KX - outer, y);
+        ctx.lineTo(KX - inner - (outer - inner) * [0, 0.3, 0.5, 0.15, 0.4][i], y);
+        ctx.moveTo(KX + inner, y);
+        ctx.lineTo(KX + outer - (outer - inner) * [0.35, 0, 0.2, 0.45, 0.1][i], y);
+      }),
+    { color: P.muted, alpha: code * 0.8, width: 2.5 },
+  );
   kernelIcon(KX, KY, KR, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
   beats(t, KX, KY, KR + 16, [c.less], { alpha: a });
-  nameText(L("ETHOS 自己的代码", "Its own code"), KX, KY - KR - NAME_GAP, {
+  nameText(L("ETHOS 的代码", "Its own code"), KX, KY - Math.max(PH / 2, KR) - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.tCut + 0.15),
   });
-  nameText(L("内核这一件事", "The kernel's one job"), KX, KY + KR + NAME_GAP, {
+  const under = KY + Math.max(PH / 2, KR) + NAME_GAP;
+  nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
     valign: "top",
     alpha: a * named(t, c.oneJob),
   });
-  nameText(L("就少得多", "Much less"), KX, KY + KR + NAME_GAP + 52, {
+  nameText(L("就少得多", "Much less"), KX, under + 52, {
     valign: "top",
     alpha: a * named(t, c.less),
   });
+  // Everything else: the tools, each linked from the kernel, arrive together on the words that turn to them.
   tools.forEach(([x, y, w, h], i) => {
-    box(x - w / 2, y - h / 2, w, h, { stroke: P.ink, alpha: a, radius: 18, width: 2.5 });
+    box(x - w / 2, y - h / 2, w, h, { stroke: P.ink, alpha: turnTo, radius: 18, width: 2.5 });
     link(KX + (i ? 1 : -1) * KR * 0.87, KY, x, y - h / 2, {
       route: "hv",
       alpha: turnTo,
@@ -50,6 +76,7 @@ export function stageTools(t, a, c) {
       flow: (q + 0.5 * i) % 1,
     });
   });
+  nameText(L("别的功能", "Everything else"), KX, tools[0][1], { alpha: turnTo });
   // Git's branch in the first tool, a tool's features in the second.
   const [gx, gy] = tools[0];
   stroke(
@@ -59,7 +86,7 @@ export function stageTools(t, a, c) {
       ctx.moveTo(gx - 70, gy + 8);
       ctx.quadraticCurveTo(gx - 70, gy - 16, gx - 40, gy - 20);
     },
-    { color: P.ink, alpha: a, width: 3 },
+    { color: P.ink, alpha: turnTo, width: 3 },
   );
   const [fx, fy] = tools[1];
   stroke(
@@ -68,7 +95,7 @@ export function stageTools(t, a, c) {
         ctx.moveTo(fx - 80, fy + dy);
         ctx.lineTo(fx - 80 + [160, 110, 140][k], fy + dy);
       }),
-    { color: P.muted, alpha: a * 0.8, width: 2.5 },
+    { color: P.muted, alpha: turnTo * 0.8, width: 2.5 },
   );
   nameText("Git", gx + 20, gy, { alpha: a * named(t, c.git) });
   // The tools' name hangs one gap under the pair, centred between them and clear of both corners: in English it takes
@@ -80,8 +107,8 @@ export function stageTools(t, a, c) {
 }
 
 /* 03.7 ETHOS does not take over the systems already in use: ETHOS at the centre with its name from the cut, and the
- * systems' four places around it, one mark under the heading that names them; each system is named in its place as it is
- * said, and left as it is. ETHOS stands on the user's own machine, depending on no vendor; on the words that connect
+ * systems' four places around it, one mark drawn with the heading that names them on its words; each system is named in
+ * its place as it is said, and left as it is. ETHOS stands on the user's own machine, depending on no vendor; on the words that connect
  * them the systems are linked to ETHOS's sides, and becoming a source of truth is refused. */
 export function stageSystems(t, a, c) {
   if (a <= 0) return;
@@ -99,21 +126,21 @@ export function stageSystems(t, a, c) {
     ats = [c.sys1, c.sys2, c.sys3, c.sys4],
     q = (voiceTime(t) * 0.4) % 1,
     joined = a * ramp(t, c.connect - 0.15, 0.4);
-  nameText(L("原有的系统", "The systems you already have"), KX, 290, {
-    alpha: a * named(t, c.sCut + 0.15),
-  });
+  // The places and their heading arrive a third of a second ahead of the heading's words, within its clause.
+  const places = a * ramp(t, c.systems - 0.45, 0.4);
+  nameText(L("原有的系统", "The systems you already have"), KX, 290, { alpha: places });
   kernelIcon(KX, KY, KR, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
   nameText("ETHOS", KX, KY - KR - NAME_GAP, { valign: "bottom", alpha: a * named(t, c.sCut) });
   stroke(() => spots.forEach(([x, y]) => ctx.roundRect(x - W / 2, y - H / 2, W, H, 14)), {
     color: P.ink,
-    alpha: a,
+    alpha: places,
     width: 2.5,
   });
   spots.forEach(([x, y], i) => {
     nameText(
       L(
         ["描述业务用的模型", "持续集成", "运行 Agent 的应用", "问题跟踪系统"],
-        ["Business model", "Automated checks", "Apps your Agents run in", "Issue tracker"],
+        ["Model of your business", "Automated checks", "Apps your Agents run in", "Issue tracker"],
       )[i],
       x,
       y,
@@ -151,7 +178,7 @@ export function stageSystems(t, a, c) {
 }
 
 /* 03.7 What every repository shares, ETHOS owns in one place: three repositories, cards of one size, standing on one
- * shared layer from the cut, a point running along it, the layer named on the words that give it to ETHOS; each
+ * shared layer from the cut, a point running along it, the layer named within the clause that gives it to ETHOS; each
  * repository's own purpose arrives inside it as its own shape, each at the same place in its card. The repositories
  * stand at equal gaps, the row and the layer under it centred on the frame, so the middle card stands on the axis of
  * the layer's name and of the heading over the row, which centres on it from its first word, its qualifier joining
@@ -193,8 +220,10 @@ export function stageLayer(t, a, c) {
     { color: P.ink, alpha: a, width: 2.5 },
   );
   flowDot(mix(x0 + 30, x1 - 30, q), LY + 22, 6, q, { color: P.ink, alpha: a });
+  // English says the layer's name after the words that open the stage, within their clause, so the stage names it
+  // 1.3 s ahead of its words and the repositories never stand unnamed; Chinese says it as the stage opens.
   nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), (x0 + x1) / 2, LY - 6, {
-    alpha: a * named(t, c.owns),
+    alpha: a * named(t, L(c.owns, c.owns - 1.3)),
   });
   // Each repository's own purpose: a shape of its own inside it, each centred on the same point of its card, right of
   // the card's centre and clear of its branch.

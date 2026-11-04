@@ -31,7 +31,7 @@ export function stageClaims(t, a, c) {
     claims = [c.everything, c.release, c.benefit2],
     own = ramp(t, c.ownPart - 0.15, 0.4);
   const evidenceNames = L(
-      ["本地跑通了", "代码合进去了", "部署成功了"],
+      ["本地跑通", "代码合进去", "部署成功"],
       ["Passed on one machine", "A merge", "A deployment"],
     ),
     claimNames = L(
@@ -80,9 +80,9 @@ export function stageClaims(t, a, c) {
       set: "claims",
     });
   });
-  nameText(L("只证明了它自己那一段", "Proves only its own part"), X0 + CW / 2, ys[2] + H / 2 + 40, {
+  nameText(L("它自己那一段", "Its own part"), X0 + CW / 2, ys[2] + H / 2 + 40, {
     valign: "top",
-    alpha: a * named(t, c.ownPart),
+    alpha: a * named(t, c.ownName),
   });
 }
 
