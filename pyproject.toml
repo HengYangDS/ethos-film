@@ -21,7 +21,7 @@ prerelease = "disallow"
 # The film engine, at the release whose tag the lock pins to its commit. The film needs 0.3.0 or
 # later, which checks the concept contract and the declared readings before any narration.
 [tool.uv.sources]
-filmkit = { git = "https://github.com/HengYangDS/filmkit", tag = "v0.7.0" }
+filmkit = { git = "https://github.com/HengYangDS/filmkit", tag = "v0.8.0" }
 
 # VERSION is the only version source, as ETHOS requires of a repository that tags releases.
 [tool.hatch.version]
