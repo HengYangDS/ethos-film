@@ -104,13 +104,14 @@ export function stageKernel(t, a, c) {
     RX = loopX + dx,
     NX = IX - 34 - NAME_GAP,
     namesTop = rowNameTop([KY + KR, KY + 45, KY + 50, KY + 34]);
-  // The path as 03.2 left it, and the kernel under it from the cut; its clause names it soon after.
+  // The path as 03.2 left it, and the kernel under it from the cut; its clause names it soon after. The kernel beats
+  // while it is said to take its inputs, and again while it compiles its plan.
   line(pathFrom + dx, PY, pathTo + dx, PY, { color: P.ink, alpha: a, width: 3 });
   dot(pathTo + dx, PY, 7, { color: P.ink, alpha: a });
   kernelIcon(KX, KY, KR, {
     alpha: a,
     color: P.ink,
-    beat: speaking(t, [c.plan], 0),
+    beat: Math.max(speaking(t, [c.takes], 0), speaking(t, [c.plan], 0)),
     turn: 0.1 * voiceTime(t),
   });
   link(KX, KY - KR, KX, PY + 3, { alpha: a, end: false });

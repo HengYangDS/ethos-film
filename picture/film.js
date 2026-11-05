@@ -1979,7 +1979,7 @@ function stageKernel(t, a, c) {
   kernelIcon(KX, KY, KR, {
     alpha: a,
     color: P.ink,
-    beat: speaking(t, [c.plan], 0),
+    beat: Math.max(speaking(t, [c.takes], 0), speaking(t, [c.plan], 0)),
     turn: 0.1 * voiceTime(t)
   });
   link(KX, KY - KR, KX, PY + 3, { alpha: a, end: false });
@@ -3184,6 +3184,7 @@ scenes["03"] = function(s, t) {
     // 03.3 the kernel.
     kCut: ["这条路", "A small trust kernel"],
     kernel: ["很小的信任内核", "a small trust kernel"],
+    takes: ["内核拿三样东西", "takes three inputs"],
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
