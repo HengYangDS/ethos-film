@@ -71,16 +71,13 @@ export function droppedPush(s, t, a) {
     alpha: a * named(t, nameAt),
   });
   platforms(PX, [RAIL_Y], { alpha: a, w: PLATFORM[0], h: PLATFORM[1] });
-  termRow(
-    t,
-    [L("目标平台", "The platform")],
-    [-Infinity],
-    L(["也许已经成了"], ["may already ", "have landed"]),
-    [landedAt],
-    PX,
-    below,
-    { alpha: a, align: "center", inline: false, width: 170 },
-  );
+  // What may already have landed is the first push: it is named under the platform, where it would have landed, on its
+  // words, and the platform's unknown mark carries the doubt on the words that say it, so the platform is not read as
+  // the subject and no label repeats the caption.
+  nameText(L("上一次", "The first push"), PX, below, {
+    valign: "top",
+    alpha: a * named(t, cueFrom(s, "上一次", "The first push", againAt)),
+  });
   verdictMark("unknown", PX, RAIL_Y + 13, 15, { alpha: a * named(t, landedAt) });
   // The second push, in doubt: it leaves the work and stops at a question.
   const again = a * named(t, againAt);

@@ -74,12 +74,12 @@
           "spoken_sha256": "660d96b894b63a54cc93d78b2b3deb416edebbd465c13c61810b63cb121ce3eb"
         },
         "7": {
-          "seed": 91789,
+          "seed": 202655,
           "text_sha256": "db26b88aa76925a03f8ce8c640e54383926375f900ea9caab313a667efd2d828",
           "spoken_sha256": "746a81b1a59672efa0b2cf261d39b7717813d70329bf4031dcb4184a3dc0eab3",
           "run_on": {
             "spoken_text": "这些都是它的设计目标。它自己的文档也写得明白：光有这个内核，并不能证明整条路已经走通。",
-            "cut_sample": 611280
+            "cut_sample": 578640
           }
         },
         "1": {
@@ -92,7 +92,7 @@
     "05": {
       "groups": {
         "2": {
-          "seed": 91791,
+          "seed": 115548,
           "text_sha256": "5921ad2c21fa171b86e05d35593a988c3624a7a39fbde293162a5e96e1f57024",
           "spoken_sha256": "d6e2fef9cab618942146df32af737793c33f2bc20da8c93f1fae95f6b5f3f0c4"
         },
@@ -102,23 +102,41 @@
           "spoken_sha256": "4a6e3b562b78ef691210e145c1a4730ef0729db84f1ce4a257cd0b388a011c5a"
         },
         "7": {
-          "seed": 147224,
+          "seed": 234333,
           "text_sha256": "dfc81c93a2a2247327a951ff3344afc29ffe058b20df54633193d73c47ea5833",
-          "spoken_sha256": "30d605ae19b28b70f22c7289acd2a6875f9d9ff8368bbfb57290c2348167a063"
+          "spoken_sha256": "30d605ae19b28b70f22c7289acd2a6875f9d9ff8368bbfb57290c2348167a063",
+          "run_on": {
+            "spoken_text": "回到例子。另一个 Agent 也在干活。它记得分支还停在昨天那次提交，看板上也是一片绿灯。可从编好计划到真正写入，中间别人可能已经改过了。就在它要写入的那一刻，Eethos 又核对了一遍：分支已经往前走了。跟计划里预想的不一样，那就什么都不写，按刚观察到的事实，重新编译计划。",
+            "cut_sample": 306000
+          }
         }
       }
     },
     "06": {
       "groups": {
         "2": {
-          "seed": 139306,
+          "seed": 242253,
           "text_sha256": "91d9e6ca82885ef23ffacf56d1520e20951d873a3eefe918eccaeb68cd1b79be",
-          "spoken_sha256": "cdc87a5a95a3e19df966063c1a0b33a733ade987358e06ab80ffcd6bfdf61996"
+          "spoken_sha256": "cdc87a5a95a3e19df966063c1a0b33a733ade987358e06ab80ffcd6bfdf61996",
+          "run_on": {
+            "spoken_text": "这就是第三条准则：把权威依据和视图分开。在 Eethos 里，权威依据指的是一次判断可以凭借的东西：用户当下的指令，仓库里的真实内容，已经采纳的正式变更，刚观察到的事实，适用的规则，还有仍然有效的存证。",
+            "cut_sample": 382800
+          }
         },
         "5": {
           "seed": 115549,
           "text_sha256": "cb9c17edddf1bbb56e18852269f80b35da586fdd6d478df828c838f0c2b0c66b",
           "spoken_sha256": "cb9c17edddf1bbb56e18852269f80b35da586fdd6d478df828c838f0c2b0c66b"
+        },
+        "1": {
+          "seed": 186820,
+          "text_sha256": "95c09e8ee224610f33920236d6f7a88793780c76670f47b76a550bfaa56becd0",
+          "spoken_sha256": "34d6ea38b982137b8037e4aa51c67a727c52acff8e802d9c15f7f04162c2647e"
+        },
+        "3": {
+          "seed": 99711,
+          "text_sha256": "f389f7a2d44719bbef83a22980f4926cffa2062917a7c438c8fb7b77fd6ca6b6",
+          "spoken_sha256": "c025c3a2b999af30b2abe6eff17b7256d77a00eaf98016d9ab679e68352e11e8"
         }
       }
     },
@@ -135,7 +153,7 @@
           "spoken_sha256": "88e7df15bf79c2c460a1cf47558e02232e360fb523aafcb7ea670b2c5c5dbed2"
         },
         "3": {
-          "seed": 329363,
+          "seed": 258092,
           "text_sha256": "ace71b5fa4e645150c00e5cf09a2c2159852e3b5b94655f05832fc177c300790",
           "spoken_sha256": "43a47afb2efc5c6db604b1a72bfbf117df985f64d64540d2e34b9a53ba7a09b4"
         }
@@ -167,7 +185,7 @@
     "09": {
       "groups": {
         "4": {
-          "seed": 178904,
+          "seed": 234337,
           "text_sha256": "871c3c3241e5ef2dd2c5a56af681a925ad03e2a9f3353b2cb16b290094f151aa",
           "spoken_sha256": "c3cd6e4341bcfc97a6a79c51c9875b50b47af8ef9879a7ad824ac63e1bcc7b62"
         }
@@ -184,6 +202,20 @@
           "seed": 91790,
           "text_sha256": "715a85901910ff06065e6a9469280ee26cc9d0eb6314403d40c9d1a20b59a68d",
           "spoken_sha256": "715a85901910ff06065e6a9469280ee26cc9d0eb6314403d40c9d1a20b59a68d"
+        },
+        "4": {
+          "seed": 273927,
+          "text_sha256": "8bcb9f6ca41aebaf0b65e303706322b34decd85bd3bd1f04edc1128465932590",
+          "spoken_sha256": "8bcb9f6ca41aebaf0b65e303706322b34decd85bd3bd1f04edc1128465932590"
+        }
+      }
+    },
+    "01": {
+      "groups": {
+        "6": {
+          "seed": 210572,
+          "text_sha256": "4805b831c223c6e99ad5fe8cd11ee2fbb7c0bb7d675b4ac25219bbee8ac871cb",
+          "spoken_sha256": "e2c90ecb14f8bbf752c92c1afce301a4d687e5d46d32d99a7d920a9d75697a56"
         }
       }
     }

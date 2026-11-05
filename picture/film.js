@@ -5149,7 +5149,7 @@ function staleStage(s, t, c, g) {
     },
     { color: P.ink, alpha: board, width: 3.5 }
   );
-  link(AX, Y + 22, 560, DY, { route: "vh", alpha: board });
+  link(AX, Y + 22, 560, DY, { route: "vh", alpha: g * named(t, c.green) });
   termRow(
     t,
     L(["看板"], ["Its dashboard"]),
@@ -6080,16 +6080,10 @@ function droppedPush(s, t, a) {
     alpha: a * named(t, nameAt)
   });
   platforms(PX, [RAIL_Y], { alpha: a, w: PLATFORM[0], h: PLATFORM[1] });
-  termRow(
-    t,
-    [L("目标平台", "The platform")],
-    [-Infinity],
-    L(["也许已经成了"], ["may already ", "have landed"]),
-    [landedAt],
-    PX,
-    below,
-    { alpha: a, align: "center", inline: false, width: 170 }
-  );
+  nameText(L("上一次", "The first push"), PX, below, {
+    valign: "top",
+    alpha: a * named(t, cueFrom(s, "上一次", "The first push", againAt))
+  });
   verdictMark("unknown", PX, RAIL_Y + 13, 15, { alpha: a * named(t, landedAt) });
   const again = a * named(t, againAt);
   link(STOP, RAIL_Y - 26, ASK[0] - ASK_R - 8, ASK[1], {
@@ -6183,7 +6177,8 @@ function lifeStart(s, t, a) {
   railFlow(t, REQ_X + 70, 1680, { alpha: a * soon(t, firstAt + 1.4, 0.4) });
   ctx.restore();
 }
-var XS = () => L([REQ_X, 490, 680, 1180, 1460], [REQ_X, 530, 760, 1190, 1556]);
+var PITCH = (1556 - REQ_X) / 4;
+var XS = () => [0, 1, 2, 3, 4].map((k) => REQ_X + k * PITCH);
 var STATION_WRAP = () => L(240, 340);
 var STATIONS = () => [
   // Authored as its lines: wrapped by measure, the English name would break onto three.
@@ -6228,7 +6223,7 @@ function lane(s, t, a) {
     set: "08.2:stations",
     wrap: STATION_WRAP()
   });
-  const lease = [holdAt, untilAt], hx = mix(x2, x3, 0.3), ux = mix(x2, x3, 0.7), leaseWrap = L(230, Math.min(230, ux - hx - 30)), h = a * named(t, holdAt), u = a * named(t, untilAt);
+  const lease = [holdAt, untilAt], hx = mix(x2, x3, 0.2), ux = mix(x2, x3, 0.8), leaseWrap = L(230, Math.min(230, ux - hx - 30)), h = a * named(t, holdAt), u = a * named(t, untilAt);
   agent(hx, LEASE_Y, { size: 0.9, alpha: h });
   clock(ux, LEASE_Y, 20, { hand: 0.62, alpha: u });
   link(hx, RAIL_Y - 6, hx, LEASE_Y + 30, {

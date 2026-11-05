@@ -59,21 +59,21 @@
     "designed_pauses": {
       "thought": 1.42,
       "question": 1.72,
-      "opening": 2.5,
-      "paragraph": 1.8,
+      "opening": 2.1,
+      "paragraph": 2.1,
       "chapter": 2.15,
-      "closing": 1.6
+      "closing": 1.5
     },
     "thought_pause_range": [
       1.25,
-      2.2
+      1.55
     ],
     "thought_boundary_ratio": 1.2,
     "thought_boundary_margin_seconds": 0.04,
-    "thought_level_tolerance_db": 0.75,
-    "chapter_level_tolerance_db": 0.3,
+    "thought_level_tolerance_db": 0.5,
+    "chapter_level_tolerance_db": 0.1,
     "paragraph_pause_range": [
-      1.8,
+      2.05,
       3.0
     ],
     "designed_pause_limits": {

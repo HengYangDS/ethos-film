@@ -142,7 +142,9 @@ export function staleStage(s, t, c, g) {
     },
     { color: P.ink, alpha: board, width: 3.5 },
   );
-  link(AX, Y + 22, 560, DY, { route: "vh", alpha: board });
+  // The Agent's tie to its dashboard joins on "all green", once the board and its name stand, so the link never
+  // waits beside the board for a name of its own.
+  link(AX, Y + 22, 560, DY, { route: "vh", alpha: g * named(t, c.green) });
   termRow(
     t,
     L(["看板"], ["Its dashboard"]),

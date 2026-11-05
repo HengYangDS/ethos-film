@@ -62,11 +62,13 @@ export function lifeStart(s, t, a) {
   ctx.restore();
 }
 
-/* The stations of 08.2 along the rail, and the Work Lane's span between its folder and its gate. English names are
- * longer: its stations stand further apart, so that "Official Change" and the file's name each keep one line, the
- * Change one pitch from the request's name, which breaks after its article, and the lane long enough for its two
- * records' names to stand apart; its names wrap no narrower than the file's. */
-const XS = () => L([REQ_X, 490, 680, 1180, 1460], [REQ_X, 530, 760, 1190, 1556]),
+/* The stations of 08.2 along the rail stand at one pitch from the request to the file, in both editions, so the
+ * journey reads at an even step and the widest neighbours, the check and the file's name, keep a clear gap; the English
+ * request's name breaks after its article, and its names wrap no narrower than the file's. The Work Lane's span runs
+ * between its folder and its gate within one pitch, and its two records stand above it a fifth of a pitch from either
+ * end, so their names stand apart. */
+const PITCH = (1556 - REQ_X) / 4;
+const XS = () => [0, 1, 2, 3, 4].map((k) => REQ_X + k * PITCH),
   STATION_WRAP = () => L(240, 340);
 const STATIONS = () => [
   // Authored as its lines: wrapped by measure, the English name would break onto three.
@@ -124,8 +126,8 @@ export function lane(s, t, a) {
   // Who holds the lane and until when, on record above it, each linked from the lane on its words; the English names
   // wrap within the distance between them, less a gap, and the Chinese ones stand on one line each.
   const lease = [holdAt, untilAt],
-    hx = mix(x2, x3, 0.3),
-    ux = mix(x2, x3, 0.7),
+    hx = mix(x2, x3, 0.2),
+    ux = mix(x2, x3, 0.8),
     leaseWrap = L(230, Math.min(230, ux - hx - 30)),
     h = a * named(t, holdAt),
     u = a * named(t, untilAt);
