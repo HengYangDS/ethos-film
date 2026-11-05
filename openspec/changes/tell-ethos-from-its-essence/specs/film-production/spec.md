@@ -2,7 +2,7 @@
 
 ### Requirement: The films explain ETHOS as its pinned documents state it
 
-The production SHALL explain ETHOS as the cited sections of its documents state it at the commit the source manifest pins, in the order a first-time viewer needs: what a claim of completion establishes, why relying on a change is hard when interchangeable Agents make it, what ETHOS is, why it is built on the four rules of the Product Design Contract's Root Constraint, and how one requirement lives through it. What ETHOS is and why it is built as it is SHALL take most of each edition, and a mechanism SHALL be named only where a rule needs a concrete case.
+The production SHALL explain ETHOS as its cited sections state it at the pinned commit, in the order a first-time viewer needs: what a claim of completion establishes, why relying on a change made by interchangeable Agents is hard, what ETHOS is, why it rests on the four rules of the Root Constraint, and how one requirement lives through it. What ETHOS is and why SHALL take most of each edition, and a mechanism SHALL be named only where a rule needs a concrete case.
 
 #### Scenario: A viewer follows the whole argument
 
@@ -56,7 +56,7 @@ Both editions SHALL use the narrator that the previous ETHOS film and the DDWG f
 
 ### Requirement: Each take is complete and read in context
 
-Each selected take SHALL end on its own and SHALL read each context-dependent word as its context requires. Each name in the pronunciation contract SHALL be heard in its declared spoken form, ETHOS as /ˈiːθɒs/ in both editions, and every Chinese character whose dictionary reading is ambiguous SHALL have its reading in context declared. Every occurrence of a declared name or reading SHALL match the approved reference occurrence of that name or reading. The assembled soundtrack SHALL bring every thought to quiet before the silence that follows it, so that no thought's voice is faded out while it is still heard.
+Each selected take SHALL end on its own and read each word as its context requires. Each name in the pronunciation contract SHALL be heard in its declared form, ETHOS as /ˈiːθɒs/, and each Chinese character with an ambiguous dictionary reading SHALL have its reading in context declared. Every occurrence of a declared name or reading SHALL match its approved reference. The assembled soundtrack SHALL bring every thought to quiet before the silence that follows it, so no voice is faded out while still heard.
 
 #### Scenario: Named terms are heard as declared
 
