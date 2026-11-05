@@ -1,17 +1,18 @@
-/* The film's colours and its two label sizes: the ETHOS brand kit's palette. The field is ink and every mark and
- * label is paper; the brand's muted tone draws lines, rails and inactive marks, and secondary text is a paper tint that
- * stays legible at the second level of a list. Cinnabar marks the datum alone. The evidence, authority and unknown
- * keys of the shared primitives draw in paper: the film tells them apart by shape and place, not by colour. */
+/* The film's colours and its two label sizes: the ETHOS brand kit's palette, refined for the screen on 2026-11-05.
+ * The field is a deeper, less saturated ink and every mark and label is paper; lines, rails and inactive marks
+ * take a cooler line tone, and secondary text is a light grey that keeps 4.5:1 against the field at the second
+ * level of a list. Cinnabar, lifted to 4.9:1, marks the datum alone. The evidence, authority and unknown keys of
+ * the shared primitives draw in paper: the film tells them apart by shape and place, not by colour. */
 
 const PAPER = "#F6F1E8";
 
 export const P = {
-  ground: "#10242C",
-  row: "#1E3037",
-  line: "#687771",
+  ground: "#0E1B20",
+  row: "#1A2A30",
+  line: "#5F7680",
   ink: PAPER,
-  muted: "#B1B4B0",
-  accent: "#B5523D",
+  muted: "#C8CED0",
+  accent: "#CF6A52",
   evidence: PAPER,
   authority: PAPER,
   unknown: PAPER,

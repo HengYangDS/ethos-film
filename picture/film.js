@@ -20,12 +20,12 @@ function setDrawing(next) {
 // picture/film/palette.js
 var PAPER = "#F6F1E8";
 var P = {
-  ground: "#10242C",
-  row: "#1E3037",
-  line: "#687771",
+  ground: "#0E1B20",
+  row: "#1A2A30",
+  line: "#5F7680",
   ink: PAPER,
-  muted: "#B1B4B0",
-  accent: "#B5523D",
+  muted: "#C8CED0",
+  accent: "#CF6A52",
   evidence: PAPER,
   authority: PAPER,
   unknown: PAPER
