@@ -36,7 +36,7 @@ Every claim SHALL keep the conditions, modality and scope of its cited sections.
 
 ### Requirement: Each edition meets the media contract
 
-Each edition SHALL be exactly 840 seconds at native progressive 60 fps, in five chapters, with a UHD master and a captioned 1080p viewing edition, 48 kHz stereo narration only, no music and purposeful 2D motion. Each film SHALL carry the release metadata its script declares, small single-line captions, a designed cover with the author Yang HENG, a transcript, chapters and a player.
+Each edition SHALL be exactly 900 seconds at native progressive 60 fps, in five chapters, with a UHD master and a captioned 1080p viewing edition, 48 kHz stereo narration only, no music and purposeful 2D motion. Each film SHALL carry the release metadata its script declares, small single-line captions, a designed cover with the author Yang HENG, a transcript, chapters and a player.
 
 #### Scenario: A packaged edition reads back its contract
 
@@ -46,7 +46,7 @@ Each edition SHALL be exactly 840 seconds at native progressive 60 fps, in five 
 
 ### Requirement: Both editions speak with one narrator
 
-Both editions SHALL use the narrator that the previous ETHOS film and the DDWG films share. Each cast SHALL speak from a reference recording that is the unchanged identity root, the unmodified English reference, or an in-context reference derived from the identity root at the pace the narration requires, each with the qualified model revision and sampling settings.
+Both editions SHALL use the narrator that the previous ETHOS film and the DDWG films share. Each cast SHALL speak from a reference recording that is the unchanged identity root, the unmodified English reference, or an in-context reference derived from the identity root for the pace or clarity the narration requires, each with the qualified model revision and sampling settings.
 
 #### Scenario: The narrator's identity is bound
 

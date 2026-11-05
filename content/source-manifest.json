@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/HengYangDS/ethos",
-  "commit": "424d325386784633839b1abf52a4ac394e412a76",
+  "commit": "ea72a93bbf05a2e2ac9da11daf8804857fb3971a",
   "members": [
     {
       "path": "README.md",
@@ -48,7 +48,7 @@
     },
     {
       "path": "docs/reference/command-plane.md",
-      "sha256": "ed5d9dd70a632db094873a6b4c24b88dd9458fcb8fdedd3a3b50935006d27bb6"
+      "sha256": "fec31e4d82638387b5f5672f0364643af6a62aa9ac998bba85307c1bae287e0e"
     },
     {
       "path": "docs/research/modern-engineering-foundations.md",
@@ -65,6 +65,10 @@
     {
       "path": "docs/governance/evolution-campaign.md",
       "sha256": "f9edeaa443facc69e10e8827fcbd3e13174e41d539041b13b82e19cb04bb17f4"
+    },
+    {
+      "path": "docs/plans/terminal-governance-product-design.md",
+      "sha256": "ef94d0e5ccddb8b2e439e75ef3f8883693d6f9dda9b855f7196cc4e1efabe9da"
     }
   ]
 }

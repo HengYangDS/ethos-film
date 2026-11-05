@@ -260,7 +260,7 @@ export function overview(s, t, a) {
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
     ["它的文档也写明", "its own documents"],
-    ["换 Agent 接手那一段", "the handover between Agents"],
+    ["换 Agent 接手", "the handover between Agents"],
     ["都还没有完成验收", "has not yet completed acceptance"],
   ]);
   const h = a * named(t, handoverAt),

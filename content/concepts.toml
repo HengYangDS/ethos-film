@@ -68,6 +68,14 @@ zh = { rendering = "通过", forms = ["拦下", "未知"] }
 en = { rendering = "pass", forms = ["block", "blocks", "unknown"] }
 
 [[concept]]
+id = "safe-next-action"
+term = "the one safe next action"
+essence = "What every result other than pass names: one step that is safe to take next."
+source = { path = "docs/governance/product-design-contract.md", quote = "Every block names what happened, why it blocks, its evidence or missing fact, the one safe next action, and whether a human decision is required." }
+zh = { rendering = "下一步做什么才安全", avoid = ["唯一安全的下一步"] }
+en = { rendering = "one safe next action" }
+
+[[concept]]
 id = "proof"
 term = "proof"
 essence = "An executed check of an exact commit that establishes local readiness, and no more."
