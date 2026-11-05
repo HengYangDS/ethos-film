@@ -67,7 +67,7 @@ function cuesOf(s) {
     notShown: cue(s, "视图上却看不出来", "without the view showing it"),
     turnedGreen: cue(s, "那片绿灯亮起来的时候", "that dashboard turned green"),
     first5b: cue(s, "视图帮人看清楚", "A view helps people see"),
-    never: cue(s, "可不能拿它当权威依据", "but it never counts as authority"),
+    never: cue(s, "可它不是权威依据", "but it never counts as authority"),
     act: cue(s, "照着视图去改东西", "Acting on what a view shows"),
     overwrite: cue(s, "覆盖掉别人的工作", "overwrite someone else's work"),
     ambiguous: cue(s, "权威依据不明确", "When authority is ambiguous"),

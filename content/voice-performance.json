@@ -328,6 +328,11 @@
             "target_reading": "zhǐ shēng míng"
           },
           {
+            "term": "只是",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ shì"
+          },
+          {
             "term": "只有",
             "kind": "contextual-mandarin-word",
             "target_reading": "zhǐ yǒu"
@@ -455,12 +460,6 @@
             "target_reading": "dāng shí"
           },
           {
-            "term": "当线索",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "dàng xiàn suǒ",
-            "dictionary_disagreement": "当 is dàng, to serve as, in 只能当线索; the dictionary reads dāng."
-          },
-          {
             "term": "得到",
             "kind": "contextual-mandarin-word",
             "target_reading": "dé dào"
@@ -500,12 +499,6 @@
             "term": "把",
             "kind": "contextual-mandarin-word",
             "target_reading": "bǎ"
-          },
-          {
-            "term": "拿它当",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "ná tā dàng",
-            "dictionary_disagreement": "当 is dàng, to take as, in 拿它当权威依据; the dictionary reads dāng."
           },
           {
             "term": "接着",

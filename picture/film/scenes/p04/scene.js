@@ -95,7 +95,7 @@ function cuesOf(s) {
     first6c: cue(s, "所以对话", "That is why conversations"),
     talk: cue(s, "对话", "conversations"),
     memory: cue(s, "记忆", "memories"),
-    leads: cue(s, "只能当线索", "only leads"),
+    leads: cue(s, "只是线索", "only leads"),
   };
   c.goes = cueFrom(s, "要去掉", "goes", c.exact);
   c.stays = cueFrom(s, "要留下", "stays", c.correction);

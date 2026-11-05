@@ -322,7 +322,7 @@ export function leadsStage(s, t, c, g) {
       set: "leads",
     });
   });
-  nameText(L("只能当线索", "Only leads"), 960, Y - 52 - NAME_GAP - 20, {
+  nameText(L("只是线索", "Only leads"), 960, Y - 52 - NAME_GAP - 20, {
     valign: "bottom",
     alpha: g * named(t, c.leads),
   });

@@ -4063,7 +4063,7 @@ function leadsStage(s, t, c, g) {
       set: "leads"
     });
   });
-  nameText(L("只能当线索", "Only leads"), 960, Y3 - 52 - NAME_GAP - 20, {
+  nameText(L("只是线索", "Only leads"), 960, Y3 - 52 - NAME_GAP - 20, {
     valign: "bottom",
     alpha: g * named(t, c.leads)
   });
@@ -4145,7 +4145,7 @@ function cuesOf(s) {
     first6c: cue(s, "所以对话", "That is why conversations"),
     talk: cue(s, "对话", "conversations"),
     memory: cue(s, "记忆", "memories"),
-    leads: cue(s, "只能当线索", "only leads")
+    leads: cue(s, "只是线索", "only leads")
   };
   c.goes = cueFrom(s, "要去掉", "goes", c.exact);
   c.stays = cueFrom(s, "要留下", "stays", c.correction);
@@ -5386,7 +5386,7 @@ function cuesOf3(s) {
     notShown: cue(s, "视图上却看不出来", "without the view showing it"),
     turnedGreen: cue(s, "那片绿灯亮起来的时候", "that dashboard turned green"),
     first5b: cue(s, "视图帮人看清楚", "A view helps people see"),
-    never: cue(s, "可不能拿它当权威依据", "but it never counts as authority"),
+    never: cue(s, "可它不是权威依据", "but it never counts as authority"),
     act: cue(s, "照着视图去改东西", "Acting on what a view shows"),
     overwrite: cue(s, "覆盖掉别人的工作", "overwrite someone else's work"),
     ambiguous: cue(s, "权威依据不明确", "When authority is ambiguous"),
