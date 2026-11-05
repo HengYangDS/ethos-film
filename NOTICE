@@ -61,8 +61,10 @@ The narrator is a synthetic voice, not a clone of any person's voice, and the sa
 narrator speaks the DDWG introduction films. Its identity recording,
 assets/audio/narration-reference.wav, was generated from a text description of a voice
 with Qwen3-TTS VoiceDesign through mlx-audio and selected by the author. The English
-reference and the clear Mandarin reference that the casts name were spoken in that voice
-by the Qwen3-TTS Base model, which also narrates both editions.
+reference and the Mandarin references that the casts name were spoken in that voice by
+the Qwen3-TTS Base model, which also narrates both editions. The natural Mandarin reference,
+assets/audio/narration-reference-natural.wav, was derived from the identity recording in the
+two recorded steps that content/voice-reference.json lists, with only its edges trimmed.
 
 The pronunciation contract records, as listening targets, English stress from CMUdict at
 commit 74790861, Copyright (C) 1993-2015 Carnegie Mellon University, under its

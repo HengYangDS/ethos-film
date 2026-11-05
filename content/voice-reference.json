@@ -1,6 +1,6 @@
 {
-  "reference_text": "Ethos以证据连接人的判断与agent的行动。OpenSpec保存正式接受的意图，证据记录实际发生的事，看清关系，决定下一步，条件改变就重新判断。",
-  "reference_text_sha256": "8c12aad945d90f05a32a0ab327e9bacc54caeeb572ca0f4e77c92a86577f1d5e",
+  "reference_text": "我们以证据连接人的判断与智能体的行动。规范保存正式接受的意图，证据记录实际发生的事。看清关系，决定下一步；条件改变，就重新判断。",
+  "reference_text_sha256": "56bb01f22625ec420f058a31c72813b0507f659a969eb8f7ee2183bb501143f3",
   "reference_mode": "icl",
   "narration_language": "Chinese",
   "full_narration_seed": 4677,
@@ -9,256 +9,51 @@
   "model": "mlx-community/Qwen3-TTS-12Hz-1.7B-Base-bf16",
   "revision": "a6eb4f68e4b056f1215157bb696209bc82a6db48",
   "reference_language": "Chinese",
-  "reference_audio": "assets/audio/narration-reference.wav",
-  "reference_sha256": "a355801a8b16ca11925457678516329c04c4f2b2a66e76ef60457eea4872aa25",
-  "scope": "Approved synthetic narrator identity root used unmodified, with the transcript, temperature and in-context repetition penalty that the revision-7 samples the user approved on 2026-11-02 were narrated with: no time-stretch, pitch shift or recast. Pronunciation and listening quality are qualified separately from this input binding.",
+  "reference_audio": "assets/audio/narration-reference-natural.wav",
+  "reference_sha256": "8b50cf9ad3064fb51c304a27a64f805e679f3cf05099ca7657623965491cdf42",
+  "scope": "Synthetic narrator derived from the approved identity root through the two recorded official steps of its derivation, with only the edges trimmed so that the root's pauses stay; clearer voicing and no codebook-0 zero frame; no time-stretch, pitch shift or recast. Pronunciation and listening quality are qualified separately from this input binding.",
   "icl_repetition_penalty": 1.05,
   "performance_recording": {
     "receipt": "build/evidence/editions/zh/ear-first/narration-receipt.json",
     "alignment": "build/evidence/editions/zh/ear-first/alignment.json"
   },
-  "retakes": {
-    "02": {
-      "groups": {
-        "2": {
-          "seed": 91788,
-          "text_sha256": "7b07ab61e8a8c356bfc37e2a8a0aba5faaf06c343c0a21532a25d8d5b02a6a2c"
-        },
-        "5": {
-          "seed": 91788,
-          "text_sha256": "51c1891d7bc222826c9088081448c876fcbf7008238eaf34357c5996a5ec7e87"
-        },
-        "6": {
-          "seed": 107626,
-          "text_sha256": "1e0fd4c57230da2341f6afac765caa3a56395e9bb1d1e183d478dd2f25ea15e1"
-        },
-        "1": {
-          "seed": 155140,
-          "text_sha256": "bd3f84f7ef1a4f80c57a55d63100ec252507893fae15e06f06442307f503e209",
-          "run_on": {
-            "spoken_text": "第一个，是原意会走样。从前，一件事常常由一个人从头做到尾，来龙去脉都装在这个人心里。现在，一项需求从提出到落地，要经过理解、转述、交接，中间换好几个人、好几个 Agent。",
-            "cut_sample": 29520
-          }
-        },
-        "4": {
-          "seed": 226411,
-          "text_sha256": "df16b26287bd867cb6c8a139842fb09269727a4b9f35a938d44b6e2efc3e397d",
-          "run_on": {
-            "spoken_text": "第三个，是事实还没看清，就先动了手。两个 Agent 同时改一条分支，一个照着过时的记忆写下去，另一个的工作就被覆盖了。同一个版本推到 GitLab 和 GitHub 两个平台，一边成功、一边失败，谁也说不清现在到底是什么状态；直接再试一遍，也换不来确定的答案。因为请求发出去了，不等于对方收下了；看到报错，也不等于什么都没发生。",
-            "cut_sample": 463440
-          }
-        }
-      }
+  "derivation": {
+    "identity_root": {
+      "path": "assets/audio/narration-reference.wav",
+      "sha256": "a355801a8b16ca11925457678516329c04c4f2b2a66e76ef60457eea4872aa25"
     },
-    "03": {
-      "groups": {
-        "2": {
-          "seed": 147222,
-          "text_sha256": "660d96b894b63a54cc93d78b2b3deb416edebbd465c13c61810b63cb121ce3eb"
-        },
-        "3": {
-          "seed": 91789,
-          "text_sha256": "b6747893db05f0d61447f4798daa4dcb0cc3b15a51ee08596fbef27ceb3be3e6"
-        },
-        "5": {
-          "seed": 99708,
-          "text_sha256": "2a61fce84e3bab330bc1cb7e3ccc3f2bb905b4124a4b6a2ee65a11c2150d6401"
-        },
-        "8": {
-          "seed": 99708,
-          "text_sha256": "b5fb2d99d91b721ff1398066be7d1c5d7819f0dd24b1ca77856714954a9cd516"
-        },
-        "1": {
-          "seed": 170979,
-          "text_sha256": "cbea7725a3da5fd94b038433cefd6e79d45dc84ea10fec3fcb78cafb213bb2f9",
-          "run_on": {
-            "spoken_text": "它想给人和可以互相替换的 Agent 一条靠得住的路：从弄清一个问题，到改动代码仓库，再到看清这次改动用起来到底怎么样。它承诺三件事：原意不丢；拿不准的地方说清楚，让人能接着处理；出了错，能恢复。多加一层治理，不在它的承诺里。",
-            "cut_sample": 204240
-          }
-        },
-        "7": {
-          "seed": 155141,
-          "text_sha256": "db26b88aa76925a03f8ce8c640e54383926375f900ea9caab313a667efd2d828",
-          "run_on": {
-            "spoken_text": "这些都是它的设计目标。它自己的文档也写得明白：光有这个内核，并不能证明整条路已经走通。",
-            "cut_sample": 599760
-          }
-        },
-        "4": {
-          "seed": 155141,
-          "text_sha256": "b5af62693300a94f89b6487e7aae3b9f8e0db225da4e7e7b8bdc6a19ccd0b702"
-        }
+    "steps": [
+      {
+        "mode": "speaker-embedding",
+        "text": "一份数据做完了，可下一位用它的人，能靠它做判断吗？他们需要知道每个数字是什么意思，对应哪个时间，依据从哪里来，能用在什么地方。",
+        "seed": 86770,
+        "temperature": 0.46,
+        "top_k": 50,
+        "top_p": 0.9,
+        "repetition_penalty": 1.05,
+        "max_tokens": 1900
+      },
+      {
+        "mode": "icl",
+        "text": "我们以证据连接人的判断与智能体的行动。规范保存正式接受的意图，证据记录实际发生的事。看清关系，决定下一步；条件改变，就重新判断。",
+        "prompt_text": "一份数据做完了，可下一位用它的人，能靠它做判断吗？他们需要知道每个数字是什么意思，对应哪个时间，依据从哪里来，能用在什么地方。",
+        "seed": 55849,
+        "temperature": 0.46,
+        "top_k": 50,
+        "top_p": 0.9,
+        "icl_repetition_penalty": 1.05,
+        "max_tokens": 1900
       }
+    ],
+    "silence_treatment": "After each step, only the edges are trimmed to 0.1 s around the first and last 10 ms frame above -45 dBFS; inner quiet is kept, so the narration copies the root's thought pauses.",
+    "selection": "Of the second step's seeds 55847-55861, the takes with no codebook-0 zero frame (55849, 55852, 55853, 55856, 55858, 55861) were compared; 55849 was narrated in full.",
+    "objective_comparison": {
+      "clarity": "Median cepstral peak prominence over frames within 18 dB of the 95th-percentile energy: identity root 16.9 dB, DDWG clear reference 7ff6347e 20.0 dB, this reference 18.6 dB; narrations: current Chinese 15.9 dB, this voice 19.1 dB on segment 01, DDWG Chinese 20.3 dB.",
+      "pauses": "In-take pauses at least 0.12 s and 30 dB below the take's level: 36 per minute in the current narration, 15 with the DDWG clear reference, 39 with this reference.",
+      "speaker_embedding_cosine_to_root": 0.9914,
+      "endings": "54 of 54 first takes of the nine Chinese segments end naturally by filmkit's ending check; the current reference's first takes left 35 of 54 inside their last syllable (2026-11-03).",
+      "pace": "At a 0.6 s inner cap the nine segments take 781.1 s against the current 751.0 s (x1.040)."
     },
-    "04": {
-      "groups": {
-        "1": {
-          "seed": 163061,
-          "text_sha256": "b9681c8b364cc2494a23529e83a5d29a88eec8f6a1ee93c0d6d853f7691c6998",
-          "run_on": {
-            "spoken_text": "有一条航情数据管线，需要时可以再跑一遍。研究员提了个要求：同一批数据再跑一遍，不能多出重复的记录；可厂商更正过的数据，一定要留下。",
-            "cut_sample": 248400
-          }
-        },
-        "2": {
-          "seed": 107628,
-          "text_sha256": "ac8e43d1d38f484fb937007482a08ed0d40514fa0f64f838605e144d40125e05"
-        },
-        "5": {
-          "seed": 226413,
-          "text_sha256": "c9c24e0accf77b172e4d9632c2ff5086baf704bffc37b14833d143ac2341d3ae",
-          "run_on": {
-            "spoken_text": "原话里相关的每一条约束，都要有个交代：要么留下，要么经授权明确排除，要么标明还没解决。理解随时可以被质疑；只有人确认过、采纳了的那部分，才按固定的规则编译成检查。编译能保证同样的输入，总会得到同样的检查，却证明不了理解本身是对的。所以对话、记忆和总结，都只能当线索。",
-            "cut_sample": 415440
-          }
-        },
-        "6": {
-          "seed": 99709,
-          "text_sha256": "1300707c5513a5605ee290ecbd6bafeb75ea05d3de9554a3e83a4172923c46ae"
-        },
-        "3": {
-          "seed": 147223,
-          "text_sha256": "007ceb03aa20ca69f6e8a2bc1e4522b808e214263751fb5035a3dd909b09dfb8",
-          "spoken_sha256": "18c36f44f320783acfd0564e70b47901523af660c9c37df611661e64e838f7f1",
-          "run_on": {
-            "spoken_text": "第一条准则，是用刚好够用的模型，留住原意。这里说的模型，是指表达原意用的那些概念和结构。模型大了，每个人都要多懂一堆用不上的概念；小到装不下原意，原意就会在半路丢掉。做法是把意图写进一份正式变更，而且只写在这一处：要解决什么，为什么要解决，做到什么样才算解决。",
-            "cut_sample": 367440
-          }
-        }
-      }
-    },
-    "05": {
-      "groups": {
-        "1": {
-          "seed": 115548,
-          "text_sha256": "95fce9a1f3acd90740a2fff99ee59db4fa21ed2911755ab85109a0643b5d5ca1"
-        },
-        "2": {
-          "seed": 178900,
-          "text_sha256": "5921ad2c21fa171b86e05d35593a988c3624a7a39fbde293162a5e96e1f57024",
-          "run_on": {
-            "spoken_text": "这就是第二条准则：只在影响行动的地方做区分。这几样，都是各自独立的证据：每一样通过以后，允许做的下一步都不一样。其中一样通过了，推不出另一样也通过。所以说“做完了”的时候，要讲明这一次实际确认过的是哪几样。",
-            "cut_sample": 453840
-          }
-        },
-        "3": {
-          "seed": 155143,
-          "text_sha256": "0c4b8d0908af8b8619ac88556e084eb70e721636fbbf863c76ea637ce36a382b",
-          "run_on": {
-            "spoken_text": "一次判断的结果，也只分三种：通过、拦下、未知。必需的事实缺了，或者没法核实，结果是未知；有冲突，或者明确失败了，结果是拦下。只有通过，才允许动手；未知，从来不等于可以。比如 GitLab 和 GitHub 上的检查还没出结果，这一项就是未知；没有结果，不能算作没有问题。",
-            "cut_sample": 398160
-          }
-        },
-        "5": {
-          "seed": 178900,
-          "text_sha256": "dfc81c93a2a2247327a951ff3344afc29ffe058b20df54633193d73c47ea5833",
-          "run_on": {
-            "spoken_text": "回到例子。另一个 Agent 也在干活。它记得分支还停在昨天那次提交，看板上也是一片绿灯。可从编好计划到真正写入，中间别人可能已经改过了。就在它要写入的那一刻，Eethos 又核对了一遍：分支已经往前走了。跟计划里预想的不一样，那就什么都不写，按刚观察到的事实，重新编译计划。",
-            "cut_sample": 292560
-          }
-        }
-      }
-    },
-    "06": {
-      "groups": {
-        "5": {
-          "seed": 131387,
-          "text_sha256": "88dad77e1397c64b7732c1b132e66ddcbb962686d9dc5d89539712a62f81c0ac"
-        },
-        "2": {
-          "seed": 155144,
-          "text_sha256": "91d9e6ca82885ef23ffacf56d1520e20951d873a3eefe918eccaeb68cd1b79be",
-          "run_on": {
-            "spoken_text": "这就是第三条准则：把权威依据和视图分开。在 Eethos 里，权威依据指的是一次判断可以凭借的东西：用户当下的指令，仓库里的真实内容，已经采纳的正式变更，刚观察到的事实，适用的规则，还有仍然有效的存证。",
-            "cut_sample": 365520
-          }
-        }
-      }
-    },
-    "07": {
-      "groups": {
-        "4": {
-          "seed": 147226,
-          "text_sha256": "ba01371d7dc57eafdda489853fbf1da61a8d07c5a9815647b5a63ee3b6ac6dd3"
-        },
-        "5": {
-          "seed": 131388,
-          "text_sha256": "f8143b54f5ca17a117cf760cb23b54b08898855d0f151ac518a996d62df12b13"
-        },
-        "3": {
-          "seed": 155145,
-          "text_sha256": "ace71b5fa4e645150c00e5cf09a2c2159852e3b5b94655f05832fc177c300790",
-          "run_on": {
-            "spoken_text": "Eethos 判断自己的仓库合不合格，用的也是它交给所有仓库的同一套义务。拿新做法换掉旧做法，新的不能比旧的弱。一项正式变更做到哪儿，就按哪儿收尾；没做完的留下记录，不冒充做完了。",
-            "cut_sample": 282960
-          }
-        },
-        "1": {
-          "seed": 202659,
-          "text_sha256": "d4ca4f2e9afc0dd9007350ddb48644932d3d88dbf564c274266319577acbe140"
-        }
-      }
-    },
-    "08": {
-      "groups": {
-        "2": {
-          "seed": 123470,
-          "text_sha256": "9e35b10cfbc3281ad941a51bb26cc54f4a205524c11b7a93d05f94e19439f4e1"
-        },
-        "3": {
-          "seed": 147227,
-          "text_sha256": "98fa16a0c14e3d1168203d0925679e62ca5b0d93874b4e9e931bc822a001985a"
-        },
-        "4": {
-          "seed": 107632,
-          "text_sha256": "d961496e4a4154a7be4c9b706115bff78796ca3beedb3a66692dd3487ea724f4"
-        },
-        "6": {
-          "seed": 139308,
-          "text_sha256": "fd99d1ed59947a178a3583606110b87b23682c870dc69fef4c278b41ef62e9d9"
-        },
-        "7": {
-          "seed": 115551,
-          "text_sha256": "2b392e5905ff8cb0aaf768626b8583e1f0b7d7bbb83e44631f41fc6f407b820b"
-        },
-        "9": {
-          "seed": 147227,
-          "text_sha256": "7009a811254d8983c359482548f65660f5796eaf294dd50ebc8dbfb0ca7d1340"
-        },
-        "5": {
-          "seed": 163065,
-          "text_sha256": "6c830a319bc1513144a60caa544cf0ddefa8500a438e226b9c0e24cb4445e504",
-          "run_on": {
-            "spoken_text": "几天后，厂商在同一天，对同一只股票发了两次更正。管线只认得“原值”和“一次更正”，第二次更正，就把第一次覆盖掉了。",
-            "cut_sample": 544080
-          }
-        },
-        "8": {
-          "seed": 155146,
-          "text_sha256": "b9a6c043533306ba4f0b8bb5a4c477ea20a3a79b1d5f04e1b49b987e400a3d1f",
-          "run_on": {
-            "spoken_text": "“不能多出重复记录”这个目标，一个字也没有放宽。目标和标准要改，只能经授权重新对齐意图，明着改；不能为了让结果通过，就悄悄放宽。",
-            "cut_sample": 615120
-          }
-        }
-      }
-    },
-    "09": {
-      "groups": {
-        "1": {
-          "seed": 99714,
-          "text_sha256": "faef6f66e804d1350f77b0bf4ea83ea60bd9741cad89061cd575f4d009ef9368"
-        },
-        "3": {
-          "seed": 147228,
-          "text_sha256": "4cc4ec704fc58064075a6bc729717dcf21bf1d30a31b514e8173251a19b611ee"
-        },
-        "4": {
-          "seed": 266013,
-          "text_sha256": "871c3c3241e5ef2dd2c5a56af681a925ad03e2a9f3353b2cb16b290094f151aa",
-          "spoken_sha256": "c3cd6e4341bcfc97a6a79c51c9875b50b47af8ef9879a7ad824ac63e1bcc7b62"
-        }
-      }
-    }
+    "reason": "The approved root is breathy, and its two codebook-0 zero frames cut every take's end under mlx-audio 0.6.4; this reference keeps the narrator's identity and pauses, is clearer and has no zero frame."
   }
 }
