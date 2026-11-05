@@ -88,7 +88,7 @@ language_quality = """\
   Chinese reads as spoken Chinese, not a translation of the English."""
 voice_quality = """\
   a clear, warm and present voice, neither hoarse, breathy, strained, muffled nor metallic: \
-  cepstral peak prominence over the loud speech frames at least 18.5 dB in Chinese and 17 dB in \
+  cepstral peak prominence over the loud speech frames at least 18 dB in Chinese and 17 dB in \
   English, near the clear reference narrations; one voice identity across both editions."""
 narration_performance = """\
   delivery natural, neither sleepy, rushed nor theatrical; distinct thought pauses, paragraph \
