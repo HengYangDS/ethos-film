@@ -57,12 +57,12 @@
     "assembly_mode": "native-speech-designed-pauses",
     "pacing_profile": "Ear-first copy spoken at the voice's native rate from the unmodified English reference, with the settings of the revision-7 samples the user approved. Speech is never time-stretched or pitch-shifted, and the native pauses inside a thought are kept as recorded; only one longer than the declared inner cap, which lies above every pause the samples hold, is shortened. Designed quiet separates complete thoughts, longer after longer ones, each thought boundary outlasts the longest pause inside its thought by at least three fifths, and the coda settles on its own longer pause after every thought; the remaining runtime opens the picture between parts and chapters within declared bounds.",
     "designed_pauses": {
-      "thought": 1.76,
+      "thought": 1.85,
       "question": 1.75,
-      "opening": 2.5,
+      "opening": 3.5,
       "paragraph": 2.3,
       "chapter": 2.6,
-      "closing": 1.5
+      "closing": 2.5
     },
     "thought_pause_range": [
       1.25,
