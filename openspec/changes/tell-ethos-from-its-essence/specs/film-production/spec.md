@@ -56,7 +56,7 @@ Both editions SHALL use the narrator that the previous ETHOS film and the DDWG f
 
 ### Requirement: Each take is complete and read in context
 
-Each selected take SHALL end on its own and read each word as its context requires. Each name in the pronunciation contract SHALL be heard in its declared form, ETHOS as /ˈiːθɒs/, and each Chinese character with an ambiguous dictionary reading SHALL have its reading in context declared. Every occurrence of a declared name or reading SHALL match its approved reference. The assembled soundtrack SHALL bring every thought to quiet before the silence that follows it, so no voice is faded out while still heard.
+Each selected take SHALL end on its own and read each word as its context requires. Each name in the pronunciation contract SHALL be heard in its declared form, ETHOS as /ˈiːθɒs/, and each Chinese character with an ambiguous dictionary reading SHALL have its reading in context declared. Every occurrence of a declared name or reading SHALL match its approved reference. The assembled soundtrack SHALL bring every thought to quiet before the silence after it, never fading a voice still heard.
 
 #### Scenario: Named terms are heard as declared
 
