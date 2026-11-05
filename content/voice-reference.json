@@ -55,5 +55,118 @@
       "pace": "At a 0.6 s inner cap the nine segments take 781.1 s against the current 751.0 s (x1.040)."
     },
     "reason": "The approved root is breathy, and its two codebook-0 zero frames cut every take's end under mlx-audio 0.6.4; this reference keeps the narrator's identity and pauses, is clearer and has no zero frame."
+  },
+  "retakes": {
+    "02": {
+      "groups": {
+        "2": {
+          "seed": 115545,
+          "text_sha256": "7b07ab61e8a8c356bfc37e2a8a0aba5faaf06c343c0a21532a25d8d5b02a6a2c",
+          "spoken_sha256": "7b07ab61e8a8c356bfc37e2a8a0aba5faaf06c343c0a21532a25d8d5b02a6a2c"
+        }
+      }
+    },
+    "03": {
+      "groups": {
+        "2": {
+          "seed": 91789,
+          "text_sha256": "660d96b894b63a54cc93d78b2b3deb416edebbd465c13c61810b63cb121ce3eb",
+          "spoken_sha256": "660d96b894b63a54cc93d78b2b3deb416edebbd465c13c61810b63cb121ce3eb"
+        },
+        "7": {
+          "seed": 91789,
+          "text_sha256": "db26b88aa76925a03f8ce8c640e54383926375f900ea9caab313a667efd2d828",
+          "spoken_sha256": "746a81b1a59672efa0b2cf261d39b7717813d70329bf4031dcb4184a3dc0eab3",
+          "run_on": {
+            "spoken_text": "这些都是它的设计目标。它自己的文档也写得明白：光有这个内核，并不能证明整条路已经走通。",
+            "cut_sample": 611280
+          }
+        },
+        "1": {
+          "seed": 155141,
+          "text_sha256": "cbea7725a3da5fd94b038433cefd6e79d45dc84ea10fec3fcb78cafb213bb2f9",
+          "spoken_sha256": "7cdad536391adcde551e1421b8d62a3704b2503888003b0dce8825a52a9ec911"
+        }
+      }
+    },
+    "05": {
+      "groups": {
+        "2": {
+          "seed": 91791,
+          "text_sha256": "5921ad2c21fa171b86e05d35593a988c3624a7a39fbde293162a5e96e1f57024",
+          "spoken_sha256": "d6e2fef9cab618942146df32af737793c33f2bc20da8c93f1fae95f6b5f3f0c4"
+        },
+        "6": {
+          "seed": 107629,
+          "text_sha256": "597069c420acc9c3a972509892c90b4b6d52b62c077af1cefb480d2daa258e7b",
+          "spoken_sha256": "4a6e3b562b78ef691210e145c1a4730ef0729db84f1ce4a257cd0b388a011c5a"
+        },
+        "7": {
+          "seed": 147224,
+          "text_sha256": "dfc81c93a2a2247327a951ff3344afc29ffe058b20df54633193d73c47ea5833",
+          "spoken_sha256": "30d605ae19b28b70f22c7289acd2a6875f9d9ff8368bbfb57290c2348167a063"
+        }
+      }
+    },
+    "06": {
+      "groups": {
+        "2": {
+          "seed": 139306,
+          "text_sha256": "91d9e6ca82885ef23ffacf56d1520e20951d873a3eefe918eccaeb68cd1b79be",
+          "spoken_sha256": "cdc87a5a95a3e19df966063c1a0b33a733ade987358e06ab80ffcd6bfdf61996"
+        }
+      }
+    },
+    "07": {
+      "groups": {
+        "4": {
+          "seed": 139307,
+          "text_sha256": "ba01371d7dc57eafdda489853fbf1da61a8d07c5a9815647b5a63ee3b6ac6dd3",
+          "spoken_sha256": "c4d80ec36e8a75a15b3cc102b293bbd1785c8c1cd8f2a4921c7f34315350223e"
+        },
+        "1": {
+          "seed": 147226,
+          "text_sha256": "d4ca4f2e9afc0dd9007350ddb48644932d3d88dbf564c274266319577acbe140",
+          "spoken_sha256": "88e7df15bf79c2c460a1cf47558e02232e360fb523aafcb7ea670b2c5c5dbed2"
+        }
+      }
+    },
+    "08": {
+      "groups": {
+        "5": {
+          "seed": 139308,
+          "text_sha256": "71f0e7a267f177dec70e3985efb55def182187f9a6006a903a99c43dae7a2412",
+          "spoken_sha256": "625b218c74da8695cfa59d4224caf7e24b17253edf82b5829d9c553324884f17"
+        },
+        "7": {
+          "seed": 99713,
+          "text_sha256": "fd99d1ed59947a178a3583606110b87b23682c870dc69fef4c278b41ef62e9d9",
+          "spoken_sha256": "fd99d1ed59947a178a3583606110b87b23682c870dc69fef4c278b41ef62e9d9"
+        },
+        "9": {
+          "seed": 107632,
+          "text_sha256": "b9a6c043533306ba4f0b8bb5a4c477ea20a3a79b1d5f04e1b49b987e400a3d1f",
+          "spoken_sha256": "b9a6c043533306ba4f0b8bb5a4c477ea20a3a79b1d5f04e1b49b987e400a3d1f"
+        }
+      }
+    },
+    "09": {
+      "groups": {
+        "4": {
+          "seed": 178904,
+          "text_sha256": "871c3c3241e5ef2dd2c5a56af681a925ad03e2a9f3353b2cb16b290094f151aa",
+          "spoken_sha256": "c3cd6e4341bcfc97a6a79c51c9875b50b47af8ef9879a7ad824ac63e1bcc7b62"
+        }
+      }
+    },
+    "04": {
+      "groups": {
+        "1": {
+          "seed": 155142,
+          "text_sha256": "b9681c8b364cc2494a23529e83a5d29a88eec8f6a1ee93c0d6d853f7691c6998",
+          "spoken_sha256": "1983f17ac03b556e5679a7265e79fda9ecd5217c98157ff743408de14273d576"
+        }
+      }
+    }
   }
 }
