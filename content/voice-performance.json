@@ -343,6 +343,11 @@
             "target_reading": "zhǐ néng"
           },
           {
+            "term": "只要",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhǐ yào"
+          },
+          {
             "term": "只认得",
             "kind": "contextual-mandarin-word",
             "target_reading": "zhǐ rèn de"
@@ -459,6 +464,12 @@
             "term": "得到",
             "kind": "contextual-mandarin-word",
             "target_reading": "dé dào"
+          },
+          {
+            "term": "得由",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "děi yóu",
+            "dictionary_disagreement": "得 is děi, must, in 得由另一个独立控制的身份重跑一遍; the dictionary reads dé."
           },
           {
             "term": "总结",
@@ -823,6 +834,12 @@
             "kind": "contextual-mandarin-word",
             "target_reading": "chóng xīn",
             "dictionary_disagreement": "重新 is chóng xīn; the dictionary's segmenter takes 权重 in 授权重新 and reads 重 as zhòng."
+          },
+          {
+            "term": "重跑",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chóng pǎo",
+            "dictionary_disagreement": "重 is chóng, again, in 重跑一遍; the dictionary reads zhòng."
           },
           {
             "term": "长期",
