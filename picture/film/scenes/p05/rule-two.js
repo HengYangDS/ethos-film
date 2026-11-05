@@ -1,10 +1,10 @@
-/* Part 05, rule two (05.3-05.5): distinguish only what changes action. Its heading brings the mark's two passages,
- * drawn out from the origin on its words, one per kind of next step. The planes are separate planes of evidence, each
- * permitting its own next step; one passing never means another has; a "done" names what was verified. A judgment has
- * three outcomes and only pass lets the work go ahead; the checks with no result are unknown, which is not "no
- * problem". A sixth distinction that changes no action is never added. The stack of planes moves aside once and then
- * only shifts as each stage builds beside it, so what stands is balanced on the content centre and the argument reads
- * as one picture changing on its words. */
+/* Part 05, rule two (05.3, 05.5 and 05.7): distinguish only what changes action. Its heading brings the mark's two
+ * passages, drawn out from the origin on its words, one per kind of next step. The planes are separate planes of
+ * evidence, each permitting its own next step; one passing never means another has; a "done" names what was verified.
+ * A judgment has three outcomes and only pass lets the work go ahead; the checks with no result are unknown, which is
+ * not "no problem". A sixth distinction that changes no action is never added. The stack of planes moves aside once
+ * and then only shifts as each stage builds beside it, so what stands is balanced on the content centre and the
+ * argument reads as one picture changing on its words. */
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
@@ -47,18 +47,18 @@ const stepsReach = () => Math.max(STEPS.at(-1) + STEP_R, STEPS[0] - STEP_R + mea
 const separateX = () => 960 - (PLANE_W + stepsReach()) / 2;
 
 /* A judgment's three outcomes and their conditions, in each edition. */
-const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]),
-  outcomeQuals = () =>
-    L(
-      [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
-      [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]],
-    );
+export const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]);
+export const outcomeQuals = () =>
+  L(
+    [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
+    [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]],
+  );
 
 /* The outcomes list's columns, from the stack's left edge: the list's mark at `mark`, the names after it, and the
  * conditions in one column after the widest name. The heading's qualifier follows its term (`natural`) and, once the
  * conditions form their column, joins it (`heading`) when its term ends before it, so the heading row reads on the
  * list's grid without waiting on a column that has not formed. */
-function outcomesColumns() {
+export function outcomesColumns() {
   const mark = PLANE_W + 80,
     names = mark + 18 + NAME_GAP,
     quals = names + Math.max(...outcomeNames().map((v) => measure(v, LABEL))) + TERM_GAP,
@@ -70,7 +70,7 @@ const columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
 /* The parts of the outcomes list, each with how far right it reaches from the stack's left edge: the heading, its term
  * and qualifier taken as one, its qualifier again once it joins the conditions' column, then each name, each condition
  * and "never permission", a second line of unknown's condition. `c` gives when each arrives. */
-function outcomesParts(c = {}) {
+export function outcomesParts(c) {
   const col = outcomesColumns(),
     names = outcomeNames(),
     quals = outcomeQuals(),
@@ -86,13 +86,13 @@ function outcomesParts(c = {}) {
     [c.never, col.quals + measure(L("不等于可以", "Never permission"), NOTE)],
   ];
 }
-/* How far right the outcomes reach at t as they build: a part that reaches further than those before it widens the
- * whole, gliding from just after its words. */
-function outcomesReach(t, c) {
-  const parts = outcomesParts(c).sort((a, b) => a[0] - b[0]);
-  let reach = parts[0][1],
+/* How far right a row of parts, each [when it arrives, how far it reaches], reaches at t as they build: a part that
+ * reaches further than those before it widens the whole, gliding from just after its words. */
+export function buildingReach(t, parts) {
+  const sorted = [...parts].sort((a, b) => a[0] - b[0]);
+  let reach = sorted[0][1],
     now = reach;
-  for (const [at, right] of parts.slice(1)) {
+  for (const [at, right] of sorted.slice(1)) {
     if (right <= reach) continue;
     now += (right - reach) * soon(t, at + 0.05, 0.7);
     reach = right;
@@ -100,9 +100,8 @@ function outcomesReach(t, c) {
   return now;
 }
 /* Where the stack stands while the outcomes are listed beside it: the stack and what of the list stands, taken
- * together, centred on the content centre; outcomesX() is that place once the whole list stands. */
-const outcomesAt = (t, c) => 960 - outcomesReach(t, c) / 2,
-  outcomesX = () => 960 - Math.max(...outcomesParts().map(([, right]) => right)) / 2;
+ * together, centred on the content centre. */
+const outcomesAt = (t, c) => 960 - buildingReach(t, outcomesParts(c)) / 2;
 
 /* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the
  * rule is named, from the heading's first frame, so the glyph stands whole beside its number before the statement
@@ -196,17 +195,16 @@ export function verifiedStage(s, t, c, g) {
   });
 }
 
-/* 05.4 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
+/* 05.5 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
  * with what it alone permits and block and unknown with their conditions; unknown is never permission. The list keeps
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
  * next three. "Never permission" is said of unknown, so it stands as a second line of unknown's condition, in the
  * condition's note style and column, rather than as a fourth row of the list. The checks with no result are linked
- * to unknown, and "no problem" is refused. The stack rises a little and moves to where the stack and the list,
- * together, stand on the content centre, and it shifts on the words of each condition that widens the list. */
+ * to unknown, and "no problem" is refused. The stack stands where the stack and the list, together, stand on the
+ * content centre, and it shifts on the words of each condition that widens the list. */
 export function outcomesStage(s, t, c, g) {
-  const settle = soon(t, c.first4 + 0.05, 0.7),
-    top = mix(TOP, 340, settle),
-    x = mix(ASIDE, outcomesAt(t, c), settle),
+  const top = 340,
+    x = outcomesAt(t, c),
     col = outcomesColumns(),
     LX = x + col.mark,
     em = labelSize(LABEL),
@@ -266,17 +264,16 @@ export function outcomesStage(s, t, c, g) {
   });
 }
 
-/* 05.5 A distinction that changes no action is never added: a sixth plane is offered under the five, refused and left
+/* 05.7 A distinction that changes no action is never added: a sixth plane is offered under the five, refused and left
  * dashed, one more thing to keep track of; the five that matter stand bracketed. The stack stands centred while the
  * sixth plane is weighed under it, and moves left as the bracket and its name join it, to where the three stand
  * centred together. */
 export function refusedStage(s, t, c, g) {
   const matterName = L("真正要紧的那几个", "The ones that matter"),
-    settle = soon(t, c.first5 + 0.05, 0.8),
-    top = mix(340, 320, settle),
+    top = 320,
     alone = 960 - PLANE_W / 2,
     bracketed = 960 - (PLANE_W + 24 + NAME_GAP + measure(matterName)) / 2,
-    x = mix(mix(outcomesX(), alone, settle), bracketed, soon(t, c.matter + 0.05, 0.7)),
+    x = mix(alone, bracketed, soon(t, c.matter + 0.05, 0.7)),
     sy = top + 5 * PLANE_STEP,
     offered = g * named(t, c.distinction),
     refused = soon(t, c.never2 + 0.05, 0.5);

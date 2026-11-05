@@ -8,7 +8,7 @@ import { P } from "../../palette.js";
 import { clamp, mix } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
-/* The journey's rail stands on the content centre line from 08.1 to 08.5, so each stage that cuts in continues the
+/* The journey's rail stands on the content centre line from 08.1 to 08.6, so each stage that cuts in continues the
  * same line; it is four pixels wide in the line colour, a firm structure the stations stand on. */
 export const RAIL_Y = 500;
 export function journeyRail(x0, x1, { alpha = 1, upto = 1, dash = null } = {}) {

@@ -1,4 +1,4 @@
-/* 08.4-08.5 the requirement's life from proof to real use: the finished work is proved on its commit and leaves an
+/* 08.4 and 08.6 the requirement's life from proof to real use: the finished work is proved on its commit and leaves an
  * attestation, is reviewed and authorized into the protected development branch and published to each platform on
  * its own; once live, its actual benefit shows only in real use and needs four things; then the journey is seen
  * whole, with the stretches not yet accepted drawn dashed. */
@@ -172,7 +172,7 @@ const NEEDS = () => [
 const NEED_Y = [350, 450, 550, 650],
   NEED_X = 1340;
 
-/* 08.5, first: the version goes live on the full rail; whether it works stands as a question over its actual benefit,
+/* 08.6, first: the version goes live on the full rail; whether it works stands as a question over its actual benefit,
  * and real use is where it shows. A claim of actual benefit then needs four things: the rail draws back to the
  * question and each need arrives on its words in a column, linked from it. The stations' names under the rail share
  * one line, the line of the third need beside them, and the question's bubble stands high enough on the rail that its
@@ -236,39 +236,45 @@ export function liveUse(s, t, a) {
       align: "left",
       width: 360,
       alpha: a * listIn(t, ats, i),
-      set: "08.5:needs",
+      set: "08.6:needs",
     });
   });
   ctx.restore();
 }
 
-/* The journey seen whole: its four stretches along the rail, the ones not yet accepted drawn dashed. */
+/* The journey seen whole: its five stretches along the rail, the ones not yet accepted drawn dashed. The dropped
+ * push's stretch is centred on the frame and the handover and the designed path stand at one distance either side, so
+ * the three names and the documents under them stand balanced about the frame's axis. */
 const STRETCHES = [
-  [240, 600],
-  [640, 820],
-  [860, 1200],
-  [1240, 1680],
+  [240, 410],
+  [450, 630],
+  [670, 840],
+  [880, 1040],
+  [1080, 1680],
 ];
 
-/* 08.5, second: the whole journey on one rail, the work at the start of its last stretch, named "from here on" over
- * it; from here on the path is the one ETHOS is designed for, drawn dashed, and the handover between Agents turns
- * dashed on its words. Its own documents, on their words, stand centred between the two stretches and are linked up
- * to the name of each, and what they say, that neither has yet completed acceptance, hangs under them on its words. */
+/* 08.6, second: the whole journey on one rail, the work at the start of its last stretch, named "from here on" over
+ * it; from here on the path is the one ETHOS is designed for, drawn dashed, and the handover between Agents and the
+ * dropped push each turn dashed on their words. Its own documents, on their words, stand on the frame's axis under the
+ * dropped push and are linked up to the name of each stretch, and what they say, that none has yet completed
+ * acceptance, hangs under them on its words. */
 export function overview(s, t, a) {
   if (a <= 0) return;
-  const [hereAt, pathAt, docsAt, handoverAt, acceptAt] = cues(s, [
+  const [hereAt, pathAt, docsAt, handoverAt, droppedAt, acceptAt] = cues(s, [
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
     ["它的文档也写明", "its own documents"],
     ["换 Agent 接手", "the handover between Agents"],
+    ["断线再推", "the dropped push"],
     ["都还没有完成验收", "has not yet completed acceptance"],
   ]);
   const h = a * named(t, handoverAt),
+    dp = a * named(t, droppedAt),
     acc = a * named(t, acceptAt),
-    [A, B, C, D] = STRETCHES;
-  // The stretches already walked are one stroke, so the name at its end names them all; the handover leaves that
-  // stroke on its words and stands dashed under its own name.
-  const solid = t < handoverAt - 0.15 ? [A, B, C] : [A, C];
+    [A, B, C, E, D] = STRETCHES;
+  // The stretches already walked are one stroke, so the name at its end names them all; the handover and the dropped
+  // push leave that stroke on their words and stand dashed under their own names.
+  const solid = [A, C, ...(t < handoverAt - 0.15 ? [B] : []), ...(t < droppedAt - 0.15 ? [E] : [])];
   stroke(
     () =>
       solid.forEach(([x0, x1]) => {
@@ -278,6 +284,7 @@ export function overview(s, t, a) {
     { color: P.line, alpha: a, width: 4 },
   );
   journeyRail(B[0], B[1], { alpha: h, dash: [12, 10] });
+  journeyRail(E[0], E[1], { alpha: dp, dash: [12, 10] });
   journeyRail(D[0], D[1], { alpha: a, dash: [12, 10] });
   railFlow(t, D[0], D[1], { alpha: a });
   // "From here on" names the work's point, where the dashed stretch begins, so it stands over that point.
@@ -307,14 +314,18 @@ export function overview(s, t, a) {
       alpha: h,
     },
   );
-  // Neither stretch has completed acceptance, as its own documents say. The documents stand midway between the two
-  // stretches, linked up to the name of each: to the stretch ETHOS is designed for, already named, as they arrive, and
-  // to the handover as it is named, so they never stand alone; each link leaves them as the rail's links leave their
-  // marks, so the two are one mark. What they say hangs one gap under them on its words.
+  const eb = nameText(L("断线再推那一段", "The dropped push"), (E[0] + E[1]) / 2, RAIL_Y + 30, {
+    valign: "top",
+    alpha: dp,
+  });
+  // No stretch has completed acceptance, as its own documents say. The documents stand on the frame's axis, under the
+  // dropped push, linked up to the name of each stretch: to the stretch ETHOS is designed for, already named, as they
+  // arrive, and to the handover and the dropped push as each is named, so they never stand alone; each link leaves them
+  // as the rail's links leave their marks, so all are one mark. What they say hangs one gap under them on its words.
   const NY = 700,
     BX = (B[0] + B[1]) / 2,
     DX = (D[0] + D[1]) / 2,
-    AXIS = (BX + DX) / 2,
+    AXIS = (E[0] + E[1]) / 2,
     DOC = [40, 52],
     docs = a * named(t, docsAt);
   docMark(AXIS - DOC[0] / 2, NY - DOC[1] / 2, DOC[0], DOC[1], { alpha: docs, rows: 3 });
@@ -327,6 +338,10 @@ export function overview(s, t, a) {
     route: "hv",
     alpha: h,
     upto: soon(t, handoverAt + 0.05, 0.6),
+  });
+  link(AXIS, NY - DOC[1] / 2 - 10, AXIS, eb.bottom + 12, {
+    alpha: dp,
+    upto: soon(t, droppedAt + 0.05, 0.4),
   });
   nameText(L("尚未完成验收", "Not yet accepted"), AXIS, NY + DOC[1] / 2 + NAME_GAP, {
     valign: "top",

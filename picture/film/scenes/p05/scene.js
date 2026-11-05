@@ -1,13 +1,16 @@
 /* 05 Rule two, distinguish only what changes action. The opening sentence returns and is taken apart into its planes
  * of evidence (05.1-05.2); rule two's heading draws the mark's two passages, the planes stand as separate evidence each
- * with its own next step, and a "done" names what was verified (05.3); a judgment's three outcomes, of which only pass
- * permits action (05.4); and a distinction that changes no action is never added (05.5). The Illustrative chip stands
- * while the opening sentence's scenario shows. */
+ * with its own next step, and a "done" names what was verified (05.3); local proof's trust boundary, which only an
+ * independent identity can cross (05.4); a judgment's three outcomes, of which only pass permits action (05.5); what
+ * every result other than pass says (05.6); and a distinction that changes no action is never added (05.7). The
+ * Illustrative chip stands while the opening sentence's scenario shows. */
 
 import { illustrative } from "../../framing/chapters.js";
 import { scenes } from "../registry.js";
 import { cue, cueFrom } from "../../timing/cues.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
+import { boundaryStage } from "./boundary.js";
+import { nonPassStage } from "./non-pass.js";
 import { apartStage } from "./planes.js";
 import { outcomesStage, refusedStage, separateStage, verifiedStage } from "./rule-two.js";
 
@@ -34,6 +37,18 @@ function cuesOf(s) {
     verified: cue(s, "实际确认过的", "were verified this time"),
     saysDone: cue(s, "所以说做完了", "says done"),
     tell: cue(s, "要讲明", "they need to say"),
+    edgeFirst: cue(s, "本地核验还有一条边界", "Local proof has one more boundary"),
+    edge: cue(s, "还有一条边界", "one more boundary"),
+    edgeWord: cue(s, "边界", "boundary"),
+    account: cue(s, "同一个账户", "the same account"),
+    produces: cue(s, "产生证据的程序", "what produces the evidence"),
+    checks: cue(s, "核对证据的程序", "what checks it"),
+    alone: cue(s, "光靠本地核验", "local proof alone"),
+    forgery: cue(s, "排除不了伪造", "cannot rule out forgery"),
+    independent: cue(s, "另一个独立控制的身份", "an independently controlled identity"),
+    rerun: cue(s, "重跑一遍", "a re-run"),
+    whether: cue(s, "要不要做", "whether one is needed"),
+    risk: cue(s, "看风险和规定", "depends on the risk and the policy"),
     first4: cue(s, "一次判断的结果", "A judgment too"),
     three: cue(s, "只分三种", "only three outcomes"),
     block: cue(s, "拦下", "block and unknown"),
@@ -48,6 +63,16 @@ function cuesOf(s) {
     example: cue(s, "比如 GitLab 和 GitHub 上的检查", "Take the checks on GitLab"),
     isUnknown: cue(s, "这一项就是未知", "their result is unknown"),
     noProblem: cue(s, "不能算作没有问题", "does not count as no problem"),
+    nonPassFirst: cue(
+      s,
+      "按 ETHOS 的设计，只要不是通过",
+      "ETHOS is designed so that any result other than pass",
+    ),
+    notPass: cue(s, "只要不是通过", "any result other than pass"),
+    why: cue(s, "为什么停下", "why that step stopped"),
+    evidence: cue(s, "证据是什么", "its evidence"),
+    nextSafe: cue(s, "下一步做什么才安全", "the one safe next action"),
+    person: cue(s, "要不要人来决定", "whether a person has to decide"),
     first5: cue(s, "反过来", "And a distinction"),
     distinction: cue(s, "一个区分", "a distinction"),
     sixth: cue(s, "改变不了任何行动", "would not change any action"),
@@ -65,13 +90,17 @@ scenes["05"] = function (s, t) {
   const c = cuesOf(s);
   const A = stageOut(t, c.first3),
     G1 = stageIn(t, c.first3) * stageOut(t, c.first3b),
-    G2 = stageIn(t, c.first3b) * stageOut(t, c.first4),
-    H = stageIn(t, c.first4) * stageOut(t, c.first5),
+    G2 = stageIn(t, c.first3b) * stageOut(t, c.edgeFirst),
+    B = stageIn(t, c.edgeFirst) * stageOut(t, c.first4),
+    H = stageIn(t, c.first4) * stageOut(t, c.nonPassFirst),
+    N = stageIn(t, c.nonPassFirst) * stageOut(t, c.first5),
     I = stageIn(t, c.first5);
   if (A > 0) apartStage(s, t, c, A);
   if (G1 > 0) separateStage(s, t, c, G1);
   if (G2 > 0) verifiedStage(s, t, c, G2);
+  if (B > 0) boundaryStage(s, t, c, B);
   if (H > 0) outcomesStage(s, t, c, H);
+  if (N > 0) nonPassStage(s, t, c, N);
   if (I > 0) refusedStage(s, t, c, I);
   // The opening sentence's scenario is made up: its chip stands while the sentence is taken apart.
   illustrative(A);

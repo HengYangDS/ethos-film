@@ -21,15 +21,15 @@ import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
-/* 08.8, first: the failed implementation and the model stand apart, a dashed line between them as they are told
+/* 08.9, first: the failed implementation and the model stand apart, a dashed line between them as they are told
  * apart; this time the fault is in the model, which takes the full ink while the code steps back. The two stand at one
- * distance either side of the dashed line on the frame's axis; until the model is named the code stands alone on that
- * axis, and it steps left into its place as the model arrives. */
+ * distance either side of the dashed line on the frame's axis; until the clause that names the model begins the code
+ * stands alone on that axis, and it steps left into its place as the model arrives. */
 export function faultApart(s, t, a) {
   if (a <= 0) return;
   const [codeAt, modelAt, apartAt, faultAt] = cues(s, [
     ["代码出错", "A failed implementation"],
-    ["模型的问题", "the model is wrong"],
+    ["不一定是模型的问题", "does not by itself mean"],
     ["要先分清", "told apart first"],
     ["问题出在模型上", "the fault is in the model"],
   ]);

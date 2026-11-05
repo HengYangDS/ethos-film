@@ -873,33 +873,33 @@ function nameText(v, x, y, { width = Infinity, size = LABEL, valign = "middle", 
   return { lines, top: top - em / 2, bottom: top + step * (lines.length - 1) + em / 2 };
 }
 var lineCaches = /* @__PURE__ */ new WeakMap();
-function growLines(parts, width = Infinity, size = LABEL) {
-  const cache = lineCaches.get(ctx) ?? /* @__PURE__ */ new Map(), key = JSON.stringify([String(width), size, parts]);
+function growLines(parts2, width = Infinity, size = LABEL) {
+  const cache = lineCaches.get(ctx) ?? /* @__PURE__ */ new Map(), key = JSON.stringify([String(width), size, parts2]);
   lineCaches.set(ctx, cache);
   if (cache.has(key)) return cache.get(key);
   const greedy = [[]];
-  parts.forEach((part, k) => {
+  parts2.forEach((part, k) => {
     const line2 = greedy.at(-1);
-    if (line2.length && measure([...line2.map((j) => parts[j]), part].join(""), size) > width)
+    if (line2.length && measure([...line2.map((j) => parts2[j]), part].join(""), size) > width)
       greedy.push([k]);
     else line2.push(k);
   });
   let lines = greedy;
-  const n = greedy.length, span = (a, b) => measure(parts.slice(a, b).join(""), size);
+  const n = greedy.length, span = (a, b) => measure(parts2.slice(a, b).join(""), size);
   const widths = greedy.map((line2) => span(line2[0], line2.at(-1) + 1));
-  if (n > 1 && parts.length <= 16 && widths.at(-1) < 0.4 * Math.max(...widths)) {
+  if (n > 1 && parts2.length <= 16 && widths.at(-1) < 0.4 * Math.max(...widths)) {
     let best = null;
     const search = (left, cuts) => {
       const from = cuts.at(-1) ?? 0;
       if (left === 1) {
-        const ends = [...cuts, parts.length], starts = [0, ...cuts], widths2 = ends.map((end, i) => span(starts[i], end));
+        const ends = [...cuts, parts2.length], starts = [0, ...cuts], widths2 = ends.map((end, i) => span(starts[i], end));
         if (!widths2.every((w, i) => w <= width || ends[i] - starts[i] === 1)) return;
         const worst = Math.max(...widths2), spread = widths2.reduce((sum, v) => sum + v * v, 0);
         if (!best || worst < best.worst - 0.5 || Math.abs(worst - best.worst) <= 0.5 && spread < best.spread)
           best = { starts, ends, worst, spread };
         return;
       }
-      for (let cut = from + 1; cut <= parts.length - left + 1; cut++)
+      for (let cut = from + 1; cut <= parts2.length - left + 1; cut++)
         search(left - 1, [...cuts, cut]);
     };
     search(n, []);
@@ -912,8 +912,8 @@ function growLines(parts, width = Infinity, size = LABEL) {
   return lines;
 }
 var blockHeight = (lines, size = LABEL) => labelSize(size) * (1 + LEADING * (lines - 1));
-function growTexts(parts, width = Infinity, size = LABEL) {
-  const lines = growLines(parts, width, size).map((line2) => line2.map((k) => [k, parts[k]]));
+function growTexts(parts2, width = Infinity, size = LABEL) {
+  const lines = growLines(parts2, width, size).map((line2) => line2.map((k) => [k, parts2[k]]));
   lines.forEach((line2, r) => {
     const [k, v] = line2[0], lead = r ? v.match(/^[、，,;；\s]+/u)?.[0] ?? "" : "";
     if (!lead) return;
@@ -923,7 +923,7 @@ function growTexts(parts, width = Infinity, size = LABEL) {
   });
   return lines;
 }
-function growName(t, parts, ats, x, y, {
+function growName(t, parts2, ats, x, y, {
   width = Infinity,
   size = LABEL,
   valign = "top",
@@ -932,7 +932,7 @@ function growName(t, parts, ats, x, y, {
   align = "left",
   ...o
 } = {}) {
-  const em = labelSize(size), step = em * LEADING, lines = growTexts(parts, width, size);
+  const em = labelSize(size), step = em * LEADING, lines = growTexts(parts2, width, size);
   const top = valign === "top" ? y + em / 2 : valign === "bottom" ? y - em / 2 - step * (lines.length - 1) : y - step * (lines.length - 1) / 2;
   lines.forEach((line2, r) => {
     const span = line2.reduce((w, [, v]) => w + measure(v, size), 0);
@@ -943,7 +943,7 @@ function growName(t, parts, ats, x, y, {
         align: "left",
         ...o,
         alpha: alpha * ramp(t, at - 0.15, 0.4),
-        whole: o.whole ?? parts.join("")
+        whole: o.whole ?? parts2.join("")
       });
       left += measure(v, size);
     });
@@ -1040,9 +1040,9 @@ var claimParts = () => L(["“做完了，", "测试全过”"], ["“Done. ", "
 var claimWidth = () => measure(claimParts().join("")) + 2 * CLAIM_PAD;
 var datumMark = (x, y, r = CLAIM_DATUM, alpha = 1) => ethosMark(x, y, 512 * r / 14, { datum: 1, hole: 0, passages: 0, boundary: 0, alpha });
 function claimPanel(t, x, y, { alpha = 1, words = alpha, ats = null, datum = 1, datumAt = null } = {}) {
-  const parts = claimParts(), w = claimWidth(), left = x - w / 2, right = x + w / 2;
+  const parts2 = claimParts(), w = claimWidth(), left = x - w / 2, right = x + w / 2;
   box(left, y - CLAIM_H / 2, w, CLAIM_H, { stroke: P.ink, alpha, radius: 16, width: 2.5 });
-  growName(t, parts, ats ?? [-Infinity], left + CLAIM_PAD, y, {
+  growName(t, parts2, ats ?? [-Infinity], left + CLAIM_PAD, y, {
     valign: "middle",
     alpha: words,
     build: ats !== null
@@ -1360,17 +1360,17 @@ var building = (t, ats, step = 48, lead = 0.1) => step * ats.slice(1).reduce((v,
 
 // picture/film/naming/placement.js
 var rowNameTop = (bottoms, gap = NAME_GAP) => Math.max(...bottoms) + gap;
-function railNames(names, xs, y, {
+function railNames(names2, xs, y, {
   side = 1,
   gap = NAME_GAP + 18,
   size = LABEL,
   alpha = () => 1,
   color = () => P.ink,
   wrap = RAIL_WRAP,
-  set = `rail:${names[0]}`
+  set = `rail:${names2[0]}`
 } = {}) {
   const room = (i) => Math.min(i ? xs[i] - xs[i - 1] : Infinity, i + 1 < xs.length ? xs[i + 1] - xs[i] : Infinity) - 30;
-  names.forEach((v, i) => {
+  names2.forEach((v, i) => {
     const width = Math.min(wrap, room(i));
     nameText(v, xs[i], y + side * gap, {
       width,
@@ -1384,12 +1384,12 @@ function railNames(names, xs, y, {
   });
 }
 var RAIL_WRAP = 240;
-function railStations(names, first, last, { size = LABEL, gap = 34, wrap = RAIL_WRAP } = {}) {
-  const widths = names.map(
+function railStations(names2, first, last, { size = LABEL, gap = 34, wrap = RAIL_WRAP } = {}) {
+  const widths = names2.map(
     (v) => Math.max(...wrapName(v, wrap, size).map((line2) => measure(line2, size)))
   );
-  const need = widths.slice(1).map((w, i) => (widths[i] + w) / 2 + gap), pitch = names.length > 1 ? (last - first) / (names.length - 1) : 0;
-  if (need.every((d) => d <= pitch)) return names.map((_, i) => first + i * pitch);
+  const need = widths.slice(1).map((w, i) => (widths[i] + w) / 2 + gap), pitch = names2.length > 1 ? (last - first) / (names2.length - 1) : 0;
+  if (need.every((d) => d <= pitch)) return names2.map((_, i) => first + i * pitch);
   const slack = Math.max(0, last - first - need.reduce((a, b) => a + b, 0)) / Math.max(1, need.length);
   return need.reduce((xs, d) => [...xs, xs.at(-1) + d + slack], [first]);
 }
@@ -1503,7 +1503,7 @@ scenes["01"] = function(s, t) {
   const W = claimWidth();
   if (stageA > 0) {
     const aside = soon(t, hand + 0.05, 0.6), AX2 = mix(960, 740, aside), AY = mix(560, 640, aside), AR = 33, gone = ramp(t, opens - 0.15, 0.4), lead = Math.max(first - 0.28, s.voice_start - 0.1), seen = stageA * ramp(t, lead - 0.15, 0.4) * (1 - gone);
-    const slide = soon(t, opens + 0.05, 0.7), PX = mix(1060, 960, slide), PY = 360, left = PX - W / 2;
+    const slide = soon(t, opens + 0.05, 0.7), PX2 = mix(1060, 960, slide), PY = 360, left = PX2 - W / 2;
     agent(AX2, AY, { size: 1.5, alpha: seen });
     nameText("Agent", AX2, AY + AR + NAME_GAP, {
       valign: "top",
@@ -1520,27 +1520,27 @@ scenes["01"] = function(s, t) {
       flowDot(fx, fy, 6, q, { color: P.ink, alpha: seen });
     }
     const panel = stageA * ramp(t, hand + 0.35, 0.4);
-    const placed = claimPanel(t, PX, PY, {
+    const placed = claimPanel(t, PX2, PY, {
       alpha: panel,
       words: stageA,
       ats: [done, pass2],
       datum: soon(t, landed + 0.05, 0.35)
     });
     const [DX, DY] = placed.datum;
-    nameText(L("说明了多少？", "How much?"), PX, PY - CLAIM_H / 2 - NAME_GAP, {
+    nameText(L("说明了多少？", "How much?"), PX2, PY - CLAIM_H / 2 - NAME_GAP, {
       valign: "bottom",
       alpha: stageA * named(t, much)
     });
     beats(t, DX, DY, 30, [much], { alpha: stageA });
-    const names = L(
+    const names2 = L(
       ["哪一次提交？", "哪些测试，在哪儿？", "是不是当初真正要的？", "能不能退回去？"],
       ["Which commit?", "Which tests ran?", "Really asked for?", "Can you get back?"]
     );
-    const RY = 620, RR = 34, base = railStations(names, 420, 1500, { wrap: 300 }), shift = building(t, qs, (base[1] - base[0]) / 2), xs = base.map((x) => x + shift), mid = (PY + CLAIM_H / 2 + RY - RR) / 2;
+    const RY = 620, RR = 34, base = railStations(names2, 420, 1500, { wrap: 300 }), shift = building(t, qs, (base[1] - base[0]) / 2), xs = base.map((x) => x + shift), mid = (PY + CLAIM_H / 2 + RY - RR) / 2;
     xs.forEach((x, i) => {
       const on = stageA * ramp(t, qs[i] - 0.15, 0.4), lit = speaking(t, qs, i);
       if (on < 0.01) return;
-      link(PX, PY + CLAIM_H / 2, x, RY - RR, {
+      link(PX2, PY + CLAIM_H / 2, x, RY - RR, {
         route: "vhv",
         mid,
         alpha: on,
@@ -1548,8 +1548,8 @@ scenes["01"] = function(s, t) {
       });
       const [fx, fy] = routePoint(
         [
-          [PX, PY + CLAIM_H / 2],
-          [PX, mid],
+          [PX2, PY + CLAIM_H / 2],
+          [PX2, mid],
           [x, mid],
           [x, RY - RR]
         ],
@@ -1569,7 +1569,7 @@ scenes["01"] = function(s, t) {
       if (i === 2) documentIcon(x - 13, RY - 17, 26, 34, { alpha: on, rows: 3 });
       if (i === 3) recoverIcon(x, RY, 15, { color: P.ink, alpha: on });
     });
-    railNames(names, xs, RY + RR, {
+    railNames(names2, xs, RY + RR, {
       gap: NAME_GAP,
       wrap: 300,
       alpha: (i) => stageA * listIn(t, qs, i),
@@ -1624,8 +1624,8 @@ scenes["01"] = function(s, t) {
       width: 2.5,
       dash: [7, 7]
     });
-    const parts = L(["会话结束了，", "换一个"], ["Session ends, ", "another picks up"]), ending = parts[0].trimEnd(), hung = /[、，。；：！？]$/u.test(ending) ? 0.3 * labelSize(LABEL) : 0, alone = xs[0] - measure(ending) / 2 + hung, whole = xs[1] - measure(parts.join("")) / 2;
-    growName(t, parts, [ends, pick], mix(alone, whole, moved), Y3 - S - NAME_GAP, {
+    const parts2 = L(["会话结束了，", "换一个"], ["Session ends, ", "another picks up"]), ending = parts2[0].trimEnd(), hung = /[、，。；：！？]$/u.test(ending) ? 0.3 * labelSize(LABEL) : 0, alone = xs[0] - measure(ending) / 2 + hung, whole = xs[1] - measure(parts2.join("")) / 2;
+    growName(t, parts2, [ends, pick], mix(alone, whole, moved), Y3 - S - NAME_GAP, {
       valign: "bottom",
       alpha: stageB,
       build: true
@@ -1633,13 +1633,13 @@ scenes["01"] = function(s, t) {
     ctx.restore();
   }
   if (stageC > 0) {
-    const X0 = 340, X1 = 1300, Y0 = 610, writingName = L("写一个改动", "Writing code"), relyName = L("能不能放心依靠它", "Whether you can rely on it"), relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))), ends2 = X1 + 7 + NAME_GAP, centre = (w) => 960 - (X0 + ends2 + w) / 2, shift = mix(
+    const X02 = 340, X1 = 1300, Y0 = 610, writingName = L("写一个改动", "Writing code"), relyName = L("能不能放心依靠它", "Whether you can rely on it"), relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))), ends2 = X1 + 7 + NAME_GAP, centre = (w) => 960 - (X02 + ends2 + w) / 2, shift = mix(
       centre(measure(writingName)),
       centre(Math.max(measure(writingName), relyWide)),
       soon(t, rely + 0.05, 0.7)
     ), climb = 120 + 160 * soon(t, easier + 0.05, 1.6) + 6 * Math.max(0, voiceTime(t) - voiceTime(easier + 1.65));
-    const rise = (x) => Y0 - climb * ((x - X0) / (X1 - X0)) ** 1.7, points = [];
-    for (let x = X0; x < X1; x += 12) points.push([x, rise(x)]);
+    const rise = (x) => Y0 - climb * ((x - X02) / (X1 - X02)) ** 1.7, points = [];
+    for (let x = X02; x < X1; x += 12) points.push([x, rise(x)]);
     points.push([X1, rise(X1)]);
     ctx.save();
     ctx.translate(shift, 0);
@@ -1649,8 +1649,8 @@ scenes["01"] = function(s, t) {
       align: "left",
       alpha: stageC * named(t, writing)
     });
-    const flat = stageC * ramp(t, flatAt - 0.15, 0.4), flatReach = mix(X0, X1, soon(t, flatAt - 0.1, 1));
-    line(X0, Y0, flatReach, Y0, { color: P.ink, alpha: flat, width: 4 });
+    const flat = stageC * ramp(t, flatAt - 0.15, 0.4), flatReach = mix(X02, X1, soon(t, flatAt - 0.1, 1));
+    line(X02, Y0, flatReach, Y0, { color: P.ink, alpha: flat, width: 4 });
     dot(flatReach, Y0, 7, { color: P.ink, alpha: flat });
     beats(t, X1, Y0, 22, [hard - 0.1], { alpha: flat });
     nameText(relyName, ends2, Y0, {
@@ -1676,19 +1676,19 @@ scenes["01"] = function(s, t) {
         align: "left",
         alpha: stageD * named(t, people)
       });
-      const XS2 = [620, 1300], FY = HY + 42, MID = 525, BY = 565, GY = BY + 120, CY = GY + 45, ways = [trust, again], costs = [luck, cantName], marks = [luck, cant], fork = stageD * ramp(t, two + 0.25, 0.3);
+      const XS2 = [620, 1300], FY = HY + 42, MID2 = 525, BY = 565, GY = BY + 120, CY = GY + 45, ways = [trust, again], costs = [luck, cantName], marks = [luck, cant], fork = stageD * ramp(t, two + 0.25, 0.3);
       XS2.forEach((x, i) => {
         link(HX, FY, x, BY, {
           route: "vhv",
-          mid: MID,
+          mid: MID2,
           alpha: fork,
           upto: soon(t, two + 0.4, 0.6)
         });
         const [fx, fy] = routePoint(
           [
             [HX, FY],
-            [HX, MID],
-            [x, MID],
+            [HX, MID2],
+            [x, MID2],
             [x, BY]
           ],
           q
@@ -1963,17 +1963,17 @@ function stageKernel(t, a, c) {
     ...inputNames.map((v) => measure(v)),
     en ? measure(intentQual.join(""), NOTE) : 0
   );
-  const parts = L(
+  const parts2 = L(
     ["看到了什么、", "判断了什么、", "做了什么"],
     ["What it observed,", " what it decided", " and what it did"]
-  ), recordWidth = Math.max(...parts.map((v) => measure(v.trim()))) + 1, recordWide = Math.max(
-    ...growTexts(parts, recordWidth).map((r) => measure(r.map(([, v]) => v).join("")))
+  ), recordWidth = Math.max(...parts2.map((v) => measure(v.trim()))) + 1, recordWide = Math.max(
+    ...growTexts(parts2, recordWidth).map((r) => measure(r.map(([, v]) => v).join("")))
   );
   const checkName = L("再核对一遍", "Checks again"), newName = L("新的存证", "New attestations"), loopX = KERNEL.SX + Math.max(120, measure(newName) / 2 + 24), left = KERNEL.IX - 34 - NAME_GAP - inputsWide, right = Math.max(loopX + 1.25, KERNEL.SX + recordWide / 2), pathFrom = KERNEL.KX - 260, pathTo = KERNEL.GX + 90, whole = centring(left, right), dx = glide(t, whole, [
     [c.in1, centring(left, pathTo + 7)],
     [c.recCut, whole]
   ]);
-  const IX = KERNEL.IX + dx, KX = KERNEL.KX + dx, PX = KERNEL.PX + dx, GX2 = KERNEL.GX + dx, SX = KERNEL.SX + dx, RX = loopX + dx, NX = IX - 34 - NAME_GAP, namesTop = rowNameTop([KY + KR, KY + 45, KY + 50, KY + 34]);
+  const IX = KERNEL.IX + dx, KX = KERNEL.KX + dx, PX2 = KERNEL.PX + dx, GX2 = KERNEL.GX + dx, SX = KERNEL.SX + dx, RX = loopX + dx, NX = IX - 34 - NAME_GAP, namesTop = rowNameTop([KY + KR, KY + 45, KY + 50, KY + 34]);
   line(pathFrom + dx, PY, pathTo + dx, PY, { color: P.ink, alpha: a, width: 3 });
   dot(pathTo + dx, PY, 7, { color: P.ink, alpha: a });
   kernelIcon(KX, KY, KR, {
@@ -2036,17 +2036,17 @@ function stageKernel(t, a, c) {
     })
   );
   const rules = a * ramp(t, c.rules - 0.15, 0.4), plan2 = a * ramp(t, c.plan - 0.15, 0.4), gate = a * ramp(t, c.writeAt - 0.15, 0.4), rec = a * ramp(t, c.rec1 - 0.15, 0.4), stamped = a * ramp(t, c.newAtt - 0.15, 0.4);
-  link(KX + KR * 0.87, KY, PX, KY, { alpha: rules, upto: soon(t, c.rules + 0.05, 0.6), flow: q });
-  nameText(L("按固定的规则", "By fixed rules"), (KX + KR * 0.87 + PX) / 2, KY - NAME_GAP, {
+  link(KX + KR * 0.87, KY, PX2, KY, { alpha: rules, upto: soon(t, c.rules + 0.05, 0.6), flow: q });
+  nameText(L("按固定的规则", "By fixed rules"), (KX + KR * 0.87 + PX2) / 2, KY - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.rules)
   });
-  paper(PX, KY - 45, 70, 90, { alpha: plan2, rows: 4 });
-  nameText(L("一份计划", "A plan"), PX + 35, namesTop, {
+  paper(PX2, KY - 45, 70, 90, { alpha: plan2, rows: 4 });
+  nameText(L("一份计划", "A plan"), PX2 + 35, namesTop, {
     valign: "top",
     alpha: a * named(t, c.plan)
   });
-  link(PX + 70, KY, GX2 - 30, KY, { alpha: gate, upto: soon(t, c.writeAt + 0.05, 0.4) });
+  link(PX2 + 70, KY, GX2 - 30, KY, { alpha: gate, upto: soon(t, c.writeAt + 0.05, 0.4) });
   writeGate(GX2, KY, 100, {
     alpha: gate,
     color: P.ink,
@@ -2059,8 +2059,8 @@ function stageKernel(t, a, c) {
   });
   link(GX2 + 30, KY, SX - 34, KY, { alpha: rec, upto: soon(t, c.rec1 + 0.05, 0.4) });
   seal(SX, KY, 34, { color: P.ink, alpha: rec, stamp: stamped });
-  const recordAts = [c.rec1, c.rec2, c.rec3], lift = labelSize(LABEL) * LEADING * growTexts(parts, recordWidth).slice(1).reduce((v, line2) => v + 1 - soon(t, recordAts[line2[0][0]] - 0.5, 0.5), 0);
-  growName(t, parts, recordAts, SX, KY - 34 - NAME_GAP + lift, {
+  const recordAts = [c.rec1, c.rec2, c.rec3], lift = labelSize(LABEL) * LEADING * growTexts(parts2, recordWidth).slice(1).reduce((v, line2) => v + 1 - soon(t, recordAts[line2[0][0]] - 0.5, 0.5), 0);
+  growName(t, parts2, recordAts, SX, KY - 34 - NAME_GAP + lift, {
     width: recordWidth,
     valign: "bottom",
     align: "center",
@@ -2082,10 +2082,10 @@ function stageKernel(t, a, c) {
 }
 function stageLifetimes(t, a, c) {
   if (a <= 0) return;
-  const ys = [440, 590, 740], X0 = 290, X1 = 1630, M0 = 960, starts = [c.intent, c.facts, c.planRow];
+  const ys = [440, 590, 740], X02 = 290, X1 = 1630, M0 = 960, starts = [c.intent, c.facts, c.planRow];
   stroke(
     () => ys.forEach((y) => {
-      ctx.moveTo(X0, y);
+      ctx.moveTo(X02, y);
       ctx.lineTo(X1, y);
     }),
     { color: P.ink, alpha: a * 0.7, width: 2.5 }
@@ -2107,7 +2107,7 @@ function stageLifetimes(t, a, c) {
   ], termTops = rows.map(([term, , qual], i) => ys[i] - 14 - termRowLayout(term, qual, 640).height);
   nameText(
     L("寿命不一样", "Different lengths of time"),
-    X0,
+    X02,
     termTops[0] - labelSize(LABEL) * LEADING,
     {
       align: "left",
@@ -2117,7 +2117,7 @@ function stageLifetimes(t, a, c) {
   );
   ys.forEach((y, i) => {
     const q = (voiceTime(t) * 0.18 + i * 0.33) % 1;
-    flowDot(mix(X0 + 20, X1 - 20, q), y, 6, q, {
+    flowDot(mix(X02 + 20, X1 - 20, q), y, 6, q, {
       color: P.ink,
       alpha: a
     });
@@ -2171,9 +2171,9 @@ function stageLifetimes(t, a, c) {
     alpha: p3,
     width: 6
   });
-  const qualLeft = X0 + Math.max(...rows.map(([term]) => measure(term.join("")))) + TERM_GAP;
+  const qualLeft = X02 + Math.max(...rows.map(([term]) => measure(term.join("")))) + TERM_GAP;
   rows.forEach(([term, termAts, qual, qualAts], i) => {
-    termRow(t, term, termAts, qual, qualAts, X0, termTops[i], {
+    termRow(t, term, termAts, qual, qualAts, X02, termTops[i], {
       width: 640,
       alpha: a * listLevel(t, starts, i),
       set: "lifetimes",
@@ -2263,7 +2263,7 @@ function stageScope(t, a, c) {
 // picture/film/scenes/p02/beyond.js
 function stageClaims(t, a, c) {
   if (a <= 0) return;
-  const X0 = 760, EW = 130, CW = 500, H = 30, ys = [430, 570, 710].map((y) => y + building(t, [c.eCut, c.merge, c.deploy], 105)), evidence = [c.local, c.merge, c.deploy], claims = [c.everything, c.release, c.benefit2], own = ramp(t, c.ownPart - 0.15, 0.4);
+  const X02 = 760, EW = 130, CW = 500, H = 30, ys = [430, 570, 710].map((y) => y + building(t, [c.eCut, c.merge, c.deploy], 105)), evidence = [c.local, c.merge, c.deploy], claims = [c.everything, c.release, c.benefit2], own = ramp(t, c.ownPart - 0.15, 0.4);
   const evidenceNames = L(
     ["本地跑通", "代码合进去", "部署成功"],
     ["Passed on one machine", "A merge", "A deployment"]
@@ -2274,14 +2274,14 @@ function stageClaims(t, a, c) {
   ys.forEach((y, i) => {
     const on = a * ramp(t, (i ? evidence[i] : c.eCut) - 0.15, 0.4), grow = soon(t, claims[i] - 0.1, 0.6), w = mix(EW, CW, grow);
     if (on < 0.01) return;
-    box(X0, y - H / 2, EW, H, { fill: P.ink, alpha: on, radius: 6 });
-    box(X0, y - H / 2, w, H, {
+    box(X02, y - H / 2, EW, H, { fill: P.ink, alpha: on, radius: 6 });
+    box(X02, y - H / 2, w, H, {
       stroke: P.ink,
       alpha: on * (1 - own * grow),
       radius: 8,
       width: 2.5
     });
-    box(X0, y - H / 2, w, H, {
+    box(X02, y - H / 2, w, H, {
       stroke: P.ink,
       alpha: on * own * grow * 0.85,
       radius: 8,
@@ -2290,24 +2290,24 @@ function stageClaims(t, a, c) {
     });
     const flash = clamp((t - c.ownPart - 0.05 - 0.3 * i) / 0.5);
     if (flash > 0 && flash < 1)
-      box(X0 - 7, y - H / 2 - 7, EW + 14, H + 14, {
+      box(X02 - 7, y - H / 2 - 7, EW + 14, H + 14, {
         stroke: P.ink,
         alpha: on * Math.sin(Math.PI * flash) * 0.6,
         radius: 10,
         width: 3
       });
-    nameText(evidenceNames[i], X0 - NAME_GAP, y, {
+    nameText(evidenceNames[i], X02 - NAME_GAP, y, {
       align: "right",
       alpha: a * listIn(t, [c.eCut, ...evidence.slice(1)], i),
       set: "evidence"
     });
-    nameText(claimNames[i], X0 + CW + NAME_GAP, y, {
+    nameText(claimNames[i], X02 + CW + NAME_GAP, y, {
       align: "left",
       alpha: a * listIn(t, claims, i),
       set: "claims"
     });
   });
-  nameText(L("它自己那一段", "Its own part"), X0 + CW / 2, ys[2] + H / 2 + 40, {
+  nameText(L("它自己那一段", "Its own part"), X02 + CW / 2, ys[2] + H / 2 + 40, {
     valign: "top",
     alpha: a * named(t, c.ownName)
   });
@@ -2403,8 +2403,8 @@ function unknownMark(x, y, alpha) {
   ring(x, y, UNKNOWN_R, { color: P.ink, alpha, width: 3 });
   text("?", x, y + 1, UNKNOWN_R * 1.25, { role: "mark", align: "center", alpha });
 }
-function standing(t, parts) {
-  const [[, x0, x1], ...rest] = parts;
+function standing(t, parts2) {
+  const [[, x0, x1], ...rest] = parts2;
   let left = x0, right = x1;
   const states = [];
   for (const [at, l, r] of rest.sort((p, q) => p[0] - q[0])) {
@@ -2471,15 +2471,15 @@ function stageBranch(t, a, c) {
 }
 function stagePlatforms(t, a, c) {
   if (a <= 0) return;
-  const VX = 470, VY = 560, PX = 1100, ys = [420, 700], W = 220, H = 84, q = voiceTime(t) * 0.4 % 1;
+  const VX = 470, VY = 560, PX2 = 1100, ys = [420, 700], W = 220, H = 84, q = voiceTime(t) * 0.4 % 1;
   const versionName = L("同一个版本", "The same version"), resultNames = L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"]), unclearName = L("谁也说不清", "Nobody can say"), retryName = L("再试一遍", "Trying again");
   const hosts = [c.gitlab, c.github], come = L(hosts, [c.platforms, c.platforms2]), calls = hosts.map((at, i) => L(at, Math.max(come[i], at - 1.4))), results = [c.ok, c.fail];
-  const from = Math.min(VX, VX + 70 - measure(versionName) / 2), after = PX + W / 2 + 76;
+  const from = Math.min(VX, VX + 70 - measure(versionName) / 2), after = PX2 + W / 2 + 76;
   ctx.save();
   ctx.translate(
     standing(t, [
       [-Infinity, from, Math.max(VX + 140, VX + 70 + measure(versionName) / 2)],
-      [come[0], from, PX + W / 2],
+      [come[0], from, PX2 + W / 2],
       ...results.map((at, i) => [at, from, after + measure(resultNames[i])]),
       [c.unclear, from, after + measure(unclearName)],
       [c.retry, from, VX + 70 + 330 + UNKNOWN_R + 16 + measure(retryName)]
@@ -2493,18 +2493,18 @@ function stagePlatforms(t, a, c) {
   });
   ys.forEach((y, i) => {
     const on = a * ramp(t, come[i] - 0.15, 0.4);
-    link(VX + 140, VY, PX - W / 2, y, {
+    link(VX + 140, VY, PX2 - W / 2, y, {
       route: "hvh",
       mid: 840,
       alpha: on,
       upto: soon(t, come[i] + 0.05, 0.5),
       flow: q
     });
-    box(PX - W / 2, y - H / 2, W, H, { stroke: P.ink, alpha: on, radius: 14, width: 2.5 });
-    nameText(["GitLab", "GitHub"][i], PX, y, { alpha: a * named(t, calls[i]), set: "hosts" });
+    box(PX2 - W / 2, y - H / 2, W, H, { stroke: P.ink, alpha: on, radius: 14, width: 2.5 });
+    nameText(["GitLab", "GitHub"][i], PX2, y, { alpha: a * named(t, calls[i]), set: "hosts" });
     const done = a * ramp(t, results[i] - 0.15, 0.4);
-    if (i === 0) check(PX + W / 2 + 40, y, 30, { color: P.ink, alpha: done, width: 4 });
-    else stopSign(PX + W / 2 + 40, y, 20, { color: P.ink, alpha: done });
+    if (i === 0) check(PX2 + W / 2 + 40, y, 30, { color: P.ink, alpha: done, width: 4 });
+    else stopSign(PX2 + W / 2 + 40, y, 20, { color: P.ink, alpha: done });
     nameText(resultNames[i], after, y, {
       align: "left",
       alpha: a * listIn(t, results, i),
@@ -2512,7 +2512,7 @@ function stagePlatforms(t, a, c) {
     });
   });
   const unknown = a * ramp(t, c.unclear - 0.15, 0.4), UY = (ys[0] + ys[1]) / 2;
-  unknownMark(PX + W / 2 + 40, UY, unknown);
+  unknownMark(PX2 + W / 2 + 40, UY, unknown);
   nameText(unclearName, after, UY, {
     align: "left",
     alpha: a * named(t, c.unclear)
@@ -2533,8 +2533,8 @@ function stagePlatforms(t, a, c) {
 }
 function stageSent(t, a, c) {
   if (a <= 0) return;
-  const X0 = 760, X1 = 1160, ys = [560, 760].map((y) => y + building(t, [c.s2Cut, c.error], 100)), near = [c.sent, c.error], far = [c.received, c.nothing], q = voiceTime(t) * 0.4 % 1;
-  const nearNames = L(["请求发出去了", "看到报错"], ["Sent", "An error message"]), farNames = L(["对方收下了", "什么都没发生"], ["Received", "Nothing happened"]), nearLeft = (i) => X0 - 10 - NAME_GAP - measure(nearNames[i]), farRight = (i) => X1 + 14 + NAME_GAP + measure(farNames[i]);
+  const X02 = 760, X1 = 1160, ys = [560, 760].map((y) => y + building(t, [c.s2Cut, c.error], 100)), near = [c.sent, c.error], far = [c.received, c.nothing], q = voiceTime(t) * 0.4 % 1;
+  const nearNames = L(["请求发出去了", "看到报错"], ["Sent", "An error message"]), farNames = L(["对方收下了", "什么都没发生"], ["Received", "Nothing happened"]), nearLeft = (i) => X02 - 10 - NAME_GAP - measure(nearNames[i]), farRight = (i) => X1 + 14 + NAME_GAP + measure(farNames[i]);
   ctx.save();
   ctx.translate(
     standing(t, [
@@ -2547,8 +2547,8 @@ function stageSent(t, a, c) {
   );
   ys.forEach((y, i) => {
     const on = a * ramp(t, (i ? near[i] : c.s2Cut) - 0.15, 0.4), off = a * ramp(t, far[i] - 0.15, 0.4);
-    dot(X0, y, 10, { color: P.ink, alpha: on });
-    link(X0 + 10, y, 930, y, {
+    dot(X02, y, 10, { color: P.ink, alpha: on });
+    link(X02 + 10, y, 930, y, {
       alpha: on,
       upto: soon(t, near[i] + 0.05, 0.4),
       end: false,
@@ -2557,7 +2557,7 @@ function stageSent(t, a, c) {
     unknownMark(960, y, off);
     dashed(990, y, X1 - 14, y, { color: P.line, alpha: off, width: 2.5 });
     ring(X1, y, 14, { color: P.ink, alpha: off, width: 2.5 });
-    nameText(nearNames[i], X0 - 10 - NAME_GAP, y, {
+    nameText(nearNames[i], X02 - 10 - NAME_GAP, y, {
       align: "right",
       alpha: a * listIn(t, [c.s2Cut, near[1]], i),
       set: "near"
@@ -2643,15 +2643,15 @@ var DOCK_POINT = 6;
 var DOCK_R = 16;
 var WRAP = 460;
 var halfName = (v) => Math.max(...wrapName(v, WRAP).map((line2) => measure(line2))) / 2;
-function dockReach(heading, names, shown) {
-  const past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, halfName(names[i])), shown[i]));
+function dockReach(heading, names2, shown) {
+  const past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, halfName(names2[i])), shown[i]));
   return [Math.max(past[0], measure(heading, NOTE) / 2), past[1]];
 }
-var centreReach = (names, shown) => [0, 2].map((i) => mix(CENTRE_POINT, Math.max(CENTRE_R, halfName(names[i])), shown[i]));
-function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
+var centreReach = (names2, shown) => [0, 2].map((i) => mix(CENTRE_POINT, Math.max(CENTRE_R, halfName(names2[i])), shown[i]));
+function hardIndex(t, k, { heading, headAt, names: names2, ats, levels, kicker }) {
   const Y3 = mix(540, DOCK_Y, k), R = mix(CENTRE_R, DOCK_R, k), pointR = mix(CENTRE_POINT, DOCK_POINT, k), gap = mix(NAME_GAP, DOCK_GAP, k), shown = ats.map((at) => ramp(t, at - 0.15, 0.4)), reach = shown.map((v) => Math.max(pointR * (1 - v), R * v));
-  const [before, after] = dockReach(heading, names, shown), [from, to] = centreReach(
-    names,
+  const [before, after] = dockReach(heading, names2, shown), [from, to] = centreReach(
+    names2,
     ats.map((at) => soon(t, at + 0.05, 0.7))
   ), xs = INDEX_XS.map((x) => x + mix((from - to) / 2, (before - after) / 2, k));
   stroke(
@@ -2679,7 +2679,7 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
       alpha: clamp((shown[i] - 0.4) / 0.6) * mix(0.58, 1, levels[i])
     });
   });
-  railNames(names, xs, Y3 + R, {
+  railNames(names2, xs, Y3 + R, {
     gap,
     wrap: WRAP,
     alpha: (i) => named(t, ats[i]) * mix(0.58, 1, levels[i]),
@@ -2850,7 +2850,7 @@ function station(x, y, i, alpha) {
 }
 function stageName(s, t, a, c) {
   if (a <= 0) return;
-  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [560, 760, 960, 1160, 1360], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X0 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5], q = voiceTime(t) * 0.35 % 1;
+  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [560, 760, 960, 1160, 1360], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5], q = voiceTime(t) * 0.35 % 1;
   nameText("ETHOS", 960, 350, { alpha: g * named(t, c.first - 0.25) });
   stroke(
     () => xs.forEach((x) => {
@@ -2869,11 +2869,11 @@ function stageName(s, t, a, c) {
       alpha: open * mix(0.75, 1, lit)
     });
   });
-  const drawn = soon(t, c.otherPath - 0.1, 0.9), reach = mix(X0 + 14, X1, drawn), on = a * ramp(t, c.otherPath - 0.15, 0.4);
-  datumMark(X0, Y3, 14, on);
-  line(X0 + 14, Y3, reach, Y3, { color: P.ink, alpha: on, width: 3 });
+  const drawn = soon(t, c.otherPath - 0.1, 0.9), reach = mix(X02 + 14, X1, drawn), on = a * ramp(t, c.otherPath - 0.15, 0.4);
+  datumMark(X02, Y3, 14, on);
+  line(X02 + 14, Y3, reach, Y3, { color: P.ink, alpha: on, width: 3 });
   dot(reach, Y3, 7, { color: P.ink, alpha: on });
-  if (drawn >= 1) flowDot(mix(X0 + 14, X1, q), Y3, 6, q, { color: P.ink, alpha: on });
+  if (drawn >= 1) flowDot(mix(X02 + 14, X1, q), Y3, 6, q, { color: P.ink, alpha: on });
   nameText(L("另一条路", "A different path"), X1 + 7 + NAME_GAP, Y3, {
     align: "left",
     alpha: a * named(t, c.otherPath)
@@ -2897,21 +2897,21 @@ var PATH_LEN = 1080;
 var PROMISE_PITCH = 80;
 function stagePath(t, a, c) {
   if (a <= 0) return;
-  const nameAt = c.reliable - 1.2, drawn = soon(t, nameAt - 0.1, L(1.8, 2.2)), on = a * ramp(t, nameAt - 0.15, 0.4), endName = L("靠得住的路", "One reliable path"), travellers = L("人和可以互相替换的 Agent", "People and interchangeable Agents"), X0 = 960 - Math.max(10 + measure(travellers), PATH_LEN * drawn + 7 + NAME_GAP + measure(endName)) / 2, PY = mix(560, 380, soon(t, c.three + 0.05, 0.7)), X1 = X0 + PATH_LEN, reach = mix(X0, X1, drawn), nameX = Math.max(reach + 7 + NAME_GAP, X0 + 10 + measure(travellers) - measure(endName)), q = voiceTime(t) * 0.35 % 1, names = STATION_NAMES(), xs = railStations(names, X0 + 240, X1 - 60), sts = [c.st1, c.st2, c.st3];
+  const nameAt = c.reliable - 1.2, drawn = soon(t, nameAt - 0.1, L(1.8, 2.2)), on = a * ramp(t, nameAt - 0.15, 0.4), endName = L("靠得住的路", "One reliable path"), travellers = L("人和可以互相替换的 Agent", "People and interchangeable Agents"), X02 = 960 - Math.max(10 + measure(travellers), PATH_LEN * drawn + 7 + NAME_GAP + measure(endName)) / 2, PY = mix(560, 380, soon(t, c.three + 0.05, 0.7)), X1 = X02 + PATH_LEN, reach = mix(X02, X1, drawn), nameX = Math.max(reach + 7 + NAME_GAP, X02 + 10 + measure(travellers) - measure(endName)), q = voiceTime(t) * 0.35 % 1, names2 = STATION_NAMES(), xs = railStations(names2, X02 + 240, X1 - 60), sts = [c.st1, c.st2, c.st3];
   pathLine(
-    X0,
+    X02,
     reach,
     PY,
     xs.filter((x, i) => t > sts[i] - 0.15 && x + 28 < reach),
     { alpha: on }
   );
   dot(reach, PY, 7, { color: P.ink, alpha: on });
-  flowDot(mix(X0, reach, q), PY, 6, q, { color: P.ink, alpha: on });
+  flowDot(mix(X02, reach, q), PY, 6, q, { color: P.ink, alpha: on });
   nameText(endName, nameX, PY, {
     align: "left",
     alpha: a * named(t, nameAt)
   });
-  const TX = X0 + 40;
+  const TX = X02 + 40;
   person(TX, PY - 50, { size: 1.3, alpha: a });
   agent(TX + 64, PY - 44, { size: 1.1, alpha: a });
   nameText(travellers, TX - 30, PY - 114, {
@@ -2920,12 +2920,12 @@ function stagePath(t, a, c) {
     alpha: a * named(t, c.pCut + 0.15)
   });
   xs.forEach((x, i) => station(x, PY, i, a * ramp(t, sts[i] - 0.15, 0.4)));
-  railNames(names, xs, PY + 28, {
+  railNames(names2, xs, PY + 28, {
     gap: NAME_GAP,
     alpha: (i) => a * listIn(t, sts, i),
     set: "stations"
   });
-  const ps = [c.p1, c.p2, c.p3], edge = xs[0] - measure(names[0]) / 2, IX = edge + 22, rowY = (i) => PY + 185 + PROMISE_PITCH * i;
+  const ps = [c.p1, c.p2, c.p3], edge = xs[0] - measure(names2[0]) / 2, IX = edge + 22, rowY = (i) => PY + 185 + PROMISE_PITCH * i;
   ps.forEach((at, i) => {
     const on2 = a * ramp(t, at - 0.15, 0.4), y = rowY(i);
     if (on2 < 0.01) return;
@@ -2954,12 +2954,12 @@ function stagePath(t, a, c) {
 }
 function stageAims(t, a, c) {
   if (a <= 0) return;
-  const names = STATION_NAMES(), kernelName = L("光有这个内核", "The kernel alone"), deliveredName = L("已经走通", "Delivered"), base = railStations(names, 850, 1390), left = Math.min(600, 700 - measure(kernelName) / 2), right = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1282 + measure(deliveredName) + 42), dx = 960 - (left + right) / 2;
-  const PY = 430, X0 = 600 + dx, X1 = 1440 + dx, KX = 700 + dx, split = 800 + dx, xs = base.map((x) => x + dx);
-  pathLine(X0, X1, PY, xs, { alpha: a, split });
+  const names2 = STATION_NAMES(), kernelName = L("光有这个内核", "The kernel alone"), deliveredName = L("已经走通", "Delivered"), base = railStations(names2, 850, 1390), left = Math.min(600, 700 - measure(kernelName) / 2), right = Math.max(1440 + 7, base[2] + measure(names2[2]) / 2, 1282 + measure(deliveredName) + 42), dx = 960 - (left + right) / 2;
+  const PY = 430, X02 = 600 + dx, X1 = 1440 + dx, KX = 700 + dx, split = 800 + dx, xs = base.map((x) => x + dx);
+  pathLine(X02, X1, PY, xs, { alpha: a, split });
   dot(X1, PY, 7, { color: P.ink, alpha: a });
   xs.forEach((x, i) => station(x, PY, i, a));
-  railNames(names, xs, PY + 28, { gap: NAME_GAP, alpha: () => a, set: "aims stations" });
+  railNames(names2, xs, PY + 28, { gap: NAME_GAP, alpha: () => a, set: "aims stations" });
   nameText(L("设计目标", "Design aims"), xs[1], PY - 28 - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.aimsCut + 0.15)
@@ -3588,9 +3588,9 @@ function modelStage(s, t, c, g) {
   );
 }
 var rowHalf = (term, qual = []) => Math.max(measure(term.join("")), qual.length ? measure(qual.join(""), NOTE) : 0) / 2;
-function reachAt(t, base, parts, duration = 0.7) {
+function reachAt(t, base, parts2, duration = 0.7) {
   let reach = base, now = base;
-  for (const [at, v] of [...parts].sort((a, b) => a[0] - b[0])) {
+  for (const [at, v] of [...parts2].sort((a, b) => a[0] - b[0])) {
     if (v <= reach) continue;
     now += (v - reach) * soon(t, at + 0.05, duration);
     reach = v;
@@ -3617,10 +3617,10 @@ function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1 } = {}
 }
 function changeStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const names = fieldNames(), term = L(["正式变更"], ["One official Change"]), qual = L(["只写在这一处"], ["only there"]), ats = [c.f1, c.f2, c.f3], over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2), alone = 960 - CHANGE_W / 2, reach = reachAt(
+  const names2 = fieldNames(), term = L(["正式变更"], ["One official Change"]), qual = L(["只写在这一处"], ["only there"]), ats = [c.f1, c.f2, c.f3], over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2), alone = 960 - CHANGE_W / 2, reach = reachAt(
     t,
     CHANGE_W + over,
-    names.map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)])
+    names2.map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)])
   ), DX = 960 - (reach - over) / 2, DY = 440, FX = DX + CHANGE_W + 90, into = soon(t, c.change + 0.05, 0.7), fields = ats.map((at) => ramp(t, at - 0.15, 0.4));
   changeDocument(DX, DY, { alpha: g * named(t, c.change), fields, intent: 0 });
   const ix = mix(alone - 190, DX + 52, into), iy = mix(DY + 150, DY + 26, into), meant = g * named(t, c.intent);
@@ -3633,7 +3633,7 @@ function changeStage(s, t, c, g) {
     alpha: g,
     align: "center"
   });
-  names.forEach((v, i) => {
+  names2.forEach((v, i) => {
     link(DX + CHANGE_W, fieldY(DY, i), FX - 14, fieldY(DY, i), {
       alpha: g * fields[i],
       upto: soon(t, ats[i] + 0.05, 0.4)
@@ -3643,15 +3643,15 @@ function changeStage(s, t, c, g) {
 }
 function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const readers = L("后面接手的人和 Agent", ["Everyone", "who picks up the work"]), same = L("同一份", "The same thing"), term = L(["正式变更"], ["The Change"]), qual = L(["只写在一处"], ["one copy"]), left = 250 + Math.max(...wrapName(readers, 300).map((v) => measure(v))) / 2, right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)), read = CHANGE_W + NAME_GAP + 10 + measure(same), DX = 960 + mix(left - right, left - read, soon(t, c.same + 0.05, 0.7)) / 2, DY = 440, RX = DX - 250, AY = 666, names = rowNameTop([AY + 22, DY + CHANGE_H]), who = g * named(t, c.readers), reading = g * named(t, c.same), q = voiceTime(t) * 0.5 % 1;
+  const readers = L("后面接手的人和 Agent", ["Everyone", "who picks up the work"]), same = L("同一份", "The same thing"), term = L(["正式变更"], ["The Change"]), qual = L(["只写在一处"], ["one copy"]), left = 250 + Math.max(...wrapName(readers, 300).map((v) => measure(v))) / 2, right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)), read = CHANGE_W + NAME_GAP + 10 + measure(same), DX = 960 + mix(left - right, left - read, soon(t, c.same + 0.05, 0.7)) / 2, DY = 440, RX = DX - 250, AY = 666, names2 = rowNameTop([AY + 22, DY + CHANGE_H]), who = g * named(t, c.readers), reading = g * named(t, c.same), q = voiceTime(t) * 0.5 % 1;
   changeDocument(DX, DY, { alpha: g });
-  termRow(t, term, [c.first5], qual, [c.first5], DX + CHANGE_W / 2, names, {
+  termRow(t, term, [c.first5], qual, [c.first5], DX + CHANGE_W / 2, names2, {
     alpha: g,
     align: "center"
   });
   person(RX, 540, { alpha: who, size: 1.1 });
   agent(RX, AY, { alpha: who });
-  nameText(readers, RX, names, { valign: "top", width: 300, alpha: who });
+  nameText(readers, RX, names2, { valign: "top", width: 300, alpha: who });
   for (const [x, y, to, k] of [
     [RX + 34, DY + 90, DY + 90, 0],
     [RX + 26, AY, DY + 160, 0.5]
@@ -3727,11 +3727,11 @@ function requestStage(s, t, c, g) {
     t,
     unit,
     lines.map((v, i) => [ats[i], lead + measure(v)])
-  ), PX = 960 - (reach - unit) / 2, RY = 690, on = g * named(t, c.researcher);
-  person(PX, RY, { alpha: on, size: 1.2 });
-  nameText(who, PX, RY + 28 + NAME_GAP, { valign: "top", alpha: on });
+  ), PX2 = 960 - (reach - unit) / 2, RY = 690, on = g * named(t, c.researcher);
+  person(PX2, RY, { alpha: on, size: 1.2 });
+  nameText(who, PX2, RY + 28 + NAME_GAP, { valign: "top", alpha: on });
   lines.forEach(
-    (v, i) => nameText(v, PX + lead, RY - 24 + i * 50, {
+    (v, i) => nameText(v, PX2 + lead, RY - 24 + i * 50, {
       align: "left",
       alpha: g * listIn(t, ats, i),
       set: "request"
@@ -3932,10 +3932,10 @@ function examplesStage(s, t, c, g) {
 }
 function constraintsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const names = L(
+  const names2 = L(
     ["留下", "经授权明确排除", "标明还没解决"],
     ["Kept", "Excluded by authorization", "Marked unresolved"]
-  ), kinds = ["pass", "cross", "unknown"], ats = [c.kept, c.excluded, c.unresolved], term = L(["每一条约束"], ["Every relevant constraint"]), qual = L(["都要有个交代"], ["accounted for"]), CW = 280, CH = 190, nw = Math.max(...names.map((v) => measure(v))), W = CW + 150 + 26 + NAME_GAP + nw, over = Math.max(0, rowHalf(term, qual) - CW / 2), CX = mix(960 - CW / 2, 960 - (W - over) / 2, soon(t, c.kept + 0.05, 0.9)), CY = 470, rows = [0, 1, 2].map((i) => CY + 50 + i * 45);
+  ), kinds = ["pass", "cross", "unknown"], ats = [c.kept, c.excluded, c.unresolved], term = L(["每一条约束"], ["Every relevant constraint"]), qual = L(["都要有个交代"], ["accounted for"]), CW = 280, CH = 190, nw = Math.max(...names2.map((v) => measure(v))), W = CW + 150 + 26 + NAME_GAP + nw, over = Math.max(0, rowHalf(term, qual) - CW / 2), CX = mix(960 - CW / 2, 960 - (W - over) / 2, soon(t, c.kept + 0.05, 0.9)), CY = 470, rows = [0, 1, 2].map((i) => CY + 50 + i * 45);
   card(CX, CY, CW, CH, { alpha: g });
   recordRows(CX + 36, rows[0], CW - 72, [0, 1, 2], { step: 45, alpha: g, color: P.ink });
   nameText(L("原话", "The original words"), CX + CW / 2, CY - NAME_GAP, {
@@ -3947,7 +3947,7 @@ function constraintsStage(s, t, c, g) {
     align: "center"
   });
   const MX = CX + CW + 150;
-  names.forEach((v, i) => {
+  names2.forEach((v, i) => {
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
     link(CX + CW - 20, rows[i], MX - 30, rows[i], { alpha: on, upto: soon(t, ats[i] + 0.05, 0.4) });
     if (kinds[i] === "cross") cross(MX, rows[i], 22, { color: P.ink, alpha: on, width: 3.5 });
@@ -3969,7 +3969,7 @@ function compileStage(s, t, c, g) {
   const meant = g * named(t, c.interpretation);
   documentIcon(xs[0] - 50, Y3 - 64, 100, 128, { alpha: meant, rows: 3 });
   verdictMark("unknown", xs[0] + 78, Y3 - 72, 20, { alpha: meant });
-  const names = [
+  const names2 = [
     termRow(
       t,
       L(["理解"], ["The interpretation"]),
@@ -3984,7 +3984,7 @@ function compileStage(s, t, c, g) {
   const who = g * named(t, c.confirmed);
   person(xs[1], Y3 - 6, { alpha: who, size: 1.2 });
   seal(xs[1] + 32, Y3 - 46, 16, { color: P.ink, alpha: who, stamp: g * ramp(t, c.accepted, 0.4) });
-  names.push(
+  names2.push(
     nameText(L("人确认过、采纳了", "Confirmed and accepted"), xs[1], under, {
       valign: "top",
       width: 260,
@@ -3999,7 +3999,7 @@ function compileStage(s, t, c, g) {
     beat: ramp(t, c.compiled, 0.3) * (1 - ramp(t, c.compiled + 0.6, 0.4))
   });
   link(xs[1] + 44, Y3, xs[2] - 52, Y3, { alpha: rules, flow: q });
-  names.push(
+  names2.push(
     termRow(
       t,
       L(["按固定的规则编译"], ["Compiled"]),
@@ -4025,7 +4025,7 @@ function compileStage(s, t, c, g) {
     { color: P.ink, alpha: made, width: 3.5 }
   );
   beats(t, xs[3], Y3, 64, [c.sameChecks], { alpha: g });
-  names.push(nameText(L("检查", "Checks"), xs[3], under, { valign: "top", alpha: made }));
+  names2.push(nameText(L("检查", "Checks"), xs[3], under, { valign: "top", alpha: made }));
   nameText(L("同样的输入", "The same input"), mid, over, {
     valign: "bottom",
     alpha: g * named(t, c.sameInput)
@@ -4034,7 +4034,7 @@ function compileStage(s, t, c, g) {
     valign: "bottom",
     alpha: g * named(t, c.sameChecks)
   });
-  const refused = g * named(t, c.cannot), ry = Math.max(...names.map((v) => v.bottom)) + 47;
+  const refused = g * named(t, c.cannot), ry = Math.max(...names2.map((v) => v.bottom)) + 47;
   link(xs[3], ry, xs[0], ry, {
     alpha: refused,
     dash: [8, 9],
@@ -4050,13 +4050,13 @@ function compileStage(s, t, c, g) {
 var LEADS_PITCH = 300;
 function leadsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]), ats = [c.talk, c.memory, c.summaries], room = soon(t, c.memory + 0.05, c.summaries - c.memory + 0.7), xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * (k + 1 - room)), Y3 = 620, back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
+  const names2 = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]), ats = [c.talk, c.memory, c.summaries], room = soon(t, c.memory + 0.05, c.summaries - c.memory + 0.7), xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * (k + 1 - room)), Y3 = 620, back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
   ats.forEach((at, i) => {
     const on = g * ramp(t, at - 0.15, 0.4) * back;
     if (i === 0) bubble(xs[i], Y3, 40, { alpha: on, color: P.ink });
     else if (i === 1) layersIcon(xs[i], Y3, 110, 90, { alpha: on });
     else documentIcon(xs[i] - 40, Y3 - 52, 80, 104, { alpha: on, rows: 3 });
-    nameText(names[i], xs[i], Y3 + 52 + NAME_GAP, {
+    nameText(names2[i], xs[i], Y3 + 52 + NAME_GAP, {
       valign: "top",
       alpha: g * listIn(t, ats, i) * back,
       set: "leads"
@@ -4250,6 +4250,160 @@ function apartStage(s, t, c, g) {
   );
 }
 
+// picture/film/scenes/p05/boundary.js
+var FRAME_TOP = 340;
+var PAD = 44;
+var PLANE_TOP = FRAME_TOP + 30;
+var PLANE_CY = PLANE_TOP + PLANE_H / 2;
+var ROW_Y = 540;
+var PROGRAM = [160, 84];
+var IDENTITY_R = 34;
+var FRAME_W = PLANE_W + 2 * PAD;
+var RUN = 160;
+var names = () => ({
+  produces: L("产生证据的程序", ["What produces", "the evidence"]),
+  checks: L("核对证据的程序", "What checks it"),
+  identity: L("独立控制的身份", ["Independently", "controlled identity"]),
+  whether: L("要不要做", "Whether one is needed"),
+  decides: L("看风险和规定", "depends on risk and policy")
+});
+function columnHalf() {
+  const n = names(), identity2 = [n.identity].flat().map((v) => measure(v));
+  return Math.max(...identity2, measure(n.whether), measure(n.decides, NOTE)) / 2;
+}
+function planeAt(t, c) {
+  const alone = 960 - PLANE_W / 2, whole = FRAME_W + RUN + IDENTITY_R + Math.max(IDENTITY_R, columnHalf()), together = 960 - whole / 2 + PAD;
+  return mix(alone, together, soon(t, Math.min(c.independent, c.rerun) + 0.05, 0.8));
+}
+function program(x, y, alpha) {
+  if (alpha < 0.01) return;
+  const [w, h] = PROGRAM;
+  terminalIcon(x - w / 2, y - h / 2, w, h, { alpha });
+  stroke(
+    () => {
+      ctx.moveTo(x - w * 0.34, y + 7);
+      ctx.lineTo(x + w * 0.2, y + 7);
+      ctx.moveTo(x - w * 0.34, y + 23);
+      ctx.lineTo(x + w * 0.04, y + 23);
+    },
+    { color: P.muted, alpha: alpha * 0.8, width: 2.5 }
+  );
+}
+function identity(x, y, alpha) {
+  if (alpha < 0.01) return;
+  ring(x, y, IDENTITY_R, { color: P.ink, alpha, width: 2.5 });
+  person(x, y + 4, { alpha, size: 0.85 });
+}
+function boundaryStage(s, t, c, g) {
+  if (g <= 0) return;
+  const px = planeAt(t, c), flow = voiceTime(t) * 0.45 % 1, n = names(), em = labelSize(LABEL), LX = px + PROGRAM[0] / 2, CX = px + PLANE_W / 2, RX = px + PLANE_W - PROGRAM[0] / 2, nameTop = rowNameTop([ROW_Y + PROGRAM[1] / 2, ROW_Y + IDENTITY_R]), rowLines = Math.max(...[n.produces, n.checks].map((v) => [v].flat().length)), frameBottom = nameTop + em * (1 + LEADING * (rowLines - 1)) + 32;
+  plane(t, 0, px, PLANE_TOP, { alpha: g, at: -Infinity });
+  beats(t, px + PLANE_W - 36, PLANE_CY, 24, [c.alone], { alpha: g });
+  card(px - PAD, FRAME_TOP, FRAME_W, frameBottom - FRAME_TOP, {
+    alpha: g * named(t, Math.max(c.edgeWord, c.account - 0.75))
+  });
+  nameText(L("还有一条边界", "One more boundary"), px - PAD, FRAME_TOP - NAME_GAP, {
+    align: "left",
+    valign: "bottom",
+    alpha: g * named(t, c.edge)
+  });
+  const account = g * named(t, c.account), produces = g * named(t, c.produces), checks = g * named(t, c.checks), rise = PROGRAM[1] / 2 + 8;
+  identity(CX, ROW_Y, account);
+  nameText(L("同一个账户", "The same account"), CX, nameTop, { valign: "top", alpha: account });
+  [
+    [LX, produces, c.produces, n.produces, -1],
+    [RX, checks, c.checks, n.checks, 1]
+  ].forEach(([x, alpha, at, name, side], i) => {
+    program(x, ROW_Y, alpha);
+    nameText(name, x, nameTop, { valign: "top", alpha });
+    link(CX + side * (IDENTITY_R + 10), ROW_Y, x - side * (PROGRAM[0] / 2 + 10), ROW_Y, {
+      alpha,
+      upto: soon(t, at + 0.05, 0.5),
+      flow: (flow + i / 2) % 1
+    });
+    link(x, ROW_Y - rise, x, PLANE_TOP + PLANE_H + 8, {
+      alpha,
+      upto: soon(t, at + 0.35, 0.4)
+    });
+  });
+  rejectedName(L("能排除伪造", "Rule out forgery"), CX, frameBottom + NAME_GAP, {
+    valign: "top",
+    alpha: g * named(t, c.forgery),
+    mark: ramp(t, c.forgery + 0.35, 0.35)
+  });
+  const frameRight = px - PAD + FRAME_W, OX = frameRight + RUN + IDENTITY_R, other = g * named(t, Math.min(c.independent, c.rerun)), rerun = g * named(t, c.rerun);
+  identity(OX, PLANE_CY, other);
+  const under = nameText(n.identity, OX, PLANE_CY + IDENTITY_R + NAME_GAP, {
+    valign: "top",
+    alpha: g * named(t, c.independent)
+  });
+  link(OX - IDENTITY_R - 10, PLANE_CY, px + PLANE_W + 8, PLANE_CY, {
+    alpha: rerun,
+    upto: soon(t, c.rerun + 0.05, 0.6),
+    dash: [8, 9],
+    flow
+  });
+  nameText(L("重跑一遍", "A re-run"), frameRight + RUN / 2, PLANE_CY - NAME_GAP, {
+    valign: "bottom",
+    alpha: rerun
+  });
+  link(OX, under.bottom + 12, OX, nameTop - 12, {
+    alpha: g * named(t, c.whether),
+    upto: soon(t, c.whether + 0.05, 0.4)
+  });
+  termRow(t, [n.whether], [c.whether], [n.decides], [c.risk], OX, nameTop, {
+    alpha: g,
+    align: "center",
+    inline: false
+  });
+}
+
+// picture/film/scenes/p08/rail.js
+var RAIL_Y = 500;
+function journeyRail(x0, x1, { alpha = 1, upto = 1, dash = null } = {}) {
+  if (alpha < 0.01 || upto <= 0) return;
+  line(x0, RAIL_Y, mix(x0, x1, clamp(upto)), RAIL_Y, { color: P.line, alpha, width: 4, dash });
+}
+function railFlow(t, x0, x1, { alpha = 1, rate = 0.12 } = {}) {
+  const q = voiceTime(t) * rate % 1;
+  flowDot(mix(x0, x1, q), RAIL_Y, 6, q, { color: P.line, alpha });
+}
+function work(x, y = RAIL_Y, alpha = 1) {
+  if (alpha < 0.01) return;
+  dot(x, y, 10, { color: P.ink, alpha });
+  ring(x, y, 19, { color: P.ink, alpha: alpha * 0.6, width: 2 });
+}
+function ordinal(n, x, y, alpha = 1) {
+  if (alpha < 0.01) return;
+  text(String(n), x, y + 1, 26, { role: "mark", align: "center", color: P.muted, alpha });
+}
+function platforms(x, ys, { alpha = 1, w = 150, h = 80 } = {}) {
+  if (alpha < 0.01) return;
+  stroke(
+    () => ys.forEach((y) => {
+      ctx.roundRect(x - w / 2, y - h / 2, w, h, 14);
+      ctx.moveTo(x - w / 2, y - h / 2 + 26);
+      ctx.lineTo(x + w / 2, y - h / 2 + 26);
+    }),
+    { color: P.ink, alpha, width: 2.5 }
+  );
+}
+function docMark(x, y, w, h, { alpha = 1, rows = 4 } = {}) {
+  if (alpha < 0.01) return;
+  documentIcon(x, y, w, h, { alpha, rows: 0 });
+  if (rows > 0)
+    stroke(
+      () => {
+        for (let i = 0; i < rows; i++) {
+          const ry = y + h * (0.3 + i * 0.55 / Math.max(1, rows));
+          ctx.moveTo(x + w * 0.14, ry);
+          ctx.lineTo(x + w * (i % 2 ? 0.62 : 0.82), ry);
+        }
+      },
+      { color: P.muted, alpha: alpha * 0.8, width: 2 }
+    );
+}
+
 // picture/film/scenes/p05/rule-two.js
 var TOP = PLANES_TOP;
 var ASIDE = 400;
@@ -4265,16 +4419,16 @@ var outcomeQuals = () => L(
   [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]]
 );
 function outcomesColumns() {
-  const mark = PLANE_W + 80, names = mark + 18 + NAME_GAP, quals = names + Math.max(...outcomeNames().map((v) => measure(v, LABEL))) + TERM_GAP, natural = mark - 18 + measure(L("一次判断的结果", "A judgment")) + TERM_GAP;
-  return { mark, names, quals, natural, heading: Math.max(quals, natural) };
+  const mark = PLANE_W + 80, names2 = mark + 18 + NAME_GAP, quals = names2 + Math.max(...outcomeNames().map((v) => measure(v, LABEL))) + TERM_GAP, natural = mark - 18 + measure(L("一次判断的结果", "A judgment")) + TERM_GAP;
+  return { mark, names: names2, quals, natural, heading: Math.max(quals, natural) };
 }
 var columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
-function outcomesParts(c = {}) {
-  const col = outcomesColumns(), names = outcomeNames(), quals = outcomeQuals(), qualifier = measure(L("只分三种", "only three outcomes"), NOTE);
+function outcomesParts(c) {
+  const col = outcomesColumns(), names2 = outcomeNames(), quals = outcomeQuals(), qualifier = measure(L("只分三种", "only three outcomes"), NOTE);
   return [
     [c.first4, col.natural + qualifier],
     [columnAt(c), col.heading + qualifier],
-    ...[c.pass, c.block, c.unknown].map((at, i) => [at, col.names + measure(names[i])]),
+    ...[c.pass, c.block, c.unknown].map((at, i) => [at, col.names + measure(names2[i])]),
     ...[c.ahead, c.conflict, c.missing].map((at, i) => [
       at,
       col.quals + measure(quals[i].join(""), NOTE)
@@ -4282,18 +4436,17 @@ function outcomesParts(c = {}) {
     [c.never, col.quals + measure(L("不等于可以", "Never permission"), NOTE)]
   ];
 }
-function outcomesReach(t, c) {
-  const parts = outcomesParts(c).sort((a, b) => a[0] - b[0]);
-  let reach = parts[0][1], now = reach;
-  for (const [at, right] of parts.slice(1)) {
+function buildingReach(t, parts2) {
+  const sorted = [...parts2].sort((a, b) => a[0] - b[0]);
+  let reach = sorted[0][1], now = reach;
+  for (const [at, right] of sorted.slice(1)) {
     if (right <= reach) continue;
     now += (right - reach) * soon(t, at + 0.05, 0.7);
     reach = right;
   }
   return now;
 }
-var outcomesAt = (t, c) => 960 - outcomesReach(t, c) / 2;
-var outcomesX = () => 960 - Math.max(...outcomesParts().map(([, right]) => right)) / 2;
+var outcomesAt = (t, c) => 960 - buildingReach(t, outcomesParts(c)) / 2;
 function ruleTwoHeading(t, c, g) {
   ruleHeading(t, {
     number: L("第二条准则", "Rule two"),
@@ -4350,7 +4503,7 @@ function verifiedStage(s, t, c, g) {
       mark: ramp(t, c.another + 0.35, 0.35)
     }
   );
-  const PX = x + PLANE_W + 70 + claimWidth() / 2, PY = rowOf(TOP, 2), edge = claimPanel(t, PX, PY, { alpha: g }), verified = g * named(t, c.verified);
+  const PX2 = x + PLANE_W + 70 + claimWidth() / 2, PY = rowOf(TOP, 2), edge = claimPanel(t, PX2, PY, { alpha: g }), verified = g * named(t, c.verified);
   beats(t, edge.right, PY, 20, [c.saysDone], { alpha: g });
   link(edge.left, PY, x + PLANE_W, one, {
     route: "hvh",
@@ -4358,13 +4511,13 @@ function verifiedStage(s, t, c, g) {
     upto: soon(t, c.tell + 0.05, 0.6),
     flow: voiceTime(t) * 0.45 % 1
   });
-  nameText(L("实际确认过的", "Verified this time"), PX, edge.bottom + NAME_GAP, {
+  nameText(L("实际确认过的", "Verified this time"), PX2, edge.bottom + NAME_GAP, {
     valign: "top",
     alpha: verified
   });
 }
 function outcomesStage(s, t, c, g) {
-  const settle = soon(t, c.first4 + 0.05, 0.7), top = mix(TOP, 340, settle), x = mix(ASIDE, outcomesAt(t, c), settle), col = outcomesColumns(), LX = x + col.mark, em = labelSize(LABEL), names = outcomeNames(), quals = outcomeQuals(), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i)), qualLeft = x + col.quals;
+  const top = 340, x = outcomesAt(t, c), col = outcomesColumns(), LX = x + col.mark, em = labelSize(LABEL), names2 = outcomeNames(), quals = outcomeQuals(), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i)), qualLeft = x + col.quals;
   planeStack(t, x, top, { alpha: g });
   termRow(
     t,
@@ -4384,7 +4537,7 @@ function outcomesStage(s, t, c, g) {
   ats.forEach((at, i) => {
     verdictMark(kinds[i], LX, ys[i], 18, { alpha: g * ramp(t, at - 0.15, 0.4) });
     beats(t, LX, ys[i], 26, restated[i], { alpha: g });
-    termRow(t, [names[i]], [at], quals[i], [qualAts[i]], LX + 18 + NAME_GAP, ys[i] - em / 2, {
+    termRow(t, [names2[i]], [at], quals[i], [qualAts[i]], LX + 18 + NAME_GAP, ys[i] - em / 2, {
       alpha: g * listLevel(t, ats, i),
       set: "outcomes",
       width: 1800 - LX,
@@ -4411,7 +4564,7 @@ function outcomesStage(s, t, c, g) {
   });
 }
 function refusedStage(s, t, c, g) {
-  const matterName = L("真正要紧的那几个", "The ones that matter"), settle = soon(t, c.first5 + 0.05, 0.8), top = mix(340, 320, settle), alone = 960 - PLANE_W / 2, bracketed = 960 - (PLANE_W + 24 + NAME_GAP + measure(matterName)) / 2, x = mix(mix(outcomesX(), alone, settle), bracketed, soon(t, c.matter + 0.05, 0.7)), sy = top + 5 * PLANE_STEP, offered = g * named(t, c.distinction), refused = soon(t, c.never2 + 0.05, 0.5);
+  const matterName = L("真正要紧的那几个", "The ones that matter"), top = 320, alone = 960 - PLANE_W / 2, bracketed = 960 - (PLANE_W + 24 + NAME_GAP + measure(matterName)) / 2, x = mix(alone, bracketed, soon(t, c.matter + 0.05, 0.7)), sy = top + 5 * PLANE_STEP, offered = g * named(t, c.distinction), refused = soon(t, c.never2 + 0.05, 0.5);
   planeStack(t, x, top, { alpha: g });
   card(x, sy, PLANE_W, PLANE_H, { alpha: offered * mix(1, 0.7, refused), dash: [8, 9] });
   termRow(
@@ -4451,6 +4604,99 @@ function refusedStage(s, t, c, g) {
   });
 }
 
+// picture/film/scenes/p05/non-pass.js
+var ROWS = [374, 458, 542, 626];
+var KINDS = ["pass", "block", "unknown"];
+var MARK_R = 18;
+var OVER = 24;
+var TICK = 14;
+var LEAD = 0.35;
+var MID = (ROWS[2] + ROWS[3]) / 2;
+var notPassName = () => L("只要不是通过", ["Any result", "other than pass"]);
+var thingNames = () => L(
+  ["为什么停下", "证据，或者缺什么事实", "下一步做什么才安全", "要不要人决定"],
+  [
+    "Why that step stopped",
+    "Its evidence, or the missing fact",
+    "The one safe next action",
+    "Whether a person has to decide"
+  ]
+);
+function columns() {
+  const list = outcomesColumns(), left = list.mark - MARK_R, right = Math.max(...outcomesParts({}).map(([, reach]) => reach)) - left, bracket = right + NAME_GAP + TICK, note = bracket + NAME_GAP, from = note + Math.max(...[notPassName()].flat().map((v) => measure(v))) + 14, trunk = from + 46, marks = trunk + 64, things = marks + 24 + NAME_GAP;
+  return {
+    names: list.names - left,
+    quals: list.quals - left,
+    right,
+    bracket,
+    note,
+    from,
+    trunk,
+    marks,
+    things
+  };
+}
+function parts(c) {
+  const col = columns();
+  return [
+    [c.nonPassFirst, col.right],
+    [c.notPass, col.from - 14],
+    ...[c.why, c.evidence, c.nextSafe, c.person].map((at, i) => [
+      at - LEAD,
+      col.things + measure(thingNames()[i])
+    ])
+  ];
+}
+function thingMark(i, x, y, alpha) {
+  if (alpha < 0.01) return;
+  if (i === 0) askIcon(x, y - 1, 19, { alpha, color: P.ink });
+  else if (i === 1) docMark(x - 17, y - 22, 34, 44, { alpha, rows: 3 });
+  else if (i === 2) {
+    ring(x, y, 17, { color: P.ink, alpha, width: 2.5 });
+    dot(x, y, 7, { color: P.ink, alpha });
+  } else person(x, y + 5, { alpha, size: 0.8 });
+}
+function nonPassStage(s, t, c, g) {
+  if (g <= 0) return;
+  const x = 960 - buildingReach(t, parts(c)) / 2, col = columns(), em = labelSize(LABEL), flow = voiceTime(t) * 0.45 % 1, names2 = outcomeNames(), quals = outcomeQuals(), things = thingNames(), ats = [c.why, c.evidence, c.nextSafe, c.person], other = g * named(t, c.notPass), aside = mix(1, 0.62, ramp(t, c.notPass + 0.2, 0.4));
+  nameText(L("按 ETHOS 的设计", "By ETHOS's design"), x, ROWS[0], { align: "left", alpha: g });
+  KINDS.forEach((kind, i) => {
+    const y = ROWS[i + 1], alpha = g * (i ? 1 : aside);
+    verdictMark(kind, x + MARK_R, y, MARK_R, { alpha });
+    termRow(t, [names2[i]], [-Infinity], quals[i], [-Infinity], x + col.names, y - em / 2, {
+      alpha,
+      qualLeft: x + col.quals
+    });
+  });
+  const bx = x + col.bracket;
+  stroke(
+    () => {
+      ctx.moveTo(bx - TICK, ROWS[2] - OVER);
+      ctx.lineTo(bx, ROWS[2] - OVER);
+      ctx.lineTo(bx, ROWS[3] + OVER);
+      ctx.lineTo(bx - TICK, ROWS[3] + OVER);
+    },
+    { color: P.ink, alpha: other, width: 2.5 }
+  );
+  nameText(notPassName(), x + col.note, MID, { align: "left", alpha: other });
+  things.forEach((name, i) => {
+    const on = g * named(t, ats[i]);
+    link(x + col.from, MID, x + col.marks - 34, ROWS[i], {
+      route: "hvh",
+      mid: x + col.trunk,
+      alpha: on,
+      upto: soon(t, ats[i] + 0.05, 0.5),
+      flow: (flow + i / 4) % 1
+    });
+    thingMark(i, x + col.marks, ROWS[i], on);
+    nameText(name, x + col.things, ROWS[i], {
+      align: "left",
+      alpha: g * listIn(t, ats, i),
+      set: "05.6:things"
+    });
+  });
+}
+
 // picture/film/scenes/p05/scene.js
 function cuesOf2(s) {
   const c = {
@@ -4474,6 +4720,18 @@ function cuesOf2(s) {
     verified: cue(s, "实际确认过的", "were verified this time"),
     saysDone: cue(s, "所以说做完了", "says done"),
     tell: cue(s, "要讲明", "they need to say"),
+    edgeFirst: cue(s, "本地核验还有一条边界", "Local proof has one more boundary"),
+    edge: cue(s, "还有一条边界", "one more boundary"),
+    edgeWord: cue(s, "边界", "boundary"),
+    account: cue(s, "同一个账户", "the same account"),
+    produces: cue(s, "产生证据的程序", "what produces the evidence"),
+    checks: cue(s, "核对证据的程序", "what checks it"),
+    alone: cue(s, "光靠本地核验", "local proof alone"),
+    forgery: cue(s, "排除不了伪造", "cannot rule out forgery"),
+    independent: cue(s, "另一个独立控制的身份", "an independently controlled identity"),
+    rerun: cue(s, "重跑一遍", "a re-run"),
+    whether: cue(s, "要不要做", "whether one is needed"),
+    risk: cue(s, "看风险和规定", "depends on the risk and the policy"),
     first4: cue(s, "一次判断的结果", "A judgment too"),
     three: cue(s, "只分三种", "only three outcomes"),
     block: cue(s, "拦下", "block and unknown"),
@@ -4488,6 +4746,16 @@ function cuesOf2(s) {
     example: cue(s, "比如 GitLab 和 GitHub 上的检查", "Take the checks on GitLab"),
     isUnknown: cue(s, "这一项就是未知", "their result is unknown"),
     noProblem: cue(s, "不能算作没有问题", "does not count as no problem"),
+    nonPassFirst: cue(
+      s,
+      "按 ETHOS 的设计，只要不是通过",
+      "ETHOS is designed so that any result other than pass"
+    ),
+    notPass: cue(s, "只要不是通过", "any result other than pass"),
+    why: cue(s, "为什么停下", "why that step stopped"),
+    evidence: cue(s, "证据是什么", "its evidence"),
+    nextSafe: cue(s, "下一步做什么才安全", "the one safe next action"),
+    person: cue(s, "要不要人来决定", "whether a person has to decide"),
     first5: cue(s, "反过来", "And a distinction"),
     distinction: cue(s, "一个区分", "a distinction"),
     sixth: cue(s, "改变不了任何行动", "would not change any action"),
@@ -4502,11 +4770,13 @@ function cuesOf2(s) {
 }
 scenes["05"] = function(s, t) {
   const c = cuesOf2(s);
-  const A = stageOut(t, c.first3), G1 = stageIn(t, c.first3) * stageOut(t, c.first3b), G2 = stageIn(t, c.first3b) * stageOut(t, c.first4), H = stageIn(t, c.first4) * stageOut(t, c.first5), I = stageIn(t, c.first5);
+  const A = stageOut(t, c.first3), G1 = stageIn(t, c.first3) * stageOut(t, c.first3b), G2 = stageIn(t, c.first3b) * stageOut(t, c.edgeFirst), B = stageIn(t, c.edgeFirst) * stageOut(t, c.first4), H = stageIn(t, c.first4) * stageOut(t, c.nonPassFirst), N = stageIn(t, c.nonPassFirst) * stageOut(t, c.first5), I = stageIn(t, c.first5);
   if (A > 0) apartStage(s, t, c, A);
   if (G1 > 0) separateStage(s, t, c, G1);
   if (G2 > 0) verifiedStage(s, t, c, G2);
+  if (B > 0) boundaryStage(s, t, c, B);
   if (H > 0) outcomesStage(s, t, c, H);
+  if (N > 0) nonPassStage(s, t, c, N);
   if (I > 0) refusedStage(s, t, c, I);
   illustrative(A);
 };
@@ -4558,18 +4828,18 @@ var GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
 var VIEWS_NAME = () => L("给人看的视图", "Views");
 var openingOf = (size) => 0.82 * 164 * (size / 512);
 function viewsParts(c = {}) {
-  const run = openingOf(VIEWS_SIZE) + VIEW_RUN, names = VIEWS();
+  const run = openingOf(VIEWS_SIZE) + VIEW_RUN, names2 = VIEWS();
   return [
-    [c.views?.[0], run + VIEW_TEXT + Math.max(...names.map((v) => measure(v)))],
+    [c.views?.[0], run + VIEW_TEXT + Math.max(...names2.map((v) => measure(v)))],
     [c.areViews, run - 32 + measure(VIEWS_NAME())],
-    [c.thatGreen, run + VIEW_TEXT + measure(names[1]) + TERM_GAP + measure(GREEN()[0], NOTE)],
+    [c.thatGreen, run + VIEW_TEXT + measure(names2[1]) + TERM_GAP + measure(GREEN()[0], NOTE)],
     [c.sentence, run + panelLeft() + claimWidth()]
   ];
 }
 function viewsReach(t, c) {
-  const parts = viewsParts(c).sort((a, b) => a[0] - b[0]);
-  let reach = parts[0][1], now = reach;
-  for (const [at, right] of parts.slice(1)) {
+  const parts2 = viewsParts(c).sort((a, b) => a[0] - b[0]);
+  let reach = parts2[0][1], now = reach;
+  for (const [at, right] of parts2.slice(1)) {
     if (right <= reach) continue;
     now += (right - reach) * soon(t, at + 0.05, 0.8);
     reach = right;
@@ -4652,8 +4922,8 @@ function viewIcon(i, x, y, a) {
   else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
 function views(t, c, g, place, { only = null, flow = null, linked = true } = {}) {
-  const ats = c.views, names = VIEWS(), v = viewsOf(place), set = only === null ? "views" : "view";
-  names.forEach((name, i) => {
+  const ats = c.views, names2 = VIEWS(), v = viewsOf(place), set = only === null ? "views" : "view";
+  names2.forEach((name, i) => {
     if (only !== null && only !== i) return;
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
     if (linked)
@@ -4971,7 +5241,7 @@ var GX = 700;
 var BX = 860;
 var BSTEP2 = 110;
 function oneStepStage(s, t, c, g) {
-  const names = rowNameTop([Y + 100, Y + 22]), step = L(["核对和写入"], ["Checking and writing"]), end = BX + 5 * BSTEP2, left = Math.min(GX - 70 - 1.25, GX - measure(step[0]) / 2), unwritten = 960 - (left + BX + 4 * BSTEP2 + COMMIT) / 2, written = 960 - (left + end + 18 + 1.25) / 2;
+  const names2 = rowNameTop([Y + 100, Y + 22]), step = L(["核对和写入"], ["Checking and writing"]), end = BX + 5 * BSTEP2, left = Math.min(GX - 70 - 1.25, GX - measure(step[0]) / 2), unwritten = 960 - (left + BX + 4 * BSTEP2 + COMMIT) / 2, written = 960 - (left + end + 18 + 1.25) / 2;
   ctx.save();
   ctx.translate(mix(unwritten, written, soon(t, c.afterwards + 0.05, 0.6)), 0);
   card(GX - 70, Y - 100, 140, 200, { alpha: g, color: P.ink });
@@ -4981,13 +5251,13 @@ function oneStepStage(s, t, c, g) {
     single: true,
     open: soon(t, c.afterwards + 0.05, 0.6)
   });
-  termRow(t, step, [c.first2], L(["一步完成"], ["as one step"]), [c.oneStep], GX, names, {
+  termRow(t, step, [c.first2], L(["一步完成"], ["as one step"]), [c.oneStep], GX, names2, {
     alpha: g,
     align: "center"
   });
   commitRow(BX, BSTEP2, Y, 5, { alpha: g, single: true });
   link(GX + 70, Y, BX - 9, Y, { alpha: g });
-  nameText(L("分支", "The branch"), BX + 2 * BSTEP2, names, { valign: "top", alpha: g });
+  nameText(L("分支", "The branch"), BX + 2 * BSTEP2, names2, { valign: "top", alpha: g });
   const wrote = soon(t, c.afterwards + 0.3, 0.6);
   stroke(
     () => {
@@ -5013,7 +5283,7 @@ function oneStepStage(s, t, c, g) {
   ctx.restore();
 }
 function platformsStage(s, t, c, g) {
-  const VX = 540, LX = 1420, PW = 330, PX = (VX + LX) / 2 - PW / 2, ys = [Y - 130, Y, Y + 130], states = ["pass", "block", "none"], names = L(["成功", "失败", "还没推"], ["Succeeded", "Failed", "Still pending"]), ats = [c.succeeded, c.failed, c.pending], ends = rowNameTop([Y + 26, Y + 65]), versionName = L("一个版本", "A version"), recordName = L("照实记下", "All recorded"), left = Math.min(VX - 60 - 1.25, VX - measure(versionName) / 2), fanned = 960 - (left + PX + PW + 1.25) / 2, whole = 960 - (left + Math.max(LX + 50 + 1.25, LX + measure(recordName) / 2)) / 2, joined = soon(t, c.recorded + 0.05, 0.8);
+  const VX = 540, LX = 1420, PW = 330, PX2 = (VX + LX) / 2 - PW / 2, ys = [Y - 130, Y, Y + 130], states = ["pass", "block", "none"], names2 = L(["成功", "失败", "还没推"], ["Succeeded", "Failed", "Still pending"]), ats = [c.succeeded, c.failed, c.pending], ends = rowNameTop([Y + 26, Y + 65]), versionName = L("一个版本", "A version"), recordName = L("照实记下", "All recorded"), left = Math.min(VX - 60 - 1.25, VX - measure(versionName) / 2), fanned = 960 - (left + PX2 + PW + 1.25) / 2, whole = 960 - (left + Math.max(LX + 50 + 1.25, LX + measure(recordName) / 2)) / 2, joined = soon(t, c.recorded + 0.05, 0.8);
   ctx.save();
   ctx.translate(mix(fanned, whole, joined), 0);
   const version = g * named(t, c.version);
@@ -5023,24 +5293,24 @@ function platformsStage(s, t, c, g) {
     alpha: version
   });
   const several = g * named(t, c.several);
-  nameText(L("几个平台", "Several platforms"), PX + PW / 2, ys[0] - 30 - NAME_GAP, {
+  nameText(L("几个平台", "Several platforms"), PX2 + PW / 2, ys[0] - 30 - NAME_GAP, {
     valign: "bottom",
     alpha: several
   });
   linkSet(
-    ys.map((y) => [VX + 60, Y, PX, y, "hvh"]),
+    ys.map((y) => [VX + 60, Y, PX2, y, "hvh"]),
     { alpha: several, upto: soon(t, c.several + 0.05, 0.5) }
   );
-  stroke(() => ys.forEach((y) => ctx.roundRect(PX, y - 30, PW, 60, 12)), {
+  stroke(() => ys.forEach((y) => ctx.roundRect(PX2, y - 30, PW, 60, 12)), {
     color: P.line,
     alpha: several,
     width: 2.5
   });
   ats.forEach((at, i) => {
     const on = g * ramp(t, at - 0.15, 0.4);
-    if (states[i] === "block") stopSign(PX + PW - 36, ys[i], 15, { color: P.ink, alpha: on });
-    else planeState(states[i], PX + PW - 36, ys[i], on);
-    nameText(names[i], PX + 24, ys[i], {
+    if (states[i] === "block") stopSign(PX2 + PW - 36, ys[i], 15, { color: P.ink, alpha: on });
+    else planeState(states[i], PX2 + PW - 36, ys[i], on);
+    nameText(names2[i], PX2 + 24, ys[i], {
       align: "left",
       alpha: g * listIn(t, ats, i),
       set: "platforms"
@@ -5048,14 +5318,14 @@ function platformsStage(s, t, c, g) {
   });
   const kept = g * named(t, c.recorded);
   linkSet(
-    ys.map((y) => [PX + PW, y, LX - 56, Y, "hvh"]),
+    ys.map((y) => [PX2 + PW, y, LX - 56, Y, "hvh"]),
     { alpha: kept, upto: soon(t, c.recorded + 0.05, 0.6), flow: flowOf3(t) }
   );
   ledger(LX, Y, 100, 130, { alpha: kept });
   nameText(recordName, LX, ends, { valign: "top", alpha: kept });
   rejectedName(
     L("同时成功、同时失败", "All succeed or fail together"),
-    PX + PW / 2,
+    PX2 + PW / 2,
     ys[2] + 30 + 70,
     {
       alpha: g * named(t, c.together),
@@ -5522,19 +5792,19 @@ function ownRepository(s, t, a) {
     ["交给所有仓库", "every other one"],
     ["同一套义务", "the same obligations"]
   ]);
-  const DX = 960 - (620 - 52 + 1450 + 50) / 2, KX = 620 + DX, LX = 960 + DX, MID = 1100 + DX, G = [1210, 1330, 1450].map((x) => x + DX), OWNX = G[1], flow = voiceTime(t) * 0.4 % 1, o = a * named(t, ownAt), g = a * named(t, allAt), l = a * named(t, sameAt), top = rowNameTop([500 + 60, 500 + 65]);
+  const DX = 960 - (620 - 52 + 1450 + 50) / 2, KX = 620 + DX, LX = 960 + DX, MID2 = 1100 + DX, G = [1210, 1330, 1450].map((x) => x + DX), OWNX = G[1], flow = voiceTime(t) * 0.4 % 1, o = a * named(t, ownAt), g = a * named(t, allAt), l = a * named(t, sameAt), top = rowNameTop([500 + 60, 500 + 65]);
   kernelIcon(KX, 500, 60, { alpha: a, color: P.ink });
   nameText("ETHOS", KX, top, { valign: "top", alpha: a * named(t, ethosAt) });
   link(KX + 72, 500, OWNX - 102, 330, {
     route: "hvh",
-    mid: MID,
+    mid: MID2,
     alpha: o,
     upto: soon(t, ownAt + 0.05, 0.8),
     flow
   });
   link(LX + 50, 500, G[0] - 62, 690, {
     route: "hvh",
-    mid: MID,
+    mid: MID2,
     alpha: l,
     upto: soon(t, sameAt + 0.05, 0.6),
     flow: (flow + 0.5) % 1
@@ -5601,9 +5871,9 @@ function closing(s, t, a) {
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"]
   ]);
-  const DELIVERED = L("做到哪儿", "Delivered"), RECORD = L("没做完的", "Unfinished work"), DY = 440, W = 250, H = 340, ROWS2 = { first: 0.24, span: 0.62, reach: 0.36 }, rowsY = listRows(DY, H, 4, ROWS2.first, ROWS2.span), BX2 = W / 2 + 18, left = Math.min(700 - W / 2, 700 - nameWidth(L("一项正式变更", "An official Change")) / 2), DELIVERED_WIDTH = L(330, 300), delivered = 700 + BX2 + 14 + 2 + NAME_GAP + nameWidth(DELIVERED, DELIVERED_WIDTH), RECORD_DX = Math.max(540, delivered - 700 + 2 * NAME_GAP + 55), right = Math.max(700 + RECORD_DX + 55, 700 + RECORD_DX + nameWidth(RECORD, 300) / 2, delivered), centred = 960 - (left + delivered) / 2, alone = 960 - (left + Math.max(700 + W / 2, 1400 - left)) / 2, first = mix(L(centred, alone), centred, soon(t, deliveredAt + 0.05, 0.7)), S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)), LX = 700 + S, RX = 700 + RECORD_DX + S, RY = (rowsY[2] + rowsY[3]) / 2, top = rowNameTop([DY + H / 2, RY + 70]);
+  const DELIVERED = L("做到哪儿", "Delivered"), RECORD = L("没做完的", "Unfinished work"), DY = 440, W = 250, H = 340, ROWS3 = { first: 0.24, span: 0.62, reach: 0.36 }, rowsY = listRows(DY, H, 4, ROWS3.first, ROWS3.span), BX2 = W / 2 + 18, left = Math.min(700 - W / 2, 700 - nameWidth(L("一项正式变更", "An official Change")) / 2), DELIVERED_WIDTH = L(330, 300), delivered = 700 + BX2 + 14 + 2 + NAME_GAP + nameWidth(DELIVERED, DELIVERED_WIDTH), RECORD_DX = Math.max(540, delivered - 700 + 2 * NAME_GAP + 55), right = Math.max(700 + RECORD_DX + 55, 700 + RECORD_DX + nameWidth(RECORD, 300) / 2, delivered), centred = 960 - (left + delivered) / 2, alone = 960 - (left + Math.max(700 + W / 2, 1400 - left)) / 2, first = mix(L(centred, alone), centred, soon(t, deliveredAt + 0.05, 0.7)), S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)), LX = 700 + S, RX = 700 + RECORD_DX + S, RY = (rowsY[2] + rowsY[3]) / 2, top = rowNameTop([DY + H / 2, RY + 70]);
   const c = a * named(t, changeAt), d = a * named(t, deliveredAt), r = a * named(t, recordAt), p = a * named(t, passAt);
-  taskList(LX, DY, W, H, { alpha: c, done: 2, tick: d, ...ROWS2 });
+  taskList(LX, DY, W, H, { alpha: c, done: 2, tick: d, ...ROWS3 });
   nameText(L("一项正式变更", "An official Change"), LX, top, {
     valign: "top",
     alpha: c
@@ -5766,50 +6036,121 @@ scenes["07"] = function(s, t) {
   burden(s, t, d2);
 };
 
-// picture/film/scenes/p08/rail.js
-var RAIL_Y = 500;
-function journeyRail(x0, x1, { alpha = 1, upto = 1, dash = null } = {}) {
-  if (alpha < 0.01 || upto <= 0) return;
-  line(x0, RAIL_Y, mix(x0, x1, clamp(upto)), RAIL_Y, { color: P.line, alpha, width: 4, dash });
-}
-function railFlow(t, x0, x1, { alpha = 1, rate = 0.12 } = {}) {
-  const q = voiceTime(t) * rate % 1;
-  flowDot(mix(x0, x1, q), RAIL_Y, 6, q, { color: P.line, alpha });
-}
-function work(x, y = RAIL_Y, alpha = 1) {
-  if (alpha < 0.01) return;
-  dot(x, y, 10, { color: P.ink, alpha });
-  ring(x, y, 19, { color: P.ink, alpha: alpha * 0.6, width: 2 });
-}
-function ordinal(n, x, y, alpha = 1) {
-  if (alpha < 0.01) return;
-  text(String(n), x, y + 1, 26, { role: "mark", align: "center", color: P.muted, alpha });
-}
-function platforms(x, ys, { alpha = 1, w = 150, h = 80 } = {}) {
-  if (alpha < 0.01) return;
-  stroke(
-    () => ys.forEach((y) => {
-      ctx.roundRect(x - w / 2, y - h / 2, w, h, 14);
-      ctx.moveTo(x - w / 2, y - h / 2 + 26);
-      ctx.lineTo(x + w / 2, y - h / 2 + 26);
-    }),
-    { color: P.ink, alpha, width: 2.5 }
+// picture/film/scenes/p08/dropped-push.js
+var X0 = 240;
+var PLATFORM = [140, 76];
+var PX = 1680 - PLATFORM[0] / 2;
+var CUT = 960;
+var CUT_GAP = 34;
+var FROM = 620;
+var STOP = CUT - 70;
+var ASK = [1240, 350];
+var ASK_R = 28;
+var ROW_Y2 = 700;
+var DOC = [44, 56];
+var NOTE_X = 420;
+var REPORT_X = 1140;
+var NEXT_X = 1510;
+var STEP_R2 = 17;
+function droppedPush(s, t, a) {
+  if (a <= 0) return;
+  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, writtenAt, nextAt] = cues(s, [
+    ["要是推到一半断了线", "the connection drops"],
+    ["断了线", "drops"],
+    ["顺手再推一遍", "Just push again"],
+    ["也许已经成了", "may already have landed"],
+    ["耗时的写入", "a long write"],
+    ["先记下要做什么", "first notes"],
+    ["事后说清楚", "afterwards reports"],
+    ["写进去没有", "whether anything was written"],
+    ["下一步做什么才安全", "the one safe next action"]
+  ]);
+  const whatAt = cueFrom(s, "要做什么", "what it is about to do", noteAt);
+  const dropped = soon(t, dropAt - 0.05, 0.3), wx = mix(FROM, STOP, soon(t, nameAt, 0.9)), below = rowNameTop([RAIL_Y + PLATFORM[1] / 2, RAIL_Y + 19]), rowTop = rowNameTop([ROW_Y2 + DOC[1] / 2, ROW_Y2 + STEP_R2]);
+  journeyRail(X0, CUT - CUT_GAP, { alpha: a });
+  journeyRail(CUT - CUT_GAP, CUT + CUT_GAP, { alpha: a * (1 - dropped) });
+  journeyRail(CUT + CUT_GAP, PX - PLATFORM[0] / 2 - 8, { alpha: a * (1 - dropped) });
+  journeyRail(CUT + CUT_GAP, PX - PLATFORM[0] / 2 - 8, { alpha: a * dropped, dash: [12, 10] });
+  railFlow(t, X0, STOP, { alpha: a * (1 - dropped) });
+  cross(CUT, RAIL_Y, 22, { color: P.ink, alpha: a * dropped, width: 3.5 });
+  work(wx, RAIL_Y, a);
+  nameText(L("推到一半，断了线", "The connection drops"), CUT, below, {
+    valign: "top",
+    alpha: a * named(t, nameAt)
+  });
+  platforms(PX, [RAIL_Y], { alpha: a, w: PLATFORM[0], h: PLATFORM[1] });
+  termRow(
+    t,
+    [L("目标平台", "The platform")],
+    [-Infinity],
+    L(["也许已经成了"], ["may already ", "have landed"]),
+    [landedAt],
+    PX,
+    below,
+    { alpha: a, align: "center", inline: false, width: 170 }
   );
-}
-function docMark(x, y, w, h, { alpha = 1, rows = 4 } = {}) {
-  if (alpha < 0.01) return;
-  documentIcon(x, y, w, h, { alpha, rows: 0 });
-  if (rows > 0)
-    stroke(
-      () => {
-        for (let i = 0; i < rows; i++) {
-          const ry = y + h * (0.3 + i * 0.55 / Math.max(1, rows));
-          ctx.moveTo(x + w * 0.14, ry);
-          ctx.lineTo(x + w * (i % 2 ? 0.62 : 0.82), ry);
-        }
-      },
-      { color: P.muted, alpha: alpha * 0.8, width: 2 }
-    );
+  verdictMark("unknown", PX, RAIL_Y + 13, 15, { alpha: a * named(t, landedAt) });
+  const again = a * named(t, againAt);
+  link(STOP, RAIL_Y - 26, ASK[0] - ASK_R - 8, ASK[1], {
+    route: "vh",
+    alpha: again,
+    upto: soon(t, againAt + 0.05, 0.7),
+    dash: [8, 9],
+    end: false
+  });
+  askIcon(ASK[0], ASK[1], ASK_R, { alpha: a * named(t, againAt + 0.35), color: P.ink });
+  nameText(L("再推一遍？", "Push again?"), ASK[0], ASK[1] - ASK_R - NAME_GAP, {
+    valign: "bottom",
+    alpha: again
+  });
+  nameText(L("耗时的写入", "A long write"), (X0 + STOP) / 2, RAIL_Y - NAME_GAP, {
+    valign: "bottom",
+    alpha: a * named(t, writeAt)
+  });
+  const note = a * named(t, noteAt);
+  link(NOTE_X, ROW_Y2 - DOC[1] / 2 - 10, NOTE_X, RAIL_Y + 6, {
+    alpha: note,
+    upto: soon(t, noteAt + 0.05, 0.5)
+  });
+  docMark(NOTE_X - DOC[0] / 2, ROW_Y2 - DOC[1] / 2, DOC[0], DOC[1], { alpha: note, rows: 3 });
+  termRow(
+    t,
+    [L("先记下", "First notes")],
+    [noteAt],
+    [L("要做什么", "what it is about to do")],
+    [whatAt],
+    NOTE_X,
+    rowTop,
+    { alpha: a, align: "center", inline: false }
+  );
+  const report = a * named(t, afterAt);
+  link(REPORT_X, ROW_Y2 - DOC[1] / 2 - 10, REPORT_X, RAIL_Y + 6, {
+    alpha: report,
+    upto: soon(t, afterAt + 0.05, 0.5)
+  });
+  docMark(REPORT_X - DOC[0] / 2, ROW_Y2 - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
+  termRow(
+    t,
+    [L("事后说明", "Afterwards reports")],
+    [afterAt],
+    [L("写进去没有", "whether anything was written")],
+    [writtenAt],
+    REPORT_X,
+    rowTop,
+    { alpha: a, align: "center", inline: false }
+  );
+  const next = a * named(t, nextAt);
+  link(REPORT_X + DOC[0] / 2 + 10, ROW_Y2, NEXT_X - STEP_R2 - 10, ROW_Y2, {
+    alpha: next,
+    upto: soon(t, nextAt + 0.05, 0.5),
+    flow: voiceTime(t) * 0.45 % 1
+  });
+  ring(NEXT_X, ROW_Y2, STEP_R2, { color: P.ink, alpha: next, width: 2.5 });
+  dot(NEXT_X, ROW_Y2, 7, { color: P.ink, alpha: next });
+  nameText(L("下一步做什么才安全", "The one safe next action"), NEXT_X, rowTop, {
+    valign: "top",
+    alpha: next
+  });
 }
 
 // picture/film/scenes/p08/lane.js
@@ -5926,7 +6267,7 @@ var SOURCES2 = () => [
   [L("正式变更", "The Change"), L("做到什么样才算完", "what counts as done")],
   [L("已有的存证", "Attestations"), L("哪些核验已经通过", "which proofs have passed")]
 ];
-var ROWS = [360, 500, 640];
+var ROWS2 = [360, 500, 640];
 var ORDER_X = 1140;
 var ICON_X = 1195;
 var TEXT_X = 1235;
@@ -5951,12 +6292,12 @@ function handoff(s, t, a) {
     ["已有的存证", "attestations already"],
     ["哪些核验已经通过", "which proofs have passed"]
   ]);
-  const sources2 = SOURCES2(), terms = [factsAt, changeAt, attestAt], tells = [nowAt, doneAt, passedAt], parts = sources2.flatMap(([term, tell], i) => [
+  const sources2 = SOURCES2(), terms = [factsAt, changeAt, attestAt], tells = [nowAt, doneAt, passedAt], parts2 = sources2.flatMap(([term, tell], i) => [
     [terms[i], measure(term)],
     [tells[i], measure(tell, NOTE)]
   ]).sort((p, q) => p[0] - q[0]);
-  let reach = parts[0][1], widest = reach;
-  for (const [at, w] of parts.slice(1)) {
+  let reach = parts2[0][1], widest = reach;
+  for (const [at, w] of parts2.slice(1)) {
     if (w <= widest) continue;
     reach += (w - widest) * soon(t, at + 0.05, 0.7);
     widest = w;
@@ -5990,7 +6331,7 @@ function handoff(s, t, a) {
     mark: ramp(t, memoryAt + 0.3, 0.4)
   });
   sources2.forEach(([term, tell], i) => {
-    const y = ROWS[i], r = a * named(t, terms[i]);
+    const y = ROWS2[i], r = a * named(t, terms[i]);
     link(BX2 + 30, AY, ORDER_X + S - 20, y, {
       route: "hvh",
       mid: ORDER_X + S - 60,
@@ -6034,7 +6375,7 @@ function release(s, t, a) {
     ["单独确认", "confirmed on its own"]
   ]);
   const DONE = L("改完以后", "The work"), OWN = L("单独确认", "Confirmed on its own"), EACH = L("每一个平台", "Each platform"), left = Math.min(220 - 2, 260 - nameWidth(DONE, 300) / 2), right = 1600 + Math.max(70, nameWidth(OWN) / 2, nameWidth(EACH) / 2), S = 960 - (left + right) / 2;
-  const WX = 260 + S, CX = 570 + S, AX2 = 820 + S, MX = 1070 + S, BX2 = 1270 + S, PX = 1600 + S, UP = 410, PY = [345, 655], above = Math.min(UP - 26, UP - 22, UP + 4 - 2.15 * 15 * 1.15) - NAME_GAP, below = rowNameTop([RAIL_Y + 23, RAIL_Y + 19]), flow = voiceTime(t) * 0.4 % 1, c = a * named(t, commitAt), p = a * named(t, proofAt), at = a * named(t, attestAt), m = a * named(t, reviewAt), br = a * named(t, branchAt), pub = a * named(t, publishAt);
+  const WX = 260 + S, CX = 570 + S, AX2 = 820 + S, MX = 1070 + S, BX2 = 1270 + S, PX2 = 1600 + S, UP = 410, PY = [345, 655], above = Math.min(UP - 26, UP - 22, UP + 4 - 2.15 * 15 * 1.15) - NAME_GAP, below = rowNameTop([RAIL_Y + 23, RAIL_Y + 19]), flow = voiceTime(t) * 0.4 % 1, c = a * named(t, commitAt), p = a * named(t, proofAt), at = a * named(t, attestAt), m = a * named(t, reviewAt), br = a * named(t, branchAt), pub = a * named(t, publishAt);
   const end = mix(1680 + S, BX2 + 90, soon(t, publishAt - 0.8, 0.5));
   journeyRail(220 + S, end, { alpha: a });
   railFlow(t, 220 + S, end, { alpha: a });
@@ -6073,7 +6414,7 @@ function release(s, t, a) {
     alpha: br
   });
   PY.forEach(
-    (y, i) => link(BX2 + 102, RAIL_Y, PX - 82, y, {
+    (y, i) => link(BX2 + 102, RAIL_Y, PX2 - 82, y, {
       route: "hvh",
       mid: BX2 + 210,
       alpha: pub,
@@ -6081,12 +6422,12 @@ function release(s, t, a) {
       flow: (flow + 0.5 * i) % 1
     })
   );
-  platforms(PX, PY, { alpha: pub, w: 140, h: 76 });
-  nameText(EACH, PX, RAIL_Y, { alpha: pub });
+  platforms(PX2, PY, { alpha: pub, w: 140, h: 76 });
+  nameText(EACH, PX2, RAIL_Y, { alpha: pub });
   PY.forEach(
-    (y, i) => check(PX + 34, y + 12, 26, { alpha: a * named(t, ownAt + 0.7 * i), width: 3.5 })
+    (y, i) => check(PX2 + 34, y + 12, 26, { alpha: a * named(t, ownAt + 0.7 * i), width: 3.5 })
   );
-  nameText(OWN, PX, PY[1] + 38 + NAME_GAP, {
+  nameText(OWN, PX2, PY[1] + 38 + NAME_GAP, {
     valign: "top",
     alpha: a * named(t, ownAt)
   });
@@ -6164,28 +6505,30 @@ function liveUse(s, t, a) {
       align: "left",
       width: 360,
       alpha: a * listIn(t, ats, i),
-      set: "08.5:needs"
+      set: "08.6:needs"
     });
   });
   ctx.restore();
 }
 var STRETCHES = [
-  [240, 600],
-  [640, 820],
-  [860, 1200],
-  [1240, 1680]
+  [240, 410],
+  [450, 630],
+  [670, 840],
+  [880, 1040],
+  [1080, 1680]
 ];
 function overview(s, t, a) {
   if (a <= 0) return;
-  const [hereAt, pathAt, docsAt, handoverAt, acceptAt] = cues(s, [
+  const [hereAt, pathAt, docsAt, handoverAt, droppedAt, acceptAt] = cues(s, [
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
     ["它的文档也写明", "its own documents"],
     ["换 Agent 接手", "the handover between Agents"],
+    ["断线再推", "the dropped push"],
     ["都还没有完成验收", "has not yet completed acceptance"]
   ]);
-  const h = a * named(t, handoverAt), acc = a * named(t, acceptAt), [A, B, C, D] = STRETCHES;
-  const solid = t < handoverAt - 0.15 ? [A, B, C] : [A, C];
+  const h = a * named(t, handoverAt), dp = a * named(t, droppedAt), acc = a * named(t, acceptAt), [A, B, C, E, D] = STRETCHES;
+  const solid = [A, C, ...t < handoverAt - 0.15 ? [B] : [], ...t < droppedAt - 0.15 ? [E] : []];
   stroke(
     () => solid.forEach(([x0, x1]) => {
       ctx.moveTo(x0, RAIL_Y);
@@ -6194,6 +6537,7 @@ function overview(s, t, a) {
     { color: P.line, alpha: a, width: 4 }
   );
   journeyRail(B[0], B[1], { alpha: h, dash: [12, 10] });
+  journeyRail(E[0], E[1], { alpha: dp, dash: [12, 10] });
   journeyRail(D[0], D[1], { alpha: a, dash: [12, 10] });
   railFlow(t, D[0], D[1], { alpha: a });
   const HERE = D[0] + 40;
@@ -6221,19 +6565,27 @@ function overview(s, t, a) {
       alpha: h
     }
   );
-  const NY = 700, BX2 = (B[0] + B[1]) / 2, DX = (D[0] + D[1]) / 2, AXIS = (BX2 + DX) / 2, DOC = [40, 52], docs = a * named(t, docsAt);
-  docMark(AXIS - DOC[0] / 2, NY - DOC[1] / 2, DOC[0], DOC[1], { alpha: docs, rows: 3 });
-  link(AXIS + DOC[0] / 2 + 10, NY, DX, db.bottom + 12, {
+  const eb = nameText(L("断线再推那一段", "The dropped push"), (E[0] + E[1]) / 2, RAIL_Y + 30, {
+    valign: "top",
+    alpha: dp
+  });
+  const NY = 700, BX2 = (B[0] + B[1]) / 2, DX = (D[0] + D[1]) / 2, AXIS = (E[0] + E[1]) / 2, DOC2 = [40, 52], docs = a * named(t, docsAt);
+  docMark(AXIS - DOC2[0] / 2, NY - DOC2[1] / 2, DOC2[0], DOC2[1], { alpha: docs, rows: 3 });
+  link(AXIS + DOC2[0] / 2 + 10, NY, DX, db.bottom + 12, {
     route: "hv",
     alpha: docs,
     upto: soon(t, docsAt + 0.05, 0.6)
   });
-  link(AXIS - DOC[0] / 2 - 10, NY, BX2, hb.bottom + 12, {
+  link(AXIS - DOC2[0] / 2 - 10, NY, BX2, hb.bottom + 12, {
     route: "hv",
     alpha: h,
     upto: soon(t, handoverAt + 0.05, 0.6)
   });
-  nameText(L("尚未完成验收", "Not yet accepted"), AXIS, NY + DOC[1] / 2 + NAME_GAP, {
+  link(AXIS, NY - DOC2[1] / 2 - 10, AXIS, eb.bottom + 12, {
+    alpha: dp,
+    upto: soon(t, droppedAt + 0.05, 0.4)
+  });
+  nameText(L("尚未完成验收", "Not yet accepted"), AXIS, NY + DOC2[1] / 2 + NAME_GAP, {
     valign: "top",
     alpha: acc
   });
@@ -6242,7 +6594,7 @@ function overview(s, t, a) {
 // picture/film/scenes/p08/feedback.js
 var Y2 = 530;
 var FEED = 470;
-var RUN = 800;
+var RUN2 = 800;
 var STORE = [1220, Y2, 400, 148];
 var SLOTS = [Y2 - 37, Y2 + 37];
 function pipelineParts(alpha, store, slots) {
@@ -6250,11 +6602,11 @@ function pipelineParts(alpha, store, slots) {
   const [sx, sy, sw, sh] = STORE;
   ring(FEED, Y2, 38, { color: P.ink, alpha, width: 2.5 });
   dot(FEED, Y2, 12, { color: P.ink, alpha });
-  box(RUN - 110, Y2 - 48, 220, 96, { fill: P.row, stroke: P.ink, alpha, radius: 10, width: 2.5 });
+  box(RUN2 - 110, Y2 - 48, 220, 96, { fill: P.row, stroke: P.ink, alpha, radius: 10, width: 2.5 });
   stroke(
     () => {
       for (let i = -1; i <= 1; i++) {
-        const cx = RUN + i * 50;
+        const cx = RUN2 + i * 50;
         ctx.moveTo(cx - 8, Y2 - 16);
         ctx.lineTo(cx + 8, Y2);
         ctx.lineTo(cx - 8, Y2 + 16);
@@ -6262,8 +6614,8 @@ function pipelineParts(alpha, store, slots) {
     },
     { color: P.ink, alpha, width: 2.5 }
   );
-  link(FEED + 40, Y2, RUN - 110, Y2, { alpha, end: false });
-  link(RUN + 110, Y2, sx - sw / 2 - 2, Y2, { alpha: Math.min(alpha, store), end: false });
+  link(FEED + 40, Y2, RUN2 - 110, Y2, { alpha, end: false });
+  link(RUN2 + 110, Y2, sx - sw / 2 - 2, Y2, { alpha: Math.min(alpha, store), end: false });
   box(sx - sw / 2, sy - sh / 2, sw, sh, {
     stroke: P.ink,
     alpha: Math.min(alpha, store),
@@ -6281,10 +6633,10 @@ function pipelineParts(alpha, store, slots) {
 }
 var INTO_RUN = [
   [FEED + 44, Y2],
-  [RUN, Y2]
+  [RUN2, Y2]
 ];
 var INTO_SLOT = [
-  [RUN, Y2],
+  [RUN2, Y2],
   [STORE[0] + 150, Y2],
   [STORE[0] + 165, SLOTS[1]]
 ];
@@ -6301,7 +6653,7 @@ function corrections(s, t, a) {
     ["第二次更正", "the second correction"],
     ["覆盖掉了", "overwrites the first"]
   ]);
-  const LATER = L("几天后", "Days later"), VENDOR = L("厂商", "The vendor"), TWO = L("两次更正", "Two corrections"), OVER = L("覆盖掉了", "Overwritten"), left = Math.min(FEED - 38, FEED - measure(TWO) / 2, FEED - measure(VENDOR) / 2), before = Math.max(RUN + 110, FEED + 40 + measure(LATER)), after = Math.max(before, STORE[0] + STORE[2] / 2, STORE[0] + measure(OVER) / 2), ABOVE = Y2 - 48 - NAME_GAP;
+  const LATER = L("几天后", "Days later"), VENDOR = L("厂商", "The vendor"), TWO = L("两次更正", "Two corrections"), OVER2 = L("覆盖掉了", "Overwritten"), left = Math.min(FEED - 38, FEED - measure(TWO) / 2, FEED - measure(VENDOR) / 2), before = Math.max(RUN2 + 110, FEED + 40 + measure(LATER)), after = Math.max(before, STORE[0] + STORE[2] / 2, STORE[0] + measure(OVER2) / 2), ABOVE = Y2 - 48 - NAME_GAP;
   const v = a * named(t, vendorAt), over = ramp(t, overAt - 0.15, 0.4), alone = 960 - (left + before) / 2, done = 960 - (left + after) / 2, off = mix(alone, done, soon(t, origAt - 0.45, Math.max(0.8, Math.abs(alone - done) / 350)));
   ctx.save();
   ctx.translate(off, 0);
@@ -6312,7 +6664,7 @@ function corrections(s, t, a) {
   });
   pipelineParts(v, a * named(t, origAt), [a * named(t, origAt), a * named(t, singleAt)]);
   nameText(VENDOR, FEED, Y2 + 38 + NAME_GAP, { valign: "top", alpha: v });
-  nameText(L("管线", "The pipeline"), RUN, ABOVE, {
+  nameText(L("管线", "The pipeline"), RUN2, ABOVE, {
     valign: "bottom",
     alpha: a * named(t, pipeAt)
   });
@@ -6331,7 +6683,7 @@ function corrections(s, t, a) {
     dot(x1, y1, 7, { color: P.ink, alpha: c * (1 - over) });
     dot(x2, y2, 16, { color: P.ink, alpha: c });
   }
-  nameText(OVER, STORE[0], STORE[1] + STORE[3] / 2 + NAME_GAP, {
+  nameText(OVER2, STORE[0], STORE[1] + STORE[3] / 2 + NAME_GAP, {
     valign: "top",
     alpha: a * named(t, overAt)
   });
@@ -6375,23 +6727,23 @@ function judgement(s, t, a) {
     ["问题不存在", "the problem go away"]
   ]);
   const apartAt = cueFrom(s, "要分开", "They stay apart", remSays);
-  const p = a * named(t, peopleAt), b = a * named(t, backAt), TOP2 = mix(450, 300, soon(t, obsAt - 0.5, 0.8)), [PX, , DX] = PANEL_X, DOC = [84, 108], PY = TOP2 + DOC[1] / 2 - 22.7 * 1.5, names = rowNameTop([PY + 22.7 * 1.5, TOP2 + DOC[1] / 2]);
-  person(PX, PY, { size: 1.5, alpha: p });
-  nameText(L("负责观察的人", ["The people watching", "the pipeline"]), PX, names, {
+  const p = a * named(t, peopleAt), b = a * named(t, backAt), TOP2 = mix(450, 300, soon(t, obsAt - 0.5, 0.8)), [PX2, , DX] = PANEL_X, DOC2 = [84, 108], PY = TOP2 + DOC2[1] / 2 - 22.7 * 1.5, names2 = rowNameTop([PY + 22.7 * 1.5, TOP2 + DOC2[1] / 2]);
+  person(PX2, PY, { size: 1.5, alpha: p });
+  nameText(L("负责观察的人", ["The people watching", "the pipeline"]), PX2, names2, {
     valign: "top",
     alpha: p
   });
-  link(PX + 40, TOP2, DX - DOC[0] / 2 - 12, TOP2, {
+  link(PX2 + 40, TOP2, DX - DOC2[0] / 2 - 12, TOP2, {
     alpha: b,
-    upto: soon(t, backAt + 0.05, Math.max(0.8, (DX - DOC[0] / 2 - 52 - PX) / 760)),
+    upto: soon(t, backAt + 0.05, Math.max(0.8, (DX - DOC2[0] / 2 - 52 - PX2) / 760)),
     flow: voiceTime(t) * 0.4 % 1
   });
-  documentIcon(DX - DOC[0] / 2, TOP2 - DOC[1] / 2, DOC[0], DOC[1], { alpha: b, rows: 0 });
-  nameText(L("报告", "The report"), DX, names, {
+  documentIcon(DX - DOC2[0] / 2, TOP2 - DOC2[1] / 2, DOC2[0], DOC2[1], { alpha: b, rows: 0 });
+  nameText(L("报告", "The report"), DX, names2, {
     valign: "top",
     alpha: b
   });
-  nameText(L("分开判断", "Judged separately"), PANEL_X[1], names, {
+  nameText(L("分开判断", "Judged separately"), PANEL_X[1], names2, {
     valign: "top",
     alpha: a * named(t, threeAt)
   });
@@ -6445,7 +6797,7 @@ function faultApart(s, t, a) {
   if (a <= 0) return;
   const [codeAt, modelAt, apartAt, faultAt] = cues(s, [
     ["代码出错", "A failed implementation"],
-    ["模型的问题", "the model is wrong"],
+    ["不一定是模型的问题", "does not by itself mean"],
     ["要先分清", "told apart first"],
     ["问题出在模型上", "the fault is in the model"]
   ]);
@@ -6496,23 +6848,23 @@ function modelRevision(s, t, a) {
     ["依赖它的检查", "every check that depends on it"],
     ["重新编译", "compiled again"]
   ]);
-  const GY = 390, GW = 400, GH = 225, DOC = [150, GH], DOC_X = 700, CHK = 960, CELL0 = 3.5 * (GW / 4), CELL = CELL0 + 0.45 * (GW / 4), MID = GY + GH / 2, RECORD = L("同一条记录", "The same record"), DIM = L("少了一个维度", "Missing a dimension"), BOUND = L("最小范围", "The smallest boundary"), CHANGE = L("新的正式变更", ["A new", "official Change"]), REVISES = L("修订模型", "Revising the model"), DEP = L("依赖它的检查", "Dependent checks"), COMPILE = L("重新编译", "Compiled again");
+  const GY = 390, GW = 400, GH = 225, DOC2 = [150, GH], DOC_X = 700, CHK = 960, CELL0 = 3.5 * (GW / 4), CELL = CELL0 + 0.45 * (GW / 4), MID2 = GY + GH / 2, RECORD = L("同一条记录", "The same record"), DIM = L("少了一个维度", "Missing a dimension"), BOUND = L("最小范围", "The smallest boundary"), CHANGE = L("新的正式变更", ["A new", "official Change"]), REVISES = L("修订模型", "Revising the model"), DEP = L("依赖它的检查", "Dependent checks"), COMPILE = L("重新编译", "Compiled again");
   const left = -22 - nameWidth(DIM, 260), right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2), right2 = Math.max(
     right1,
     CELL + nameWidth(BOUND) / 2,
-    DOC_X + DOC[0] / 2,
+    DOC_X + DOC2[0] / 2,
     DOC_X + nameWidth(CHANGE) / 2,
     DOC_X + nameWidth(REVISES) / 2
   ), right3 = Math.max(right2, CHK + 46 + nameWidth(DEP, 280), CHK + nameWidth(COMPILE) / 2), at = (right) => 960 - (left + right) / 2, GX2 = at(right3) + (at(right2) - at(right3)) * (1 - soon(t, checksAt - 0.4, 0.8)) + (at(right1) - at(right2)) * (1 - soon(t, changeAt - 0.4, 0.8));
   ctx.save();
   ctx.translate(GX2, 0);
-  const grow = soon(t, dimAt + 0.05, 0.8), c = a * named(t, changeAt), bd = a * named(t, boundAt), k = a * named(t, checksAt), flow = voiceTime(t) * 0.4 % 1, above = GY - NAME_GAP, ys = [GY + 22, MID, GY + GH - 22], below = rowNameTop([GY + GH, ys.at(-1) + 22]);
+  const grow = soon(t, dimAt + 0.05, 0.8), c = a * named(t, changeAt), bd = a * named(t, boundAt), k = a * named(t, checksAt), flow = voiceTime(t) * 0.4 % 1, above = GY - NAME_GAP, ys = [GY + 22, MID2, GY + GH - 22], below = rowNameTop([GY + GH, ys.at(-1) + 22]);
   modelGrid(0, GY, GW, GH, { alpha: a, cell: [3, 1], lit: 1, grow });
   nameText(RECORD, mix(CELL0, CELL, grow), above, {
     valign: "bottom",
     alpha: a * named(t, recordAt)
   });
-  nameText(DIM, -22, MID, {
+  nameText(DIM, -22, MID2, {
     align: "right",
     width: 260,
     alpha: a * named(t, dimAt)
@@ -6523,8 +6875,8 @@ function modelRevision(s, t, a) {
     valign: "top",
     alpha: bd
   });
-  docMark(DOC_X - DOC[0] / 2, GY, DOC[0], DOC[1], { alpha: c, rows: 4 });
-  link(DOC_X - DOC[0] / 2 - 12, MID, cx1 + 10, MID, {
+  docMark(DOC_X - DOC2[0] / 2, GY, DOC2[0], DOC2[1], { alpha: c, rows: 4 });
+  link(DOC_X - DOC2[0] / 2 - 12, MID2, cx1 + 10, MID2, {
     alpha: a * named(t, revisesAt),
     upto: soon(t, revisesAt + 0.05, 0.6),
     flow
@@ -6538,16 +6890,16 @@ function modelRevision(s, t, a) {
     alpha: a * named(t, revisesAt)
   });
   ys.forEach(
-    (y, i) => link(DOC_X + DOC[0] / 2 + 12, MID, CHK - 38, y, {
+    (y, i) => link(DOC_X + DOC2[0] / 2 + 12, MID2, CHK - 38, y, {
       route: "hvh",
-      mid: (DOC_X + DOC[0] / 2 + CHK) / 2,
+      mid: (DOC_X + DOC2[0] / 2 + CHK) / 2,
       alpha: k,
       upto: soon(t, checksAt + 0.05 + 0.15 * i, 0.6),
       flow: (flow + i / 3) % 1
     })
   );
   checkGroup(t, CHK, ys, { alpha: k, at: compileAt });
-  nameText(DEP, CHK + 46, MID, {
+  nameText(DEP, CHK + 46, MID2, {
     align: "left",
     width: 280,
     alpha: k
@@ -6658,7 +7010,7 @@ function goalKept(s, t, a) {
     ["经授权重新对齐意图", "authorized intent alignment"],
     ["悄悄放宽", "silently loosened"]
   ]);
-  const LY = 380, x0 = 560, x1 = 1372, LOCK = x1 + 20, AXIS = (x0 + LOCK + 17) / 2, PX = 1322, PY = 624, al = a * named(t, alignAt), q = a * named(t, quietAt), sink = soon(t, quietAt + 0.05, 1), flow = voiceTime(t) * 0.4 % 1;
+  const LY = 380, x0 = 560, x1 = 1372, LOCK = x1 + 20, AXIS = (x0 + LOCK + 17) / 2, PX2 = 1322, PY = 624, al = a * named(t, alignAt), q = a * named(t, quietAt), sink = soon(t, quietAt + 0.05, 1), flow = voiceTime(t) * 0.4 % 1;
   line(x0, LY, x1, LY, { color: P.ink, alpha: a, width: 5 });
   lock(LOCK, LY, { alpha: a, color: P.ink });
   nameText(L("不能多出重复记录", "No duplicate records"), AXIS, LY - NAME_GAP, {
@@ -6673,12 +7025,12 @@ function goalKept(s, t, a) {
     width: 300,
     alpha: a * named(t, notAt)
   });
-  person(PX, PY, { size: 1.2, alpha: al });
+  person(PX2, PY, { size: 1.2, alpha: al });
   seal(LOCK, 620, 22, { alpha: al, color: P.ink });
   link(LOCK, 594, LOCK, LY + 22, { alpha: al, upto: soon(t, alignAt + 0.05, 0.6), flow });
   nameText(
     L("经授权重新对齐意图", "Authorized intent alignment"),
-    (PX - 28 + LOCK + 22) / 2,
+    (PX2 - 28 + LOCK + 22) / 2,
     rowNameTop([PY + 22.7 * 1.2, 620 + 22]),
     {
       valign: "top",
@@ -6696,10 +7048,11 @@ function goalKept(s, t, a) {
 
 // picture/film/scenes/p08/life.js
 scenes["08"] = function(s, t) {
-  const [laneAt, halfAt, proofAt, liveAt, hereAt, daysAt] = cues(s, [
+  const [laneAt, halfAt, proofAt, dropAt, liveAt, hereAt, daysAt] = cues(s, [
     ["研究员的要求", "The researcher's request"],
     ["做到一半", "Halfway through"],
     ["改完以后", "When the work is committed"],
+    ["要是推到一半断了线", "Say the connection drops"],
     ["版本上线以后", "Once the version is live"],
     ["从这里往后", "From here on"],
     ["几天后", "A few days later"]
@@ -6712,12 +7065,13 @@ scenes["08"] = function(s, t) {
     ["依赖这个概念的改动", "changes that depend on that idea"],
     ["不能多出重复记录", "The goal"]
   ]);
-  const s1 = stageOut(t, laneAt), s2 = stageIn(t, laneAt) * stageOut(t, halfAt), s3 = stageIn(t, halfAt) * stageOut(t, proofAt), s4 = stageIn(t, proofAt) * stageOut(t, liveAt), s5 = stageIn(t, liveAt) * stageOut(t, hereAt), s5b = stageIn(t, hereAt) * stageOut(t, daysAt), s6 = stageIn(t, daysAt) * stageOut(t, peopleAt), s7 = stageIn(t, peopleAt) * stageOut(t, failAt), s8 = stageIn(t, failAt) * stageOut(t, recordAt), s8b = stageIn(t, recordAt) * stageOut(t, noneAt), s8c = stageIn(t, noneAt) * stageOut(t, meanAt), s8d = stageIn(t, meanAt) * stageOut(t, goalAt), s9 = stageIn(t, goalAt);
+  const s1 = stageOut(t, laneAt), s2 = stageIn(t, laneAt) * stageOut(t, halfAt), s3 = stageIn(t, halfAt) * stageOut(t, proofAt), s4 = stageIn(t, proofAt) * stageOut(t, dropAt), s4b = stageIn(t, dropAt) * stageOut(t, liveAt), s5 = stageIn(t, liveAt) * stageOut(t, hereAt), s5b = stageIn(t, hereAt) * stageOut(t, daysAt), s6 = stageIn(t, daysAt) * stageOut(t, peopleAt), s7 = stageIn(t, peopleAt) * stageOut(t, failAt), s8 = stageIn(t, failAt) * stageOut(t, recordAt), s8b = stageIn(t, recordAt) * stageOut(t, noneAt), s8c = stageIn(t, noneAt) * stageOut(t, meanAt), s8d = stageIn(t, meanAt) * stageOut(t, goalAt), s9 = stageIn(t, goalAt);
   illustrative(1);
   lifeStart(s, t, s1);
   lane(s, t, s2);
   handoff(s, t, s3);
   release(s, t, s4);
+  droppedPush(s, t, s4b);
   liveUse(s, t, s5);
   overview(s, t, s5b);
   corrections(s, t, s6);
@@ -6761,19 +7115,19 @@ function bound(s, t, a) {
     mix(alone, chain, soon(t, wayAt + 0.05, 0.9)),
     boundShift(),
     soon(t, commitAt + 0.05, 0.9)
-  ), PX = BOUND_X + off, Y3 = 470, AX2 = PX - W / 2 - AGENT_DX, AY = Y3 + AGENT_DY, under = Y3 + CLAIM_H / 2 + 18, clear = a * clearOfTitle(s, t, Y3 - 60), way = a * ramp(t, wayAt - 0.15, 0.5), at = a * named(t, sealAt), end = PX + BOUND_RUN, rows = BOUND_ROWS, ats = [commitAt, provedAt, openAt], flow = voiceTime(t) * 0.4 % 1;
+  ), PX2 = BOUND_X + off, Y3 = 470, AX2 = PX2 - W / 2 - AGENT_DX, AY = Y3 + AGENT_DY, under = Y3 + CLAIM_H / 2 + 18, clear = a * clearOfTitle(s, t, Y3 - 60), way = a * ramp(t, wayAt - 0.15, 0.5), at = a * named(t, sealAt), end = PX2 + BOUND_RUN, rows = BOUND_ROWS, ats = [commitAt, provedAt, openAt], flow = voiceTime(t) * 0.4 % 1;
   agent(AX2, AY, { size: 1.5, alpha: clear });
-  link(AX2, AY - 33, PX - W / 2 - 6, Y3, { route: "vh", alpha: clear, flow });
+  link(AX2, AY - 33, PX2 - W / 2 - 6, Y3, { route: "vh", alpha: clear, flow });
   const {
     datum: [dx, dy]
-  } = claimPanel(t, PX, Y3, { alpha: clear, words: clear * named(t, doneAt) });
-  nameText(L("开头的那句话", "Where we began"), PX, Y3 - CLAIM_H / 2 - 44, {
+  } = claimPanel(t, PX2, Y3, { alpha: clear, words: clear * named(t, doneAt) });
+  nameText(L("开头的那句话", "Where we began"), PX2, Y3 - CLAIM_H / 2 - 44, {
     valign: "bottom",
     size: NOTE,
     color: P.muted,
     alpha: clear * ramp(t, beganAt - (en ? 0.6 : 0.15), 0.4)
   });
-  nameText(L("能不能信", "Can it be trusted?"), PX, under, {
+  nameText(L("能不能信", "Can it be trusted?"), PX2, under, {
     valign: "top",
     size: NOTE,
     color: P.muted,
@@ -6839,10 +7193,10 @@ function judged(s, t, a, cutAt2) {
     ["能不能退回去", "you can get back after a mistake"]
   ]);
   const refused = REFUSED(), conditions = CONDITIONS(), A = Math.max(...refused.map((v) => measure(v))) + 16 + 26, B = 36 + 20 + Math.max(...conditions.map((v) => measure(v))), GUTTER = 200, left = 960 - (A + GUTTER + B) / 2, axis = left + A + GUTTER / 2, alone = 960 - (left + axis + claimWidth() / 2 + CLAIM_DATUM) / 2, shift = mix(alone, 0, soon(t, meaningAt + 0.05, 0.9)), RX = left + A - 42 + shift, BX2 = left + A + GUTTER + shift;
-  const q = soon(t, Math.max(trustAt + 0.05, cutAt2), 1), PX = mix(BOUND_X + boundShift(), axis + shift, q), PY = mix(470, 380, q), conds = [meaningAt, withinAt, backAt], rows = [545, 630, 715];
-  claimPanel(t, PX, PY, { alpha: a });
+  const q = soon(t, Math.max(trustAt + 0.05, cutAt2), 1), PX2 = mix(BOUND_X + boundShift(), axis + shift, q), PY = mix(470, 380, q), conds = [meaningAt, withinAt, backAt], rows = [545, 630, 715];
+  claimPanel(t, PX2, PY, { alpha: a });
   line(axis + shift, rows[0] - 30, axis + shift, rows[2] + 30, { alpha: a });
-  nameText(L("能不能信", "Can it be trusted?"), PX, PY + CLAIM_H / 2 + 18, {
+  nameText(L("能不能信", "Can it be trusted?"), PX2, PY + CLAIM_H / 2 + 18, {
     valign: "top",
     size: NOTE,
     color: P.muted,
