@@ -114,6 +114,11 @@
           "seed": 139306,
           "text_sha256": "91d9e6ca82885ef23ffacf56d1520e20951d873a3eefe918eccaeb68cd1b79be",
           "spoken_sha256": "cdc87a5a95a3e19df966063c1a0b33a733ade987358e06ab80ffcd6bfdf61996"
+        },
+        "5": {
+          "seed": 321443,
+          "text_sha256": "88dad77e1397c64b7732c1b132e66ddcbb962686d9dc5d89539712a62f81c0ac",
+          "spoken_sha256": "88dad77e1397c64b7732c1b132e66ddcbb962686d9dc5d89539712a62f81c0ac"
         }
       }
     },
@@ -128,6 +133,11 @@
           "seed": 147226,
           "text_sha256": "d4ca4f2e9afc0dd9007350ddb48644932d3d88dbf564c274266319577acbe140",
           "spoken_sha256": "88e7df15bf79c2c460a1cf47558e02232e360fb523aafcb7ea670b2c5c5dbed2"
+        },
+        "3": {
+          "seed": 329363,
+          "text_sha256": "ace71b5fa4e645150c00e5cf09a2c2159852e3b5b94655f05832fc177c300790",
+          "spoken_sha256": "43a47afb2efc5c6db604b1a72bfbf117df985f64d64540d2e34b9a53ba7a09b4"
         }
       }
     },
@@ -144,9 +154,13 @@
           "spoken_sha256": "fd99d1ed59947a178a3583606110b87b23682c870dc69fef4c278b41ef62e9d9"
         },
         "9": {
-          "seed": 107632,
+          "seed": 297688,
           "text_sha256": "b9a6c043533306ba4f0b8bb5a4c477ea20a3a79b1d5f04e1b49b987e400a3d1f",
-          "spoken_sha256": "b9a6c043533306ba4f0b8bb5a4c477ea20a3a79b1d5f04e1b49b987e400a3d1f"
+          "spoken_sha256": "b9a6c043533306ba4f0b8bb5a4c477ea20a3a79b1d5f04e1b49b987e400a3d1f",
+          "run_on": {
+            "spoken_text": "“不能多出重复记录”这个目标，一个字也没有放宽。目标和标准要改，只能经授权重新对齐意图，明着改；不能为了让结果通过，就悄悄放宽。",
+            "cut_sample": 668880
+          }
         }
       }
     },
@@ -165,6 +179,11 @@
           "seed": 155142,
           "text_sha256": "b9681c8b364cc2494a23529e83a5d29a88eec8f6a1ee93c0d6d853f7691c6998",
           "spoken_sha256": "1983f17ac03b556e5679a7265e79fda9ecd5217c98157ff743408de14273d576"
+        },
+        "6": {
+          "seed": 250170,
+          "text_sha256": "1300707c5513a5605ee290ecbd6bafeb75ea05d3de9554a3e83a4172923c46ae",
+          "spoken_sha256": "1300707c5513a5605ee290ecbd6bafeb75ea05d3de9554a3e83a4172923c46ae"
         }
       }
     }
