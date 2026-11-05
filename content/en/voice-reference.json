@@ -22,10 +22,6 @@
   "retakes": {
     "08": {
       "groups": {
-        "9": {
-          "seed": 99713,
-          "text_sha256": "52bff83bb7b59ebd93b335195dbf08a660ccf86a0622cf8114c5971ca28e9ed8"
-        },
         "3": {
           "seed": 99713,
           "text_sha256": "fb81f222208f643f5f37816b1f25477ad63d2f2b8a7a98f7e2154b81fd82b234",
@@ -35,6 +31,10 @@
           "seed": 91794,
           "text_sha256": "549589d687378e79354fd242f2cf2bf207a5ae6bc76912d9edbef9f8a0172caf",
           "spoken_sha256": "549589d687378e79354fd242f2cf2bf207a5ae6bc76912d9edbef9f8a0172caf"
+        },
+        "10": {
+          "seed": 99713,
+          "text_sha256": "52bff83bb7b59ebd93b335195dbf08a660ccf86a0622cf8114c5971ca28e9ed8"
         }
       }
     },
