@@ -5,7 +5,7 @@ import { ring } from "../drawing/strokes.js";
 import { P } from "../palette.js";
 import { phraseEnd } from "../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../timing/easing.js";
-import { pauseHold, thoughtEnd } from "../timing/pauses.js";
+import { glideShare, pauseHold, thoughtEnd } from "../timing/pauses.js";
 import { stageCuts } from "../timing/stages.js";
 
 /* A name arrives on its words and stays while its mark stands; it leaves with its stage or its mark. */
@@ -71,6 +71,21 @@ export function beats(t, x, y, r, ats, { color = P.ink, alpha = 1 } = {}) {
 }
 /* A list said member by member keeps its spoken order along its axis and stays balanced while it builds: each member
  * stands at its place in the list's final layout, and the whole list stands `step` px toward its open end for each
- * member still to come, closing one step on each further member's words. Returns that offset at t. */
+ * member still to come, closing one step on each further member's words by the film's structural glide. Returns that
+ * offset at t. */
 export const building = (t, ats, step = 48, lead = 0.1) =>
-  step * ats.slice(1).reduce((v, at) => v + 1 - soon(t, at - lead, 0.4), 0);
+  step * ats.slice(1).reduce((v, at) => v + 1 - glideShare(t, at - lead, step), 0);
+/* How far a group that builds part by part reaches at t, so it can stand centred on what it shows: from `base`, the
+ * reach of what stands first, each part that reaches further than those before it widens the group, gliding from just
+ * after its words by the film's structural glide, over at least `duration` seconds. A centred group moves by half of
+ * what it widens by, so that half is the glide's way. `parts` are [at, reach] pairs. */
+export function reachAt(t, base, parts, duration = 0.7) {
+  let reach = base,
+    now = base;
+  for (const [at, v] of [...parts].sort((a, b) => a[0] - b[0])) {
+    if (v <= reach) continue;
+    now += (v - reach) * glideShare(t, at + 0.05, (v - reach) / 2, duration);
+    reach = v;
+  }
+  return now;
+}

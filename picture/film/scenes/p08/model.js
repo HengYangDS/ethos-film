@@ -4,8 +4,8 @@
  * goes on; and the goal stays as it was, changed only by an authorized realignment of intent, never loosened. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
-import { box, flowDot, line, measure, stroke } from "../../drawing/strokes.js";
+import { FLOW_EVERY, FLOW_PACE, flowAlong, flowClock, link } from "../../drawing/links.js";
+import { box, dot, line, measure, stroke } from "../../drawing/strokes.js";
 import { lock, person, seal } from "../../drawing/symbols.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { modelGrid } from "../../drawing/models.js";
@@ -19,7 +19,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare } from "../../timing/pauses.js";
 
 /* 08.9, first: the failed implementation and the model stand apart, a line between them as they are told apart, solid
  * since the film keeps dashes for what is unknown, missing or refused; this time the fault is in the model, which
@@ -42,7 +42,7 @@ export function faultApart(s, t, a) {
     CX = 960 - GAP - W / 2,
     MX = 960 + GAP + W / 2,
     shown = modelAt - L(0, 0.35),
-    alone = (960 - CX) * (1 - soon(t, shown - 0.4, 0.8)),
+    alone = (960 - CX) * (1 - glideShare(t, shown - 0.4, 960 - CX, 0.8)),
     m = a * named(t, shown),
     d = a * named(t, apartAt),
     f = ramp(t, faultAt - 0.15, 0.6);
@@ -133,17 +133,19 @@ export function modelRevision(s, t, a) {
     ),
     right3 = Math.max(right2, CHK + 46 + nameWidth(DEP, 280), CHK + nameWidth(COMPILE) / 2),
     at = (right) => 960 - (left + right) / 2,
+    // Each step left by the film's structural glide over its own way, setting off 0.65 s before the words of the part
+    // it makes room for, so it has gone most of its way when that part's name appears.
     GX =
       at(right3) +
-      (at(right2) - at(right3)) * (1 - soon(t, checksAt - 0.4, 0.8)) +
-      (at(right1) - at(right2)) * (1 - soon(t, changeAt - 0.4, 0.8));
+      (at(right2) - at(right3)) * (1 - glideShare(t, checksAt - 0.65, at(right2) - at(right3), 0.8)) +
+      (at(right1) - at(right2)) * (1 - glideShare(t, changeAt - 0.65, at(right1) - at(right2), 0.8));
   ctx.save();
   ctx.translate(GX, 0);
   const grow = soon(t, dimAt + 0.05, 0.8),
     c = a * named(t, changeAt),
     bd = a * named(t, boundAt),
     k = a * named(t, checksAt),
-    flow = (voiceTime(t) * 0.4) % 1,
+    flow = flowClock(t),
     above = GY - NAME_GAP,
     // The checks' frames, 44 px tall, span the model's height from its top to its bottom.
     ys = [GY + 22, MID, GY + GH - 22],
@@ -193,7 +195,8 @@ export function modelRevision(s, t, a) {
       mid: (DOC_X + DOC[0] / 2 + CHK) / 2,
       alpha: k,
       upto: soon(t, checksAt + 0.05 + 0.15 * i, 0.6),
-      flow: (flow + i / 3) % 1,
+      flow: flowClock(t, i / 3),
+      flowEvery: FLOW_EVERY,
     }),
   );
   checkGroup(t, CHK, ys, { alpha: k, at: compileAt });
@@ -257,18 +260,25 @@ export function noWayAround(s, t, a) {
   ctx.restore();
 }
 
-/* A lane of work: its folder, its track, and the points of work on it. */
-function workLane(x0, x1, y, { alpha = 1, flow = null, held = null, gate = null } = {}) {
+/* A lane of work: its folder, its track, and the points of work on it: a point held at `held`, or points flowing on
+ * the flow clock `flow` (flowClock), from the flow clock `since`. */
+function workLane(x0, x1, y, { alpha = 1, flow = null, since = -Infinity, held = null, gate = null } = {}) {
   if (alpha < 0.01) return;
   folderIcon(x0, y - 26, 62, 52, { alpha });
   link(x0 + 70, y, x1, y, { alpha, end: false });
   if (gate !== null) writeGate(gate, y, 92, { alpha, open: 0, single: true });
-  if (held !== null) flowDot(held, y, 10, 0.5, { color: P.ink, alpha });
+  if (held !== null) dot(held, y, 10, { color: P.ink, alpha });
+  // Three points of work stand on the track at a time, evenly spaced, each at the film's flow pace.
   if (flow !== null)
-    for (let k = 0; k < 3; k++) {
-      const q = (flow + k / 3) % 1;
-      flowDot(mix(x0 + 80, x1, q), y, 10, q, { color: P.ink, alpha });
-    }
+    flowAlong(
+      [
+        [x0 + 80, y],
+        [x1, y],
+      ],
+      flow,
+      10,
+      { every: (x1 - x0 - 80) / FLOW_PACE / 3, since, color: P.ink, alpha },
+    );
 }
 
 /* 08.8, last: meanwhile two lanes: the changes that depend on the concept wait at a closed gate under the model being
@@ -298,7 +308,7 @@ export function meanwhile(s, t, a) {
     OUT = 20,
     first = Math.max(GATE + 70, END1 + OUT + measure(WAIT), 600 + nameWidth(DEPEND, 420)),
     right = Math.max(first, END2 + OUT + measure(ON), 600 + measure(OTHER)),
-    S = mix(960 - (520 + first) / 2, 960 - (520 + right) / 2, soon(t, otherAt + 0.05, 0.7)),
+    S = mix(960 - (520 + first) / 2, 960 - (520 + right) / 2, glideShare(t, otherAt + 0.05, (right - first) / 2, 0.7)),
     d = a * named(t, dependAt),
     o = a * named(t, otherAt);
   ctx.save();
@@ -307,7 +317,7 @@ export function meanwhile(s, t, a) {
   workLane(520, END1, Y1, {
     alpha: d,
     gate: GATE,
-    held: mix(700, 1140, soon(t, dependAt + 0.1, 1.4)),
+    held: mix(700, 1140, glideShare(t, dependAt + 0.1, 1140 - 700, 1.4)),
   });
   // The model the changes wait on stands over the gate's near post, linked down to it, so gate and model are one mark.
   modelGrid(GATE - 130, 300, 200, 112, { alpha: d, cell: [3, 1], lit: 1, grow: 1 });
@@ -326,7 +336,8 @@ export function meanwhile(s, t, a) {
     align: "left",
     alpha: a * named(t, waitAt),
   });
-  workLane(520, END2, Y2, { alpha: o, flow: (voiceTime(t) * 0.35) % 1 });
+  // The work on the second lane sets off from its folder as the lane arrives, so it flows in under the lane's name.
+  workLane(520, END2, Y2, { alpha: o, flow: flowClock(t), since: flowClock(otherAt - 0.15) });
   nameText(OTHER, 600, Y2 + 40, {
     align: "left",
     valign: "top",
@@ -364,8 +375,8 @@ export function goalKept(s, t, a) {
     PY = 624,
     al = a * named(t, alignAt),
     q = a * named(t, quietAt),
-    sink = soon(t, quietAt + 0.05, 1.0),
-    flow = (voiceTime(t) * 0.4) % 1;
+    sink = glideShare(t, quietAt + 0.05, 60, 1.0),
+    flow = flowClock(t);
   line(x0, LY, x1, LY, { color: P.ink, alpha: a, width: 5 });
   lock(LOCK, LY, { alpha: a, color: P.ink });
   nameText(L("不能多出重复记录", "No duplicate records"), AXIS, LY - NAME_GAP, {

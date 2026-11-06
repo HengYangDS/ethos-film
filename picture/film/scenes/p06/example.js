@@ -7,7 +7,7 @@
 import { ctx } from "../../canvas.js";
 import { pipelineMark } from "../../drawing/examples.js";
 import { commitRow } from "../../drawing/history.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { dot, measure, ring, stroke } from "../../drawing/strokes.js";
 import { documentIcon, stopSign } from "../../drawing/symbols.js";
@@ -18,8 +18,8 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom } from "../../timing/cues.js";
-import { clamp, mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { clamp, ease, mix, ramp, soon } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 import { agents, card, linkSet } from "../p04/marks.js";
 import { planeState } from "../p05/planes.js";
 
@@ -39,7 +39,6 @@ const AX = 440,
 /* Once the context settles at the top, the example stands this much lower, so its picture, from the context to the
  * dashboard under the row, is balanced on the content centre. */
 const DROP = 60;
-const flowOf = (t) => (voiceTime(t) * 0.4) % 1;
 const agentName = () => L("另一个 Agent", "A second Agent"),
   movedName = () => L("往前走了", "Moved on");
 
@@ -51,17 +50,17 @@ function exampleShift(t, c) {
   const left = AX - 22 - NAME_GAP - measure(agentName()),
     building = 960 - (left + HEAD + COMMIT) / 2,
     checked = 960 - (left + NEW + Math.max(18 + 1.25, measure(movedName()) / 2)) / 2;
-  return mix(building, checked, soon(t, c.changed + 0.05, 0.8));
+  return mix(building, checked, glideShare(t, c.changed + 0.05, building - checked, 0.8));
 }
 
 /* The example's context, the pipeline of part 04: centred by itself while it is the whole picture, at `alone` in the
  * example's frame; large at the right once the second Agent is introduced, gliding there on the Agent's words; then
  * small at the top as the Agent's view builds, named as the example. */
 function exampleContext(t, c, g, { settle = 1, alone = 1110 } = {}) {
-  const x = mix(mix(alone, 1110, soon(t, c.agent + 0.05, 0.8)), 1000, settle),
+  const x = mix(mix(alone, 1110, glideShare(t, c.agent + 0.05, 1110 - alone, 0.8)), 1000, settle),
     m = pipelineMark(x, mix(Y, 222, settle), mix(700, 400, settle), {
       alpha: g,
-      flow: flowOf(t),
+      flow: flowClock(t),
     });
   // The name stands above the large pipeline and slides to its left as it settles at the top.
   const name = L("例子", "The example"),
@@ -77,7 +76,7 @@ function exampleContext(t, c, g, { settle = 1, alone = 1110 } = {}) {
 }
 /* The Agent with its name at its left, arriving on its words. */
 function secondAgent(t, c, g) {
-  const a = g * ramp(t, c.agent - 0.25, 0.3);
+  const a = g * ramp(t, c.agent - 0.3, 0.4);
   agents([[AX, Y]], { alpha: a });
   nameText(agentName(), AX - 22 - NAME_GAP, Y, {
     align: "right",
@@ -85,9 +84,9 @@ function secondAgent(t, c, g) {
   });
   return a;
 }
-/* The branch as the repository holds it: four commits, and a fifth once someone else has written. Its name hangs from
- * `nameTop`, the row's line by default. */
-function branch(t, g, { moved = 0, nameAlpha = g, nameTop = ROW_NAMES } = {}) {
+/* The branch as the repository holds it: four commits, and a fifth once someone else has written: `moved` draws the
+ * line to it and `landed` brings the commit in. Its name hangs from `nameTop`, the row's line by default. */
+function branch(t, g, { moved = 0, landed = moved, nameAlpha = g, nameTop = ROW_NAMES } = {}) {
   commitRow(BRANCH_X, STEP, Y, 4, { alpha: g, single: true });
   nameText(L("分支", "The branch"), BRANCH_X + 1.5 * STEP, nameTop, {
     valign: "top",
@@ -101,7 +100,7 @@ function branch(t, g, { moved = 0, nameAlpha = g, nameTop = ROW_NAMES } = {}) {
     },
     { color: P.ink, alpha: g, width: 2.5 },
   );
-  commitDot(NEW, Y, { alpha: g * ramp(moved, 0.5, 0.4) });
+  commitDot(NEW, Y, { alpha: g * landed });
 }
 /* The plan: a document at its place between the Agent and the gate. */
 const plan = (a) => documentIcon(PLAN_X - 48, Y - 60, 96, 120, { alpha: a, rows: 3 });
@@ -111,8 +110,9 @@ const plan = (a) => documentIcon(PLAN_X - 48, Y - 60, 96, 120, { alpha: a, rows:
  * someone else may have changed things. The branch arrives before the plan and the gate, so its name hangs one gap
  * under its commits until the plan's words bring the row's taller members, and then joins the row's line. */
 export function staleStage(s, t, c, g) {
+  // The context settles at the top by the film's structural glide; its name travels furthest, about 410 px.
   const shift = exampleShift(t, c),
-    settle = soon(t, c.remembers + 0.05, 0.8);
+    settle = glideShare(t, c.remembers + 0.05, 410, 0.8);
   ctx.save();
   ctx.translate(shift, DROP * settle);
   exampleContext(t, c, g, { settle, alone: 960 - shift });
@@ -169,7 +169,9 @@ export function staleStage(s, t, c, g) {
   link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: real });
   branch(t, real, {
     moved: soon(t, c.changed + 0.05, 0.8),
-    nameTop: mix(Y + COMMIT + NAME_GAP, ROW_NAMES, soon(t, c.plan + 0.05, 0.6)),
+    // The new commit lands over 0.45 s as the line reaches it.
+    landed: ramp(t, c.changed + 0.3, 0.45),
+    nameTop: mix(Y + COMMIT + NAME_GAP, ROW_NAMES, glideShare(t, c.plan + 0.05, ROW_NAMES - Y - COMMIT - NAME_GAP, 0.6)),
   });
   nameText(L("别人可能已经改过了", "May have changed"), NEW + 20, Y - 22 - NAME_GAP, {
     align: "right",
@@ -203,9 +205,14 @@ export function checkStage(s, t, c, g) {
   link(AX + 22, Y, PLAN_X - 48, Y, { alpha: g });
   link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: g });
   link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: g });
-  // The write is carried to the gate, which takes it in.
-  const p = clamp((t - c.first1b - 0.1) / 0.5);
-  if (p > 0 && p < 1) dot(mix(PLAN_X + 48, GATE_X - 36, p), Y, 9, { color: P.ink, alpha: g });
+  // The write is carried to the gate, which takes it in: it travels by the film's structural glide and enters and
+  // leaves by its size.
+  const p = glideShare(t, c.first1b + 0.1, GATE_X - 36 - PLAN_X - 48, 0.5);
+  if (p > 0 && p < 1)
+    dot(mix(PLAN_X + 48, GATE_X - 36, p), Y, 9 * ease(p / 0.2) * ease((1 - p) / 0.2), {
+      color: P.ink,
+      alpha: g,
+    });
   branch(t, g, { moved: 1 });
   // ETHOS checks again: a dashed look from the gate along the branch to where the plan expected its head.
   const look = g * named(t, c.checks);
@@ -221,7 +228,7 @@ export function checkStage(s, t, c, g) {
   });
   // The branch has moved on: the ring on the expected head moves to the real one as the clause begins, and reaches it
   // as the words that name the move are said, with its name.
-  const moving = soon(t, c.movedOn + 0.05, 0.6);
+  const moving = glideShare(t, c.movedOn + 0.05, NEW - HEAD, 0.6);
   ring(mix(HEAD, NEW, moving), Y, 18, { color: P.ink, alpha: look, width: 2.5 });
   nameText(movedName(), NEW, ROW_NAMES, {
     valign: "top",
@@ -241,7 +248,7 @@ export function checkStage(s, t, c, g) {
     mid: 340,
     alpha: fresh,
     upto: soon(t, c.fresh + 0.05, 0.8),
-    flow: flowOf(t),
+    flow: flowClock(t),
   });
   nameText(L("刚观察到的事实", "Fresh facts"), (PLAN_X + NEW) / 2, 340 - NAME_GAP + 6, {
     valign: "bottom",
@@ -268,13 +275,13 @@ export function oneStepStage(s, t, c, g) {
     unwritten = 960 - (left + BX + 4 * BSTEP + COMMIT) / 2,
     written = 960 - (left + end + 18 + 1.25) / 2;
   ctx.save();
-  ctx.translate(mix(unwritten, written, soon(t, c.afterwards + 0.05, 0.6)), 0);
+  ctx.translate(mix(unwritten, written, glideShare(t, c.afterwards + 0.05, unwritten - written, 0.6)), 0);
   card(GX - 70, Y - 100, 140, 200, { alpha: g, color: P.ink });
   writeGate(GX, Y, 150, {
     alpha: g,
     color: P.ink,
     single: true,
-    open: soon(t, c.afterwards + 0.05, 0.6),
+    open: glideShare(t, c.afterwards + 0.05, 110, 0.6),
   });
   termRow(t, step, [c.first2], L(["一步完成"], ["as one step"]), [c.oneStep], GX, names, {
     alpha: g,
@@ -299,7 +306,7 @@ export function oneStepStage(s, t, c, g) {
     mid: 330,
     alpha: back,
     upto: soon(t, c.readBack + 0.05, 0.8),
-    flow: flowOf(t),
+    flow: flowClock(t),
   });
   planeState("pass", GX, 330, back * ramp(t, c.confirm - 0.15, 0.4));
   nameText(L("读回来确认", "Read back to confirm"), (GX + end) / 2, 330 - NAME_GAP, {
@@ -331,7 +338,7 @@ export function platformsStage(s, t, c, g) {
     left = Math.min(VX - 60 - 1.25, VX - measure(versionName) / 2),
     fanned = 960 - (left + PX + PW + 1.25) / 2,
     whole = 960 - (left + Math.max(LX + 50 + 1.25, LX + measure(recordName) / 2)) / 2,
-    joined = soon(t, c.recorded + 0.05, 0.8);
+    joined = glideShare(t, c.recorded + 0.05, fanned - whole, 0.8);
   ctx.save();
   ctx.translate(mix(fanned, whole, joined), 0);
   const version = g * named(t, c.version);
@@ -370,7 +377,7 @@ export function platformsStage(s, t, c, g) {
   const kept = g * named(t, c.recorded);
   linkSet(
     ys.map((y) => [PX + PW, y, LX - 56, Y, "hvh"]),
-    { alpha: kept, upto: soon(t, c.recorded + 0.05, 0.6), flow: flowOf(t) },
+    { alpha: kept, upto: soon(t, c.recorded + 0.05, 0.6), flow: flowClock(t) },
   );
   ledger(LX, Y, 100, 130, { alpha: kept });
   nameText(recordName, LX, ends, { valign: "top", alpha: kept });

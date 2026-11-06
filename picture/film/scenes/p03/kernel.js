@@ -4,12 +4,11 @@
 import { paper, papers } from "../p02/drift.js";
 import { ctx } from "../../canvas.js";
 import { writeGate } from "../../drawing/lanes.js";
-import { link } from "../../drawing/links.js";
+import { flowAlong, flowClock, link } from "../../drawing/links.js";
 import {
   box,
   dot,
   fill,
-  flowDot,
   labelSize,
   line,
   measure,
@@ -32,7 +31,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideSteps, voiceTime } from "../../timing/pauses.js";
 
 /* 03.3 A small trust kernel supports the path: the path at the top, the kernel under it on its words. Its three inputs
  * stand at its left, each linked to it on its words: the accepted intent, the fresh facts, the attestations on record.
@@ -52,11 +51,6 @@ import { voiceTime } from "../../timing/pauses.js";
 const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
 /* The shift that centres the extent from x0 to x1 on the frame. */
 export const centring = (x0, x1) => 960 - (x0 + x1) / 2;
-/* A picture built part by part stands centred on what is on screen: it stands at the shift `first` and glides as one
- * to each next shift, over 0.7 s from just after the word that brings the part that changes its extent. Each step is
- * [that word's time, the shift]. */
-export const glide = (t, first, steps) =>
-  steps.reduce((x, [at, to]) => mix(x, to, soon(t, at + 0.05, 0.7)), first);
 export function stageKernel(t, a, c) {
   if (a <= 0) return;
   const PY = 380,
@@ -64,7 +58,7 @@ export function stageKernel(t, a, c) {
     KR = 54,
     ys = [440, 560, 680],
     LOOP = 780,
-    q = (voiceTime(t) * 0.45) % 1;
+    q = flowClock(t);
   const inputNames = L(
       ["已经采纳的意图", "刚观察到的事实", "留下的存证"],
       ["Intent", "Fresh facts", "Attestations"],
@@ -96,7 +90,7 @@ export function stageKernel(t, a, c) {
     pathFrom = KERNEL.KX - 260,
     pathTo = KERNEL.GX + 90,
     whole = centring(left, right),
-    dx = glide(t, whole, [
+    dx = glideSteps(t, whole, [
       [c.in1, centring(left, pathTo + 7)],
       [c.recCut, whole],
     ]);
@@ -199,7 +193,7 @@ export function stageKernel(t, a, c) {
     alpha: gate,
     color: P.ink,
     single: true,
-    open: soon(t, c.check + 0.3, 0.6),
+    open: glideShare(t, c.check + 0.3, 60, 0.6),
   });
   termRow(t, gateName, [c.gateName], [L("再核对一遍", "checks again")], [c.check], GX, namesTop, {
     width: 200,
@@ -229,11 +223,12 @@ export function stageKernel(t, a, c) {
     valign: "top",
     alpha: a * named(t, c.newAtt),
   });
+  // The loop draws on in two legs, the second from where the first ends, as the first completes.
   const back = soon(t, c.newAtt + 0.05, 0.25);
   link(SX + 34, KY, RX, LOOP, { route: "hv", alpha: stamped, upto: back, end: false });
   link(RX, LOOP, IX, ys[2] + 28, {
     route: "hv",
-    alpha: stamped * (back >= 1 ? 1 : 0),
+    alpha: stamped,
     upto: soon(t, c.newAtt + 0.3, 0.3),
     flow: q,
   });
@@ -290,13 +285,17 @@ export function stageLifetimes(t, a, c) {
     },
   );
   // A point runs along each row from the cut, while the voice speaks: the rows' time passing.
-  ys.forEach((y, i) => {
-    const q = (voiceTime(t) * 0.18 + i * 0.33) % 1;
-    flowDot(mix(X0 + 20, X1 - 20, q), y, 6, q, {
-      color: P.ink,
-      alpha: a,
-    });
-  });
+  ys.forEach((y, i) =>
+    flowAlong(
+      [
+        [X0 + 20, y],
+        [X1 - 20, y],
+      ],
+      flowClock(t, i * 0.33),
+      6,
+      { single: true, color: P.ink, alpha: a },
+    ),
+  );
   // Intent: kept in one Change, a bar that runs the rest of the row; a copy compiled from it each time it is needed.
   const kept = a * ramp(t, c.change - 0.15, 0.4);
   folderIcon(M0 - 4, ys[0] - 44, 56, 44, { alpha: a * ramp(t, c.intent - 0.15, 0.4) });
@@ -341,12 +340,12 @@ export function stageLifetimes(t, a, c) {
   );
   check(M0 + 240, ys[2] - 4, 26, {
     color: P.ink,
-    alpha: p1 * gone * soon(t, c.carried + 0.4, 0.3),
+    alpha: p1 * gone * ramp(t, c.carried + 0.35, 0.4),
     width: 3.5,
   });
   cross(M0 + 500, ys[2], 22, {
     color: P.ink,
-    alpha: p2 * gone * soon(t, c.discarded + 0.4, 0.3),
+    alpha: p2 * gone * ramp(t, c.discarded + 0.35, 0.4),
     width: 3.5,
   });
   line(M0 + 560, ys[2], M0 + 560 + 100 * soon(t, c.again2, 0.6), ys[2], {
@@ -405,7 +404,7 @@ export function stageScope(t, a, c) {
     cardAt = c.att - L(0.15, 0.45),
     // Before the attestation's name joins it, the heading reaches as far as its first part does.
     headRight = 1000 + L(measure(head.join("")) / 2 - measure(head[1]), measure(head[0]) / 2),
-    dx = glide(t, centring(left, headRight), [
+    dx = glideSteps(t, centring(left, headRight), [
       [cardAt, centring(left, scopeEnd)],
       [c.outside, centring(left, right)],
     ]);
@@ -417,7 +416,7 @@ export function stageScope(t, a, c) {
     headBottom = CY - H / 2 - NAME_GAP - 40 * soon(t, c.scope - 0.5, 0.5),
     joins = c.att - c.longTerm >= 1.5 ? soon(t, c.att - 0.5, 0.5) : 1,
     card = a * ramp(t, cardAt, 0.4),
-    q = (voiceTime(t) * 0.4) % 1;
+    q = flowClock(t);
   kernelIcon(KX, CY, 44, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
   nameText(kernelName, KX, namesTop, {
     valign: "top",

@@ -3,7 +3,7 @@
  * its own; once live, its actual benefit shows only in real use and needs four things; then the journey is seen
  * whole, with the stretches not yet accepted drawn dashed. */
 
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { ctx } from "../../canvas.js";
 import { box, line, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, clock, lock, person, seal } from "../../drawing/symbols.js";
@@ -17,7 +17,7 @@ import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideSteps, glideTime } from "../../timing/pauses.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
 /* The proof: a check in its ring, the executed check of one commit. */
@@ -70,18 +70,18 @@ export function release(s, t, a) {
     // The maintainer's head is the tallest of the upper row's marks; the commit's ring reaches lowest under the rail.
     above = Math.min(UP - 26, UP - 22, UP + 4 - 2.15 * 15 * 1.15) - NAME_GAP,
     below = rowNameTop([RAIL_Y + 23, RAIL_Y + 19]),
-    flow = (voiceTime(t) * 0.4) % 1,
     c = a * named(t, commitAt),
     p = a * named(t, proofAt),
     at = a * named(t, attestAt),
     m = a * named(t, reviewAt),
     br = a * named(t, branchAt),
     each = a * named(t, eachAt);
-  // The rail runs on across the band until the platforms are named, then ends where it branches to them, a moment
-  // before their name stands on its line.
-  const end = mix(1760 + S, BX + 90, soon(t, eachAt - 0.8, 0.5));
+  // The rail runs on across the band until the platforms are named, then draws back by the film's structural glide to
+  // end where it branches to them, 0.3 s before their name's word.
+  const back = 1760 + S - BX - 90,
+    end = mix(1760 + S, BX + 90, glideShare(t, eachAt - 0.3 - glideTime(back, 0.5), back, 0.5));
   journeyRail(220 + S, end, { alpha: a });
-  railFlow(t, 220 + S, end, { alpha: a });
+  railFlow(t, 220 + S, end, { alpha: a, longest: 1540 });
   // The finished work under the Agent that finished it, then the commit it became, proved and attested; the Agent
   // steps back as the proof begins and the work moves on, and the name of the finished work leaves with them.
   const finisher = a * (1 - ramp(t, proofAt + 0.3, 0.5));
@@ -132,7 +132,8 @@ export function release(s, t, a) {
       mid: BX + 250,
       alpha: each,
       upto: soon(t, eachAt + 0.05 + 0.25 * i, 0.6),
-      flow: (flow + 0.5 * i) % 1,
+      flow: flowClock(t, 0.5 * i),
+      flowEvery: FLOW_EVERY,
     }),
   );
   platforms(PX, PY, { alpha: each, w: 140, h: 76 });
@@ -144,19 +145,19 @@ export function release(s, t, a) {
     valign: "top",
     alpha: a * named(t, ownAt),
   });
-  // The work travels on: proved, reviewed, onto the protected branch and out to publication.
-  // Each leg takes at least 0.9 s and longer in proportion to its length, so the work keeps one pace on the rail.
-  let wx = WX,
-    from = WX;
-  [
-    [proofAt, CX + 36],
-    [reviewAt, MX + 30],
-    [branchAt, BX + 90],
-    [publishAt, BX + 70],
-  ].forEach(([cueAt, to]) => {
-    wx = mix(wx, to, soon(t, cueAt + 0.05, Math.max(0.9, Math.abs(to - from) / 390)));
-    from = to;
-  });
+  // The work travels on: proved, reviewed, onto the protected branch and out to publication, each leg by the film's
+  // structural glide, so the work keeps one pace on the rail.
+  const wx = glideSteps(
+    t,
+    WX,
+    [
+      [proofAt, CX + 36],
+      [reviewAt, MX + 30],
+      [branchAt, BX + 90],
+      [publishAt, BX + 70],
+    ],
+    0.9,
+  );
   // It leaves the rail as the links to the platforms draw out from where it stops.
   work(wx, RAIL_Y, a * (1 - ramp(t, Math.max(publishAt + 0.6, eachAt), 0.4)));
 }
@@ -208,7 +209,6 @@ export function liveUse(s, t, a) {
     NAMES = NEED_Y[2],
     ats = [versionAt, envAt, baseAt, periodAt],
     back = soon(t, versionAt - 0.2, 0.7),
-    flow = (voiceTime(t) * 0.4) % 1,
     v = a * named(t, liveAt),
     q = a * named(t, worksAt),
     u = a * named(t, useAt);
@@ -238,7 +238,8 @@ export function liveUse(s, t, a) {
       mid: QX + 150,
       alpha: n,
       upto: soon(t, ats[i] + 0.05, 0.6),
-      flow: (flow + i / 4) % 1,
+      flow: flowClock(t, i / 4),
+      flowEvery: FLOW_EVERY,
     });
     needMark(i, NEED_X, y, n);
     nameText(v2, NEED_X + 50, y, {

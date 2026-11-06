@@ -13,7 +13,8 @@ import { P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { clamp, mix, ramp, soon } from "../../timing/easing.js";
+import { clamp, ease, mix, ramp } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
 /* The index: a rail of three stations under its heading. While a difficulty is introduced the index stands at the
@@ -61,7 +62,9 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
   const [before, after] = dockReach(heading, names, shown),
     [from, to] = centreReach(
       names,
-      ats.map((at) => soon(t, at + 0.05, 0.7)),
+      ats.map((at, i) =>
+        glideShare(t, at + 0.05, (Math.max(CENTRE_R, halfName(names[i])) - CENTRE_POINT) / 2, 0.7),
+      ),
     ),
     xs = INDEX_XS.map((x) => x + mix((from - to) / 2, (before - after) / 2, k));
   stroke(
@@ -72,12 +75,13 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
       }),
     { color: P.line, width: 2.5 },
   );
-  // The points of the stations not yet named: one fill, so they read as one mark with the rail.
+  // The points of the stations not yet named: one fill, so they read as one mark with the rail. A point shrinks away
+  // over the first half of its station ring's growth in its place, before the station's number joins the ring.
   fill(
     () =>
       xs.forEach((x, i) => {
-        if (shown[i] > 0) return;
-        const r = pointR;
+        const r = pointR * (1 - ease(shown[i] / 0.45));
+        if (r < 0.3) return;
         ctx.moveTo(x + r, Y);
         ctx.arc(x, Y, r, 0, Math.PI * 2);
       }),
@@ -89,7 +93,9 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
     text(String(i + 1), x, Y + 1, mix(30, 18, k), {
       role: "mark",
       align: "center",
-      alpha: clamp((shown[i] - 0.4) / 0.6) * mix(0.58, 1, levels[i]),
+      // The number joins by its short fade from just after the station's point has shrunk away (0.03 s after its
+      // words), so it never stands over the point and never takes firm ink at once.
+      alpha: ramp(t, ats[i] + 0.04, 0.4) * mix(0.58, 1, levels[i]),
     });
   });
   railNames(names, xs, Y + R, {
@@ -194,30 +200,27 @@ scenes["02"] = function (s, t) {
     fight: ["互相打架", "contradict each other"],
     burden: ["新的负担", "a burden of their own"],
   });
-  // The index stands at the centre while each difficulty is introduced and at the top while it is shown. It rises on
-  // the last word that begins at least 0.32 s before the words of each illustration's first mark, or 0.45 s before
-  // them after a longer pause, so it has passed above the stage when the stage cuts in on those words and the stage's
-  // first name stands on them, while the docked index never stands alone for long; it comes down just after the cut
-  // that ends the last, so it never passes through a stage's marks.
+  // The index stands at the centre while each difficulty is introduced and at the top while it is shown; it rises and
+  // comes down by the film's structural glide over its 374 px. It rises on the last word that begins at least 0.7 s
+  // before the words of each illustration's first mark, and no earlier than 0.95 s before them, so it is most of the
+  // way up when the stage cuts in on those words and the stage's first name stands on them, while the docked index
+  // never stands alone for long; it comes down just after the cut that ends the last, so it never passes through a
+  // stage's marks.
   const riseFor = (at) => {
     let start = s.words[0].start;
     for (const w of s.words) {
-      if (w.start > at - 0.32) break;
+      if (w.start > at - 0.7) break;
       start = w.start;
     }
-    return Math.max(start + 0.05, at - 0.45);
+    return Math.max(start + 0.05, at - 0.95);
   };
   const [upP, upE, upB] = [c.pCut, c.eCut, c.bCut].map(riseFor);
-  const k =
-    soon(t, upP, 0.6) -
-    soon(t, c.second + 0.2, 0.6) +
-    soon(t, upE, 0.6) -
-    soon(t, c.third + 0.2, 0.6) +
-    soon(t, upB, 0.6);
+  const move = (at) => glideShare(t, at, 540 - DOCK_Y);
+  const k = move(upP) - move(c.second + 0.2) + move(upE) - move(c.third + 0.2) + move(upB);
   // The kicker shows while the index is docked: it fades in over the slow end of each rise, as the heading leaves the
   // centre, and out over the slow start of each descent, as the heading returns there.
   const docked = (up, down = Infinity) =>
-    ramp(t, up + 0.2, 0.35) * (1 - ramp(t, down - 0.05, 0.25));
+    ramp(t, up + 0.75, 0.45) * (1 - ramp(t, down - 0.05, 0.25));
   const kicker = docked(upP, c.second + 0.2) + docked(upE, c.third + 0.2) + docked(upB);
   // The difficulty being told at full ink, the others at the second level; in the last thought all three step back.
   const told = [

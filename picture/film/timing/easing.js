@@ -23,6 +23,3 @@ const bezier = (x1, y1, x2, y2) => (q) => {
 };
 const standard = bezier(0.4, 0, 0.2, 1);
 export const soon = (t, start, duration = 0.55) => standard((t - start) / duration);
-/* A looping flow (dots along a path, a widening pulse): each pass enters at its start and leaves at its end, so a
- * wrap never pops a mark back to its beginning. `q` is the pass phase in [0, 1). */
-export const pass = (q, edge = 0.12) => clamp(q / edge) * clamp((1 - q) / edge);

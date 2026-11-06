@@ -6,7 +6,7 @@
  * never arrives beyond the safe area. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { dot, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { person } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
@@ -15,7 +15,6 @@ import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
 import { docMark } from "../p08/rail.js";
 import { verdictMark } from "../p04/marks.js";
 import {
@@ -109,7 +108,6 @@ export function nonPassStage(s, t, c, g) {
   const x = 960 - buildingReach(t, parts(c)) / 2,
     col = columns(),
     em = labelSize(LABEL),
-    flow = (voiceTime(t) * 0.45) % 1,
     names = outcomeNames(),
     quals = outcomeQuals(),
     things = thingNames(),
@@ -145,7 +143,8 @@ export function nonPassStage(s, t, c, g) {
       mid: x + col.trunk,
       alpha: on,
       upto: soon(t, ats[i] + 0.05, 0.5),
-      flow: (flow + i / 5) % 1,
+      flow: flowClock(t, i / 5),
+      flowEvery: FLOW_EVERY,
     });
     thingMark(i, x + col.marks, THING_ROWS[i], on);
     nameText(name, x + col.things, THING_ROWS[i], {

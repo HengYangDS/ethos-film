@@ -2,11 +2,11 @@
  * the three verdict shapes. Panels are outlines, never fills, and every mark here is paper or line on the ink field. */
 
 import { ctx } from "../../canvas.js";
-import { along, rounded } from "../../drawing/links.js";
-import { box, flowDot, ring, stroke, text } from "../../drawing/strokes.js";
+import { FLOW_EVERY, along, flowAlong, rounded } from "../../drawing/links.js";
+import { box, ring, stroke, text } from "../../drawing/strokes.js";
 import { check, stopSign } from "../../drawing/symbols.js";
 import { P } from "../../palette.js";
-import { clamp } from "../../timing/easing.js";
+import { ease } from "../../timing/easing.js";
 
 /* A card: a rounded outline that holds a text or a few records. */
 export function card(x, y, w, h, { alpha = 1, color = P.line, dash = null, width = 2.5 } = {}) {
@@ -70,7 +70,8 @@ export function agents(points, { alpha = 1, size = 1, color = P.ink } = {}) {
 
 /* Several relations drawn as one mark: their orthogonal routes one stroke and their quiet end points one stroke of
  * small discs, so links that leave one source together are named once rather than waiting as members. Each route is
- * [x1, y1, x2, y2, kind, mid] as `link` takes them; `flow`, a phase in voice time, runs one point along each. */
+ * [x1, y1, x2, y2, kind, mid] as `link` takes them; `flow`, a flow's clock (flowClock), runs a flow along each, the
+ * routes' flows setting off in turn. */
 export function linkSet(
   routes,
   { alpha = 1, upto = 1, color = P.line, width = 2, flow = null, end = true } = {},
@@ -111,22 +112,22 @@ export function linkSet(
       ),
     { color, alpha, width },
   );
-  const ends = end ? clamp((upto - 0.9) / 0.1) : 0;
-  if (ends > 0)
+  // The end points land as the routes arrive: they grow to their size and ink over the last tenth of the drawing.
+  const ends = end ? ease((upto - 0.9) / 0.1) : 0;
+  if (ends > 0.07)
     stroke(
       () =>
         paths.forEach((points) => {
           const [x, y] = points.at(-1);
-          ctx.moveTo(x + 2.25, y);
-          ctx.arc(x, y, 2.25, 0, Math.PI * 2);
+          ctx.moveTo(x + 2.25 * ends, y);
+          ctx.arc(x, y, 2.25 * ends, 0, Math.PI * 2);
         }),
-      { color, alpha: alpha * ends, width: 4.5 },
+      { color, alpha: alpha * ends, width: 4.5 * ends },
     );
   if (flow !== null)
-    paths.forEach((points, k) => {
-      const q = (flow + k / paths.length) % 1;
-      if (q < upto) flowDot(...along(points, q).point, width + 2, q, { color, alpha });
-    });
+    paths.forEach((points, k) =>
+      flowAlong(points, flow + (k / paths.length) * FLOW_EVERY, width + 2, { upto, color, alpha }),
+    );
 }
 
 /* The three verdicts as shapes, each beside its name: pass a check, block a stop bar, unknown a question mark in a

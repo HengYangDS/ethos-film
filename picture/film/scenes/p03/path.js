@@ -5,8 +5,8 @@
 import { datumMark } from "../claim.js";
 import { paper } from "../p02/drift.js";
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
-import { dot, flowDot, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
+import { flowAlong, flowClock, link } from "../../drawing/links.js";
+import { dot, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
 import { agent, check, person } from "../../drawing/symbols.js";
 import { kernelIcon, recoverIcon } from "../../drawing/workspace.js";
 import { clearOfTitle } from "../../framing/chapters.js";
@@ -16,7 +16,7 @@ import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { drawShare, glideShare, voiceTime } from "../../timing/pauses.js";
 
 /* A path from x0 to x1 at y, in pieces that leave the rings of the stations at `gaps` clear, so no line runs under a
  * station's glyph; `dash` draws it dashed from `split` on. */
@@ -84,8 +84,7 @@ export function stageName(s, t, a, c) {
     Y = NAME_PATH_Y(),
     X0 = (xs[0] + xs[1]) / 2,
     X1 = (xs[3] + xs[4]) / 2,
-    lights = [c.w1, c.w2, c.w3, c.w4, c.w5],
-    q = (voiceTime(t) * 0.35) % 1;
+    lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
   nameText("ETHOS", 960, 350, { alpha: g * named(t, c.first - 0.25) });
   stroke(
     () =>
@@ -105,14 +104,25 @@ export function stageName(s, t, a, c) {
       alpha: open * mix(0.75, 1, lit),
     });
   });
-  // A different path, drawn on its words from the datum, the claim's point, at its start, and named at its end.
-  const drawn = soon(t, c.otherPath - 0.1, 0.9),
+  // A different path, drawn on its words from the datum, the claim's point, at its start, and named at its end; its end
+  // point leads it out as a stroke drawing on (drawShare), from just before its ink arrives, so the path nears its name
+  // within half a second of standing.
+  const drawn = drawShare(t, c.otherPath - 0.2, X1 - X0 - 14, 0.9),
     reach = mix(X0 + 14, X1, drawn),
     on = a * ramp(t, c.otherPath - 0.15, 0.4);
   datumMark(X0, Y, 14, on);
   line(X0 + 14, Y, reach, Y, { color: P.ink, alpha: on, width: 3 });
   dot(reach, Y, 7, { color: P.ink, alpha: on });
-  if (drawn >= 1) flowDot(mix(X0 + 14, X1, q), Y, 6, q, { color: P.ink, alpha: on });
+  // Once it is drawn, points run along it.
+  flowAlong(
+    [
+      [X0 + 14, Y],
+      [X1, Y],
+    ],
+    flowClock(t),
+    6,
+    { upto: drawn, color: P.ink, alpha: on },
+  );
   nameText(L("另一条路", "A different path"), X1 + 7 + NAME_GAP, Y, {
     align: "left",
     alpha: a * named(t, c.otherPath),
@@ -146,15 +156,19 @@ export function stageName(s, t, a, c) {
  * the last promise, so it reads as set apart from the list rather than as a fourth promise. */
 const PATH_LEN = 1080,
   PROMISE_PITCH = 80;
+/* The larger of two reaches, joined over about `s` px so that a picture centred on it never sets off at speed when
+ * one reach passes the other. */
+const softMax = (a, b, s = 80) => (a + b + Math.hypot(a - b, s)) / 2;
 export function stagePath(t, a, c) {
   if (a <= 0) return;
   // The path draws out from under the travellers as the stage opens, so the picture is never thin for long; they stand
   // on its start, so it is one mark with them, named by their heading, until its own name stands at its end on its
-  // words. It draws out over 1.8 s, and over 2.2 s in English, whose longer heading its end must pass alone before the
-  // picture glides, so that its end, which travels furthest, never moves more than about 32 px a frame.
+  // words. Its end, which travels furthest, leads it out as a stroke drawing on (drawShare) over 1.8 s, and over 2 s in
+  // English, whose longer heading its end must pass alone before the picture glides; once the picture glides, the end
+  // and the travellers each move at half the drawing's pace.
   const nameAt = c.reliable,
     from = c.pCut + 0.18,
-    drawn = soon(t, from, L(1.8, 2.2)),
+    drawn = drawShare(t, from, PATH_LEN, L(1.8, 2.0)),
     on = a * ramp(t, from - 0.05, 0.4),
     endName = L("靠得住的路", "One reliable path"),
     // The travellers' heading: Chinese builds it as the voice names them, the people and then the Agents with them;
@@ -163,25 +177,20 @@ export function stagePath(t, a, c) {
     travellers = party.join(""),
     // While the Chinese heading names only the people, the person ends what stands, 70 px right of the path's start;
     // the Agent arrives with its name, and the picture glides to the whole heading as they join it.
+    alone = Math.max(60, measure(party[0])),
     heading = en
       ? measure(travellers)
-      : mix(Math.max(60, measure(party[0])), measure(travellers), soon(t, c.agents + 0.05, 0.7)),
+      : mix(alone, measure(travellers), glideShare(t, c.agents + 0.05, (measure(travellers) - alone) / 2, 0.7)),
     // Where the path starts: the picture spans from it to the end of the travellers' heading, which starts 10 px
     // right of it, or to the path's end and, once it is said, the name there, whichever reaches further, and stands
-    // centred.
-    X0 =
-      960 -
-      Math.max(
-        10 + heading,
-        PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * soon(t, nameAt - 0.1, 0.6),
-      ) /
-        2,
-    PY = mix(560, 380, soon(t, c.three + 0.05, 0.7)),
+    // centred. The two reaches meet by a soft maximum, so the picture sets off gently as the path passes the heading.
+    named2 = glideShare(t, nameAt - 0.1, (NAME_GAP + measure(endName)) / 2, 0.6),
+    X0 = 960 - softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2,
+    PY = mix(560, 380, glideShare(t, c.three + 0.05, 180, 0.7)),
     X1 = X0 + PATH_LEN,
     reach = mix(X0, X1, drawn),
     // The name stands at the path's end, and never left of the end of the travellers' heading.
     nameX = Math.max(reach + 7 + NAME_GAP, X0 + 10 + measure(travellers) - measure(endName)),
-    q = (voiceTime(t) * 0.35) % 1,
     names = STATION_NAMES(),
     xs = railStations(names, X0 + 240, X1 - 60),
     sts = [c.st1, c.st2, c.st3];
@@ -193,8 +202,25 @@ export function stagePath(t, a, c) {
     { alpha: on },
   );
   dot(reach, PY, 7, { color: P.ink, alpha: on });
-  // A point runs along the path as far as it is drawn, so it arrives with the path rather than when it is whole.
-  flowDot(mix(X0, reach, q), PY, 6, q, { color: P.ink, alpha: on });
+  // Points run along the path as far as it is drawn, so they arrive with the path rather than when it is whole: each
+  // stands at its distance from the start, so the path drawing on never moves them. A point leaves by its size before
+  // a station that stands on the path and enters again past it.
+  flowAlong(
+    [
+      [X0, PY],
+      [reach, PY],
+    ],
+    flowClock(t),
+    6,
+    {
+      // The path grows, so its dots keep one period whatever its length: 1.6 s, 288 px apart, out of step with the
+      // stations' pitch of about 390 px, so the dots never all shrink at the stations at once.
+      every: 1.6,
+      clear: xs.map((x, i) => [x, PY, 28, ramp(t, sts[i] - 0.15, 0.4)]),
+      color: P.ink,
+      alpha: on,
+    },
+  );
   nameText(endName, nameX, PY, {
     align: "left",
     alpha: a * named(t, nameAt),

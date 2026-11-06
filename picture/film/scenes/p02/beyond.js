@@ -2,9 +2,9 @@
  * "all tests pass", which shows only that the tests someone wrote have passed. */
 
 import { CLAIM_DATUM, claimPanel, claimWidth } from "../claim.js";
-import { centring, glide } from "../p03/kernel.js";
+import { centring } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { box, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { illustrative } from "../../framing/chapters.js";
 import { building, listIn, listLevel, named } from "../../naming/lists.js";
@@ -12,7 +12,7 @@ import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideSteps } from "../../timing/pauses.js";
 
 /* 02.4 Each step's evidence is a short solid block, and the claim made from it an outline that grows out of the block
  * on the claim's words and runs far past it: one machine and everything, a merge and a release, a deployment and actual
@@ -118,7 +118,7 @@ export function stageTests(t, a, c) {
     enoughName = L("这些测试够不够", "Whether those tests are enough"),
     reachLeft = (cols * S) / 2 + NAME_GAP + measure(writtenName),
     reachRight = Math.max((cols * S) / 2, claimWidth() / 2 + CLAIM_DATUM, measure(enoughName) / 2),
-    dx = glide(t, 0, [[c.written, centring(960 - reachLeft, 960 + reachRight)]]),
+    dx = glideSteps(t, 0, [[c.written, centring(960 - reachLeft, 960 + reachRight)]]),
     PY = 380,
     GX = 960 + dx,
     GY = 650,
@@ -126,7 +126,7 @@ export function stageTests(t, a, c) {
     top = GY - (rows * S) / 2;
   claimPanel(t, GX, PY, { alpha: a });
   const tests = a * ramp(t, c.written - 0.15, 0.4),
-    q = (voiceTime(t) * 0.45) % 1;
+    q = flowClock(t);
   // The cells: the tests written are the first three of the first two rows, the rest of the requirement around them.
   const cells = (pick) => () => {
     for (let i = 0; i < cols; i++)

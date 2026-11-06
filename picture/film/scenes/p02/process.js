@@ -9,7 +9,8 @@ import { NAME_GAP, nameText } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { clamp, mix, ramp, soon } from "../../timing/easing.js";
+import { clamp, mix, ramp } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 
 /* A record of the process: a document whose middle row is the rule it keeps; `stale` dims it to a dashed outline. */
 function record(x, y, w, h, { alpha = 1, stale = 0 } = {}) {
@@ -48,7 +49,7 @@ export function stageLedgers(t, a, c) {
     ats = [c.register, c.ledger, c.copyRule],
     stale = ramp(t, c.stale - 0.15, 0.4),
     fight = ramp(t, c.fight - 0.15, 0.4),
-    sink = 28 * soon(t, c.burden + 0.05, 0.6),
+    sink = 28 * glideShare(t, c.burden + 0.05, 28, 0.6),
     SY = 700 + sink;
   line(xs[0] - W / 2 - 40, SY, xs[2] + W / 2 + 40, SY, { color: P.ink, alpha: a, width: 3 });
   nameText(L("加流程", "More process"), 960, SY + NAME_GAP, {

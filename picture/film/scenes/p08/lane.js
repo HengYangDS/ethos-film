@@ -4,20 +4,20 @@
  * next takes over by reading, in ETHOS's order, fresh facts, the Change and the attestations on record. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { dot, labelSize, measure, ring } from "../../drawing/strokes.js";
 import { agent, clock, seal } from "../../drawing/symbols.js";
 import { bubble, folderIcon } from "../../drawing/workspace.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { clearOfTitle } from "../../framing/chapters.js";
-import { listIn, named } from "../../naming/lists.js";
+import { listIn, named, reachAt } from "../../naming/lists.js";
 import { NOTE, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideSteps } from "../../timing/pauses.js";
 import { nameWidth } from "../p07/example.js";
 import { RAIL_Y, docMark, journeyRail, ordinal, railFlow, work } from "./rail.js";
 
@@ -103,7 +103,7 @@ export function lane(s, t, a) {
     upto: soon(t, laneAt + 0.05, 0.8),
     end: false,
   });
-  writeGate(x3, RAIL_Y, 110, { alpha: shown(3), open: soon(t, writeAt + 0.05, 0.6) });
+  writeGate(x3, RAIL_Y, 110, { alpha: shown(3), open: glideShare(t, writeAt + 0.05, 70, 0.6) });
   docMark(x4 - 45, RAIL_Y - 57, 90, 115, { alpha: shown(4), rows: 3 });
   railNames(STATIONS(), xs, RAIL_Y + 85, {
     alpha: level,
@@ -143,14 +143,19 @@ export function lane(s, t, a) {
     alpha: a * listIn(t, lease, 1),
     set: "08.2:lease",
   });
-  // The work travels on: into the Change, into the lane, up to the gate, and through it once the write may go ahead.
-  let wx = x0 + REQ[0] / 2 + 22;
-  [
-    [changeAt, x1 + 75 + 22],
-    [laneAt, x2 + 36 + 26],
-    [fileAt, x3 - 30 - 24],
-    [writeAt, x3 + 30 + 26],
-  ].forEach(([at, to]) => (wx = mix(wx, to, soon(t, at + 0.05, 0.9))));
+  // The work travels on: into the Change, into the lane, up to the gate, and through it once the write may go ahead,
+  // each leg by the film's structural glide.
+  const wx = glideSteps(
+    t,
+    x0 + REQ[0] / 2 + 22,
+    [
+      [changeAt, x1 + 75 + 22],
+      [laneAt, x2 + 36 + 26],
+      [fileAt, x3 - 30 - 24],
+      [writeAt, x3 + 30 + 26],
+    ],
+    0.9,
+  );
   work(wx, RAIL_Y, a * clearOfTitle(s, t, RAIL_Y));
   ctx.restore();
 }
@@ -208,32 +213,27 @@ export function handoff(s, t, a) {
       ])
       .sort((p, q) => p[0] - q[0]);
   // How far the sources reach at t: a part that reaches further than those before it widens them, gliding from just
-  // after its words.
-  let reach = parts[0][1],
-    widest = reach;
-  for (const [at, w] of parts.slice(1)) {
-    if (w <= widest) continue;
-    reach += (w - widest) * soon(t, at + 0.05, 0.7);
-    widest = w;
-  }
+  // after its words (reachAt).
+  const reach = reachAt(t, parts[0][1], parts.slice(1));
   const S = 960 - (560 - 320 - 2 + TEXT_X + reach) / 2,
-    reading = soon(t, factsAt - 0.4, 0.8),
+    // The stage steps to its place by the structural glide over that step.
+    reading = glideShare(t, factsAt - 0.4, 960 - (560 + 820) / 2 - (960 - (560 - 320 - 2 + TEXT_X + parts[0][1]) / 2), 0.8),
     off = mix(960 - (560 + 820) / 2, S, reading),
     AX = 560 + off,
     BX = 820 + off,
     AY = 410,
     // The rail's stretch beyond the new Agent draws back on its own, slower than the step, so no part of the rail
     // travels more than a few pixels a frame.
-    railEnd = BX + 60 + 280 * (1 - soon(t, factsAt - 0.4, 1.2)),
+    railEnd = BX + 60 + 280 * (1 - glideShare(t, factsAt - 0.4, 280, 1.2)),
     ended = ramp(t, endsAt - 0.15, 1.2),
-    passed = soon(t, overAt + 0.05, 0.9),
+    passed = glideShare(t, overAt + 0.05, 820 - 560, 0.9),
     b = a * named(t, overAt),
     m = a * named(t, memoryAt),
     WX = mix(AX, BX, passed),
-    flow = (voiceTime(t) * 0.4) % 1;
+    flow = flowClock(t);
   journeyRail(AX - 320, BX + 60, { alpha: a });
   journeyRail(BX + 60, railEnd, { alpha: a });
-  railFlow(t, AX - 320, railEnd, { alpha: a });
+  railFlow(t, AX - 320, railEnd, { alpha: a, longest: BX + 340 - (AX - 320) });
   // The work halfway, under the Agent working on it; the link passes to the next Agent with the work.
   work(WX, RAIL_Y, a);
   nameText(L("做到一半", "Halfway through"), WX, RAIL_Y + 30, {
@@ -277,7 +277,8 @@ export function handoff(s, t, a) {
       mid: ORDER_X + S - 60,
       alpha: r,
       upto: soon(t, Math.max(terms[i], factsAt + 0.45) + 0.05, 0.6),
-      flow: (flow + i / 3) % 1,
+      flow: flowClock(t, i / 3),
+      flowEvery: FLOW_EVERY,
     });
     ordinal(i + 1, ORDER_X + S + 4, y, r);
     sourceMark(i, ICON_X + S, y, r);

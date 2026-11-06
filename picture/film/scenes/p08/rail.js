@@ -2,11 +2,11 @@
  * stations of the journey share. */
 
 import { ctx } from "../../canvas.js";
-import { dot, flowDot, line, ring, stroke, text } from "../../drawing/strokes.js";
+import { FLOW_EVERY, FLOW_PACE, flowAlong, flowClock } from "../../drawing/links.js";
+import { dot, line, ring, stroke, text } from "../../drawing/strokes.js";
 import { documentIcon } from "../../drawing/symbols.js";
 import { P } from "../../palette.js";
 import { clamp, mix } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
 
 /* The journey's rail stands on the content centre line from 08.1 to 08.6, so each stage that cuts in continues the
  * same line; it is four pixels wide in the line colour, a firm structure the stations stand on. */
@@ -15,11 +15,20 @@ export function journeyRail(x0, x1, { alpha = 1, upto = 1, dash = null } = {}) {
   if (alpha < 0.01 || upto <= 0) return;
   line(x0, RAIL_Y, mix(x0, x1, clamp(upto)), RAIL_Y, { color: P.line, alpha, width: 4, dash });
 }
-/* The way the journey runs: one quiet point travels the rail in voice time, so the rail rests in the quiet between
- * thoughts and moves while the voice speaks. */
-export function railFlow(t, x0, x1, { alpha = 1, rate = 0.12 } = {}) {
-  const q = (voiceTime(t) * rate) % 1;
-  flowDot(mix(x0, x1, q), RAIL_Y, 6, q, { color: P.line, alpha });
+/* The way the journey runs: one quiet point travels the rail at the film's flow pace, in voice time, so the rail rests
+ * in the quiet between thoughts and moves while the voice speaks. A point sets off as the last one leaves the rail at
+ * its `longest`, so one stands on the rail at a time; a rail whose end draws back passes its longest, so its points
+ * keep one period and never jump as it shortens. */
+export function railFlow(t, x0, x1, { alpha = 1, longest = x1 - x0 } = {}) {
+  flowAlong(
+    [
+      [x0, RAIL_Y],
+      [x1, RAIL_Y],
+    ],
+    flowClock(t),
+    6,
+    { every: Math.max(FLOW_EVERY, Math.abs(longest) / FLOW_PACE), color: P.line, alpha },
+  );
 }
 /* The work the requirement has become: a firm point with its ring, standing on the rail. Its ring is a size no other
  * mark of the part shares (seals, proofs and commits are rings too), so it is never read as one of a list of rings

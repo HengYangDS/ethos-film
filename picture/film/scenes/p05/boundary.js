@@ -7,7 +7,7 @@
  * glide together to where they stand centred as one group. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { labelSize, measure, ring, stroke } from "../../drawing/strokes.js";
 import { person } from "../../drawing/symbols.js";
 import { terminalIcon } from "../../drawing/workspace.js";
@@ -17,7 +17,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare } from "../../timing/pauses.js";
 import { card } from "../p04/marks.js";
 import { PLANE_H, PLANE_W, plane } from "./planes.js";
 
@@ -52,7 +52,7 @@ function planeAt(t, c) {
   const alone = 960 - PLANE_W / 2,
     whole = FRAME_W + RUN + IDENTITY_R + Math.max(IDENTITY_R, columnHalf()),
     together = 960 - whole / 2 + PAD;
-  return mix(alone, together, soon(t, Math.min(c.independent, c.rerun) + 0.05, 0.8));
+  return mix(alone, together, glideShare(t, Math.min(c.independent, c.rerun) + 0.05, alone - together, 0.8));
 }
 
 /* A program: the film's window for code, with two ruled lines in it, drawn as one mark. */
@@ -80,7 +80,7 @@ function identity(x, y, alpha) {
 export function boundaryStage(s, t, c, g) {
   if (g <= 0) return;
   const px = planeAt(t, c),
-    flow = (voiceTime(t) * 0.45) % 1,
+    flow = flowClock(t),
     n = names(),
     em = labelSize(LABEL),
     LX = px + PROGRAM[0] / 2,
@@ -117,7 +117,8 @@ export function boundaryStage(s, t, c, g) {
     link(CX + side * (IDENTITY_R + 10), ROW_Y, x - side * (PROGRAM[0] / 2 + 10), ROW_Y, {
       alpha,
       upto: soon(t, at + 0.05, 0.5),
-      flow: (flow + i / 2) % 1,
+      flow: flowClock(t, i / 2),
+      flowEvery: FLOW_EVERY,
     });
     link(x, ROW_Y - rise, x, PLANE_TOP + PLANE_H + 8, {
       alpha,

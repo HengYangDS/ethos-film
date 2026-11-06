@@ -3,8 +3,8 @@
  * can still aim at the wrong goal. Each stage stands under the index at the top of the frame. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
-import { box, dashed, dot, flowDot, line, measure, ring, stroke } from "../../drawing/strokes.js";
+import { flowAlong, flowClock, link } from "../../drawing/links.js";
+import { box, dashed, dot, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, cross, person, token } from "../../drawing/symbols.js";
 import { beats, listIn, listLevel, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
@@ -12,7 +12,7 @@ import { railNames, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideSteps } from "../../timing/pauses.js";
 
 /* Documents drawn as one mark: their outlines and folds one stroke and their rows another, so a set of copies reads as
  * one thing and a sheet's rows as its own lines rather than a list of marks to name. Sheets are outlines without a
@@ -96,7 +96,7 @@ function railEnd(alpha) {
 export function stagePerson(t, a, c) {
   if (a <= 0) return;
   const Y = 700,
-    walk = soon(t, c.span - 0.05, 3),
+    walk = glideShare(t, c.span - 0.05, 800, 3),
     ux = mix(560, 1360, walk),
     work = a * ramp(t, c.work - 0.15, 0.4),
     who = a * ramp(t, c.person - 0.15, 0.4);
@@ -176,12 +176,15 @@ export function stageRail(t, a, c) {
   beats(t, xs[0], 634, 46, [c.people], { alpha: seen[0] });
   beats(t, xs[2], 634, 46, [c.people], { alpha: seen[2] });
   beats(t, xs[1], 646, 46, [c.agents], { alpha: seen[1] });
-  // The request's point moves on to each station on its words, and to the end once it has passed them all.
+  // The request's point moves on to each station on its words, and to the end once it has passed them all, each step
+  // by the film's structural glide.
   const stops = [...xs, x1],
     steps = [...stations, en ? c.delivery : c.people],
-    px = steps.reduce(
-      (x, at, i) => x + (stops[i] - (i ? stops[i - 1] : x0)) * soon(t, at + 0.05, 0.5),
+    px = glideSteps(
+      t,
       x0,
+      steps.map((at, i) => [at, stops[i]]),
+      0.5,
     );
   token(px, y, { r: 9, alpha: a });
 }
@@ -209,13 +212,20 @@ export function stageSummaries(t, a, c) {
   const original = L("原话", "The words before it"),
     overhang = Math.max(0, measure(original) / 2 - DOC_W / 2);
   ctx.save();
-  ctx.translate((overhang / 2) * soon(t, c.orig + 0.05, 0.7), 0);
+  ctx.translate((overhang / 2) * glideShare(t, c.orig + 0.05, overhang / 2, 0.7), 0);
   railLine(a);
   requestDoc(a);
   railEnd(a);
   handlers([a, a, a]);
-  const q = (voiceTime(t) * 0.3) % 1;
-  flowDot(mix(x0 + 44, x1 - 20, q), y, 7, q, { color: P.ink, alpha: a });
+  flowAlong(
+    [
+      [x0 + 44, y],
+      [x1 - 20, y],
+    ],
+    flowClock(t),
+    7,
+    { single: true, color: P.ink, alpha: a },
+  );
   nameText(original, x0, above, {
     valign: "bottom",
     alpha: a * named(t, c.orig - 0.1),
@@ -259,7 +269,7 @@ export function stageWrongGoal(t, a, c) {
   const DX = 640,
     DY = 580,
     TX = 1280,
-    q = (voiceTime(t) * 0.45) % 1,
+    q = flowClock(t),
     aim = a * ramp(t, c.wrong - 0.15, 0.4);
   paper(DX - 70, DY - 90, 140, 180, { alpha: a, rows: 6 });
   dot(DX + 70, DY + 90, 22, { color: P.ground, alpha: a });

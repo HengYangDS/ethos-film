@@ -3,7 +3,7 @@
  * closes on what it delivered. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { ethosMark } from "../../drawing/mark.js";
 import { box, fill, line, measure, stroke } from "../../drawing/strokes.js";
 import { check } from "../../drawing/symbols.js";
@@ -16,7 +16,7 @@ import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, voiceTime } from "../../timing/pauses.js";
 import { listRows, nameWidth, taskList } from "./example.js";
 
 /* Repositories of one group drawn as one mark: their stores one fill, their outlines and branch glyphs one stroke, so
@@ -63,15 +63,21 @@ export function repoGroup(xs, y, w, h, { alpha = 1, checks = 0 } = {}) {
 const GLYPH = 240,
   OPENING = 500,
   FULL = { datum: 1, passages: 1, boundary: 1 };
-function ruleHeading(t, q, { kick, kickAt, rule, ruleAt, alpha }) {
+function ruleHeading(t, { kick, kickAt, rule, ruleAt, settleAt, alpha }) {
   // At rest the heading stands in the rules' shared place; opening, it stands larger in the middle of the band, its glyph
   // and text centred together there too.
   const rest = ruleHeadingLayout(kick, rule, GLYPH, FULL),
     lift = 500 - (rest.top + rest.bottom) / 2,
-    // While only the number stands beside the glyph, the heading stands right by half of what the statement adds.
+    // While only the number stands beside the glyph, the heading stands right by half of what the statement adds, and
+    // glides left by that much, by the film's structural glide, as the statement arrives.
     wider = Math.max(0, Math.max(...rest.lines.map((v) => measure(v))) - measure(kick, NOTE)),
-    aside = (wider / 2) * (1 - soon(t, ruleAt + 0.05, 0.7)),
+    aside = (wider / 2) * (1 - glideShare(t, ruleAt + 0.05, wider / 2, 0.7)),
     open = ruleHeadingLayout(kick, rule, OPENING, FULL, { dy: lift, cx: 960 + aside }),
+    // While the rule is spoken the heading drifts slowly toward its place in voice time; it settles on the next words
+    // by the structural glide over the way its glyph travels.
+    drift = 0.12 * clamp((voiceTime(t) - voiceTime(kickAt)) / 4),
+    way = Math.hypot(open.mx - rest.mx, open.my - rest.my),
+    q = drift + (1 - drift) * glideShare(t, settleAt + 0.05, way, 0.9),
     dy = mix(lift, 0, q),
     TX = mix(open.tx, rest.tx, q);
   ethosMark(mix(open.mx, rest.mx, q), mix(open.my, rest.my, q), mix(OPENING, GLYPH, q), { alpha });
@@ -108,14 +114,13 @@ export function ruleFour(s, t, a) {
     ["每个仓库", "each repository"],
     ["只声明自己特有的检查", "declares only the checks"],
   ]);
-  // While the rule is spoken the heading drifts slowly toward its place in voice time; it settles on the next words.
   // The statement stands on one line in both editions, authored so, past the width at which headings wrap.
-  const drift = 0.12 * clamp((voiceTime(t) - voiceTime(kickAt)) / 4);
-  ruleHeading(t, drift + (1 - drift) * soon(t, everyAt + 0.05, 0.9), {
+  ruleHeading(t, {
     kick: L("第四条准则", "Rule four"),
     kickAt,
     rule: L("义务没了，机制就退场", ["Retire a mechanism when its obligation disappears"]),
     ruleAt,
+    settleAt: everyAt,
     alpha: a,
   });
   // The legend waits until the heading's glyph has shrunk clear of it, under half a second, so its names stand within
@@ -123,12 +128,12 @@ export function ruleFour(s, t, a) {
   const heads = [everyAt + 0.45, Math.max(oneAt, everyAt + 0.45)],
     duties = [sharedAt, ownAt],
     owners = [ethosAt, eachAt],
-    flow = (voiceTime(t) * 0.4) % 1,
+    flow = flowClock(t),
     LEG = 730,
     DUTY = 410,
     OWN = 580,
     // The columns' axes: the first on the frame's axis while it stands alone, then both either side of it.
-    shift = mix(960 - 690, 0, soon(t, eachAt + 0.05, 0.9)),
+    shift = mix(960 - 690, 0, glideShare(t, eachAt + 0.05, 960 - 690, 0.9)),
     C1 = 690 + shift,
     C2 = 1230 + shift,
     G = [C2 - 110, C2, C2 + 110],
@@ -190,7 +195,7 @@ export function ruleFour(s, t, a) {
   link(C2, d2.bottom + 12, C2, OWN - REPO[1] / 2 - 12, {
     alpha: o,
     upto: soon(t, ownAt + 0.05, 0.5),
-    flow: (flow + 0.5) % 1,
+    flow: flowClock(t, 0.5),
   });
   repoGroup(G, OWN, REPO[0], REPO[1], { alpha: r, checks: o });
   nameText(L("每个仓库", "Each repository"), C2, ownerTop, {
@@ -226,7 +231,7 @@ export function ownRepository(s, t, a) {
     MID = 1124 + DX,
     G = [1210, 1330, 1450].map((x) => x + DX),
     OWNX = G[1],
-    flow = (voiceTime(t) * 0.4) % 1,
+    flow = flowClock(t),
     o = a * named(t, ownAt),
     g = a * named(t, allAt),
     l = a * named(t, sameAt),
@@ -246,7 +251,7 @@ export function ownRepository(s, t, a) {
     mid: MID,
     alpha: l,
     upto: soon(t, sameAt + 0.05, 0.6),
-    flow: (flow + 0.5) % 1,
+    flow: flowClock(t, 0.5),
   });
   ownRepo(OWNX, 330, o, named(t, sameAt + 0.4));
   nameText(L("自己的仓库", "Its own repository"), OWNX, 385 + NAME_GAP, {
@@ -296,7 +301,7 @@ export function replacement(s, t, a) {
   const n = a * named(t, newAt),
     w = a * named(t, weakAt),
     o = a * named(t, oldAt),
-    S = mix(L(0, 960 - 1220), 0, soon(t, oldAt + 0.05, 0.8));
+    S = mix(L(0, 960 - 1220), 0, glideShare(t, oldAt + 0.05, L(0, 1220 - 960), 0.8));
   wayBox(700 + S, 430, 3, { alpha: o });
   nameText(L("旧做法", "What it replaces"), 700 + S, 505 + NAME_GAP, { valign: "top", alpha: o });
   wayBox(1220 + S, 430, 4, { alpha: n, more: w, extra: 1 });
@@ -305,7 +310,7 @@ export function replacement(s, t, a) {
   link(827 + S, 430, 1093 + S, 430, {
     alpha: Math.min(n, o),
     upto: soon(t, Math.max(newAt, oldAt) + L(0.05, 0.35), 0.6),
-    flow: (voiceTime(t) * 0.4) % 1,
+    flow: flowClock(t),
   });
   if (en)
     termRow(t, ["A replacement"], [newAt], ["never weaker"], [weakAt], 1220 + S, 505 + NAME_GAP, {
@@ -359,9 +364,10 @@ export function closing(s, t, a) {
     centred = 960 - (left + delivered) / 2,
     // English: the Change alone, centred by its list and its name, until its delivered rows' words.
     alone = 960 - (left + Math.max(700 + W / 2, 1400 - left)) / 2,
-    first = mix(L(centred, alone), centred, soon(t, deliveredAt + 0.05, 0.7)),
+    first = mix(L(centred, alone), centred, glideShare(t, deliveredAt + 0.05, L(0, centred - alone), 0.7)),
     // The picture's offset: that place, then, on the record's words, where the whole is centred.
-    S = mix(first, 960 - (left + right) / 2, soon(t, recordAt + 0.05, 0.9)),
+    whole = 960 - (left + right) / 2,
+    S = mix(first, whole, glideShare(t, recordAt + 0.05, whole - centred, 0.9)),
     LX = 700 + S,
     RX = 700 + RECORD_DX + S,
     RY = (rowsY[2] + rowsY[3]) / 2,
@@ -394,7 +400,7 @@ export function closing(s, t, a) {
   link(LX + BX + 4, RY, RX - 62, RY, {
     alpha: r,
     upto: soon(t, recordAt + 0.05, 0.7),
-    flow: (voiceTime(t) * 0.4) % 1,
+    flow: flowClock(t),
   });
   ledger(RX, RY, 110, 140, { alpha: r });
   nameText(RECORD, RX, top, {

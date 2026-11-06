@@ -17,14 +17,16 @@ export const opensChapter = (s) => {
 };
 
 /* Marks in the rising chapter title's path wait until it has risen above them (a mark at height y appears as the title
- * passes y - 45 and stands once it is 60 px higher), so the two never meet, and they still stand by the first word. */
+ * passes y - 45 and stands, by an eased fade, once the title is up to 240 px higher still, less for a mark so high that
+ * the title lands sooner), so the two never meet, no mark arrives at once, and they still stand by the first word. */
 const titleY = (s, t) => mix(540, 72, ease(clamp((t - (cardLanding(s) - RISE)) / RISE)));
 /* How far the rising chapter title has cleared a mark drawn at height y, measured on screen through the scene's
  * camera, so a closer shot keeps clear of the title as well as the scene's own frame. */
 export const clearOfTitle = (s, t, y = 400) => {
   if (!opensChapter(s)) return 1;
-  const c = cameraOf(s, t);
-  return clamp((c.oy + c.k * (y - c.ay) - 45 - titleY(s, t)) / 60);
+  const c = cameraOf(s, t),
+    sy = c.oy + c.k * (y - c.ay);
+  return ease((sy - 45 - titleY(s, t)) / Math.min(240, Math.max(60, sy - 45 - 72)));
 };
 
 /* A chapter opens on one centred line, its number and title, with a short rule beneath, once the previous chapter has

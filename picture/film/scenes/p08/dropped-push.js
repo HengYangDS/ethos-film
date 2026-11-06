@@ -11,7 +11,7 @@
  * are not read as a pair of one length that each wait for a name, and the cut's name stays clear of the report's link
  * to the uncertain stretch. The names under the rail hang from one line, and so do those of the row below. */
 
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { dot, ring } from "../../drawing/strokes.js";
 import { cross } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
@@ -21,8 +21,8 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom, cues } from "../../timing/cues.js";
-import { mix, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { mix, ramp, soon } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 import { verdictMark } from "../p04/marks.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
@@ -60,8 +60,8 @@ export function droppedPush(s, t, a) {
   ]);
   const whatAt = cueFrom(s, "要做什么", "what it is about to do", noteAt),
     firstAt = cueFrom(s, "上一次", "The first push", againAt);
-  const dropped = soon(t, dropAt - 0.05, 0.3),
-    wx = mix(FROM, STOP, soon(t, nameAt, 0.9)),
+  const dropped = ramp(t, dropAt - 0.1, 0.4),
+    wx = mix(FROM, STOP, glideShare(t, nameAt, STOP - FROM, 0.9)),
     below = rowNameTop([RAIL_Y + PLATFORM[1] / 2, RAIL_Y + 19]),
     rowTop = rowNameTop([ROW_Y + DOC[1] / 2, ROW_Y + STEP_R]);
   // The rail: solid up to the cut, and beyond it solid until the connection drops, then dashed; its end draws back to
@@ -143,7 +143,7 @@ export function droppedPush(s, t, a) {
   link(REPORT_X + DOC[0] / 2 + 10, ROW_Y, NEXT_X - STEP_R - 10, ROW_Y, {
     alpha: next,
     upto: soon(t, nextAt + 0.05, 0.5),
-    flow: (voiceTime(t) * 0.45) % 1,
+    flow: flowClock(t),
   });
   ring(NEXT_X, ROW_Y, STEP_R, { color: P.ink, alpha: next, width: 2.5 });
   dot(NEXT_X, ROW_Y, 7, { color: P.ink, alpha: next });

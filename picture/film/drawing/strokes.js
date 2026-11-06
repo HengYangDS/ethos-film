@@ -2,7 +2,7 @@
 
 import { ctx, layout, resolution, sceneFade, wordFade } from "../canvas.js";
 import { LABEL, P, TYPE } from "../palette.js";
-import { clamp, pass } from "../timing/easing.js";
+import { clamp } from "../timing/easing.js";
 
 /* Drawing primitives. Every painted text registers its box for the geometry check. */
 export function font(size, bold, sample) {
@@ -160,6 +160,3 @@ export function ring(
     dash,
   });
 }
-/* A flow's dot enters and leaves by its size at full ink. A flow rests with the voice in the quiet between thoughts,
- * so a dot stopped near either end of its pass stays a small firm mark rather than a half-faded one. */
-export const flowDot = (x, y, r, q, o) => dot(x, y, r * pass(q), o);

@@ -3,14 +3,14 @@
  * have no result yet; nothing is released, no one uses it, and there is no observation of actual benefit. Each plane
  * arrives on its words with its state, and the stack builds from below so it stays balanced as it grows. */
 
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { labelSize, ring } from "../../drawing/strokes.js";
 import { building, listLevel } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { clamp, mix, ramp } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 import { agents, card, verdictMark } from "../p04/marks.js";
 import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 
@@ -73,9 +73,11 @@ export function claimRow(
   const edge = claimPanel(t, px, py, { alpha });
   agents([[ax, ay]], { alpha });
   nameText("Agent", ax, nameTop, { valign: "top", alpha });
-  // The report travels from the Agent to its sentence: up from the Agent, then along to the panel.
-  if (Math.abs(ay - py) < 1) link(ax + 22, ay, edge.left, py, { alpha, flow });
-  else link(ax, ay - 22, edge.left, py, { route: "vh", alpha, flow });
+  // The report travels from the Agent to its sentence: up from the Agent, then along to the panel. As the Agent comes
+  // level with the panel its start moves round from the Agent's top to its right point and the upward run shrinks
+  // away, so the relation stays one line throughout.
+  const up = clamp((ay - py) / 60);
+  link(ax + 22 * (1 - up), ay - 22 * up, edge.left, py, { route: "vh", alpha, flow, flowEvery: FLOW_EVERY });
   return edge;
 }
 /* On a middle anchor the Latin face's alphabetic baseline stands 0.1 em above the CJK face's (their typo boxes are
@@ -88,7 +90,8 @@ const latinDrop = (name, neighbour) =>
  * its first plane arrives. */
 function claimAt(t, c) {
   const w = claimWidth(),
-    rise = soon(t, c.local + 0.05, 0.7),
+    // The Agent travels furthest, (560 - 260) / 2 px across and 386 px up.
+    rise = glideShare(t, c.local + 0.05, Math.hypot(150, 386), 0.7),
     gap = mix(560, 260, rise),
     ax = 960 - (w + gap) / 2;
   return { ax, ay: mix(600, 214, rise), px: ax + gap + w / 2, py: mix(420, 214, rise), rise };
@@ -105,7 +108,7 @@ export function apartStage(s, t, c, g) {
     rule = L("按 ETHOS 的规则", "By ETHOS's rules");
   claimRow(t, ax, ay, px, py, {
     alpha: g,
-    flow: (voiceTime(t) * 0.4) % 1,
+    flow: flowClock(t),
     // The Agent's name keeps its gap under the Agent while it rises and joins the panel's line as the two come level,
     // on the baseline of the rule's name beside it.
     nameTop:

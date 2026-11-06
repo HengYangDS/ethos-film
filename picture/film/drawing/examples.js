@@ -2,12 +2,13 @@
 
 import { ctx } from "../canvas.js";
 import { blend } from "./colour.js";
-import { link } from "./links.js";
-import { box, dashed, dot, flowDot, line, path, ring, stroke } from "./strokes.js";
+import { FLOW_EVERY, flowAlong, link } from "./links.js";
+import { box, dashed, dot, line, path, ring, stroke } from "./strokes.js";
 import { P } from "../palette.js";
 import { clamp, mix } from "../timing/easing.js";
 
-/* The film's two running examples. A pipeline: a feed, one run and the stored records. `flow` moves a point along it, and
+/* The film's two running examples. A pipeline: a feed, one run and the stored records. `flow`, a flow's clock
+ * (flowClock), moves points along it, and
  * `back` draws the way a rerun returns from the records to the feed. Returns where its parts stand. */
 export function pipelineMark(
   x,
@@ -80,11 +81,17 @@ export function pipelineMark(
       alpha,
       upto: back,
     });
-  if (flow !== null) {
-    const q = flow,
-      px = mix(feedX + r, storeX - storeW / 2, q);
-    flowDot(px, y, 8 * Math.max(k, 0.6), q, { color: P.evidence, alpha });
-  }
+  if (flow !== null)
+    // A pipeline may glide and change its size, so its flow keeps one period.
+    flowAlong(
+      [
+        [feedX + r, y],
+        [storeX - storeW / 2, y],
+      ],
+      flow,
+      8 * Math.max(k, 0.6),
+      { every: FLOW_EVERY, color: P.evidence, alpha },
+    );
   return place;
 }
 /* A signal study: the backtest's curve over a time axis, with the moment of decision at share `at` of it. Information

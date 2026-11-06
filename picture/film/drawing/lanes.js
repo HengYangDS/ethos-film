@@ -1,13 +1,14 @@
 /* Work Lanes: a lane's track, a group of lanes drawn as one mark, and the check before writing that stands on a lane. */
 
 import { ctx } from "../canvas.js";
-import { link } from "./links.js";
-import { box, fill, flowDot, line, stroke } from "./strokes.js";
+import { FLOW_EVERY, flowAlong, link } from "./links.js";
+import { box, fill, line, stroke } from "./strokes.js";
 import { folderIcon } from "./workspace.js";
 import { P } from "../palette.js";
-import { ease, mix } from "../timing/easing.js";
+import { clamp } from "../timing/easing.js";
 
-/* A work lane: its folder, the worktree, at the start of a track, and a point of work moving along it. */
+/* A work lane: its folder, the worktree, at the start of a track, and points of work moving along it: `flow` is the
+ * flow's clock (flowClock). */
 export function laneTrack(
   x0,
   x1,
@@ -17,10 +18,20 @@ export function laneTrack(
   if (alpha < 0.01) return;
   folderIcon(x0, y - 26, 62, 52, { alpha, color: P.ink });
   link(x0 + 62, y, x1, y, { alpha, color, upto, width: 2.5, end: false });
-  if (flow !== null) flowDot(mix(x0 + 70, x1, flow), y, 9, flow, { color: tone, alpha });
+  if (flow !== null)
+    flowAlong(
+      [
+        [x0 + 70, y],
+        [x1, y],
+      ],
+      flow,
+      9,
+      { color: tone, alpha },
+    );
 }
 /* Several lanes of one group: their folders and tracks are drawn as one stroke each, so one name names them together,
- * and a point of work moves along each. Two groups side by side differ in `size`, so each reads as its own group. */
+ * and points of work move along each, the lanes' flows setting off in turn from the flow clock `q`. Two groups side by
+ * side differ in `size`, so each reads as its own group. */
 export function laneGroup(x0, x1, ys, { alpha = 1, q = 0, tones = [], size = 1 } = {}) {
   if (alpha < 0.01) return;
   const W = 62 * size,
@@ -48,12 +59,20 @@ export function laneGroup(x0, x1, ys, { alpha = 1, q = 0, tones = [], size = 1 }
       }),
     { color: P.line, alpha, width: 2.5 },
   );
-  ys.forEach((y, i) => {
-    const flow = (q + i * 0.31) % 1;
-    flowDot(mix(x0 + 70, x1, flow), y, 9, flow, { color: tones[i] ?? P.evidence, alpha });
-  });
+  ys.forEach((y, i) =>
+    flowAlong(
+      [
+        [x0 + 70, y],
+        [x1, y],
+      ],
+      q + i * 0.31 * FLOW_EVERY,
+      9,
+      { color: tones[i] ?? P.evidence, alpha },
+    ),
+  );
 }
-/* The gate before a write: two posts with a bar that lifts when the check passes. */
+/* The gate before a write: two posts with a bar that lifts when the check passes. `open` is the share the bar has
+ * lifted; callers drive it by the structural glide over the bar's way, h - 40 px (glideShare). */
 export function writeGate(
   x,
   y,
@@ -63,7 +82,7 @@ export function writeGate(
   if (alpha < 0.01) return;
   const top = y - h / 2,
     bottom = y + h / 2,
-    lift = ease(open) * (h - 40);
+    lift = clamp(open) * (h - 40);
   // `single` draws both posts as one stroke, so the gate reads as one mark and one name.
   if (single)
     stroke(

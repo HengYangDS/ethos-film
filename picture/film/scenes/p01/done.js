@@ -5,12 +5,11 @@
 
 import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 import { ctx } from "../../canvas.js";
-import { along, link, rounded } from "../../drawing/links.js";
+import { FLOW_EVERY, flowAlong, flowClock, link, rounded } from "../../drawing/links.js";
 import {
   box,
   dot,
   fill,
-  flowDot,
   labelSize,
   line,
   measure,
@@ -37,12 +36,12 @@ import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L, en } from "../../timeline.js";
 import { cue, cues } from "../../timing/cues.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { clamp, ease, mix, ramp, soon } from "../../timing/easing.js";
+import { glideShare, voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
-/* The point at share q of an orthogonal route drawn as link() draws it, for a flow that only one link carries. */
-const routePoint = (corners, q) => along(rounded(corners, 14), q).point;
+/* An orthogonal route as link() draws it, for a flow that runs along it in the scene's own colour and size. */
+const route = (corners) => rounded(corners, 14);
 /* A row of Agents drawn as one mark, their outlines one stroke and their cores one fill, so one name names the row. */
 function agentRow(xs, y, { alpha = 1, size = 1 } = {}) {
   if (alpha < 0.01) return;
@@ -88,28 +87,45 @@ function die(x, y, s, { alpha = 1 } = {}) {
     { color: P.ink, alpha },
   );
 }
-/* Checks that multiply with the Agents: `n` columns of a small Agent over the check it must redo, the whole ones as one
- * mark and the one arriving beside them, so the grid reads as one growing mark. */
+/* Checks that multiply with the Agents: `n` columns of a small Agent over the check it must redo, drawn as one mark of
+ * outlines, one of cores and one of checks, so the grid reads as one growing mark. The row stands centred on x for its
+ * `n` columns as n grows, so it re-centres continuously, and the column arriving at its open end grows in by its size. */
 function checksGrid(x, y, n, { alpha = 1, step = 46 } = {}) {
-  const whole = Math.floor(n),
-    part = n - whole,
-    col = (i) => x + (i - (Math.ceil(n) - 1) / 2) * step;
-  const draw = (from, to, a) => {
-    if (a < 0.01 || to <= from) return;
-    const xs = Array.from({ length: to - from }, (_, k) => col(from + k));
-    agentRow(xs, y, { alpha: a, size: 0.55 });
-    stroke(
-      () =>
-        xs.forEach((cx) => {
-          ctx.moveTo(cx - 7, y + 38);
-          ctx.lineTo(cx - 2, y + 43);
-          ctx.lineTo(cx + 8, y + 32);
-        }),
-      { color: P.ink, alpha: a, width: 2.5 },
-    );
-  };
-  draw(0, whole, alpha);
-  draw(whole, whole + 1, alpha * part);
+  if (alpha < 0.01) return;
+  const cols = Array.from({ length: Math.ceil(n - 1e-6) }, (_, i) => [
+      x + (i - (n - 1) / 2) * step,
+      clamp(n - i),
+    ]),
+    r = 22 * 0.55,
+    c = 4.5 * 0.55;
+  stroke(
+    () =>
+      cols.forEach(([cx, k]) => {
+        ctx.moveTo(cx, y - r * k);
+        ctx.lineTo(cx + r * k, y);
+        ctx.lineTo(cx, y + r * k);
+        ctx.lineTo(cx - r * k, y);
+        ctx.closePath();
+      }),
+    { color: P.ink, alpha, width: 2.5 },
+  );
+  fill(
+    () =>
+      cols.forEach(([cx, k]) => {
+        ctx.moveTo(cx + c * k, y);
+        ctx.arc(cx, y, c * k, 0, Math.PI * 2);
+      }),
+    { color: P.ink, alpha },
+  );
+  stroke(
+    () =>
+      cols.forEach(([cx, k]) => {
+        ctx.moveTo(cx - 7 * k, y + 37.5 + 0.5 * k);
+        ctx.lineTo(cx - 2 * k, y + 37.5 + 5.5 * k);
+        ctx.lineTo(cx + 8 * k, y + 37.5 - 5.5 * k);
+      }),
+    { color: P.ink, alpha, width: 2.5 },
+  );
 }
 
 scenes["01"] = function (s, t) {
@@ -167,7 +183,7 @@ scenes["01"] = function (s, t) {
     stageC = stageIn(t, writing) * stageOut(t, heard),
     stageD = stageIn(t, heard) * stageOut(t, ethos),
     stageE = stageIn(t, ethos);
-  const q = (voiceTime(t) * 0.45) % 1;
+  const q = flowClock(t);
   // The opening sentence's scenario is made up, so its stages carry the Illustrative chip.
   illustrative(Math.max(stageA, stageD, stageE));
   const W = claimWidth();
@@ -177,7 +193,7 @@ scenes["01"] = function (s, t) {
   // leaves, the panel takes the centre, and the four questions the sentence leaves open build on a rail beneath it,
   // each linked from the panel, the one being asked carrying a point along its link.
   if (stageA > 0) {
-    const aside = soon(t, hand + 0.05, 0.6),
+    const aside = glideShare(t, hand + 0.05, Math.hypot(220, 80)),
       AX = mix(960, 740, aside),
       AY = mix(560, 640, aside),
       AR = 33,
@@ -186,7 +202,7 @@ scenes["01"] = function (s, t) {
       // that names it or 0.27 s before its own word.
       lead = Math.max(first - 0.28, s.voice_start - 0.1, cue(s, "Agent", "Agent") - 0.27),
       seen = stageA * ramp(t, lead - 0.15, 0.4) * (1 - gone);
-    const slide = soon(t, opens + 0.05, 0.7),
+    const slide = glideShare(t, opens + 0.05, 100, 0.7),
       PX = mix(1060, 960, slide),
       PY = 360,
       left = PX - W / 2;
@@ -202,10 +218,8 @@ scenes["01"] = function (s, t) {
         [left, PY],
       ];
     link(AX, AY - AR, left, PY, { route: "vh", alpha: seen, upto: handed, end: false });
-    if (handed >= 1 && seen > 0.01) {
-      const [fx, fy] = routePoint(corners, q);
-      flowDot(fx, fy, 6, q, { color: P.ink, alpha: seen });
-    }
+    // The Agent steps aside as its link draws on, so the flow keeps one period as the link's length changes.
+    flowAlong(route(corners), q, 6, { upto: handed, every: FLOW_EVERY, color: P.ink, alpha: seen });
     const panel = stageA * ramp(t, hand + 0.35, 0.4);
     const placed = claimPanel(t, PX, PY, {
       alpha: panel,
@@ -235,22 +249,25 @@ scenes["01"] = function (s, t) {
       const on = stageA * ramp(t, qs[i] - 0.15, 0.4),
         lit = speaking(t, qs, i);
       if (on < 0.01) return;
+      const drawn = soon(t, qs[i] + 0.05, 0.5);
       link(PX, PY + CLAIM_H / 2, x, RY - RR, {
         route: "vhv",
         mid,
         alpha: on,
-        upto: soon(t, qs[i] + 0.05, 0.5),
+        upto: drawn,
       });
-      const [fx, fy] = routePoint(
-        [
+      flowAlong(
+        route([
           [PX, PY + CLAIM_H / 2],
           [PX, mid],
           [x, mid],
           [x, RY - RR],
-        ],
+        ]),
         q,
+        5,
+        // The rail's stations glide while it builds, so the flow keeps one period.
+        { upto: drawn, every: FLOW_EVERY, color: P.ink, alpha: on * lit },
       );
-      flowDot(fx, fy, 5, q, { color: P.ink, alpha: on * lit });
       dot(x, RY, RR, { color: P.ground, alpha: on });
       ring(x, RY, RR, { color: P.ink, alpha: on, width: 2.5 + lit });
       if (i === 0) {
@@ -323,7 +340,7 @@ scenes["01"] = function (s, t) {
     });
     // The session frame: solid while the session runs, dashed once it has ended, solid again around the next Agent.
     const ended = ramp(t, ends - 0.15, 0.4),
-      moved = soon(t, pick + 0.05, 0.7),
+      moved = glideShare(t, pick + 0.05, xs[1] - xs[0], 0.7),
       FX = mix(xs[0], xs[1], moved),
       dashedShare = ended * (1 - ramp(t, pick + 0.45, 0.4));
     box(FX - S, Y - S, 2 * S, 2 * S, {
@@ -370,7 +387,7 @@ scenes["01"] = function (s, t) {
       shift = mix(
         centre(measure(writingName)),
         centre(Math.max(measure(writingName), relyWide)),
-        soon(t, rely + 0.05, 0.7),
+        glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7),
       ),
       climb =
         120 +
@@ -388,10 +405,12 @@ scenes["01"] = function (s, t) {
       align: "left",
       alpha: stageC * named(t, writing),
     });
+    // The flat line draws on within its thought and its end point stands as it completes, so no point runs ahead of it.
     const flat = stageC * ramp(t, flatAt - 0.15, 0.4),
-      flatReach = mix(X0, X1, soon(t, flatAt - 0.1, 1));
+      flatDrawn = ease((t - flatAt + 0.1) / 1.3),
+      flatReach = mix(X0, X1, flatDrawn);
     line(X0, Y0, flatReach, Y0, { color: P.ink, alpha: flat, width: 4 });
-    dot(flatReach, Y0, 7, { color: P.ink, alpha: flat });
+    dot(X1, Y0, 7, { color: P.ink, alpha: flat * ramp(t, flatAt + 0.8, 0.4) });
     beats(t, X1, Y0, 22, [hard - 0.1], { alpha: flat });
     nameText(relyName, ends, Y0, {
       align: "left",
@@ -409,7 +428,7 @@ scenes["01"] = function (s, t) {
   // sentence for the centre, and ETHOS stands under it.
   if (stageD > 0 || stageE > 0) {
     const PY = 300,
-      move = soon(t, ethos + 0.05, 0.8);
+      move = glideShare(t, ethos + 0.05, Math.hypot(W / 2, 620 - PY), 0.8);
     claimPanel(t, 960, PY, {
       alpha: stageD + stageE,
       datum: mix(1, 1.5, move),
@@ -418,7 +437,7 @@ scenes["01"] = function (s, t) {
     nameText("ETHOS", 960, 620 + 18 + NAME_GAP, { valign: "top", alpha: stageE * named(t, ethos) });
     if (stageD > 0) {
       const HX = 960,
-        HY = 450 + 170 * (1 - soon(t, two + 0.05, 0.5)),
+        HY = 450 + 170 * (1 - glideShare(t, two + 0.05, 170, 0.5)),
         heard1 = stageD;
       // The listener is joined to the sentence by its link from the cut, so it is one mark with the panel until its
       // own name arrives on its words.
@@ -443,22 +462,24 @@ scenes["01"] = function (s, t) {
         marks = [luck, cant],
         fork = stageD * ramp(t, two + 0.25, 0.3);
       XS.forEach((x, i) => {
+        const forked = soon(t, two + 0.4, 0.6);
         link(HX, FY, x, BY, {
           route: "vhv",
           mid: MID,
           alpha: fork,
-          upto: soon(t, two + 0.4, 0.6),
+          upto: forked,
         });
-        const [fx, fy] = routePoint(
-          [
+        flowAlong(
+          route([
             [HX, FY],
             [HX, MID],
             [x, MID],
             [x, BY],
-          ],
+          ]),
           q,
+          5,
+          { upto: forked, color: P.ink, alpha: fork * speaking(t, ways, i) },
         );
-        flowDot(fx, fy, 5, q, { color: P.ink, alpha: fork * speaking(t, ways, i) });
         // The costs stay short: the die is luck, and the growing row of Agents and checks says how many there are.
         termRow(
           t,
@@ -477,7 +498,9 @@ scenes["01"] = function (s, t) {
       });
       die(XS[0], GY, 46, { alpha: stageD * ramp(t, luck - 0.15, 0.4) });
       const grid = stageD * ramp(t, cant - 0.15, 0.4);
-      checksGrid(XS[1], GY - 16, mix(2, 7, soon(t, many + 0.05, 0.65)), { alpha: grid });
+      checksGrid(XS[1], GY - 16, mix(2, 7, glideShare(t, many + 0.05, (5 * 46) / 2, 0.65)), {
+        alpha: grid,
+      });
     }
   }
 };

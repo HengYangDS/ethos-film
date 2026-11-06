@@ -10,13 +10,13 @@
 
 import { ctx } from "../../canvas.js";
 import { commitRow } from "../../drawing/history.js";
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { ethosMark, markExtent } from "../../drawing/mark.js";
 import { labelSize, measure, ring, stroke } from "../../drawing/strokes.js";
 import { cross, documentIcon, stopSign } from "../../drawing/symbols.js";
 import { bubble, terminalIcon } from "../../drawing/workspace.js";
 import { ruleHeading, ruleHeadingLayout } from "../../framing/rules.js";
-import { beats, listIn, listLevel, named } from "../../naming/lists.js";
+import { beats, listIn, listLevel, named, reachAt } from "../../naming/lists.js";
 import {
   LEADING,
   NAME_GAP,
@@ -31,13 +31,11 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
 import { card } from "../p04/marks.js";
 import { claimPanel, claimWidth } from "../claim.js";
 
 const FULL = { datum: 1, passages: 1, boundary: 1 };
-const flowOf = (t) => (voiceTime(t) * 0.4) % 1;
 
 /* Rule three's heading: its number, its statement and, under the statement in the note style, what authority means. */
 const RULE = () => ({
@@ -122,17 +120,10 @@ function viewsParts(c = {}) {
   ];
 }
 /* How far right the views reach at t as they build: a part that reaches further than those before it widens the
- * whole, gliding from just after its words. */
+ * whole, gliding from just after its words (reachAt). */
 function viewsReach(t, c) {
-  const parts = viewsParts(c).sort((a, b) => a[0] - b[0]);
-  let reach = parts[0][1],
-    now = reach;
-  for (const [at, right] of parts.slice(1)) {
-    if (right <= reach) continue;
-    now += (right - reach) * soon(t, at + 0.05, 0.8);
-    reach = right;
-  }
-  return now;
+  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]);
+  return reachAt(t, first[1], rest, 0.8);
 }
 /* The mark's place from 06.4: the mark and what beyond its opening reaches `reach` px right of its origin, centred
  * together; by default, once every part stands. */
@@ -231,10 +222,11 @@ function viewIcon(i, x, y, a) {
   } else if (i === 2) terminalIcon(x - 32, y - 26, 64, 52, { alpha: a });
   else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
-function views(t, c, g, place, { only = null, flow = null, linked = true, back = null } = {}) {
+function views(t, c, g, place, { only = null, flow = null, since = null, linked = true, back = null } = {}) {
   // The four views build and leave as one list; one view kept on alone after them is no longer that list's member. A
   // view that returns alone (`back`, the time its words bring it back) is computed again: its link draws out from the
-  // opening from the cut, and the view arrives at its end.
+  // opening from the cut, and the view arrives at its end. `flow` runs the links' flows from `since`, the time they
+  // begin, their dots entering from the opening then, each link's flow setting off in turn.
   const ats = back === null ? c.views : c.views.map(() => back.at),
     names = VIEWS(),
     v = viewsOf(place),
@@ -248,7 +240,9 @@ function views(t, c, g, place, { only = null, flow = null, linked = true, back =
         mid: v.open + 60,
         alpha: back === null ? on : g,
         upto: back === null ? 1 : soon(t, back.cut, 0.4),
-        flow: flow === null ? null : (flow + i * 0.25) % 1,
+        flow: flow ? flowClock(t, i * 0.25) : null,
+        flowSince: since === null ? -Infinity : flowClock(since, i * 0.25),
+        flowEvery: FLOW_EVERY,
       });
     viewIcon(i, v.vx, v.ys[i], on);
     if (i === 1)
@@ -283,7 +277,7 @@ export function viewsStage(s, t, c, g) {
   const place = viewsPlace(viewsReach(t, c)),
     v = viewsOf(place);
   boundaryMark(t, c, g, place);
-  views(t, c, g, place, { flow: ramp(t, c.derived, 0.4) > 0.5 ? flowOf(t) : null });
+  views(t, c, g, place, { flow: true, since: c.derived + 0.2 });
   nameText(VIEWS_NAME(), v.vx - 32, v.ys[0] - 40 - NAME_GAP, {
     align: "left",
     valign: "bottom",
@@ -334,7 +328,7 @@ export function staleViewStage(s, t, c, g) {
     cut = c.first5 + STAGE_CUT,
     back = { cut, at: Math.max(c.computed, cut + 0.25) };
   boundaryMark(t, c, g, place);
-  views(t, c, g, place, { only: 1, flow: flowOf(t), back });
+  views(t, c, g, place, { only: 1, flow: true, back });
   // The Chinese name is the clause itself, whose words have begun by the cut, so it stands from the cut; the English
   // name is its one word.
   nameText(L("视图算出来以后", "Computed"), v.text, v.ys[1] - 46, {

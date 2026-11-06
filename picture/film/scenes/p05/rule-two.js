@@ -7,11 +7,11 @@
  * argument reads as one picture changing on its words. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { cross } from "../../drawing/symbols.js";
 import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { ruleHeading } from "../../framing/rules.js";
-import { beats, listLevel, named } from "../../naming/lists.js";
+import { beats, listLevel, named, reachAt } from "../../naming/lists.js";
 import {
   LEADING,
   NAME_GAP,
@@ -24,7 +24,7 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
 import { card, linkSet, verdictMark } from "../p04/marks.js";
 import { claimPanel, claimWidth } from "../claim.js";
@@ -91,17 +91,10 @@ export function outcomesParts(c) {
   ];
 }
 /* How far right a row of parts, each [when it arrives, how far it reaches], reaches at t as they build: a part that
- * reaches further than those before it widens the whole, gliding from just after its words. */
+ * reaches further than those before it widens the whole, gliding from just after its words (reachAt). */
 export function buildingReach(t, parts) {
-  const sorted = [...parts].sort((a, b) => a[0] - b[0]);
-  let reach = sorted[0][1],
-    now = reach;
-  for (const [at, right] of sorted.slice(1)) {
-    if (right <= reach) continue;
-    now += (right - reach) * soon(t, at + 0.05, 0.7);
-    reach = right;
-  }
-  return now;
+  const [first, ...rest] = [...parts].sort((a, b) => a[0] - b[0]);
+  return reachAt(t, first[1], rest);
 }
 /* Where the stack stands while the outcomes are listed beside it: the stack and what of the list stands, taken
  * together, centred on the content centre. */
@@ -128,11 +121,11 @@ export function ruleTwoHeading(t, c, g) {
  * step, the one that passed, is open. */
 export function separateStage(s, t, c, g) {
   ruleTwoHeading(t, c, g);
-  const x = mix(960 - PLANE_W / 2, separateX(), soon(t, c.nextStep + 0.05, 0.7)),
+  const x = mix(960 - PLANE_W / 2, separateX(), glideShare(t, c.nextStep + 0.05, stepsReach() / 2, 0.7)),
     nx = x + PLANE_W,
     reach = STEPS,
     steps = g * named(t, c.nextStep),
-    q = (voiceTime(t) * 0.45) % 1;
+    q = flowClock(t);
   planeStack(t, x, TOP, { alpha: g });
   nameText(L("各自独立的证据", "Separate planes of evidence"), x, TOP - NAME_GAP, {
     align: "left",
@@ -168,7 +161,7 @@ export function separateStage(s, t, c, g) {
  * together as one group. The steps leave at the cut with their name, the two as one mark. */
 export function verifiedStage(s, t, c, g) {
   ruleTwoHeading(t, c, g);
-  const x = mix(separateX(), ASIDE, soon(t, c.first3b + STAGE_CUT, 0.7)),
+  const x = mix(separateX(), ASIDE, glideShare(t, c.first3b + STAGE_CUT, separateX() - ASIDE, 0.7)),
     one = rowOf(TOP, 0);
   planeStack(t, x, TOP, { alpha: g });
   nameText(L("各自独立的证据", "Separate planes of evidence"), x, TOP - NAME_GAP, {
@@ -196,7 +189,7 @@ export function verifiedStage(s, t, c, g) {
     route: "hvh",
     alpha: g * named(t, c.tell),
     upto: soon(t, c.tell + 0.05, 0.6),
-    flow: (voiceTime(t) * 0.45) % 1,
+    flow: flowClock(t),
   });
   nameText(L("实际确认过的", "Verified this time"), PX, edge.bottom + NAME_GAP, {
     valign: "top",
@@ -237,7 +230,7 @@ export function outcomesStage(s, t, c, g) {
     {
       alpha: g,
       width: 1824 - LX,
-      qualLeft: x + mix(col.natural, col.heading, soon(t, columnAt(c) + 0.05, 0.6)),
+      qualLeft: x + mix(col.natural, col.heading, glideShare(t, columnAt(c) + 0.05, col.heading - col.natural, 0.6)),
     },
   );
   const restated = [[c.onlyPass], [c.isBlock], [c.isUnknownToo]];
@@ -265,7 +258,7 @@ export function outcomesStage(s, t, c, g) {
     route: "hvh",
     alpha: example,
     upto: soon(t, c.isUnknown + 0.05, 0.5),
-    flow: (voiceTime(t) * 0.45) % 1,
+    flow: flowClock(t),
   });
   rejectedName(L("没有问题", "No problem"), x + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
     alpha: g * named(t, c.noProblem),
@@ -282,7 +275,7 @@ export function refusedStage(s, t, c, g) {
     top = 320,
     alone = 960 - PLANE_W / 2,
     bracketed = 960 - (PLANE_W + 24 + NAME_GAP + measure(matterName)) / 2,
-    x = mix(alone, bracketed, soon(t, c.matter + 0.05, 0.7)),
+    x = mix(alone, bracketed, glideShare(t, c.matter + 0.05, alone - bracketed, 0.7)),
     sy = top + 5 * PLANE_STEP,
     offered = g * named(t, c.distinction),
     refused = soon(t, c.never2 + 0.05, 0.5);

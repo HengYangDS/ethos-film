@@ -2,8 +2,8 @@
  * in use as they are, works on the user's own machine and owns in one place what every repository shares. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
-import { box, flowDot, ring, stroke } from "../../drawing/strokes.js";
+import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
+import { box, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
 import { beats, named } from "../../naming/lists.js";
 import {
@@ -18,7 +18,7 @@ import {
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, voiceTime } from "../../timing/pauses.js";
 
 /* 03.6 ETHOS's own code does the kernel's one job: from the cut its code is a panel of lines round the kernel, named as
  * ETHOS's code; on the words that give the kernel its one job the panel draws in to the kernel and its lines go, so
@@ -33,9 +33,8 @@ export function stageTools(t, a, c) {
   const KX = 960,
     KY = 420,
     KR = 36,
-    q = (voiceTime(t) * 0.4) % 1,
     // The panel draws in over the time until the tools are said, so the kernel stands alone only a moment.
-    gather = soon(t, c.oneJob + 0.05, Math.max(0.9, c.elseAt - c.oneJob - 0.2)),
+    gather = glideShare(t, c.oneJob + 0.05, (560 - 2 * KR) / 2, Math.max(0.9, c.elseAt - c.oneJob - 0.2)),
     PW = mix(560, 2 * KR, gather),
     PH = mix(240, 2 * KR, gather),
     code = a * (1 - gather),
@@ -85,7 +84,8 @@ export function stageTools(t, a, c) {
       route: "hv",
       alpha: turnTo,
       upto: soon(t, c.elseAt + 0.05, 0.6),
-      flow: (q + 0.5 * i) % 1,
+      flow: flowClock(t, 0.5 * i),
+      flowEvery: FLOW_EVERY,
     });
   });
   nameText(L("别的功能", "Everything else"), KX, tools[0][1], { alpha: turnTo });
@@ -142,7 +142,7 @@ export function stageSystems(t, a, c) {
       [L(1400, 1450), 600],
     ],
     ats = [c.sys1, c.sys2, c.sys3, c.sys4],
-    q = (voiceTime(t) * 0.4) % 1,
+    q = flowClock(t),
     joined = a * ramp(t, c.connect - 0.15, 0.4);
   // The places and their heading arrive a third of a second ahead of the heading's words, within its clause.
   const places = a * ramp(t, c.systems - 0.45, 0.4);
@@ -211,8 +211,7 @@ export function stageLayer(t, a, c) {
     repos = [0, 1, 2].map((i) => [x0 + REPO_W / 2 + i * (REPO_W + REPO_GAP), REPO_W]),
     RH = 150,
     RY = 520,
-    LY = RY + RH / 2 + 50,
-    q = (voiceTime(t) * 0.3) % 1;
+    LY = RY + RH / 2 + 50;
   repos.forEach(([x, w]) =>
     box(x - w / 2, RY - RH / 2, w, RH, { stroke: P.ink, alpha: a, radius: 14, width: 2.5 }),
   );
@@ -237,7 +236,15 @@ export function stageLayer(t, a, c) {
       }),
     { color: P.ink, alpha: a, width: 2.5 },
   );
-  flowDot(mix(x0 + 30, x1 - 30, q), LY + 22, 6, q, { color: P.ink, alpha: a });
+  flowAlong(
+    [
+      [x0 + 30, LY + 22],
+      [x1 - 30, LY + 22],
+    ],
+    flowClock(t),
+    6,
+    { single: true, color: P.ink, alpha: a },
+  );
   // The layer is named on its own words: Chinese says them as the stage opens, and the English stage cuts in on them
   // (what.js), so the repositories never stand unnamed.
   nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), (x0 + x1) / 2, LY - 6, {

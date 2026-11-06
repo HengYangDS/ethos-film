@@ -5,12 +5,12 @@
 
 import { ctx } from "../../canvas.js";
 import { pipelineMark } from "../../drawing/examples.js";
-import { along, link } from "../../drawing/links.js";
+import { along, flowClock, link } from "../../drawing/links.js";
 import { blend } from "../../drawing/colour.js";
-import { flowDot, labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check, documentIcon, person } from "../../drawing/symbols.js";
 import { clearOfTitle } from "../../framing/chapters.js";
-import { listIn, named } from "../../naming/lists.js";
+import { listIn, named, reachAt } from "../../naming/lists.js";
 import {
   NAME_GAP,
   NOTE,
@@ -21,17 +21,15 @@ import {
 } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { clamp, mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { ease, mix, ramp, soon } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 import { agents, card, recordRows, valueCell } from "./marks.js";
-import { reachAt } from "./rule-one.js";
 
 /* The request in the researcher's words and the line two handoffs leave of it. The Chinese lines drop a particle of the
  * spoken words, since the verbatim lines would repeat their captions; the quote does so for the same reason. */
 export const REQUEST = () =>
   L(["不能多出重复记录", "更正过的数据一定留下"], ["No duplicate records", "Corrections stay"]);
 export const QUOTE = () => L("按股票代码和日期去重", "Deduplicate by stock code and date");
-const flowOf = (t) => (voiceTime(t) * 0.42) % 1;
 
 /* 04.1 The contract: a wide document whose four rows are its rules, named ETHOS's Product Design Contract; the rows
  * brighten as its four rules of judgment are named. */
@@ -69,7 +67,7 @@ export function contractStage(s, t, c, g) {
  * the row, dimmed with its cross from its first frame, since the voice refuses it before it names it, and the row
  * glides as one unit to centre on the pipeline's axis. */
 export function exampleStage(s, t, c, g) {
-  const m = pipelineMark(960, 470, 900, { alpha: g, flow: flowOf(t) });
+  const m = pipelineMark(960, 470, 900, { alpha: g, flow: flowClock(t) });
   nameText(L("一个例子", "One example"), 960, m.top - NAME_GAP, {
     valign: "bottom",
     alpha: g * named(t, c.example),
@@ -78,7 +76,7 @@ export function exampleStage(s, t, c, g) {
     refused = L("实测", "A measured case");
   const w1 = measure(idea),
     row = w1 + 80 + measure(refused) + 42,
-    x1 = mix(960 - w1 / 2, 960 - row / 2, soon(t, c.measured + 0.05, 0.6)),
+    x1 = mix(960 - w1 / 2, 960 - row / 2, glideShare(t, c.measured + 0.05, (row - w1) / 2, 0.6)),
     y = m.bottom + NAME_GAP + 18;
   nameText(idea, x1, y, { align: "left", alpha: g * named(t, c.idea) });
   rejectedName(refused, x1 + w1 + 80, y, {
@@ -95,10 +93,10 @@ export function exampleStage(s, t, c, g) {
  * reaches further than those before it, the figure glides with its name and lines as one unit to where what stands is
  * centred. */
 export function requestStage(s, t, c, g) {
-  const Y = mix(470, 400, soon(t, c.researcher + 0.05, 0.6));
+  const Y = mix(470, 400, glideShare(t, c.researcher + 0.05, 70, 0.6));
   const m = pipelineMark(960, Y, 900, {
     alpha: g,
-    flow: flowOf(t),
+    flow: flowClock(t),
     back: soon(t, c.runAgain + 0.05, 0.6),
   });
   const term = [L("行情数据管线", "Market-data pipeline")],
@@ -171,7 +169,7 @@ export function handoffStage(s, t, c, g) {
     x0 =
       960 -
       (cw + 120 + 180 + 120 + qw) / 2 +
-      ((whole - first) / 2) * (1 - soon(t, c.summary + 0.05, 0.9)),
+      ((whole - first) / 2) * (1 - glideShare(t, c.summary + 0.05, (whole - first) / 2, 0.9)),
     a1 = x0 + cw + 120,
     a2 = a1 + 180,
     qx = a2 + 120,
@@ -193,7 +191,9 @@ export function handoffStage(s, t, c, g) {
     align: "left",
     alpha: g * named(t, c.summaryName),
   });
-  // The request travels from the card through both Agents, smaller after each, until the one line stands.
+  // The request travels from the card through both Agents, smaller after each, until the one line stands: it sets off
+  // as the summary is named and travels by the film's structural glide, entering and leaving by its size and easing
+  // to its smaller size as it reaches each Agent.
   const path = [
       [x0 + cw, Y0],
       [a1, Y0],
@@ -201,12 +201,15 @@ export function handoffStage(s, t, c, g) {
       [a2, Y1],
       [a2, Y2],
     ],
-    p = clamp((t - c.summary) / Math.max(0.8, c.single - c.summary - 0.1));
+    p = glideShare(t, c.summary - 0.15, 470);
   if (p > 0 && p < 1)
-    flowDot(...along(path, p).point, p < 0.42 ? 12 : p < 0.75 ? 9 : 6, p, {
-      color: P.ink,
-      alpha: g,
-    });
+    dot(
+      ...along(path, p).point,
+      (12 - 3 * ease((p - 0.37) / 0.1) - 3 * ease((p - 0.7) / 0.1)) *
+        ease(p / 0.08) *
+        ease((1 - p) / 0.08),
+      { color: P.ink, alpha: g },
+    );
   const q = g * named(t, c.single);
   link(a2, Y2 + 22, qx, Y3, { route: "vh", alpha: q, upto: soon(t, c.single + 0.05, 0.4) });
   quoteCard(qx, Y3, { alpha: q, words: g * named(t, c.quote) });
@@ -227,7 +230,7 @@ export function deleteStage(s, t, c, g) {
     keepName = L("要留下的更正", "Corrections that had to stay"),
     // The table stands centred and makes room on its right as the corrections are named there, gliding with the
     // words under it and the strikes on it as one unit.
-    room = soon(t, c.corrections - 0.1, 0.8),
+    room = glideShare(t, c.corrections - 0.1, (40 + measure(keepName)) / 2, 0.8),
     tx = 960 - (TW + room * (40 + measure(keepName))) / 2,
     ty = 420,
     qw = quoteWidth(),
@@ -300,8 +303,8 @@ export function replaceStage(s, t, c, g) {
     col = Math.max(cw, qw),
     left = 960 - (col + 40 + Math.max(measure(gone), nameW)) / 2,
     start = 960 - (cw + 160 + qw + 40 + measure(summary[0])) / 2;
-  const step = soon(t, c.replace + 0.05, 0.6),
-    take = soon(t, c.replace + 0.35, 0.7),
+  const step = glideShare(t, c.replace + 0.05, 270, 0.6),
+    take = glideShare(t, c.replace + 0.35, Math.hypot(start + cw + 160 - left - (col - qw) / 2, 160), 0.7),
     fade = soon(t, c.noOne + 0.05, 1);
   // The original steps down at once and back as the summary rises, so neither card passes over the other.
   const ox = mix(start, left + (col - cw) / 2, take),
@@ -312,7 +315,7 @@ export function replaceStage(s, t, c, g) {
   link(start + cw, 400, start + cw + 160 + qw / 2, 528, {
     route: "hv",
     alpha: g * (1 - ramp(t, c.replace - 0.15, 0.25)),
-    flow: (voiceTime(t) * 0.5) % 1,
+    flow: flowClock(t),
   });
   requestCard(ox, oy, { alpha: g * (1 - fade), ink: mix(1, 0.58, step), frame: g, dash: fade });
   nameText(L("原话", "Original words"), ox + cw / 2, oy + 54 + NAME_GAP, {

@@ -4,7 +4,7 @@
  * prove the understanding right; and conversations, memories and summaries are only leads. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check, cross, documentIcon, person, seal, stopSign } from "../../drawing/symbols.js";
 import { bubble, kernelIcon, layersIcon } from "../../drawing/workspace.js";
@@ -13,7 +13,7 @@ import { NAME_GAP, NOTE, TERM_GAP, nameText, termRow } from "../../naming/names.
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare } from "../../timing/pauses.js";
 import { QUOTE } from "./example.js";
 import { card, linkSet, recordRows, valueCell, verdictMark } from "./marks.js";
 import { ruleOneHeading, rowHalf } from "./rule-one.js";
@@ -78,12 +78,15 @@ export function examplesStage(s, t, c, g) {
           (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0),
       ) /
         2,
-    joined = soon(t, c.correction + 0.05, 0.9),
-    lean = ((reachLeft - reachRight) / 2) * joined * (1 - soon(t, c.stays + 0.05, 0.7)),
+    joined = glideShare(t, c.correction + 0.05, 280, 0.9),
+    lean =
+      ((reachLeft - reachRight) / 2) *
+      joined *
+      (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)),
     X1 = 960 + lean - 280 * joined,
     X2 = X1 + 560,
     vy = Y + 72,
-    q = (voiceTime(t) * 0.5) % 1;
+    q = flowClock(t);
   // The repeat: its second record is struck as it goes.
   const one = g * named(t, c.exact),
     goes = soon(t, c.goes + 0.05, 0.5),
@@ -166,7 +169,7 @@ export function constraintsStage(s, t, c, g) {
     W = CW + 150 + 26 + NAME_GAP + nw,
     // The whole spans the constraint's name where it is wider than the card, and the dispositions' names.
     over = Math.max(0, rowHalf(term, qual) - CW / 2),
-    CX = mix(960 - CW / 2, 960 - (W - over) / 2, soon(t, c.kept + 0.05, 0.9)),
+    CX = mix(960 - CW / 2, 960 - (W - over) / 2, glideShare(t, c.kept + 0.05, Math.abs(W - over - CW) / 2, 0.9)),
     CY = 470,
     rows = [0, 1, 2].map((i) => CY + 50 + i * 45);
   card(CX, CY, CW, CH, { alpha: g });
@@ -206,14 +209,14 @@ export function compileStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const Y = 580,
     come = [c.confirmed, c.compiled, c.checks].reduce(
-      (v, at) => v + 1 - soon(t, at + 0.05, 0.7),
+      (v, at) => v + 1 - glideShare(t, at + 0.05, COMPILE_PITCH / 2, 0.7),
       0,
     ),
     xs = [430, 784, 1138, 1492].map((x) => x + (COMPILE_PITCH / 2) * come),
     mid = (xs[0] + xs[3]) / 2,
     under = Y + 64 + NAME_GAP,
     over = Y - 64 - NAME_GAP,
-    q = (voiceTime(t) * 0.45) % 1;
+    q = flowClock(t);
   // The interpretation: a card with an open question.
   const meant = g * named(t, c.interpretation);
   documentIcon(xs[0] - 50, Y - 64, 100, 128, { alpha: meant, rows: 3 });
@@ -320,7 +323,7 @@ export function leadsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]),
     ats = [c.talk, c.memory, c.summaries],
-    room = soon(t, c.memory + 0.05, c.summaries - c.memory + 0.7),
+    room = glideShare(t, c.memory + 0.05, LEADS_PITCH, c.summaries - c.memory + 0.7),
     xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * (k + 1 - room)),
     Y = 620,
     back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));

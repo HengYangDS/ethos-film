@@ -3,7 +3,7 @@
 
 import { ctx } from "../../canvas.js";
 import { pipelineMark } from "../../drawing/examples.js";
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { box, dot, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, clock, documentIcon, person } from "../../drawing/symbols.js";
 import { askIcon, ledger, repoIcon, terminalIcon } from "../../drawing/workspace.js";
@@ -22,7 +22,7 @@ import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, voiceTime } from "../../timing/pauses.js";
 
 /* The rows of the example's two makings and two owners, and the sizes of their marks. */
 const R1 = 370,
@@ -149,9 +149,7 @@ export function makings(s, t, a) {
   ]);
   // The makings step left as the words that bring the owners begin, so the declared check arrives clear of the script's
   // name, which stands on one line.
-  const lift = soon(t, moveAt + 0.05, 0.9),
-    gone = a * (1 - ramp(t, retireAt + 0.05, 0.4)),
-    settle = soon(t, retireAt + 0.05, 0.9);
+  const gone = a * (1 - ramp(t, retireAt + 0.05, 0.4));
   // How far each column's marks and names reach either side of its axis.
   const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2),
     makingHalf = Math.max(
@@ -168,12 +166,16 @@ export function makings(s, t, a) {
     owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2,
     // Before its makings arrive, the Agent stands alone at the frame's centre.
     alone = 960 - 640,
-    start = mix(alone, first, soon(t, scriptAt + 0.05, 0.9));
+    start = mix(alone, first, glideShare(t, scriptAt + 0.05, first - alone, 0.9)),
+    // The makings step left by the film's structural glide over the making's way, the longer of the two; the owners
+    // settle and the obligations' links draw back to their leads over the owners' way.
+    lift = glideShare(t, moveAt + 0.05, 1040 + first - 760 - owned, 0.9),
+    settle = glideShare(t, retireAt + 0.05, 1330 + owned - 1150, 0.9);
   const AX = mix(640 + start, 400 + owned, lift),
     MX = mix(1040 + start, 760 + owned, lift),
     OX = mix(1330 + owned, 1150, settle),
     AY = 495,
-    flow = (voiceTime(t) * 0.35) % 1;
+    flow = flowClock(t);
   // The example sets the scene for the Agent and its makings, and leaves with its name as the owners arrive.
   exampleContext(a * named(t, exampleAt) * (1 - ramp(t, checkAt + 0.05, 0.4)), flow);
   // The Agent and its place stand from the cut; its name may lead its clause by a fifth of a second, so the thought
@@ -196,14 +198,16 @@ export function makings(s, t, a) {
     mid,
     alpha: sIn,
     upto: soon(t, scriptAt + 0.05, 0.5),
-    flow: sIn > 0.5 ? flow : null,
+    flow,
+    flowEvery: FLOW_EVERY,
   });
   link(AX + 52, AY, MX - SHEET[0] / 2 - 10, R2, {
     route: "hvh",
     mid,
     alpha: hIn,
     upto: soon(t, sheetAt + 0.05, 0.5),
-    flow: hIn > 0.5 ? (flow + 0.5) % 1 : null,
+    flow: flowClock(t, 0.5),
+    flowEvery: FLOW_EVERY,
   });
   // Each row of marks, a making and its owner, hangs its names from one baseline under the row's lower mark.
   const top1 = rowNameTop([R1 + SCRIPT[1] / 2, R1 + OWNER[1] / 2]),
@@ -274,7 +278,8 @@ export function makings(s, t, a) {
     link(spans[i][0], y, spans[i][1], y, {
       alpha: shown,
       upto: soon(t, at + 0.05, 0.6),
-      flow: (flow + 0.5 * i) % 1,
+      flow: flowClock(t, 0.5 * i),
+      flowEvery: FLOW_EVERY,
     });
     // A duty and its qualifier end one line over the link.
     termRow(
@@ -348,8 +353,8 @@ export function ghost(s, t, a) {
     // Until the finder comes, the script and the check stand alone in their places of the finished picture, the two
     // together centred on the frame, from the script's left edge to the check's outer edge.
     ALONE = 960 - (640 - SCRIPT[0] / 2 + right) / 2;
-  const rise = soon(t, backAt + 0.2, 0.9),
-    off = mix(ALONE, DX, soon(t, foundAt + 0.05, 0.9)),
+  const rise = glideShare(t, backAt + 0.2, Math.hypot(1310 + ALONE - 1150, 380 - R1), 0.9),
+    off = mix(ALONE, DX, glideShare(t, foundAt + 0.05, DX - ALONE, 0.9)),
     CX = mix(1150, 1310 + off, rise),
     CY = mix(R1, 380, rise),
     GX = 640 + off,

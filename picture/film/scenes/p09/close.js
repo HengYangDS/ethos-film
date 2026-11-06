@@ -2,9 +2,9 @@
  * the three conditions the rules give rather than by who said it; and the close, the whole ETHOS mark, each part
  * named on its words and the cinnabar datum last. */
 
-import { link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
 import { ethosMark } from "../../drawing/mark.js";
-import { box, flowDot, labelSize, line, measure, ring } from "../../drawing/strokes.js";
+import { box, labelSize, line, measure, ring } from "../../drawing/strokes.js";
 import { agent, check, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot } from "../../drawing/workspace.js";
 import { clearOfTitle, illustrative } from "../../framing/chapters.js";
@@ -14,7 +14,7 @@ import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare } from "../../timing/pauses.js";
 import { STAGE_CUT, stageIn, stageOut } from "../../timing/stages.js";
 import { CLAIM_DATUM, CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 import { scenes } from "../registry.js";
@@ -83,14 +83,20 @@ function bound(s, t, a) {
     chain =
       960 - BOUND_X - (boundLeft() + BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2)) / 2,
     off = mix(
-      mix(alone, chain, soon(t, wayAt + 0.05, 0.9)),
+      mix(alone, chain, glideShare(t, wayAt + 0.05, chain - alone, 0.9)),
       boundShift(),
-      soon(t, commitAt + 0.05, 0.9),
+      glideShare(t, commitAt + 0.05, boundShift() - chain, 0.9),
     ),
     PX = BOUND_X + off,
     Y = 470,
     // The Agent steps aside from the centre as its sentence comes back, as in 01.
-    aside = soon(t, beganAt + 0.05, 0.6),
+    // Its way, from the centre to its place beside the sentence as the sentence stands alone.
+    aside = glideShare(
+      t,
+      beganAt + 0.05,
+      Math.hypot(960 - (BOUND_X + alone - W / 2 - AGENT_DX), 560 - Y - AGENT_DY),
+      0.6,
+    ),
     AX = mix(960, PX - W / 2 - AGENT_DX, aside),
     AY = mix(560, Y + AGENT_DY, aside),
     // The question's top, at its gap under the panel; the seal's name shares its baseline.
@@ -104,7 +110,7 @@ function bound(s, t, a) {
     end = PX + BOUND_RUN,
     rows = BOUND_ROWS,
     ats = [commitAt, provedAt, openAt],
-    flow = (voiceTime(t) * 0.4) % 1;
+    flow = flowClock(t);
   agent(AX, AY, { size: 1.5, alpha: seen });
   nameText("Agent", AX, AY + 33 + NAME_GAP, { valign: "top", alpha: seen });
   // The Agent's link draws out to the sentence and then carries a point to it while the voice speaks, ending in its
@@ -113,7 +119,8 @@ function bound(s, t, a) {
     route: "vh",
     alpha: seen,
     upto: aside,
-    flow: aside >= 1 ? flow : null,
+    flow,
+    flowEvery: FLOW_EVERY,
   });
   const {
     datum: [dx, dy],
@@ -135,7 +142,7 @@ function bound(s, t, a) {
   // ETHOS's way: the datum's link draws out while its clause is said and reaches the seal as the attestations are
   // named, its quiet point arriving under the seal.
   const drawn = soon(t, wayAt + 0.05, Math.max(0.9, sealAt - wayAt));
-  link(dx + 16, dy, end, dy, { alpha: way, upto: drawn, flow: drawn >= 1 ? flow : null });
+  link(dx + 16, dy, end, dy, { alpha: way, upto: drawn, flow });
   nameText(L("ETHOS 的做法", "In ETHOS"), (dx + end) / 2, dy - 22, {
     valign: "bottom",
     size: NOTE,
@@ -222,12 +229,17 @@ function judged(s, t, a, cutAt) {
     axis = left + A + GUTTER / 2,
     // The refusals and the sentence, with its datum, are centred on the frame while they stand alone.
     alone = 960 - (left + axis + claimWidth() / 2 + CLAIM_DATUM) / 2,
-    shift = mix(alone, 0, soon(t, meaningAt + 0.05, 0.9)),
+    shift = mix(alone, 0, glideShare(t, meaningAt + 0.05, alone, 0.9)),
     RX = left + A - 42 + shift,
     BX = left + A + GUTTER + shift;
   // The sentence rises from the cut, the question having been put before it, over a second, so its longest rise, in
   // English, keeps a step between frames that reads as one mark moving.
-  const q = soon(t, Math.max(trustAt + 0.05, cutAt), 1.0),
+  const q = glideShare(
+      t,
+      Math.max(trustAt + 0.05, cutAt),
+      Math.hypot(BOUND_X + boundShift() - axis - alone, 470 - 380),
+      1.0,
+    ),
     PX = mix(BOUND_X + boundShift(), axis + shift, q),
     PY = mix(470, 380, q),
     conds = [meaningAt, withinAt, backAt],
@@ -322,12 +334,15 @@ function close(s, t, a) {
   ring(X, Y, point, { color: P.ink, alpha: o * (1 - datum), width: 3 });
   ethosMark(X, Y, S, { datum, hole: 1, passages: 0, boundary: 0, alpha: a });
   // A point travels the boundary while the voice speaks, and once drawn, the passages.
-  const q = (voiceTime(t) * 0.18) % 1,
-    ang = -0.7 - q * (2 * Math.PI - 1.4);
-  flowDot(X + r * Math.cos(ang), Y + r * Math.sin(ang), 7, q, {
-    color: P.line,
-    alpha: a * (1 - lit),
-  });
+  flowAlong(
+    Array.from({ length: 65 }, (_, i) => {
+      const ang = -0.7 - (i / 64) * (2 * Math.PI - 1.4);
+      return [X + r * Math.cos(ang), Y + r * Math.sin(ang)];
+    }),
+    flowClock(t),
+    7,
+    { single: true, color: P.line, alpha: a * (1 - lit) },
+  );
   // English names the mark as its clause begins, so the cut already shows the name with the drawing outline.
   nameText(L("ETHOS 的标志", "The ETHOS mark"), X, Y + r + 16 * k + NAME_GAP, {
     valign: "top",

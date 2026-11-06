@@ -2,7 +2,7 @@
  * every mechanism needs keeping and the ones kept without an obligation pile up into the burden. */
 
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import { ring, stroke } from "../../drawing/strokes.js";
 import { person } from "../../drawing/symbols.js";
 import { illustrative } from "../../framing/chapters.js";
@@ -13,7 +13,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 import { scenes } from "../registry.js";
 import { ghost, makings, nameWidth } from "./example.js";
@@ -62,7 +62,7 @@ function upkeep(s, t, a) {
     top = rowNameTop([GY + R, personBottom(PY, 1.3)]),
     stale = ramp(t, staleAt - 0.15, 0.4),
     turn = 0.3 * voiceTime(Math.min(t, staleAt + 0.2)),
-    flow = (voiceTime(t) * 0.45) % 1,
+    flow = flowClock(t),
     m = a * named(t, maintainAt),
     e = a * named(t, explainAt);
   stroke(() => gearPath(GX, GY, R, turn), { color: P.ink, alpha: a * (1 - stale), width: 3 });
@@ -89,7 +89,7 @@ function upkeep(s, t, a) {
   link(1242, GY, GX + R + 12, GY, {
     alpha: e,
     upto: soon(t, explainAt + 0.05, 0.5),
-    flow: (flow + 0.5) % 1,
+    flow: flowClock(t, 0.5),
   });
   nameText(L("有人解释", "Someone to explain it"), 1280, top, { valign: "top", alpha: e });
 }
@@ -128,7 +128,7 @@ function burden(s, t, a) {
     MIDX = (SHELF[0] + SHELF[1]) / 2,
     S = 960 - (NX - nameWidth(PILE_NAME, PILE_WRAP) + SHELF[1] + 2) / 2;
   const kept = 1 + Math.floor((PILE.length - 1) * clamp((t - goneAt - 0.05) / 0.6)),
-    sag = 34 * soon(t, burdenAt + 0.05, 1.2),
+    sag = 34 * glideShare(t, burdenAt + 0.05, 68, 1.2),
     depth = (x) => sag * (1 - ((x - MIDX) / (MIDX - SHELF[0])) ** 2),
     g = a * named(t, goneAt),
     b = a * named(t, govAt);

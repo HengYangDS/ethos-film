@@ -5,18 +5,18 @@
  * top through 04.6, so each stage below it reaches down to about y 800 and the whole stays balanced. */
 
 import { ctx } from "../../canvas.js";
-import { along, link } from "../../drawing/links.js";
+import { flowAlong, flowClock, link } from "../../drawing/links.js";
 import { modelGrid } from "../../drawing/models.js";
-import { box, dot, flowDot, labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { box, dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { agent, documentIcon, person } from "../../drawing/symbols.js";
 import { ruleHeading } from "../../framing/rules.js";
-import { beats, listIn, named } from "../../naming/lists.js";
+import { beats, listIn, named, reachAt } from "../../naming/lists.js";
 import { NAME_GAP, NOTE, TERM_STACK, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare } from "../../timing/pauses.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
  * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once as the
@@ -82,11 +82,11 @@ function enoughModel(t, x, y, a, flowing) {
     width: 2.5,
   });
   dot(x, y - 28, 6, { color: P.ink, alpha: a });
-  if (flowing > 0) {
-    const q = (voiceTime(t) * 0.5) % 1,
-      path = [links[0][0], links[0][1], links[1][0], links[1][1]];
-    flowDot(...along(path, q).point, 6, q, { color: P.ink, alpha: a * flowing });
-  }
+  if (flowing > 0)
+    flowAlong([links[0][0], links[0][1], links[1][0], links[1][1]], flowClock(t), 6, {
+      color: P.ink,
+      alpha: a * flowing,
+    });
 }
 
 /* 04.4 The model: concepts and structure. The one of the right size stands with the statement; one too big, with
@@ -97,8 +97,8 @@ function enoughModel(t, x, y, a, flowing) {
 const MODEL_PITCH = 450;
 export function modelStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const s2 = soon(t, c.big - 0.1, 0.5),
-    s3 = soon(t, c.small + 0.05, 0.6),
+  const s2 = glideShare(t, c.big - 0.1, MODEL_PITCH / 2, 0.5),
+    s3 = glideShare(t, c.small + 0.05, MODEL_PITCH / 2, 0.6),
     Y = 620,
     half = MODEL_PITCH / 2,
     under = rowNameTop([Y + 48, Y + 75, Y + 20]),
@@ -130,7 +130,7 @@ export function modelStage(s, t, c, g) {
     row,
   );
   const small = g * named(t, c.small),
-    lost = soon(t, c.lost + 0.05, 0.9);
+    lost = glideShare(t, c.lost + 0.05, 70, 0.9);
   box(xs[0] - 32, Y - 20, 64, 40, { stroke: P.ink, alpha: small, radius: 6, width: 2.5 });
   // The meaning does not fit the small model: it sits on its edge and falls away when it is lost.
   dot(xs[0] + 44, mix(Y - 30, Y + 40, lost), 6, { color: P.ink, alpha: small * (1 - lost) });
@@ -151,19 +151,6 @@ export function modelStage(s, t, c, g) {
 export const rowHalf = (term, qual = []) =>
   Math.max(measure(term.join("")), qual.length ? measure(qual.join(""), NOTE) : 0) / 2;
 
-/* How far a group that builds part by part reaches at t, so it can stand centred on what it shows: from `base`, the
- * reach of what stands first, each part that reaches further than those before it widens the group, gliding from just
- * after its words. `parts` are [at, reach] pairs. */
-export function reachAt(t, base, parts, duration = 0.7) {
-  let reach = base,
-    now = base;
-  for (const [at, v] of [...parts].sort((a, b) => a[0] - b[0])) {
-    if (v <= reach) continue;
-    now += (v - reach) * soon(t, at + 0.05, duration);
-    reach = v;
-  }
-  return now;
-}
 
 /* The Change: a document that holds the intent at its head and, on their words, its three fields. */
 export const CHANGE_W = 150,
@@ -209,7 +196,11 @@ export function changeStage(s, t, c, g) {
     DX = 960 - (reach - over) / 2,
     DY = 440,
     FX = DX + CHANGE_W + 90,
-    into = soon(t, c.change + 0.05, 0.7),
+    // The intent's way, from its place to the head of the Change as the Change stands alone.
+    // It sets off as the Change's word begins, so it stands in the Change's head within half a second of the Change.
+    // Its way from (alone - 190, DY + 150) to (alone + 52, DY + 26) as the Change stands alone: 242 px across and 124
+    // up; the Change may stand further left once its fields are named, so the way allows for that too.
+    into = glideShare(t, c.change - 0.1, Math.hypot(242 + Math.max(0, alone - DX), 124), 0.7),
     fields = ats.map((at) => ramp(t, at - 0.15, 0.4));
   changeDocument(DX, DY, { alpha: g * named(t, c.change), fields, intent: 0 });
   // The intent travels from its place into the head of the Change.
@@ -217,10 +208,11 @@ export function changeStage(s, t, c, g) {
     iy = mix(DY + 150, DY + 26, into),
     meant = g * named(t, c.intent);
   documentIcon(ix, iy, 46, 58, { alpha: meant, rows: 2, fold: false });
-  // Its name stays where the intent was named and leaves as the intent goes in.
-  nameText(L("意图", "The intent"), alone - 190 + 23, DY + 150 + 58 + NAME_GAP, {
+  // Its name goes with it toward the Change, one gap under it, and fades over the first third of its way, well before
+  // it would meet the Change's outline; the Change's own name takes over from there.
+  nameText(L("意图", "The intent"), ix + 23, iy + 58 + NAME_GAP, {
     valign: "top",
-    alpha: meant * (1 - ramp(t, c.change + 0.05, 0.3)),
+    alpha: meant * (1 - ramp(t, c.change - 0.05, 0.3)),
   });
   // The Change is named under it from its first word; "only there" joins under its name.
   termRow(t, term, [c.change], qual, [c.only], DX + CHANGE_W / 2, DY + CHANGE_H + NAME_GAP, {
@@ -254,14 +246,13 @@ export function readersStage(s, t, c, g) {
     left = 250 + rowHalf(readers, readersQual),
     right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)),
     read = CHANGE_W + NAME_GAP + 10 + measure(same),
-    DX = 960 + mix(left - right, left - read, soon(t, c.same + 0.05, 0.7)) / 2,
+    DX = 960 + mix(left - right, left - read, glideShare(t, c.same + 0.05, (read - right) / 2, 0.7)) / 2,
     DY = 440,
     RX = DX - 250,
     AY = 666,
     names = rowNameTop([AY + 22, DY + CHANGE_H]),
     who = g * named(t, c.readers),
-    reading = g * named(t, c.same),
-    q = (voiceTime(t) * 0.5) % 1;
+    reading = g * named(t, c.same);
   changeDocument(DX, DY, { alpha: g });
   termRow(t, term, [c.first5], qual, [c.first5], DX + CHANGE_W / 2, names, {
     alpha: g,
@@ -282,7 +273,7 @@ export function readersStage(s, t, c, g) {
       route: "hvh",
       alpha: reading,
       upto: soon(t, c.same + 0.05, 0.5),
-      flow: (q + k) % 1,
+      flow: flowClock(t, k),
     });
   nameText(same, DX + CHANGE_W + NAME_GAP + 10, DY + 120, { align: "left", alpha: reading });
 }

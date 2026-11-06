@@ -1,15 +1,17 @@
-/* Drawn relations: orthogonal links that end in a quiet point. From ddwg-film v1.0.0 (c4e8aac), picture/film.js. */
+/* Drawn relations: orthogonal links that end in a quiet point, and the flows that run along them. From ddwg-film v1.0.0 (c4e8aac), picture/film.js. */
 
 import { ctx } from "../canvas.js";
-import { dot, flowDot, stroke } from "./strokes.js";
+import { dot, stroke } from "./strokes.js";
 import { P } from "../palette.js";
-import { clamp } from "../timing/easing.js";
+import { clamp, ease } from "../timing/easing.js";
+import { voiceTime } from "../timing/pauses.js";
 
 /* A drawn relation follows the grid: a straight run when its ends share a row or a column, otherwise an orthogonal
  * route whose corners are quarter turns of radius `r` (never a diagonal). It draws on from its source along its length
- * and ends in a quiet point rather than an arrowhead; `flow`, a phase in [0, 1) that callers advance in voice time,
- * moves one dot along it to show the way the relation runs, so it rests in the quiet between thoughts. Routes: "vhv" leaves vertically, crosses at `mid` and arrives vertically; "hvh" the reverse;
- * "vh" and "hv" turn once. */
+ * and ends in a quiet point rather than an arrowhead; `flow`, a flow's clock (flowClock), runs the flow's dots along it
+ * to show the way the relation runs (flowAlong), `flowSince` starts that flow later and `flowEvery` fixes its period,
+ * which a relation whose ends glide must do, so its dots keep their places as its length changes. Routes: "vhv" leaves
+ * vertically, crosses at `mid` and arrives vertically; "hvh" the reverse; "vh" and "hv" turn once. */
 export function rounded(corners, r) {
   const out = [corners[0]];
   for (let i = 1; i < corners.length - 1; i++) {
@@ -55,6 +57,70 @@ export function along(points, q) {
   }
   return { point: kept.at(-1), kept };
 }
+/* A flow shows the way a relation runs: dots that cross the path at FLOW_PACE px/s, whatever its length, so every flow
+ * in the film moves at one calm, even pace, and rest with the voice in the quiet between thoughts. On a path that takes
+ * up to FLOW_EVERY seconds to cross, the next dot sets off as the last one leaves, so the flow never stands empty; a
+ * longer path carries a dot every FLOW_EVERY seconds, more than one at a time, and a very short one a dot every
+ * FLOW_SOONEST seconds, so it never pulses. Each dot enters at the start and leaves at the end by its size, over
+ * FLOW_EDGE seconds; a dot under half a pixel is not drawn. A dot stands at its distance along the path, so a path that
+ * grows or shrinks never moves the dots already on it. */
+export const FLOW_PACE = 180,
+  FLOW_EVERY = 2.2,
+  FLOW_SOONEST = 1,
+  FLOW_EDGE = 0.25;
+/* A flow's clock at t: voice time, shifted by `stagger` shares of FLOW_EVERY so that flows side by side set off in
+ * turn. */
+export const flowClock = (t, stagger = 0) => voiceTime(t) + stagger * FLOW_EVERY;
+/* The dots of a flow along the polyline `points` at the flow clock `clock`, `r` px when whole. A relation still
+ * drawing on (`upto` under 1) holds its flow: its dots grow in where they stand over the last tenth of the drawing, so
+ * none appears whole part way along. `since`, a flow clock, starts a flow later: only the dots that set off from then
+ * on are drawn, so a flow that begins enters from its start. `every` sets the seconds between dots, a constant, so a
+ * path whose length changes never moves its dots; by default it follows the path's own length as above, which suits a
+ * path of fixed length or one that only draws on (its dots stay put while it grows, since a path that has not finished
+ * drawing holds its flow). A `single` flow carries one dot at a time, however long its path. `clear` lists places, as
+ * [x, y, r, presence], that a dot leaves by its size as it nears them and enters again past them, so it never crosses a
+ * mark standing on its path; a place that is arriving clears its way over the first 0.3 of its presence, before it
+ * is firm. */
+export function flowAlong(
+  points,
+  clock,
+  r,
+  {
+    upto = 1,
+    since = -Infinity,
+    every = null,
+    single = false,
+    clear = [],
+    color = P.line,
+    alpha = 1,
+  } = {},
+) {
+  if (clock === null || alpha < 0.01 || upto <= 0.9 || points.length < 2) return;
+  let total = 0;
+  for (let i = 1; i < points.length; i++)
+    total += Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]);
+  const travel = total / FLOW_PACE,
+    period = single
+      ? Math.max(every ?? FLOW_EVERY, travel)
+      : (every ?? Math.min(FLOW_EVERY, Math.max(FLOW_SOONEST, travel))),
+    edge = Math.min(FLOW_EDGE, travel / 2),
+    grown = ease((upto - 0.9) / 0.1);
+  for (let time = ((clock % period) + period) % period; time < travel; time += period) {
+    if (clock - time < since) continue;
+    const [x, y] = along(points, time / travel).point;
+    const size =
+      grown *
+      ease(time / edge) *
+      ease((travel - time) / edge) *
+      clear.reduce(
+        (k, [cx, cy, cr, presence = 1]) =>
+          k * (1 - ease(presence / 0.3) * (1 - ease((Math.hypot(x - cx, y - cy) - cr) / (FLOW_PACE * edge)))),
+        1,
+      );
+    if (r * size < 0.5) continue;
+    dot(x, y, r * size, { color, alpha });
+  }
+}
 export function link(
   x1,
   y1,
@@ -70,6 +136,8 @@ export function link(
     width = 2,
     dash = null,
     flow = null,
+    flowSince = -Infinity,
+    flowEvery = null,
     end = true,
   } = {},
 ) {
@@ -113,9 +181,9 @@ export function link(
       width,
       dash,
     });
-  if (end) dot(x2, y2, width + 2.5, { color, alpha: alpha * clamp((upto - 0.9) / 0.1) });
-  if (flow !== null && flow < upto) {
-    const [px, py] = along(points, flow).point;
-    flowDot(px, py, width + 2, flow, { color, alpha });
-  }
+  // The quiet end point lands as the relation arrives: it grows to its size over the last tenth of the drawing.
+  const point = (width + 2.5) * ease((upto - 0.9) / 0.1);
+  if (end && point > 0.3) dot(x2, y2, point, { color, alpha });
+  if (flow !== null)
+    flowAlong(points, flow, width + 2, { upto, since: flowSince, every: flowEvery, color, alpha });
 }

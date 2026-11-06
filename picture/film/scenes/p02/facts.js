@@ -1,9 +1,9 @@
 /* 02.5 Changes are made before the facts are checked: an Agent writes from an outdated memory over another's work, a
  * version lands on one platform and not the other, and neither a retry nor an error message settles what happened. */
 
-import { centring, glide } from "../p03/kernel.js";
+import { centring } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
-import { link } from "../../drawing/links.js";
+import { flowClock, link } from "../../drawing/links.js";
 import {
   box,
   dashed,
@@ -24,7 +24,7 @@ import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideSteps } from "../../timing/pauses.js";
 
 /* Two Agents drawn as one mark: their outlines one stroke and their cores one fill, so one name names the pair. */
 function agentPair(xs, y, { alpha = 1, size = 1 } = {}) {
@@ -84,7 +84,7 @@ function standing(t, parts) {
     if (next !== shift) steps.push([at, next]);
     shift = next;
   }
-  return glide(t, first, steps);
+  return glideSteps(t, first, steps);
 }
 
 /* 02.5 Two Agents work on the same branch. One keeps a memory of the branch as it was, three commits; it writes from
@@ -105,7 +105,7 @@ export function stageBranch(t, a, c) {
     alpha: a * named(t, c.bCut),
   });
   // The branch, on its words: one line and its commits as one mark; the newest, under the other Agent, is its work.
-  const over = soon(t, c.overwritten + 0.05, 0.6),
+  const over = glideShare(t, c.overwritten + 0.05, 96, 0.6),
     branch = a * ramp(t, c.branch - 0.15, 0.4);
   line(xs[2], Y, xs[3], Y, { color: P.ink, alpha: branch, width: 2.5 });
   commitRow(xs[0], xs[1] - xs[0], Y, 3, { alpha: branch, single: true });
@@ -152,7 +152,7 @@ export function stageBranch(t, a, c) {
     mid: 560,
     alpha: write,
     upto: soon(t, c.writes + 0.05, 0.8),
-    flow: (voiceTime(t) * 0.45) % 1,
+    flow: flowClock(t),
   });
   dot(BX, Y, 9 * soon(t, c.writes + 0.75, 0.3), { color: P.ink, alpha: a });
 }
@@ -167,13 +167,13 @@ export function stageBranch(t, a, c) {
 export function stagePlatforms(t, a, c) {
   if (a <= 0) return;
   const VX = 470,
-    VY = 600 + 40 * (1 - soon(t, c.github + 0.05, 0.7)),
+    VY = 600 + 40 * (1 - glideShare(t, c.github + 0.05, 40, 0.7)),
     PX = 1100,
     ys = [VY - 140, VY + 140],
     RY = VY + 240,
     W = 220,
     H = 84,
-    q = (voiceTime(t) * 0.4) % 1;
+    q = flowClock(t);
   const versionName = L("同一个版本", "The same version"),
     resultNames = L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"]),
     unclearName = L("谁也说不清", "Nobody can say"),
@@ -234,7 +234,7 @@ export function stagePlatforms(t, a, c) {
     upto: soon(t, c.retry + 0.05, 0.6),
     dash: [8, 8],
   });
-  unknownMark(VX + 70 + 330, RY, again * soon(t, c.retry + 0.55, 0.3));
+  unknownMark(VX + 70 + 330, RY, again * ramp(t, c.retry + 0.5, 0.4));
   // Its name stands as far from its mark as the results' names stand from theirs.
   nameText(retryName, VX + 70 + 330 + UNKNOWN_R + 16, RY, {
     align: "left",
@@ -256,7 +256,7 @@ export function stageSent(t, a, c) {
     ys = [560, 760].map((y) => y + building(t, [c.s2Cut, c.error], 100)),
     near = [c.sent, c.error],
     far = [c.received, c.nothing],
-    q = (voiceTime(t) * 0.4) % 1;
+    q = flowClock(t);
   const nearNames = L(["请求", "报错"], ["A request", "An error message"]),
     nearQuals = L([["发出去了"], []], [["that was sent"], []]),
     nearAts = [L(c.sent, c.s2Cut), L(c.errorName, c.error)],

@@ -3,7 +3,7 @@
  * about why, and the remedy proposed. */
 
 import { ctx } from "../../canvas.js";
-import { link, along } from "../../drawing/links.js";
+import { along, flowClock, link } from "../../drawing/links.js";
 import { box, dot, measure, ring, stroke } from "../../drawing/strokes.js";
 import { check, clock, documentIcon, person, stopSign } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
@@ -14,7 +14,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom, cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideTime, voiceTime } from "../../timing/pauses.js";
 
 /* The pipeline of the example, drawn here as the vendor's feed, the run and a store of two slots. */
 const Y = 530,
@@ -68,8 +68,16 @@ const INTO_RUN = [
     [STORE[0] + 150, Y],
     [STORE[0] + 165, SLOTS[1]],
   ];
-const travel = (t, toRun, toSlot) =>
-  toSlot > 0 ? along(INTO_SLOT, toSlot).point : along(INTO_RUN, toRun).point;
+/* One way from the feed through the run into the slot, and how far along it a correction stands once it has gone
+ * `toRun` of the way into the run and then `toSlot` of the rest of the way from there to the slot, so it never leaves
+ * one leg before it has reached its end. */
+const WAY = [...INTO_RUN, ...INTO_SLOT.slice(1)],
+  wayTo = (points) =>
+    points.slice(1).reduce((v, p, i) => v + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]), 0),
+  RUN_WAY = wayTo(INTO_RUN),
+  SLOT_WAY = wayTo(INTO_SLOT);
+const travel = (toRun, toSlot) =>
+  along(WAY, mix(toRun * RUN_WAY, RUN_WAY + SLOT_WAY, toSlot) / (RUN_WAY + SLOT_WAY)).point;
 
 /* 08.6. A few days later, on a clock whose hand turns while the voice speaks: the vendor sends two corrections for the
  * same stock on the same day, the second drawn larger than the first; the pipeline keeps only an original value and
@@ -103,7 +111,7 @@ export function corrections(s, t, a) {
     alone = 960 - (left + before) / 2,
     done = 960 - (left + after) / 2,
     // At least 0.8 s, longer for a longer step, so the picture keeps one pace as it steps.
-    off = mix(alone, done, soon(t, origAt - 0.45, Math.max(0.8, Math.abs(alone - done) / 350)));
+    off = mix(alone, done, glideShare(t, origAt - 0.45, alone - done, 0.8));
   ctx.save();
   ctx.translate(off, 0);
   clock(FEED, 330, 24, { hand: (voiceTime(t) * 0.5) % 1, alpha: a });
@@ -130,8 +138,18 @@ export function corrections(s, t, a) {
   const c = a * named(t, twoAt);
   nameText(TWO, FEED, ABOVE, { valign: "bottom", alpha: c });
   if (c > 0.01) {
-    const [x1, y1] = travel(t, soon(t, twoAt + 0.1, 1.0), soon(t, singleAt + 0.2, 1.0)),
-      [x2, y2] = travel(t, 0.8 * soon(t, twoAt + 0.3, 1.0), soon(t, secondAt + 0.05, 1.2));
+    // Each leg by the film's structural glide over its way, the slot's leg arriving as its words end: the first
+    // correction reaches the slot of a single correction by the end of that name's clause, and the second reaches it
+    // as it is said to overwrite the first, so each stands in the slot while it is named.
+    const into = (at, until, way) => glideShare(t, Math.min(at + 0.2, until - glideTime(way, 0.8)), way, 0.8);
+    const [x1, y1] = travel(
+        glideShare(t, twoAt + 0.1, RUN_WAY, 1.0),
+        into(singleAt, secondAt, SLOT_WAY),
+      ),
+      [x2, y2] = travel(
+        0.8 * glideShare(t, twoAt + 0.3, 0.8 * RUN_WAY, 1.0),
+        into(secondAt - 0.15, overAt + 0.3, 0.2 * RUN_WAY + SLOT_WAY),
+      );
     // Sized apart from each other and from the feed's point, so neither is read as one of a list of points.
     dot(x1, y1, 7, { color: P.ink, alpha: c * (1 - over) });
     dot(x2, y2, 16, { color: P.ink, alpha: c });
@@ -198,7 +216,7 @@ export function judgement(s, t, a) {
   // the report's bottom line, so the row's names hang one gap under each of their marks on one baseline.
   const p = a * named(t, peopleAt),
     b = a * named(t, backAt),
-    TOP = mix(450, 300, soon(t, obsAt - 0.5, 0.8)),
+    TOP = mix(450, 300, glideShare(t, obsAt - 0.5, 150, 0.8)),
     [PX, , DX] = PANEL_X,
     DOC = [84, 108],
     PY = TOP + DOC[1] / 2 - 22.7 * 1.5,
@@ -219,7 +237,7 @@ export function judgement(s, t, a) {
   link(PX + 40, TOP, DX - DOC[0] / 2 - 12, TOP, {
     alpha: b,
     upto: soon(t, backAt + 0.05, Math.max(0.8, (DX - DOC[0] / 2 - 52 - PX) / 760)),
-    flow: (voiceTime(t) * 0.4) % 1,
+    flow: flowClock(t),
   });
   documentIcon(DX - DOC[0] / 2, TOP - DOC[1] / 2, DOC[0], DOC[1], { alpha: b, rows: 0 });
   nameText(L("报告", "The report"), DX, names, {
