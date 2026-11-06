@@ -6,7 +6,15 @@ import { link } from "../../drawing/links.js";
 import { box, flowDot, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
 import { beats, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
+import {
+  NAME_GAP,
+  NOTE,
+  TERM_STACK,
+  nameText,
+  rejectedName,
+  termRow,
+  termRowLayout,
+} from "../../naming/names.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
@@ -17,7 +25,8 @@ import { voiceTime } from "../../timing/pauses.js";
  * the kernel alone is what ETHOS's code does, named under it. For everything else it turns to tools: on those words two
  * tools, larger outlines of two sizes below the kernel, each holding its content (Git's branch in one, a tool's
  * features in the other), are linked from the kernel and named as everything else between them; Git is named on its
- * word and the pair as mature tools under them; so there is much less to verify, and the kernel lights once. The
+ * word and the pair as mature tools under them; so there is much less to verify, the qualifier under the kernel's
+ * one job, and the kernel lights once. The
  * panel's names ride its top and bottom edges as it draws in, so each stays one gap from what it names. */
 export function stageTools(t, a, c) {
   if (a <= 0) return;
@@ -58,12 +67,15 @@ export function stageTools(t, a, c) {
     alpha: a * named(t, c.tCut + 0.15),
   });
   const under = KY + Math.max(PH / 2, KR) + NAME_GAP;
-  nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
+  const job = nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
     valign: "top",
     alpha: a * named(t, c.oneJob),
   });
-  nameText(L("就少得多", "Much less"), KX, under + 52, {
+  // What it leaves to verify is said of the kernel's one job, so it stands under that name as its qualifier.
+  nameText(L("就少得多", "much less"), KX, job.bottom + TERM_STACK, {
     valign: "top",
+    size: NOTE,
+    color: P.muted,
     alpha: a * named(t, c.less),
   });
   // Everything else: the tools, each linked from the kernel, arrive together on the words that turn to them.

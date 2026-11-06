@@ -96,11 +96,6 @@
           "text_sha256": "5921ad2c21fa171b86e05d35593a988c3624a7a39fbde293162a5e96e1f57024",
           "spoken_sha256": "d6e2fef9cab618942146df32af737793c33f2bc20da8c93f1fae95f6b5f3f0c4"
         },
-        "6": {
-          "seed": 107629,
-          "text_sha256": "597069c420acc9c3a972509892c90b4b6d52b62c077af1cefb480d2daa258e7b",
-          "spoken_sha256": "4a6e3b562b78ef691210e145c1a4730ef0729db84f1ce4a257cd0b388a011c5a"
-        },
         "7": {
           "seed": 234333,
           "text_sha256": "dfc81c93a2a2247327a951ff3344afc29ffe058b20df54633193d73c47ea5833",
@@ -109,6 +104,16 @@
             "spoken_text": "回到例子。另一个 Agent 也在干活。它记得分支还停在昨天那次提交，看板上也是一片绿灯。可从编好计划到真正写入，中间别人可能已经改过了。就在它要写入的那一刻，Eethos 又核对了一遍：分支已经往前走了。跟计划里预想的不一样，那就什么都不写，按刚观察到的事实，重新编译计划。",
             "cut_sample": 306000
           }
+        },
+        "5": {
+          "seed": 368956,
+          "text_sha256": "1e247ae0eb46e22d00d5a85f08688f1983fcbb88ce5f0e80743154e19ba2faf9",
+          "spoken_sha256": "1e247ae0eb46e22d00d5a85f08688f1983fcbb88ce5f0e80743154e19ba2faf9"
+        },
+        "6": {
+          "seed": 361037,
+          "text_sha256": "80011e970ad22ebbf1e0f206daf1e8ee4ab946aa7547505c449dd473d4775602",
+          "spoken_sha256": "58bc0e0aded5129048fe54427f6682b6549b5b5af309095eb49c6ed27dd914e9"
         }
       }
     },

@@ -3011,12 +3011,14 @@ function stageTools(t, a, c) {
     alpha: a * named(t, c.tCut + 0.15)
   });
   const under = KY + Math.max(PH / 2, KR) + NAME_GAP;
-  nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
+  const job = nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
     valign: "top",
     alpha: a * named(t, c.oneJob)
   });
-  nameText(L("就少得多", "Much less"), KX, under + 52, {
+  nameText(L("就少得多", "much less"), KX, job.bottom + TERM_STACK, {
     valign: "top",
+    size: NOTE,
+    color: P.muted,
     alpha: a * named(t, c.less)
   });
   tools.forEach(([x, y, w, h], i) => {
@@ -4418,8 +4420,8 @@ var stepsReach = () => Math.max(STEPS.at(-1) + STEP_R, STEPS[0] - STEP_R + measu
 var separateX = () => 960 - (PLANE_W + stepsReach()) / 2;
 var outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]);
 var outcomeQuals = () => L(
-  [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
-  [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]]
+  [["允许动手"], ["有冲突、失败或警告"], ["缺了，或者没法核实"]],
+  [["lets work go ahead"], ["a conflict, failure or warning"], ["missing or unverifiable"]]
 );
 function outcomesColumns() {
   const mark = PLANE_W + 80, names2 = mark + 18 + NAME_GAP, quals = names2 + Math.max(...outcomeNames().map((v) => measure(v, LABEL))) + TERM_GAP, natural = mark - 18 + measure(L("一次判断的结果", "A judgment")) + TERM_GAP;
@@ -4436,7 +4438,7 @@ function outcomesParts(c) {
       at,
       col.quals + measure(quals[i].join(""), NOTE)
     ]),
-    [c.never, col.quals + measure(L("不等于可以", "Never permission"), NOTE)]
+    [c.never, col.quals + measure(L("不等于可以", "never permission"), NOTE)]
   ];
 }
 function buildingReach(t, parts2) {
@@ -4547,7 +4549,7 @@ function outcomesStage(s, t, c, g) {
       qualLeft
     });
   });
-  nameText(L("不等于可以", "Never permission"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
+  nameText(L("不等于可以", "never permission"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
     align: "left",
     size: NOTE,
     color: P.muted,
@@ -4609,6 +4611,7 @@ function refusedStage(s, t, c, g) {
 
 // picture/film/scenes/p05/non-pass.js
 var ROWS = [374, 458, 542, 626];
+var THING_ROWS = [332, 416, 500, 584, 668];
 var KINDS = ["pass", "block", "unknown"];
 var MARK_R = 18;
 var OVER = 24;
@@ -4617,8 +4620,9 @@ var LEAD = 0.35;
 var MID = (ROWS[2] + ROWS[3]) / 2;
 var notPassName = () => L("只要不是通过", ["Any result", "other than pass"]);
 var thingNames = () => L(
-  ["为什么停下", "证据，或者缺什么事实", "下一步做什么才安全", "要不要人决定"],
+  ["发生了什么", "为什么停下", "证据，或者缺什么事实", "下一步做什么才安全", "要不要人决定"],
   [
+    "What happened",
     "Why that step stopped",
     "Its evidence, or the missing fact",
     "The one safe next action",
@@ -4644,7 +4648,7 @@ function parts(c) {
   return [
     [c.nonPassFirst, col.right],
     [c.notPass, col.from - 14],
-    ...[c.why, c.evidence, c.nextSafe, c.person].map((at, i) => [
+    ...[c.happened, c.why, c.evidence, c.nextSafe, c.person].map((at, i) => [
       at - LEAD,
       col.things + measure(thingNames()[i])
     ])
@@ -4652,16 +4656,19 @@ function parts(c) {
 }
 function thingMark(i, x, y, alpha) {
   if (alpha < 0.01) return;
-  if (i === 0) askIcon(x, y - 1, 19, { alpha, color: P.ink });
-  else if (i === 1) docMark(x - 17, y - 22, 34, 44, { alpha, rows: 3 });
-  else if (i === 2) {
+  if (i === 0) {
+    line(x - 20, y, x + 20, y, { color: P.ink, alpha, width: 2.5 });
+    dot(x, y, 7, { color: P.ink, alpha });
+  } else if (i === 1) askIcon(x, y - 1, 19, { alpha, color: P.ink });
+  else if (i === 2) docMark(x - 17, y - 22, 34, 44, { alpha, rows: 3 });
+  else if (i === 3) {
     ring(x, y, 17, { color: P.ink, alpha, width: 2.5 });
     dot(x, y, 7, { color: P.ink, alpha });
   } else person(x, y + 5, { alpha, size: 0.8 });
 }
 function nonPassStage(s, t, c, g) {
   if (g <= 0) return;
-  const x = 960 - buildingReach(t, parts(c)) / 2, col = columns(), em = labelSize(LABEL), flow = voiceTime(t) * 0.45 % 1, names2 = outcomeNames(), quals = outcomeQuals(), things = thingNames(), ats = [c.why, c.evidence, c.nextSafe, c.person], other = g * named(t, c.notPass), aside = mix(1, 0.62, ramp(t, c.notPass + 0.2, 0.4));
+  const x = 960 - buildingReach(t, parts(c)) / 2, col = columns(), em = labelSize(LABEL), flow = voiceTime(t) * 0.45 % 1, names2 = outcomeNames(), quals = outcomeQuals(), things = thingNames(), ats = [c.happened, c.why, c.evidence, c.nextSafe, c.person], other = g * named(t, c.notPass), aside = mix(1, 0.62, ramp(t, c.notPass + 0.2, 0.4));
   nameText(L("按 ETHOS 的设计", "By ETHOS's design"), x, ROWS[0], { align: "left", alpha: g });
   KINDS.forEach((kind, i) => {
     const y = ROWS[i + 1], alpha = g * (i ? 1 : aside);
@@ -4684,15 +4691,15 @@ function nonPassStage(s, t, c, g) {
   nameText(notPassName(), x + col.note, MID, { align: "left", alpha: other });
   things.forEach((name, i) => {
     const on = g * named(t, ats[i]);
-    link(x + col.from, MID, x + col.marks - 34, ROWS[i], {
+    link(x + col.from, MID, x + col.marks - 34, THING_ROWS[i], {
       route: "hvh",
       mid: x + col.trunk,
       alpha: on,
       upto: soon(t, ats[i] + 0.05, 0.5),
-      flow: (flow + i / 4) % 1
+      flow: (flow + i / 5) % 1
     });
-    thingMark(i, x + col.marks, ROWS[i], on);
-    nameText(name, x + col.things, ROWS[i], {
+    thingMark(i, x + col.marks, THING_ROWS[i], on);
+    nameText(name, x + col.things, THING_ROWS[i], {
       align: "left",
       alpha: g * listIn(t, ats, i),
       set: "05.6:things"
@@ -4740,7 +4747,7 @@ function cuesOf2(s) {
     block: cue(s, "拦下", "block and unknown"),
     unknown: cue(s, "未知", "unknown"),
     missing: cue(s, "缺了", "Missing or unverifiable"),
-    conflict: cue(s, "有冲突", "a conflict or an explicit failure"),
+    conflict: cue(s, "有冲突", "a conflict, an explicit failure"),
     isUnknownToo: cue(s, "结果是未知", "make it unknown"),
     isBlock: cue(s, "结果是拦下", "makes it block"),
     onlyPass: cue(s, "只有通过", "Only pass"),
@@ -4755,6 +4762,7 @@ function cuesOf2(s) {
       "ETHOS is designed so that any result other than pass"
     ),
     notPass: cue(s, "只要不是通过", "any result other than pass"),
+    happened: cue(s, "发生了什么", "what happened"),
     why: cue(s, "为什么停下", "why that step stopped"),
     evidence: cue(s, "证据是什么", "its evidence"),
     nextSafe: cue(s, "下一步做什么才安全", "the one safe next action"),
@@ -6183,8 +6191,8 @@ var PITCH = (1556 - REQ_X) / 4;
 var XS = () => [0, 1, 2, 3, 4].map((k) => REQ_X + k * PITCH);
 var STATION_WRAP = () => L(240, 340);
 var STATIONS = () => [
-  // Authored as its lines: wrapped by measure, the English name would break onto three.
-  L("研究员的要求", ["The", "researcher's request"]),
+  // Authored as its lines: wrapped by measure, the English name would break onto three, and no line is an article.
+  L("研究员的要求", ["The researcher's", "request"]),
   L("正式变更", "Official Change"),
   L("工作通道", "Work Lane"),
   L("再查一次", "One more check"),
@@ -6846,7 +6854,7 @@ function modelRevision(s, t, a) {
     ["依赖它的检查", "every check that depends on it"],
     ["重新编译", "compiled again"]
   ]);
-  const GY = 390, GW = 400, GH = 225, DOC2 = [150, GH], DOC_X = 700, CHK = 960, CELL0 = 3.5 * (GW / 4), CELL = CELL0 + 0.45 * (GW / 4), MID2 = GY + GH / 2, RECORD = L("同一条记录", "The same record"), DIM = L("少了一个维度", "Missing a dimension"), BOUND = L("最小范围", "The smallest boundary"), CHANGE = L("新的正式变更", ["A new", "official Change"]), REVISES = L("修订模型", "Revising the model"), DEP = L("依赖它的检查", "Dependent checks"), COMPILE = L("重新编译", "Compiled again");
+  const GY = 390, GW = 400, GH = 225, DOC2 = [150, GH], DOC_X = 700, CHK = 960, CELL0 = 3.5 * (GW / 4), CELL = CELL0 + 0.45 * (GW / 4), MID2 = GY + GH / 2, RECORD = L("同一条记录", "The same record"), DIM = L("少了一个维度", ["Missing", "a dimension"]), BOUND = L("最小范围", "The smallest boundary"), CHANGE = L("新的正式变更", ["A new", "official Change"]), REVISES = L("修订模型", "Revising the model"), DEP = L("依赖它的检查", "Dependent checks"), COMPILE = L("重新编译", "Compiled again");
   const left = -22 - nameWidth(DIM, 260), right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2), right2 = Math.max(
     right1,
     CELL + nameWidth(BOUND) / 2,

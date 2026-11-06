@@ -1,12 +1,13 @@
 /* 05.6 What every result other than pass says. By ETHOS's design: a judgment's three outcomes return, as they stood,
  * under that name; on its words pass steps back, and block and unknown, every result other than pass, are bracketed as
- * one and named; from that name links lead to the four things they say, built as one list on its words, each a mark and
- * its name, on the outcomes' rows. The whole stands centred from its first state: it shifts as each part that widens
- * it arrives, a moment ahead of the things' words, so a name never arrives beyond the safe area. */
+ * one and named; from that name links lead to the five things they say, built as one list on its words, each a mark and
+ * its name, in a column of five rows at the outcomes' pitch, centred on the outcomes' rows. The whole stands centred
+ * from its first state: it shifts as each part that widens it arrives, a moment ahead of the things' words, so a name
+ * never arrives beyond the safe area. */
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { dot, labelSize, measure, ring, stroke } from "../../drawing/strokes.js";
+import { dot, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { person } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
 import { listIn, named } from "../../naming/lists.js";
@@ -25,9 +26,10 @@ import {
   outcomesParts,
 } from "./rule-two.js";
 
-/* One grid for both columns, four rows about the content centre: the design's name and the three outcomes, and on the
- * same rows the four things. */
+/* One grid for both columns about the content centre: four rows for the design's name and the three outcomes, and five
+ * rows at the same pitch, centred on them, for the five things. */
 const ROWS = [374, 458, 542, 626],
+  THING_ROWS = [332, 416, 500, 584, 668],
   KINDS = ["pass", "block", "unknown"],
   MARK_R = 18,
   // How far the bracket's spine runs past its two rows, and its ticks.
@@ -40,8 +42,9 @@ const ROWS = [374, 458, 542, 626],
 const notPassName = () => L("只要不是通过", ["Any result", "other than pass"]);
 const thingNames = () =>
   L(
-    ["为什么停下", "证据，或者缺什么事实", "下一步做什么才安全", "要不要人决定"],
+    ["发生了什么", "为什么停下", "证据，或者缺什么事实", "下一步做什么才安全", "要不要人决定"],
     [
+      "What happened",
       "Why that step stopped",
       "Its evidence, or the missing fact",
       "The one safe next action",
@@ -79,20 +82,23 @@ function parts(c) {
   return [
     [c.nonPassFirst, col.right],
     [c.notPass, col.from - 14],
-    ...[c.why, c.evidence, c.nextSafe, c.person].map((at, i) => [
+    ...[c.happened, c.why, c.evidence, c.nextSafe, c.person].map((at, i) => [
       at - LEAD,
       col.things + measure(thingNames()[i]),
     ]),
   ];
 }
 
-/* The four marks: why a step stopped a question raised, its evidence or the missing fact a document, the safe next
- * action the open step of 05.3, and a decision a person. */
+/* The five marks: what happened an event, a point on a short line of time; why a step stopped a question raised, its
+ * evidence or the missing fact a document, the safe next action the open step of 05.3, and a decision a person. */
 function thingMark(i, x, y, alpha) {
   if (alpha < 0.01) return;
-  if (i === 0) askIcon(x, y - 1, 19, { alpha, color: P.ink });
-  else if (i === 1) docMark(x - 17, y - 22, 34, 44, { alpha, rows: 3 });
-  else if (i === 2) {
+  if (i === 0) {
+    line(x - 20, y, x + 20, y, { color: P.ink, alpha, width: 2.5 });
+    dot(x, y, 7, { color: P.ink, alpha });
+  } else if (i === 1) askIcon(x, y - 1, 19, { alpha, color: P.ink });
+  else if (i === 2) docMark(x - 17, y - 22, 34, 44, { alpha, rows: 3 });
+  else if (i === 3) {
     ring(x, y, 17, { color: P.ink, alpha, width: 2.5 });
     dot(x, y, 7, { color: P.ink, alpha });
   } else person(x, y + 5, { alpha, size: 0.8 });
@@ -107,7 +113,7 @@ export function nonPassStage(s, t, c, g) {
     names = outcomeNames(),
     quals = outcomeQuals(),
     things = thingNames(),
-    ats = [c.why, c.evidence, c.nextSafe, c.person],
+    ats = [c.happened, c.why, c.evidence, c.nextSafe, c.person],
     other = g * named(t, c.notPass),
     aside = mix(1, 0.62, ramp(t, c.notPass + 0.2, 0.4));
   nameText(L("按 ETHOS 的设计", "By ETHOS's design"), x, ROWS[0], { align: "left", alpha: g });
@@ -134,15 +140,15 @@ export function nonPassStage(s, t, c, g) {
   nameText(notPassName(), x + col.note, MID, { align: "left", alpha: other });
   things.forEach((name, i) => {
     const on = g * named(t, ats[i]);
-    link(x + col.from, MID, x + col.marks - 34, ROWS[i], {
+    link(x + col.from, MID, x + col.marks - 34, THING_ROWS[i], {
       route: "hvh",
       mid: x + col.trunk,
       alpha: on,
       upto: soon(t, ats[i] + 0.05, 0.5),
-      flow: (flow + i / 4) % 1,
+      flow: (flow + i / 5) % 1,
     });
-    thingMark(i, x + col.marks, ROWS[i], on);
-    nameText(name, x + col.things, ROWS[i], {
+    thingMark(i, x + col.marks, THING_ROWS[i], on);
+    nameText(name, x + col.things, THING_ROWS[i], {
       align: "left",
       alpha: g * listIn(t, ats, i),
       set: "05.6:things",

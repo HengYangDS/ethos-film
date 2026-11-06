@@ -64,15 +64,15 @@ export function lifeStart(s, t, a) {
 
 /* The stations of 08.2 along the rail stand at one pitch from the request to the file, in both editions, so the
  * journey reads at an even step and the widest neighbours, the check and the file's name, keep a clear gap; the English
- * request's name breaks after its article, and its names wrap no narrower than the file's. The Work Lane's span runs
+ * request's name breaks after its possessive, and its names wrap no narrower than the file's. The Work Lane's span runs
  * between its folder and its gate within one pitch, and its two records stand above it a fifth of a pitch from either
  * end, so their names stand apart. */
 const PITCH = (1556 - REQ_X) / 4;
 const XS = () => [0, 1, 2, 3, 4].map((k) => REQ_X + k * PITCH),
   STATION_WRAP = () => L(240, 340);
 const STATIONS = () => [
-  // Authored as its lines: wrapped by measure, the English name would break onto three.
-  L("研究员的要求", ["The", "researcher's request"]),
+  // Authored as its lines: wrapped by measure, the English name would break onto three, and no line is an article.
+  L("研究员的要求", ["The researcher's", "request"]),
   L("正式变更", "Official Change"),
   L("工作通道", "Work Lane"),
   L("再查一次", "One more check"),

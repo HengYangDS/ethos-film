@@ -112,7 +112,8 @@ export function modelRevision(s, t, a) {
     CELL = CELL0 + 0.45 * (GW / 4),
     MID = GY + GH / 2,
     RECORD = L("同一条记录", "The same record"),
-    DIM = L("少了一个维度", "Missing a dimension"),
+    // The English name breaks before its article, so no line ends on "a".
+    DIM = L("少了一个维度", ["Missing", "a dimension"]),
     BOUND = L("最小范围", "The smallest boundary"),
     // The English name of the Change is authored as its lines, so it breaks before the concept's two words.
     CHANGE = L("新的正式变更", ["A new", "official Change"]),

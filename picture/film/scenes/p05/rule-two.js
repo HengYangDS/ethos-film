@@ -50,8 +50,8 @@ const separateX = () => 960 - (PLANE_W + stepsReach()) / 2;
 export const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]);
 export const outcomeQuals = () =>
   L(
-    [["允许动手"], ["有冲突，或者明确失败"], ["缺了，或者没法核实"]],
-    [["lets work go ahead"], ["a conflict or an explicit failure"], ["missing or unverifiable"]],
+    [["允许动手"], ["有冲突、失败或警告"], ["缺了，或者没法核实"]],
+    [["lets work go ahead"], ["a conflict, failure or warning"], ["missing or unverifiable"]],
   );
 
 /* The outcomes list's columns, from the stack's left edge: the list's mark at `mark`, the names after it, and the
@@ -83,7 +83,7 @@ export function outcomesParts(c) {
       at,
       col.quals + measure(quals[i].join(""), NOTE),
     ]),
-    [c.never, col.quals + measure(L("不等于可以", "Never permission"), NOTE)],
+    [c.never, col.quals + measure(L("不等于可以", "never permission"), NOTE)],
   ];
 }
 /* How far right a row of parts, each [when it arrives, how far it reaches], reaches at t as they build: a part that
@@ -198,8 +198,8 @@ export function verifiedStage(s, t, c, g) {
 /* 05.5 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
  * with what it alone permits and block and unknown with their conditions; unknown is never permission. The list keeps
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
- * next three. "Never permission" is said of unknown, so it stands as a second line of unknown's condition, in the
- * condition's note style and column, rather than as a fourth row of the list. The checks with no result are linked
+ * next three. "never permission" is said of unknown, so it stands as a second line of unknown's condition, in the
+ * condition's note style, column and lowercase, rather than as a fourth row of the list. The checks with no result are linked
  * to unknown, and "no problem" is refused. The stack stands where the stack and the list, together, stand on the
  * content centre, and it shifts on the words of each condition that widens the list. */
 export function outcomesStage(s, t, c, g) {
@@ -242,7 +242,7 @@ export function outcomesStage(s, t, c, g) {
       qualLeft,
     });
   });
-  nameText(L("不等于可以", "Never permission"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
+  nameText(L("不等于可以", "never permission"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
     align: "left",
     size: NOTE,
     color: P.muted,

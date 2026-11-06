@@ -94,6 +94,20 @@
           "spoken_sha256": "b5de0911264a8e6d336e379c4c81084cf9f9b414ff90bd07c4068b60d49e898e"
         }
       }
+    },
+    "05": {
+      "groups": {
+        "5": {
+          "seed": 329361,
+          "text_sha256": "beeb93c51fc081e3fa3ce3d97ecb7d48d13b4209575cb478694b9aa6e45aae6f",
+          "spoken_sha256": "beeb93c51fc081e3fa3ce3d97ecb7d48d13b4209575cb478694b9aa6e45aae6f"
+        },
+        "6": {
+          "seed": 250171,
+          "text_sha256": "fd616a897afd6cff723bcb10086175b8de02724544de4577f89d1881757ce476",
+          "spoken_sha256": "18ab3aef5d8886a597292e3a2e45e2d8ebd78580d9a48e09b19bb8792a61a1ae"
+        }
+      }
     }
   }
 }
