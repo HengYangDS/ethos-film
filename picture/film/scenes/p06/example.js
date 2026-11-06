@@ -17,6 +17,7 @@ import { NAME_GAP, nameText, rejectedName, termRow } from "../../naming/names.js
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
+import { cueFrom } from "../../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { agents, card, linkSet } from "../p04/marks.js";
@@ -218,12 +219,13 @@ export function checkStage(s, t, c, g) {
     valign: "bottom",
     alpha: look,
   });
-  // The branch has moved on: the ring on the expected head moves to the real one.
+  // The branch has moved on: the ring on the expected head moves to the real one as the clause begins, and reaches it
+  // as the words that name the move are said, with its name.
   const moving = soon(t, c.movedOn + 0.05, 0.6);
   ring(mix(HEAD, NEW, moving), Y, 18, { color: P.ink, alpha: look, width: 2.5 });
   nameText(movedName(), NEW, ROW_NAMES, {
     valign: "top",
-    alpha: g * named(t, c.movedOn),
+    alpha: g * named(t, cueFrom(s, "往前走了", "moved on", c.movedOn)),
   });
   // Nothing is written: a stop at the gate.
   const stop = g * named(t, c.nothing);

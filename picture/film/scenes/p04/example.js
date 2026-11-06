@@ -7,12 +7,19 @@ import { ctx } from "../../canvas.js";
 import { pipelineMark } from "../../drawing/examples.js";
 import { along, link } from "../../drawing/links.js";
 import { blend } from "../../drawing/colour.js";
-import { flowDot, measure, stroke } from "../../drawing/strokes.js";
+import { flowDot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check, documentIcon, person } from "../../drawing/symbols.js";
 import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import {
+  NAME_GAP,
+  NOTE,
+  nameText,
+  rejectedName,
+  termRow,
+  termRowLayout,
+} from "../../naming/names.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
@@ -59,7 +66,8 @@ export function contractStage(s, t, c, g) {
 
 /* 04.1 The example: the pipeline at the centre, its data flowing; it is there only to show the idea, and a measured
  * case is refused. The idea stands centred under the pipeline while it is alone; the refusal joins it at its place in
- * the row, and the row glides as one unit to centre on the pipeline's axis. */
+ * the row, dimmed with its cross from its first frame, since the voice refuses it before it names it, and the row
+ * glides as one unit to centre on the pipeline's axis. */
 export function exampleStage(s, t, c, g) {
   const m = pipelineMark(960, 470, 900, { alpha: g, flow: flowOf(t) });
   nameText(L("一个例子", "One example"), 960, m.top - NAME_GAP, {
@@ -76,14 +84,16 @@ export function exampleStage(s, t, c, g) {
   rejectedName(refused, x1 + w1 + 80, y, {
     align: "left",
     alpha: g * named(t, c.measured),
-    mark: ramp(t, c.measured + 0.35, 0.35),
+    mark: 1,
   });
 }
 
-/* 04.2 The pipeline rises to make room; its rerun loop draws on "run again", and below it the researcher's request
- * builds as two lines, each on its words. The lines start clear of the researcher's name as well as the figure. The
- * researcher stands centred under the pipeline while alone; on the words of each line that reaches further than those
- * before it, the figure glides with its name and lines as one unit to where what stands is centred. */
+/* 04.2 The pipeline rises to make room; its rerun loop draws on "run again", and what that says of the pipeline joins
+ * under its name as its qualifier, the name standing one qualifier higher from its first word so it never moves; below
+ * it the researcher's request builds as two lines, each on its words. The lines start clear of the researcher's name
+ * as well as the figure. The researcher stands centred under the pipeline while alone; on the words of each line that
+ * reaches further than those before it, the figure glides with its name and lines as one unit to where what stands is
+ * centred. */
 export function requestStage(s, t, c, g) {
   const Y = mix(470, 400, soon(t, c.researcher + 0.05, 0.6));
   const m = pipelineMark(960, Y, 900, {
@@ -91,13 +101,12 @@ export function requestStage(s, t, c, g) {
     flow: flowOf(t),
     back: soon(t, c.runAgain + 0.05, 0.6),
   });
-  nameText(L("行情数据管线", "Market-data pipeline"), 960, m.top - NAME_GAP, {
-    valign: "bottom",
-    alpha: g * named(t, c.pipe),
-  });
-  nameText(L("可以再跑一遍", "Can be run again"), 960, m.loop + NAME_GAP, {
-    valign: "top",
-    alpha: g * named(t, c.runAgain),
+  const term = [L("行情数据管线", "Market-data pipeline")],
+    qual = [L("可以再跑一遍", "can be run again")],
+    { height } = termRowLayout(term, qual, Infinity, false);
+  termRow(t, term, [c.pipe], qual, [c.runAgain], 960, m.top - NAME_GAP - height, {
+    alpha: g,
+    align: "center",
   });
   const lines = REQUEST(),
     ats = [c.dup, c.corrected],
@@ -182,7 +191,7 @@ export function handoffStage(s, t, c, g) {
   nameText(L("两次交接", "Two handoffs"), a1, Y1 + 22 + NAME_GAP, { valign: "top", alpha: h });
   nameText(L("总结", "An Agent's summary"), a2 + 22 + NAME_GAP, Y2, {
     align: "left",
-    alpha: g * named(t, c.summary),
+    alpha: g * named(t, c.summaryName),
   });
   // The request travels from the card through both Agents, smaller after each, until the one line stands.
   const path = [
@@ -201,14 +210,17 @@ export function handoffStage(s, t, c, g) {
   const q = g * named(t, c.single);
   link(a2, Y2 + 22, qx, Y3, { route: "vh", alpha: q, upto: soon(t, c.single + 0.05, 0.4) });
   quoteCard(qx, Y3, { alpha: q, words: g * named(t, c.quote) });
-  nameText(L("只剩下一句", "One line"), qx + qw / 2, Y3 + 32 + NAME_GAP, {
+  // The line is named by its noun on its word, 一句 / "a single line".
+  nameText(L("一句", "One line"), qx + qw / 2, Y3 + 32 + NAME_GAP, {
     valign: "top",
-    alpha: q,
+    alpha: g * named(t, c.oneLine),
   });
 }
 
 /* 04.3 The line followed to the letter, on a table of records: rows 2 and 4 are corrections of the rows above them
- * (the same code and date, a new value), and deduplicating by code and date strikes exactly those rows. */
+ * (the same code and date, a new value), and deduplicating by code and date strikes exactly those rows. What happens
+ * to the corrections joins under their name as its qualifier: on its own word in Chinese, and with the name in
+ * English, which says the deletion before it names them. */
 export function deleteStage(s, t, c, g) {
   const TW = 560,
     TH = 226,
@@ -260,29 +272,39 @@ export function deleteStage(s, t, c, g) {
     },
     { color: P.ink, alpha: g * ramp(t, c.deleted - 0.15, 0.3), width: 3 },
   );
-  nameText(keepName, tx + TW + 40, ry + 3 * step, { align: "left", alpha: named2 });
-  nameText(L("被删掉", "Deleted"), tx + TW / 2, ty + TH + NAME_GAP, {
-    valign: "top",
-    alpha: g * named(t, c.deleted),
-  });
+  termRow(
+    t,
+    [keepName],
+    [c.corrections],
+    [L("被删掉", "deleted")],
+    [L(c.deletedName, c.corrections)],
+    tx + TW + 40,
+    ry + 3 * step - labelSize(LABEL) / 2,
+    { alpha: g, inline: false },
+  );
 }
 
 /* 04.3 The summary made reading faster, which is fine; the trouble is that it takes the place of the original words.
- * The original stands upper left and the summary lower right; on "takes the place" the summary moves into the
- * original's place while the original steps down and back, and when no one goes back to it its words fade, leaving
- * its dashed place. Each name travels with its card. */
+ * The original stands upper left and the summary lower right, named at its right from the words that open the
+ * thought; on "takes the place" that joins under the summary's name, and the summary moves into the original's place
+ * while the original steps down and back, and when no one goes back to it its words fade, leaving its dashed place,
+ * which keeps its name until the stage leaves. Each name travels with its card, and both states stand centred with
+ * their names. */
 export function replaceStage(s, t, c, g) {
   const cw = requestWidth(),
     qw = quoteWidth(),
     gone = L("没人再回头看", "No one goes back"),
-    takes = L("顶替了原话", "Takes the place"),
+    summary = [L("总结", "The summary")],
+    takes = [L("顶替了原话", "takes the place")],
+    nameW = Math.max(measure(summary[0]), measure(takes[0], NOTE)),
     col = Math.max(cw, qw),
-    left = 960 - (col + 40 + Math.max(measure(gone), measure(takes))) / 2,
-    start = 960 - (cw + 160 + qw) / 2;
+    left = 960 - (col + 40 + Math.max(measure(gone), nameW)) / 2,
+    start = 960 - (cw + 160 + qw + 40 + measure(summary[0])) / 2;
   const step = soon(t, c.replace + 0.05, 0.6),
     take = soon(t, c.replace + 0.35, 0.7),
     fade = soon(t, c.noOne + 0.05, 1);
-  const ox = mix(start, left + (col - cw) / 2, step),
+  // The original steps down at once and back as the summary rises, so neither card passes over the other.
+  const ox = mix(start, left + (col - cw) / 2, take),
     oy = mix(400, 670, step),
     qx = mix(start + cw + 160, left + (col - qw) / 2, take),
     qy = mix(560, 400, take);
@@ -295,11 +317,14 @@ export function replaceStage(s, t, c, g) {
   requestCard(ox, oy, { alpha: g * (1 - fade), ink: mix(1, 0.58, step), frame: g, dash: fade });
   nameText(L("原话", "Original words"), ox + cw / 2, oy + 54 + NAME_GAP, {
     valign: "top",
-    alpha: g * named(t, c.original) * (1 - fade),
+    alpha: g * named(t, c.original),
   });
   nameText(gone, ox + cw + 40, oy, { align: "left", alpha: g * named(t, c.noOne) });
   quoteCard(qx, qy, { alpha: g });
-  nameText(takes, qx + qw + 40, qy, { align: "left", alpha: g * named(t, c.replace) });
+  termRow(t, summary, [c.first3c], takes, [c.replace], qx + qw + 40, qy - labelSize(LABEL) / 2, {
+    alpha: g,
+    inline: false,
+  });
   // Faster to read: a check below the summary, which travels with it; the check and its words centre on the card
   // together. The check's ink runs from 12.75 px left of its point to 13.85 px right, and the words start 26 px right.
   const fast = g * named(t, c.fast),

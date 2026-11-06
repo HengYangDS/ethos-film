@@ -39,7 +39,7 @@ const ROWS = [374, 458, 542, 626],
   LEAD = 0.35,
   // The bracket's rows, block and unknown, and the line between them, where its name stands and the links leave.
   MID = (ROWS[2] + ROWS[3]) / 2;
-const notPassName = () => L("只要不是通过", ["Any result", "other than pass"]);
+const notPassName = () => L("只要不是通过", "Any result other than pass");
 const thingNames = () =>
   L(
     ["发生了什么", "为什么停下", "证据，或者缺什么事实", "下一步做什么才安全", "要不要人决定"],
@@ -60,7 +60,7 @@ function columns() {
     right = Math.max(...outcomesParts({}).map(([, reach]) => reach)) - left,
     bracket = right + NAME_GAP + TICK,
     note = bracket + NAME_GAP,
-    from = note + Math.max(...[notPassName()].flat().map((v) => measure(v))) + 14,
+    from = note + measure(notPassName()) + 14,
     trunk = from + 46,
     marks = trunk + 64,
     things = marks + 24 + NAME_GAP;

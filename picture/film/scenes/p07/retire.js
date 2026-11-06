@@ -109,8 +109,10 @@ const PILE = [
 ];
 /* 07.5, second: the mechanisms whose obligation is gone are kept one after another on their words, piling row on row
  * on a shelf as one dashed mark; as governance becomes the burden, the shelf bends under them and the pile sinks with
- * it. The pile's name stands beside it at the height of its middle row and sinks with it, the shelf is named as
- * governance itself under it, and the picture, the name and the shelf, is centred on the frame. */
+ * it. The pile's name stands beside it at the height of its middle row and sinks with it, on one line in both
+ * editions: wrapped by measure, the English name would break after "without", which no line may end on. The shelf is
+ * named as governance itself under it, and the picture, the name and the shelf, is centred on the frame. */
+const PILE_WRAP = 460;
 function burden(s, t, a) {
   if (a <= 0) return;
   const [goneAt, govAt, burdenAt] = cues(s, [
@@ -124,7 +126,7 @@ function burden(s, t, a) {
     // The shelf is centred on the pile, its ends 140 px beyond the outer mechanisms' axes.
     SHELF = [700, 1280],
     MIDX = (SHELF[0] + SHELF[1]) / 2,
-    S = 960 - (NX - nameWidth(PILE_NAME, 300) + SHELF[1] + 2) / 2;
+    S = 960 - (NX - nameWidth(PILE_NAME, PILE_WRAP) + SHELF[1] + 2) / 2;
   const kept = 1 + Math.floor((PILE.length - 1) * clamp((t - goneAt - 0.05) / 0.6)),
     sag = 34 * soon(t, burdenAt + 0.05, 1.2),
     depth = (x) => sag * (1 - ((x - MIDX) / (MIDX - SHELF[0])) ** 2),
@@ -151,7 +153,7 @@ function burden(s, t, a) {
   );
   nameText(PILE_NAME, NX, my + depth(mx), {
     align: "right",
-    width: 300,
+    width: PILE_WRAP,
     alpha: g,
   });
   // The shelf the pile bends is governance itself, named under it on its words.

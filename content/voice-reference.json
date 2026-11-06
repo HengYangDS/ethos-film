@@ -68,10 +68,10 @@
     },
     "03": {
       "groups": {
-        "2": {
-          "seed": 91789,
-          "text_sha256": "660d96b894b63a54cc93d78b2b3deb416edebbd465c13c61810b63cb121ce3eb",
-          "spoken_sha256": "660d96b894b63a54cc93d78b2b3deb416edebbd465c13c61810b63cb121ce3eb"
+        "1": {
+          "seed": 234331,
+          "text_sha256": "cbea7725a3da5fd94b038433cefd6e79d45dc84ea10fec3fcb78cafb213bb2f9",
+          "spoken_sha256": "7cdad536391adcde551e1421b8d62a3704b2503888003b0dce8825a52a9ec911"
         },
         "7": {
           "seed": 202655,
@@ -82,10 +82,10 @@
             "cut_sample": 578640
           }
         },
-        "1": {
-          "seed": 234331,
-          "text_sha256": "cbea7725a3da5fd94b038433cefd6e79d45dc84ea10fec3fcb78cafb213bb2f9",
-          "spoken_sha256": "7cdad536391adcde551e1421b8d62a3704b2503888003b0dce8825a52a9ec911"
+        "2": {
+          "seed": 408549,
+          "text_sha256": "a31d19559f990f8657c9711097e709f5ea1fe842b88402a2c35636f8af960452",
+          "spoken_sha256": "a31d19559f990f8657c9711097e709f5ea1fe842b88402a2c35636f8af960452"
         }
       }
     },
@@ -184,6 +184,16 @@
             "spoken_text": "“不能多出重复记录”这个目标，一个字也没有放宽。目标和标准要改，只能经授权重新对齐意图，明着改；不能为了让结果通过，就悄悄放宽。",
             "cut_sample": 668880
           }
+        },
+        "1": {
+          "seed": 424392,
+          "text_sha256": "658d83477d606174773337f951e207a6eff78ce904820eec8dc1d4e0a6e4767f",
+          "spoken_sha256": "658d83477d606174773337f951e207a6eff78ce904820eec8dc1d4e0a6e4767f"
+        },
+        "2": {
+          "seed": 495663,
+          "text_sha256": "2c59e290a83ab3c025171ae19be14d47bb8da1d64e3f71e5f7134d76ddd65ac8",
+          "spoken_sha256": "2c59e290a83ab3c025171ae19be14d47bb8da1d64e3f71e5f7134d76ddd65ac8"
         }
       }
     },
@@ -221,6 +231,11 @@
           "seed": 210572,
           "text_sha256": "4805b831c223c6e99ad5fe8cd11ee2fbb7c0bb7d675b4ac25219bbee8ac871cb",
           "spoken_sha256": "e2c90ecb14f8bbf752c92c1afce301a4d687e5d46d32d99a7d920a9d75697a56"
+        },
+        "4": {
+          "seed": 384790,
+          "text_sha256": "ea537a00ae7d4e0c0cf943424c83c28ab073e9fdb604380b4e04086be1b8a10a",
+          "spoken_sha256": "ea537a00ae7d4e0c0cf943424c83c28ab073e9fdb604380b4e04086be1b8a10a"
         }
       }
     }

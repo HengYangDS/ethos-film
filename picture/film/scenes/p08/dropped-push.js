@@ -1,10 +1,15 @@
-/* 08.5 the dropped push: the journey's rail runs on to a platform, the work on its way. The connection drops midway:
- * a cross stands in the rail, the work stops short of it and the stretch beyond turns dashed. A second push leaves the
- * work, dashed, and stops at a question; it is in doubt because the first may already have landed, and the platform
- * shows that unknown. ETHOS is designed so that the rail, a long write, is bracketed from below: before it, a note of
- * what it is about to do, linked up to the rail's start; after it, a report on the uncertain stretch of whether
- * anything was written, leading to the one safe next action. The rail stands whole on the frame's axis from the first
- * frame; the names under it hang from one line, and so do those of the row below. */
+/* 08.5 the dropped push: the journey's rail runs on towards a platform, the work on its way. The connection drops
+ * midway: a cross stands in the rail, the work stops short of it and the stretch beyond turns dashed. A second push
+ * leaves the work, dashed, and stops at a question; it is in doubt because the first may already have landed, and the
+ * platform, where it would have landed, arrives at the rail's end with the first push's name and shows that unknown.
+ * ETHOS is designed so that the rail, a long write, is bracketed from below: before it, a note of what it is about to
+ * do, linked up to the rail's start; after it, a report on the uncertain stretch of whether anything was written,
+ * leading to the one safe next action. The rail stands whole on the frame's axis from the stage's first frame, from
+ * 240 to 1680; until the platform is named, the stretch beyond the cut runs to the rail's end, and it draws back to the
+ * platform's near edge as the platform arrives at that end, the platform's outer edge mirroring the rail's start. The
+ * cut stands near the middle, 50 px left of the axis, so the stretches either side of it differ by 14% in length and
+ * are not read as a pair of one length that each wait for a name, and the cut's name stays clear of the report's link
+ * to the uncertain stretch. The names under the rail hang from one line, and so do those of the row below. */
 
 import { link } from "../../drawing/links.js";
 import { dot, ring } from "../../drawing/strokes.js";
@@ -22,11 +27,11 @@ import { verdictMark } from "../p04/marks.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
 /* The rail from its start to the platform, whose outer edge mirrors the rail's start about the frame's axis, the cut
- * midway along it and the work's place on either side of its travel. */
+ * near the middle and the work's place on either side of its travel. */
 const X0 = 240,
   PLATFORM = [140, 76],
   PX = 1680 - PLATFORM[0] / 2,
-  CUT = 960,
+  CUT = 910,
   CUT_GAP = 34,
   FROM = 620,
   STOP = CUT - 70,
@@ -53,16 +58,19 @@ export function droppedPush(s, t, a) {
     ["写进去没有", "whether anything was written"],
     ["下一步做什么才安全", "the one safe next action"],
   ]);
-  const whatAt = cueFrom(s, "要做什么", "what it is about to do", noteAt);
+  const whatAt = cueFrom(s, "要做什么", "what it is about to do", noteAt),
+    firstAt = cueFrom(s, "上一次", "The first push", againAt);
   const dropped = soon(t, dropAt - 0.05, 0.3),
     wx = mix(FROM, STOP, soon(t, nameAt, 0.9)),
     below = rowNameTop([RAIL_Y + PLATFORM[1] / 2, RAIL_Y + 19]),
     rowTop = rowNameTop([ROW_Y + DOC[1] / 2, ROW_Y + STEP_R]);
-  // The rail: solid up to the cut, and beyond it solid until the connection drops, then dashed.
+  // The rail: solid up to the cut, and beyond it solid until the connection drops, then dashed; its end draws back to
+  // the platform's near edge as the platform begins to arrive, clear of it before the platform is a fifth drawn.
+  const end = mix(PX + PLATFORM[0] / 2, PX - PLATFORM[0] / 2 - 8, soon(t, firstAt - 0.25, 0.35));
   journeyRail(X0, CUT - CUT_GAP, { alpha: a });
   journeyRail(CUT - CUT_GAP, CUT + CUT_GAP, { alpha: a * (1 - dropped) });
-  journeyRail(CUT + CUT_GAP, PX - PLATFORM[0] / 2 - 8, { alpha: a * (1 - dropped) });
-  journeyRail(CUT + CUT_GAP, PX - PLATFORM[0] / 2 - 8, { alpha: a * dropped, dash: [12, 10] });
+  journeyRail(CUT + CUT_GAP, end, { alpha: a * (1 - dropped) });
+  journeyRail(CUT + CUT_GAP, end, { alpha: a * dropped, dash: [12, 10] });
   railFlow(t, X0, STOP, { alpha: a * (1 - dropped) });
   cross(CUT, RAIL_Y, 22, { color: P.ink, alpha: a * dropped, width: 3.5 });
   work(wx, RAIL_Y, a);
@@ -70,14 +78,12 @@ export function droppedPush(s, t, a) {
     valign: "top",
     alpha: a * named(t, nameAt),
   });
-  platforms(PX, [RAIL_Y], { alpha: a, w: PLATFORM[0], h: PLATFORM[1] });
-  // What may already have landed is the first push: it is named under the platform, where it would have landed, on its
-  // words, and the platform's unknown mark carries the doubt on the words that say it, so the platform is not read as
-  // the subject and no label repeats the caption.
-  nameText(L("上一次", "The first push"), PX, below, {
-    valign: "top",
-    alpha: a * named(t, cueFrom(s, "上一次", "The first push", againAt)),
-  });
+  // What may already have landed is the first push: the platform, where it would have landed, arrives on its words
+  // with its name under it, so it never stands unnamed, and its unknown mark carries the doubt on the words that say
+  // it, so the platform is not read as the subject and no label repeats the caption.
+  const first = a * named(t, firstAt);
+  platforms(PX, [RAIL_Y], { alpha: first, w: PLATFORM[0], h: PLATFORM[1] });
+  nameText(L("上一次", "The first push"), PX, below, { valign: "top", alpha: first });
   verdictMark("unknown", PX, RAIL_Y + 13, 15, { alpha: a * named(t, landedAt) });
   // The second push, in doubt: it leaves the work and stops at a question.
   const again = a * named(t, againAt);

@@ -110,12 +110,18 @@ export function stageTools(t, a, c) {
     { color: P.muted, alpha: turnTo * 0.8, width: 2.5 },
   );
   nameText("Git", gx + 20, gy, { alpha: a * named(t, c.git) });
-  // The tools' name hangs one gap under the pair, centred between them and clear of both corners: in English it takes
-  // two lines, broken before its relative clause, since on one line it would run under Git's corner.
-  nameText(L("现成、成熟的工具", ["Mature tools", "that already exist"]), KX, 760, {
-    valign: "top",
-    alpha: a * named(t, c.mature),
-  });
+  // The tools' name hangs one gap under the pair, centred between them and clear of both corners: in English its
+  // relative clause, which on one line would run under Git's corner, joins under it as its smaller gloss on its words.
+  termRow(
+    t,
+    [L("现成、成熟的工具", "Mature tools")],
+    [c.mature],
+    L([], ["that already exist"]),
+    [c.exist],
+    KX,
+    760,
+    { alpha: a, align: "center" },
+  );
 }
 
 /* 03.7 ETHOS does not take over the systems already in use: ETHOS at the centre with its name from the cut, and the
@@ -232,10 +238,10 @@ export function stageLayer(t, a, c) {
     { color: P.ink, alpha: a, width: 2.5 },
   );
   flowDot(mix(x0 + 30, x1 - 30, q), LY + 22, 6, q, { color: P.ink, alpha: a });
-  // English says the layer's name after the words that open the stage, within their clause, so the stage names it
-  // 1.3 s ahead of its words and the repositories never stand unnamed; Chinese says it as the stage opens.
+  // The layer is named on its own words: Chinese says them as the stage opens, and the English stage cuts in on them
+  // (what.js), so the repositories never stand unnamed.
   nameText(L("共有的部分，归 ETHOS", "ETHOS owns in one place"), (x0 + x1) / 2, LY - 6, {
-    alpha: a * named(t, L(c.owns, c.owns - 1.3)),
+    alpha: a * named(t, c.owns),
   });
   // Each repository's own purpose: a shape of its own inside it, each centred on the same point of its card, right of
   // the card's centre and clear of its branch.

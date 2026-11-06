@@ -39,11 +39,14 @@ function cuesOf(s) {
     first3: cue(s, "经过两次交接", "After two handoffs"),
     handoffs: cue(s, "两次交接", "two handoffs"),
     summary: cue(s, "一个 Agent 写的总结", "an Agent's summary"),
+    summaryName: cue(s, "总结", "an Agent's summary"),
     single: cue(s, "只剩下一句", "a single line"),
+    oneLine: cue(s, "一句", "a single line"),
     quote: cue(s, "按股票代码和日期去重", "Deduplicate by stock code and date"),
     follow: cue(s, "照这句话去做", "Followed to the letter"),
     corrections: cue(s, "最该留下的那些更正", "the corrections that had to stay"),
     deleted: cue(s, "恰好会被删掉", "would delete exactly"),
+    deletedName: cue(s, "被删掉", "would delete exactly"),
     first3c: cue(s, "总结能让人读得快", "The summary made reading faster"),
     fast: cue(s, "读得快", "reading faster"),
     replace: cue(s, "顶替了原话", "takes the place"),
@@ -67,6 +70,7 @@ function cuesOf(s) {
     f1: cue(s, "要解决什么", "what is to be solved"),
     first5: cue(s, "只写在一处", "With one copy"),
     readers: cue(s, "后面接手的人和 Agent", "everyone who picks up"),
+    readersWho: cue(s, "后面接手的人和 Agent", "who picks up the work"),
     same: cue(s, "同一份", "the same thing"),
     first5b: cue(s, "还要拿正例和反例", "Then positive and negative"),
     examples: cue(s, "正例和反例", "positive and negative examples"),
@@ -85,6 +89,7 @@ function cuesOf(s) {
     interpretation: cue(s, "理解随时", "The interpretation"),
     challenge: cue(s, "可以被质疑", "open to challenge"),
     confirmed: cue(s, "人确认过", "a person has confirmed"),
+    confirmedQual: cue(s, "确认过", "has confirmed"),
     accepted: cue(s, "采纳了的", "and accepted"),
     compiled: cue(s, "按固定的规则编译", "compiled into"),
     fixed: cue(s, "按固定的规则编译", "by fixed rules"),
@@ -101,6 +106,8 @@ function cuesOf(s) {
   c.stays = cueFrom(s, "要留下", "stays", c.correction);
   c.quote2 = cueFrom(s, "按股票代码和日期去重", "Deduplicate by stock code and date", c.correction);
   c.summaries = cueFrom(s, "总结", "summaries", c.memory);
+  // 04.6 names the original words again; their first occurrence is 04.3's.
+  c.originalAgain = cueFrom(s, "原话", "the original words", c.first6);
   c.f2 = cueFrom(s, "为什么要解决", "why", c.f1);
   c.f3 = cue(s, "做到什么样才算解决", "what counts as solved");
   return c;

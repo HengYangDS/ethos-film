@@ -63,6 +63,7 @@ function cuesOf(s) {
     sentence: cue(s, "开头那句", "The sentence we began with"),
     suchReport: cue(s, "就是这样一份汇报", "just such a report"),
     first5: cue(s, "视图算出来以后", "Once a view has been computed"),
+    computed: cue(s, "算出来", "has been computed"),
     change: cue(s, "情况可能又变了", "things can change"),
     notShown: cue(s, "视图上却看不出来", "without the view showing it"),
     turnedGreen: cue(s, "那片绿灯亮起来的时候", "that dashboard turned green"),

@@ -22,8 +22,16 @@ import { agent, check, documentIcon, person } from "../../drawing/symbols.js";
 import { commitDot, recoverIcon, repoIcon } from "../../drawing/workspace.js";
 import { illustrative } from "../../framing/chapters.js";
 import { titleSignature } from "../../framing/titles.js";
-import { beats, building, listIn, named, speaking } from "../../naming/lists.js";
-import { NAME_GAP, growName, nameText, wrapName } from "../../naming/names.js";
+import { beats, building, listIn, listLevel, named, speaking } from "../../naming/lists.js";
+import {
+  NAME_GAP,
+  NOTE,
+  TERM_STACK,
+  growName,
+  nameText,
+  termRow,
+  wrapName,
+} from "../../naming/names.js";
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
@@ -125,10 +133,13 @@ scenes["01"] = function (s, t) {
       ["是不是当初真正要的", "really asked for"],
       ["能不能退回去", "can you get back"],
     ]);
+  // Chinese says the Agents before the code they change and what makes them interchangeable last. The stage still cuts
+  // in on 替我们, whose 改代码 names the row and its code within half a second, as no earlier word can, and the
+  // Agents' name, the concept's rendering, stands on 可以互相替换.
   const [relay, codeAt, inter, ends, pick] = cues(s, [
     ["替我们", "our code"],
     ["改代码", "our code"],
-    ["可以互相替换的 Agent", "interchangeable Agents"],
+    ["可以互相替换", "interchangeable Agents"],
     ["会话结束了", "session ends"],
     ["换一个接着做", "another picks up"],
   ]);
@@ -172,8 +183,8 @@ scenes["01"] = function (s, t) {
       AR = 33,
       gone = ramp(t, opens - 0.15, 0.4),
       // The Agent and its name stand firm from the voice's first instant, no earlier than 0.3 s before the clause
-      // that names it.
-      lead = Math.max(first - 0.28, s.voice_start - 0.1),
+      // that names it or 0.27 s before its own word.
+      lead = Math.max(first - 0.28, s.voice_start - 0.1, cue(s, "Agent", "Agent") - 0.27),
       seen = stageA * ramp(t, lead - 0.15, 0.4) * (1 - gone);
     const slide = soon(t, opens + 0.05, 0.7),
       PX = mix(1060, 960, slide),
@@ -390,10 +401,12 @@ scenes["01"] = function (s, t) {
     ctx.restore();
   }
   // 5-6. The sentence returns at the top and reaches a listener, who has two ways to answer it: take it on trust, a
-  // gamble, or check everything again, which stops working as the Agents multiply and their checks with them. Until the
-  // two ways fork from the listener, the listener stands lower at the end of a longer link, so the panel and the
-  // listener alone stay balanced and fill the band; it rises into place as the fork draws. Then the two ways leave,
-  // the datum leaves the sentence for the centre, and ETHOS stands under it.
+  // gamble, or check everything again, which stops working as the Agents multiply and their checks with them. Each way
+  // is named on its words, and what it costs joins under its name as its qualifier on its own words, so no cost stands
+  // as a name without the way it belongs to; each cost's mark hangs under the way's name. Until the two ways fork from
+  // the listener, the listener stands lower at the end of a longer link, so the panel and the listener alone stay
+  // balanced and fill the band; it rises into place as the fork draws. Then the two ways leave, the datum leaves the
+  // sentence for the centre, and ETHOS stands under it.
   if (stageD > 0 || stageE > 0) {
     const PY = 300,
       move = soon(t, ethos + 0.05, 0.8);
@@ -419,12 +432,14 @@ scenes["01"] = function (s, t) {
         FY = HY + 42,
         MID = 525,
         BY = 565,
-        GY = BY + 120,
-        CY = GY + 45,
+        // The ways' names and their costs under them, then each cost's mark one short link lower.
+        NY = BY + NAME_GAP,
+        LINK = NY + labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + 14,
+        GY = LINK + 62,
         ways = [trust, again],
-        // The consequences' names, and when each consequence's mark arrives: the gamble's die with its name, the
-        // checks with the words that multiply the Agents.
-        costs = [luck, cantName],
+        // The costs, and when each cost's mark arrives: the gamble's die with its words, the checks with the words
+        // that multiply the Agents.
+        costs = [cue(s, "运气", "a gamble"), cantName],
         marks = [luck, cant],
         fork = stageD * ramp(t, two + 0.25, 0.3);
       XS.forEach((x, i) => {
@@ -444,31 +459,25 @@ scenes["01"] = function (s, t) {
           q,
         );
         flowDot(fx, fy, 5, q, { color: P.ink, alpha: fork * speaking(t, ways, i) });
-        nameText(
-          L(["照单全收", "从头再查一遍"], ["Take it on trust", "Check everything again"])[i],
+        // The costs stay short: the die is luck, and the growing row of Agents and checks says how many there are.
+        termRow(
+          t,
+          [L(["照单全收", "从头再查一遍"], ["Take it on trust", "Check everything again"])[i]],
+          [ways[i]],
+          [L(["运气", "查不过来"], ["a gamble", "stops working"])[i]],
+          [costs[i]],
           x,
-          BY + NAME_GAP,
-          { valign: "top", alpha: stageD * listIn(t, ways, i), set: "ways" },
+          NY,
+          { alpha: stageD * listLevel(t, ways, i), align: "center", set: "ways" },
         );
         const on = stageD * ramp(t, marks[i] - 0.15, 0.4);
-        // Each way's short link ends with its point clear above its consequence's mark, so the checks' link does not
-        // land on the middle Agent of the row.
-        link(x, BY + NAME_GAP + 40, x, GY - 42, { alpha: on, upto: soon(t, marks[i] - 0.1, 0.4) });
+        // Each way's short link ends with its point clear above its cost's mark, so the checks' link does not land on
+        // the middle Agent of the row.
+        link(x, LINK, x, GY - 42, { alpha: on, upto: soon(t, marks[i] - 0.1, 0.4) });
       });
       die(XS[0], GY, 46, { alpha: stageD * ramp(t, luck - 0.15, 0.4) });
-      nameText(L("靠的是运气", "A gamble"), XS[0], CY, {
-        valign: "top",
-        alpha: stageD * listIn(t, costs, 0),
-        set: "costs",
-      });
       const grid = stageD * ramp(t, cant - 0.15, 0.4);
       checksGrid(XS[1], GY - 16, mix(2, 7, soon(t, many + 0.05, 0.65)), { alpha: grid });
-      // The consequence stays short: the growing row of Agents and checks says how many there are.
-      nameText(L("查不过来", "Stops working"), XS[1], CY, {
-        valign: "top",
-        alpha: stageD * listIn(t, costs, 1),
-        set: "costs",
-      });
     }
   }
 };

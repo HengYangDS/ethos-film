@@ -9,6 +9,7 @@ import {
   dashed,
   dot,
   fill,
+  labelSize,
   line,
   measure,
   ring,
@@ -18,9 +19,9 @@ import {
 import { check, cross, stopSign } from "../../drawing/symbols.js";
 import { commitRow } from "../../drawing/history.js";
 import { commitDot, tagIcon } from "../../drawing/workspace.js";
-import { building, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { building, listIn, listLevel, named } from "../../naming/lists.js";
+import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
@@ -88,7 +89,8 @@ function standing(t, parts) {
 
 /* 02.5 Two Agents work on the same branch. One keeps a memory of the branch as it was, three commits; it writes from
  * that memory, its link drawn to the place after them, and its commit lands there; the other's commit, the newest on
- * the branch, drops off it, struck through: overwritten. */
+ * the branch, named as the other one's work on its words, drops off it, struck through, as "overwritten" joins under
+ * that name. */
 export function stageBranch(t, a, c) {
   if (a <= 0) return;
   const xs = [760, 920, 1080, 1240],
@@ -115,10 +117,16 @@ export function stageBranch(t, a, c) {
   commitDot(BX, dropY, { alpha: branch * mix(1, 0.75, over) });
   cross(BX, dropY, 30, { color: P.ink, alpha: branch * over, width: 3.5 });
   // The name hangs one gap under the struck commit and drops with it, so it stays on its mark from its first word.
-  nameText(L("被覆盖了", "Overwritten"), BX, dropY + 15 + NAME_GAP, {
-    valign: "top",
-    alpha: a * named(t, c.overwritten),
-  });
+  termRow(
+    t,
+    [L("另一个的工作", "The other one's work")],
+    [c.otherWork],
+    [L("被覆盖了", "overwritten")],
+    [c.overwritten],
+    BX,
+    dropY + 15 + NAME_GAP,
+    { alpha: a, align: "center" },
+  );
   // The outdated memory: the branch as it was, three commits, over the first Agent.
   const mem = a * ramp(t, c.memory - 0.15, 0.4),
     MY = 330;
@@ -152,13 +160,17 @@ export function stageBranch(t, a, c) {
 /* 02.5 The same version pushed to two platforms: one succeeds, the other fails, and between them the state nobody can
  * name; trying again adds a second push that ends in the same question. The row grows to the right as it is told, so it
  * stands centred on what stands: the version alone from the cut, then the version with its platforms, its results and
- * the state between them, gliding as one on the words of each part that widens it. */
+ * the state between them, gliding as one on the words of each part that widens it. Each platform arrives with its link
+ * and its name on the words that name it. While the version stands alone, which English holds for most of three
+ * seconds before it names a platform, and with the first platform, the stage stands 40 px lower, so it stays balanced
+ * under the docked index; on the second platform's name it rises as one to its place. */
 export function stagePlatforms(t, a, c) {
   if (a <= 0) return;
   const VX = 470,
-    VY = 560,
+    VY = 600 + 40 * (1 - soon(t, c.github + 0.05, 0.7)),
     PX = 1100,
-    ys = [420, 700],
+    ys = [VY - 140, VY + 140],
+    RY = VY + 240,
     W = 220,
     H = 84,
     q = (voiceTime(t) * 0.4) % 1;
@@ -166,11 +178,7 @@ export function stagePlatforms(t, a, c) {
     resultNames = L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"]),
     unclearName = L("谁也说不清", "Nobody can say"),
     retryName = L("再试一遍", "Trying again");
-  // Each platform arrives with its name. The English names the platforms before it names them, and its clause
-  // already runs, so each arrives on the words that bring it and its name may stand that far ahead of its words.
-  const hosts = [c.gitlab, c.github],
-    come = L(hosts, [c.platforms, c.platforms2]),
-    calls = hosts.map((at, i) => L(at, Math.max(come[i], at - 1.4))),
+  const come = [c.gitlab, c.github],
     results = [c.ok, c.fail];
   const from = Math.min(VX, VX + 70 - measure(versionName) / 2),
     after = PX + W / 2 + 76;
@@ -200,7 +208,7 @@ export function stagePlatforms(t, a, c) {
       flow: q,
     });
     box(PX - W / 2, y - H / 2, W, H, { stroke: P.ink, alpha: on, radius: 14, width: 2.5 });
-    nameText(["GitLab", "GitHub"][i], PX, y, { alpha: a * named(t, calls[i]), set: "hosts" });
+    nameText(["GitLab", "GitHub"][i], PX, y, { alpha: a * named(t, come[i]), set: "hosts" });
     const done = a * ramp(t, results[i] - 0.15, 0.4);
     if (i === 0) check(PX + W / 2 + 40, y, 30, { color: P.ink, alpha: done, width: 4 });
     else stopSign(PX + W / 2 + 40, y, 20, { color: P.ink, alpha: done });
@@ -220,15 +228,15 @@ export function stagePlatforms(t, a, c) {
   });
   // Trying again: a second push, dashed, that ends in the same question.
   const again = a * ramp(t, c.retry - 0.15, 0.4);
-  link(VX + 70, VY + 28, VX + 70 + 300, 800, {
+  link(VX + 70, VY + 28, VX + 70 + 300, RY, {
     route: "vh",
     alpha: again,
     upto: soon(t, c.retry + 0.05, 0.6),
     dash: [8, 8],
   });
-  unknownMark(VX + 70 + 330, 800, again * soon(t, c.retry + 0.55, 0.3));
+  unknownMark(VX + 70 + 330, RY, again * soon(t, c.retry + 0.55, 0.3));
   // Its name stands as far from its mark as the results' names stand from theirs.
-  nameText(retryName, VX + 70 + 330 + UNKNOWN_R + 16, 800, {
+  nameText(retryName, VX + 70 + 330 + UNKNOWN_R + 16, RY, {
     align: "left",
     alpha: a * named(t, c.retry),
   });
@@ -236,7 +244,8 @@ export function stagePlatforms(t, a, c) {
 }
 
 /* 02.5 A request that was sent may not have been received, and an error does not mean nothing happened: each pair a
- * link that stops at a question, so the far end cannot be read from the near one. The pairs stand centred on what
+ * link that stops at a question, so the far end cannot be read from the near one. The near ends are named by their
+ * nouns, the request with "sent" joining under it on its words and the error message. The pairs stand centred on what
  * stands: the first pair's near half from the cut, its link run out to the question's place, and each half that
  * widens the pairs glides them as one on its words. */
 export function stageSent(t, a, c) {
@@ -248,9 +257,12 @@ export function stageSent(t, a, c) {
     near = [c.sent, c.error],
     far = [c.received, c.nothing],
     q = (voiceTime(t) * 0.4) % 1;
-  const nearNames = L(["请求发出去了", "看到报错"], ["Sent", "An error message"]),
+  const nearNames = L(["请求", "报错"], ["A request", "An error message"]),
+    nearQuals = L([["发出去了"], []], [["that was sent"], []]),
+    nearAts = [L(c.sent, c.s2Cut), L(c.errorName, c.error)],
     farNames = L(["对方收下了", "什么都没发生"], ["Received", "Nothing happened"]),
-    nearLeft = (i) => X0 - 10 - NAME_GAP - measure(nearNames[i]),
+    nearLeft = (i) =>
+      X0 - 10 - NAME_GAP - Math.max(measure(nearNames[i]), measure(nearQuals[i].join(""), NOTE)),
     farRight = (i) => X1 + 14 + NAME_GAP + measure(farNames[i]);
   ctx.save();
   ctx.translate(
@@ -276,11 +288,17 @@ export function stageSent(t, a, c) {
     unknownMark(960, y, off);
     dashed(990, y, X1 - 14, y, { color: P.line, alpha: off, width: 2.5 });
     ring(X1, y, 14, { color: P.ink, alpha: off, width: 2.5 });
-    nameText(nearNames[i], X0 - 10 - NAME_GAP, y, {
-      align: "right",
-      alpha: a * listIn(t, [c.s2Cut, near[1]], i),
-      set: "near",
-    });
+    // Each near name stands on its pair's line, the request's qualifier under it.
+    termRow(
+      t,
+      [nearNames[i]],
+      [nearAts[i]],
+      nearQuals[i],
+      [c.sentName],
+      X0 - 10 - NAME_GAP,
+      y - labelSize(LABEL) / 2,
+      { align: "right", alpha: a * listLevel(t, nearAts, i), set: "near" },
+    );
     nameText(farNames[i], X1 + 14 + NAME_GAP, y, {
       align: "left",
       alpha: a * listIn(t, far, i),

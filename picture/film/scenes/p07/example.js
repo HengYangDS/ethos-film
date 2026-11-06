@@ -2,12 +2,21 @@
  * carry them and are retired; a script kept anyway returns months later and disagrees with the declared check. */
 
 import { ctx } from "../../canvas.js";
+import { pipelineMark } from "../../drawing/examples.js";
 import { link } from "../../drawing/links.js";
 import { box, dot, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, clock, documentIcon, person } from "../../drawing/symbols.js";
 import { askIcon, ledger, repoIcon, terminalIcon } from "../../drawing/workspace.js";
 import { named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName, wrapName } from "../../naming/names.js";
+import {
+  NAME_GAP,
+  NOTE,
+  nameText,
+  rejectedName,
+  termRow,
+  termRowLayout,
+  wrapName,
+} from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -84,56 +93,89 @@ function declaredCheck(x, y, alpha) {
   check(x + 24, y + 10, 46, { alpha, width: 4 });
 }
 const CHECK_NAME = () => L("仓库自己声明的检查", "Declared check");
+/* The width within which the script's and the task list's names stand on one line in both editions. */
+const NAME_WRAP = 420;
 
-/* 07.1. The first Agent stands from the cut with the links to its makings' places, its two makings arriving on their
- * words, and the picture steps left as the owners arrive. Each obligation passes from its making to its owner along a
- * link on its words, a point flowing along it under the obligation's name. The makings and the Agent retire together
- * on their word, each link drawing back to a short lead into its owner, the owners settle to the centre, and keeping
- * the makings just in case is refused where they stood. Each of the three pictures, the Agent with its makings, the
- * same with the owners, and the owners with the refusal, is centred on the frame by its outer names; until the first
- * making arrives, the Agent and its links stand centred by their own ends, and the picture glides left, as one unit,
- * on the words that bring the script. */
+/* The example's context, its market-data pipeline, small at the top of the frame as 06.1 shows it once the second
+ * Agent's view builds, and named as the example one gap after its records, which the name stands beside in their row;
+ * the two are centred together on the frame. It stands while the first Agent and its makings are told and leaves as
+ * the owners arrive, before the obligations' names take the band under it. Its height keeps the opening, the context
+ * over the first Agent, about 9% above the content centre two seconds into the thought, inside the reviewers' 12%, and
+ * its records about 30 px clear of the script that arrives under them. */
+const CONTEXT_W = 400,
+  CONTEXT_Y = 250;
+function exampleContext(alpha, flow) {
+  const name = L("例子", "The example"),
+    // The pipeline spans its width about its centre.
+    x = 960 - (NAME_GAP + measure(name)) / 2;
+  pipelineMark(x, CONTEXT_Y, CONTEXT_W, { alpha, flow });
+  nameText(name, x + CONTEXT_W / 2 + NAME_GAP, CONTEXT_Y, { align: "left", alpha });
+}
+
+/* 07.1. In the example, whose pipeline stands named at the top from the scene's first words until the owners arrive,
+ * the first Agent stands centred on the frame, and each of its makings arrives on its own words at the end of a link that draws out from the
+ * Agent with it, so no link stands without its making; the picture steps left as the owners arrive. Each obligation
+ * passes from its making to its owner along a link on its words, a point flowing along it under the obligation's name. The makings and the Agent retire together on their word, each link drawing
+ * back to a short lead into its owner, the owners settle to the centre, and keeping the makings just in case is
+ * refused where they stood. Each of the three pictures, the Agent with its makings, the same with the owners, and the
+ * owners with the refusal, is centred on the frame by its outer names; the Agent's picture glides left, as one unit,
+ * from its centre alone on the words that bring the script. */
 export function makings(s, t, a) {
   if (a <= 0) return;
-  const [agentAt, scriptAt, sheetAt, checkAt, dedupAt, listAt, progressAt, retireAt, caseAt] = cues(
-    s,
-    [
-      ["最早那个 Agent", "the first Agent"],
-      ["写了一个临时的去重脚本", "wrote a temporary deduplication script"],
-      ["进度表", "progress sheet"],
-      ["仓库自己声明的检查", "the repository's own declared check"],
-      ["去重这项义务", "the obligation to deduplicate"],
-      ["正式变更里的任务清单", "the official Change's task list"],
-      ["接住了进度", "carries the progress"],
-      ["撤掉", "are retired"],
-      ["以防万一", "just in case"],
-    ],
-  );
-  const lift = soon(t, checkAt + 0.05, 0.9),
+  const [
+    moveAt,
+    exampleAt,
+    agentAt,
+    scriptAt,
+    sheetAt,
+    checkAt,
+    dedupAt,
+    listAt,
+    progressAt,
+    retireAt,
+    caseAt,
+  ] = cues(s, [
+    ["仓库自己", "the repository's own"],
+    ["在例子里", "In the example"],
+    ["最早那个 Agent", "the first Agent"],
+    ["临时的去重脚本", "temporary deduplication script"],
+    ["进度表", "progress sheet"],
+    ["仓库自己声明的检查", "declared check"],
+    ["去重这项义务", "the obligation to deduplicate"],
+    ["正式变更里的任务清单", "the official Change's task list"],
+    ["接住了进度", "carries the progress"],
+    ["撤掉", "are retired"],
+    ["以防万一", "just in case"],
+  ]);
+  // The makings step left as the words that bring the owners begin, so the declared check arrives clear of the script's
+  // name, which stands on one line.
+  const lift = soon(t, moveAt + 0.05, 0.9),
     gone = a * (1 - ramp(t, retireAt + 0.05, 0.4)),
     settle = soon(t, retireAt + 0.05, 0.9);
   // How far each column's marks and names reach either side of its axis.
   const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2),
     makingHalf = Math.max(
       SCRIPT[0] / 2,
-      nameWidth(L("临时的去重脚本", "Temporary deduplication script"), 350) / 2,
+      nameWidth(L("临时的去重脚本", "Temporary deduplication script"), NAME_WRAP) / 2,
       measure(L("进度表", "Progress sheet")) / 2,
     ),
     ownerHalf = Math.max(
       OWNER[0] / 2,
       nameWidth(CHECK_NAME(), 300) / 2,
-      nameWidth(L("正式变更里的任务清单", "The official Change's task list"), 300) / 2,
+      nameWidth(L("正式变更里的任务清单", "The official Change's task list"), NAME_WRAP) / 2,
     ),
     first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2,
     owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2,
-    // Before its makings arrive, the Agent's picture ends where its longer link does, at the sheet's place.
-    links = 960 - (640 - agentHalf + 1040 - SHEET[0] / 2 - 10) / 2,
-    start = mix(links, first, soon(t, scriptAt + 0.05, 0.7));
+    // Before its makings arrive, the Agent stands alone at the frame's centre.
+    alone = 960 - 640,
+    start = mix(alone, first, soon(t, scriptAt + 0.05, 0.9));
   const AX = mix(640 + start, 400 + owned, lift),
     MX = mix(1040 + start, 760 + owned, lift),
     OX = mix(1330 + owned, 1150, settle),
     AY = 495,
     flow = (voiceTime(t) * 0.35) % 1;
+  // The example sets the scene for the Agent and its makings, and leaves with its name as the owners arrive.
+  exampleContext(a * named(t, exampleAt) * (1 - ramp(t, checkAt + 0.05, 0.4)), flow);
   // The Agent and its place stand from the cut; its name may lead its clause by a fifth of a second, so the thought
   // is named within its first second.
   agent(AX, AY, { size: 1.5, alpha: gone });
@@ -143,23 +185,24 @@ export function makings(s, t, a) {
     alpha: gone * ramp(t, agentAt - 0.35, 0.4),
     set: "07.1:makings",
   });
-  // Its two makings, each at the end of a link that leaves the Agent from the cut, so the opening picture already
-  // spans the Agent's work; each link's end point and flow arrive with its making.
+  // Its two makings, each at the end of a link that draws out from the Agent on the making's own words, its end point
+  // and flow arriving with it.
   const sIn = gone * named(t, scriptAt),
     hIn = gone * named(t, sheetAt),
-    mid = (AX + 52 + MX - SCRIPT[0] / 2) / 2;
+    // The links turn clear of the Agent's name at their left and of the script's name at their right.
+    mid = AX + 125;
   link(AX + 52, AY, MX - SCRIPT[0] / 2 - 10, R1, {
     route: "hvh",
     mid,
-    alpha: gone,
-    end: sIn > 0.5,
+    alpha: sIn,
+    upto: soon(t, scriptAt + 0.05, 0.5),
     flow: sIn > 0.5 ? flow : null,
   });
   link(AX + 52, AY, MX - SHEET[0] / 2 - 10, R2, {
     route: "hvh",
     mid,
-    alpha: gone,
-    end: hIn > 0.5,
+    alpha: hIn,
+    upto: soon(t, sheetAt + 0.05, 0.5),
     flow: hIn > 0.5 ? (flow + 0.5) % 1 : null,
   });
   // Each row of marks, a making and its owner, hangs its names from one baseline under the row's lower mark.
@@ -168,7 +211,7 @@ export function makings(s, t, a) {
   terminalIcon(MX - SCRIPT[0] / 2, R1 - SCRIPT[1] / 2, SCRIPT[0], SCRIPT[1], { alpha: sIn });
   nameText(L("临时的去重脚本", "Temporary deduplication script"), MX, top1, {
     valign: "top",
-    width: 350,
+    width: NAME_WRAP,
     alpha: sIn,
     set: "07.1:makings",
   });
@@ -198,7 +241,7 @@ export function makings(s, t, a) {
   });
   nameText(L("正式变更里的任务清单", "The official Change's task list"), OX, top2, {
     valign: "top",
-    width: 300,
+    width: NAME_WRAP,
     alpha: lIn,
     set: "07.1:owners",
   });
@@ -210,9 +253,10 @@ export function makings(s, t, a) {
       MX + SCRIPT[0] / 2,
       OX - OWNER[0] / 2,
       dedupAt,
-      L("去重", ["Obligation", "to deduplicate"]),
+      L(["去重"], ["Obligation"]),
+      L([], ["to deduplicate"]),
     ],
-    [R2, MX + SHEET[0] / 2, OX - LIST[0] / 2, progressAt, L("进度", "Progress")],
+    [R2, MX + SHEET[0] / 2, OX - LIST[0] / 2, progressAt, L(["进度"], ["Progress"]), []],
   ];
   const lead = Math.min(...rows.map(([, , to]) => to)) - 150,
     spans = rows.map(([, from, to]) => [mix(from + 12, lead, settle), to - 12]);
@@ -220,20 +264,34 @@ export function makings(s, t, a) {
   // edges.
   const axis = Math.min(
     (spans[0][0] + spans[0][1] + spans[1][0] + spans[1][1]) / 4,
-    ...rows.map(([, , to, , name]) => to - 20 - nameWidth(name) / 2),
+    ...rows.map(
+      ([, , to, , term, qual]) =>
+        to - 20 - Math.max(measure(term[0]), ...qual.map((v) => measure(v, NOTE))) / 2,
+    ),
   );
-  rows.forEach(([y, , , at, name], i) => {
+  rows.forEach(([y, , , at, term, qual], i) => {
     const shown = a * named(t, at);
     link(spans[i][0], y, spans[i][1], y, {
       alpha: shown,
       upto: soon(t, at + 0.05, 0.6),
       flow: (flow + 0.5 * i) % 1,
     });
-    nameText(name, axis, y - 26, {
-      valign: "bottom",
-      alpha: shown,
-      set: "07.1:duties",
-    });
+    // A duty and its qualifier end one line over the link.
+    termRow(
+      t,
+      term,
+      [at],
+      qual,
+      [at],
+      axis,
+      y - 26 - termRowLayout(term, qual, Infinity, false).height,
+      {
+        alpha: a,
+        align: "center",
+        inline: false,
+        set: "07.1:duties",
+      },
+    );
   });
   // Kept just in case: refused where the makings stood.
   rejectedName(L("以防万一", "Just in case"), 700, AY, {

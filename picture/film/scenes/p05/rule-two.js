@@ -50,8 +50,12 @@ const separateX = () => 960 - (PLANE_W + stepsReach()) / 2;
 export const outcomeNames = () => L(["通过", "拦下", "未知"], ["Pass", "Block", "Unknown"]);
 export const outcomeQuals = () =>
   L(
-    [["允许动手"], ["有冲突、失败或警告"], ["缺了，或者没法核实"]],
-    [["lets work go ahead"], ["a conflict, failure or warning"], ["missing or unverifiable"]],
+    [["允许动手"], ["有冲突、明确失败或警告"], ["缺了，或者没法核实"]],
+    [
+      ["lets work go ahead"],
+      ["a conflict, explicit failure or warning"],
+      ["missing or unverifiable"],
+    ],
   );
 
 /* The outcomes list's columns, from the stack's left edge: the list's mark at `mark`, the names after it, and the
@@ -160,13 +164,18 @@ export function separateStage(s, t, c, g) {
 
 /* 05.3 One passing never means another has: the sentence that says "done" stands beside the stack, the local proof's
  * check beats and the inference to another plane is refused; the sentence is then linked to the one plane verified.
- * The stack comes from where its steps left it, and from the cut it and the sentence glide aside together as one
- * group. */
+ * The stack comes from where its steps left it, keeping its name, and from the cut it and the sentence glide aside
+ * together as one group. The steps leave at the cut with their name, the two as one mark. */
 export function verifiedStage(s, t, c, g) {
   ruleTwoHeading(t, c, g);
   const x = mix(separateX(), ASIDE, soon(t, c.first3b + STAGE_CUT, 0.7)),
     one = rowOf(TOP, 0);
   planeStack(t, x, TOP, { alpha: g });
+  nameText(L("各自独立的证据", "Separate planes of evidence"), x, TOP - NAME_GAP, {
+    align: "left",
+    valign: "bottom",
+    alpha: g,
+  });
   beats(t, x + PLANE_W - 36, one, 24, [c.first3b], { alpha: g });
   rejectedName(
     L("另一样也通过", "Another has passed"),

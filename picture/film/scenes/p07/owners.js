@@ -109,12 +109,12 @@ export function ruleFour(s, t, a) {
     ["只声明自己特有的检查", "declares only the checks"],
   ]);
   // While the rule is spoken the heading drifts slowly toward its place in voice time; it settles on the next words.
-  // English breaks its statement between the act and its condition, so neither line ends inside a phrase.
+  // The statement stands on one line in both editions, authored so, past the width at which headings wrap.
   const drift = 0.12 * clamp((voiceTime(t) - voiceTime(kickAt)) / 4);
   ruleHeading(t, drift + (1 - drift) * soon(t, everyAt + 0.05, 0.9), {
     kick: L("第四条准则", "Rule four"),
     kickAt,
-    rule: L("义务没了，机制就退场", ["Retire a mechanism", "when its obligation disappears"]),
+    rule: L("义务没了，机制就退场", ["Retire a mechanism when its obligation disappears"]),
     ruleAt,
     alpha: a,
   });
@@ -163,10 +163,10 @@ export function ruleFour(s, t, a) {
     alpha: a * listIn(t, heads, 1),
     set: "07.3:heads",
   });
-  // The obligation the same for every repository, owned by ETHOS. English breaks it before the phrase "for every
-  // repository", so no line ends on "for", and names the second duty as a noun, the repository's own checks.
-  const d1 = nameText(L("对所有仓库都一样的规则", ["The same", "for every repository"]), C1, DUTY, {
-    width: 330,
+  // The obligation the same for every repository, owned by ETHOS, on one line. English names the second duty as a
+  // noun, the repository's own checks.
+  const d1 = nameText(L("对所有仓库都一样的规则", "The same for every repository"), C1, DUTY, {
+    width: 400,
     alpha: a * listIn(t, duties, 0),
     set: "07.3:duties",
   });
@@ -208,7 +208,9 @@ function ownRepo(x, y, alpha, ticked) {
 
 /* 07.4, first: ETHOS, as its kernel, judges its own repository on its words; the same obligations it ships stand
  * between on theirs, linked on to every other repository, and each repository is ticked by them. The two branches,
- * its own repository above and every other one below, stand on one axis, and the picture is centred on the frame. */
+ * its own repository above and every other one below, stand on one axis, and the picture is centred on the frame. The
+ * obligations' name stands on one line, since broken by measure the English would leave "obligations" alone on its
+ * last line, and the branches turn 25 px clear of its end. */
 export function ownRepository(s, t, a) {
   if (a <= 0) return;
   const [ethosAt, ownAt, allAt, sameAt] = cues(s, [
@@ -221,7 +223,7 @@ export function ownRepository(s, t, a) {
   const DX = 960 - (620 - 52 + 1450 + 50) / 2,
     KX = 620 + DX,
     LX = 960 + DX,
-    MID = 1100 + DX,
+    MID = 1124 + DX,
     G = [1210, 1330, 1450].map((x) => x + DX),
     OWNX = G[1],
     flow = (voiceTime(t) * 0.4) % 1,
@@ -259,7 +261,7 @@ export function ownRepository(s, t, a) {
   ledger(LX, 500, 100, 130, { alpha: l });
   nameText(L("同一套义务", "The same obligations"), LX, top, {
     valign: "top",
-    width: 230,
+    width: 300,
     alpha: l,
   });
 }

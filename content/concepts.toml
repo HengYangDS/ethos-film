@@ -1,7 +1,10 @@
 # The ETHOS film's concept contract: what each concept the film names means in ETHOS at the pinned
 # release, and the words each edition uses for it. The user approved the renderings on 2026-11-01
 # and, with the revision-4 script on 2026-11-02, 实际效益, 原意, the verdict's forms and the
-# inflections. A rendering changes here first, with the user's approval, then wherever it is used.
+# inflections; on 2026-11-06 the form 可以互相替换 and the rule that a Latin-script term, which
+# keeps its base form in Chinese, has its number carried by Chinese words (越来越多的, 它们, 那些)
+# wherever the English uses its plural. A rendering changes here first, with the user's approval,
+# then wherever it is used.
 
 [[concept]]
 id = "authority"
@@ -40,7 +43,7 @@ id = "fresh-facts"
 term = "Facts"
 essence = "Observed again for each judgment, never stored as truth."
 source = { path = "docs/reference/glossary.md", quote = "Fresh observations of the repository and its governed environment." }
-zh = { rendering = "刚观察到的事实" }
+zh = { rendering = "刚观察到的事实", forms = ["事实"] }
 en = { rendering = "fresh facts" }
 
 [[concept]]
@@ -168,7 +171,7 @@ id = "interchangeable-agents"
 term = "interchangeable Agent capabilities"
 essence = "Capabilities that can be replaced without losing meaning or authority."
 source = { path = "docs/governance/product-design-contract.md", quote = "interchangeable Agent capabilities" }
-zh = { rendering = "可以互相替换的 Agent" }
+zh = { rendering = "可以互相替换的 Agent", forms = ["可以互相替换"] }
 en = { rendering = "interchangeable Agents" }
 
 [[concept]]

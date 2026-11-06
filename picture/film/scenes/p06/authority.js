@@ -26,6 +26,7 @@ import {
   growName,
   nameText,
   termRow,
+  termRowLayout,
 } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -230,9 +231,11 @@ function viewIcon(i, x, y, a) {
   } else if (i === 2) terminalIcon(x - 32, y - 26, 64, 52, { alpha: a });
   else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
-function views(t, c, g, place, { only = null, flow = null, linked = true } = {}) {
-  // The four views build and leave as one list; one view kept on alone after them is no longer that list's member.
-  const ats = c.views,
+function views(t, c, g, place, { only = null, flow = null, linked = true, back = null } = {}) {
+  // The four views build and leave as one list; one view kept on alone after them is no longer that list's member. A
+  // view that returns alone (`back`, the time its words bring it back) is computed again: its link draws out from the
+  // opening from the cut, and the view arrives at its end.
+  const ats = back === null ? c.views : c.views.map(() => back.at),
     names = VIEWS(),
     v = viewsOf(place),
     set = only === null ? "views" : "view";
@@ -243,16 +246,26 @@ function views(t, c, g, place, { only = null, flow = null, linked = true } = {})
       link(v.open - 40, place.y, v.vx - 36, v.ys[i], {
         route: "hvh",
         mid: v.open + 60,
-        alpha: on,
+        alpha: back === null ? on : g,
+        upto: back === null ? 1 : soon(t, back.cut, 0.4),
         flow: flow === null ? null : (flow + i * 0.25) % 1,
       });
     viewIcon(i, v.vx, v.ys[i], on);
     if (i === 1)
-      termRow(t, [name], [ats[i]], GREEN(), [c.thatGreen], v.text, v.ys[i] - labelSize(LABEL) / 2, {
-        alpha: g * (only === null ? listLevel(t, ats, i) : 1),
-        set,
-        width: 1800 - v.text,
-      });
+      termRow(
+        t,
+        [name],
+        [ats[i]],
+        GREEN(),
+        [back?.at ?? c.thatGreen],
+        v.text,
+        v.ys[i] - labelSize(LABEL) / 2,
+        {
+          alpha: g * (only === null ? listLevel(t, ats, i) : 1),
+          set,
+          width: 1800 - v.text,
+        },
+      );
     else
       nameText(name, v.text, v.ys[i], {
         align: "left",
@@ -310,20 +323,26 @@ function innerBranch(a, place, moved, says = null) {
     });
 }
 
-/* 06.5 A stale view: the dashboard was computed from inside; inside, the branch arrives with what is said of it, then
- * moves on as the change is said, and the view still shows what it showed, without showing the change. What is said
- * of the view stands on its names' column. */
+/* 06.5 A stale view: 06.4's views leave whole at the cut, and the dashboard returns alone as a view computed from
+ * inside, its link drawing out through the opening from the cut and the view arriving at its end on the words that
+ * compute it, with what is said of it; inside, the branch arrives with what is said of it, then moves on as the change
+ * is said, and the view still shows what it showed, without showing the change. What is said of the view stands on
+ * its names' column. */
 export function staleViewStage(s, t, c, g) {
   const place = viewsPlace(),
-    v = viewsOf(place);
+    v = viewsOf(place),
+    cut = c.first5 + STAGE_CUT,
+    back = { cut, at: Math.max(c.computed, cut + 0.25) };
   boundaryMark(t, c, g, place);
-  views(t, c, g, place, { only: 1, flow: flowOf(t) });
+  views(t, c, g, place, { only: 1, flow: flowOf(t), back });
+  // The Chinese name is the clause itself, whose words have begun by the cut, so it stands from the cut; the English
+  // name is its one word.
   nameText(L("视图算出来以后", "Computed"), v.text, v.ys[1] - 46, {
     align: "left",
-    alpha: g * named(t, c.first5),
+    alpha: g * named(t, L(cut + 0.15, back.at)),
   });
   innerBranch(
-    g * named(t, c.change),
+    g * named(t, c.changes),
     place,
     soon(t, c.changes + 0.05, 0.7),
     L("又变了", "A change"),
@@ -354,12 +373,12 @@ export function notAuthorityStage(s, t, c, g) {
   // view carries it on to the new commit, which it would overwrite.
   const refused = g * named(t, c.never),
     reach = mix(0.45, 1, soon(t, c.act + 0.05, 0.9)) * soon(t, c.never + 0.05, 0.5),
-    // English breaks before the phrase "as authority", so no line ends on "as".
-    counts = L("当权威依据", ["Counts", "as authority"]),
-    // The cross stands in the gap between the opening and the view, its words centred under it within that gap,
-    // ending at least 20 px before the view, so they stay clear of the passages inside.
-    room = v.vx - 30 - 20 - v.open,
-    mouth = v.open + room / 2;
+    // What is refused is named in the narration's words: one line in Chinese, and in English two, broken by measure.
+    counts = L("不是权威依据", "Never counts as authority"),
+    // The cross stands in the gap between the opening and the view, its words centred under it, ending at least 20 px
+    // before the view; they may reach 16 px inside the opening, which is clear of the passages at their height.
+    room = v.vx - 30 - 20 - (v.open - 16),
+    mouth = v.open - 16 + room / 2;
   link(v.vx - 36, v.ys[1], b.end, b.by + 22, {
     route: "hv",
     alpha: refused,
@@ -375,14 +394,18 @@ export function notAuthorityStage(s, t, c, g) {
   });
   const over = g * named(t, c.overwrite);
   cross(b.end, b.by, 14, { color: P.ink, alpha: over, width: 3 });
-  nameText(
-    L("覆盖掉别人的工作", ["Overwrite", "someone else's work"]),
+  // The English sets what is overwritten as the name's qualifier: on one line the name would reach the boundary.
+  const overwrite = L(["覆盖掉别人的工作"], ["Overwrite"]),
+    whose = L([], ["someone else's work"]);
+  termRow(
+    t,
+    overwrite,
+    [c.overwrite],
+    whose,
+    [c.overwrite],
     b.mid,
-    b.by - 22 - NAME_GAP + 8,
-    {
-      valign: "bottom",
-      alpha: over,
-    },
+    b.by - 22 - NAME_GAP + 8 - termRowLayout(overwrite, whose, Infinity, false).height,
+    { alpha: g, align: "center", inline: false },
   );
   // The judgment cannot pass: a stop on the icons' column beside the views, its conditions above its words.
   const stop = g * named(t, c.cannotPass);

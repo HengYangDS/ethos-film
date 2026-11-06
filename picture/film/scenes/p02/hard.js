@@ -135,11 +135,13 @@ scenes["02"] = function (s, t) {
     orig: ["原话", "the words before it"],
     summary: ["一份总结顶替一次", "a summary takes the place"],
     unwritten: ["没写下来的约束", "never written down"],
+    anyConstraint: ["没写下来的约束", "any constraint"],
     gone: ["跟着没了", "ends with it"],
     mustNot: ["不能做什么", "what must not be done"],
     benefit: ["想要得到的好处", "the benefit"],
     gCut: ["需求哪怕", "A specification"],
     wellFormed: ["格式齐全", "complete and well formed"],
+    goal: ["目标", "the wrong goal"],
     wrong: ["从一开始就定错了", "aimed at the wrong goal"],
     second: ["第二个", "The second"],
     n2: ["结论超出了证据", "claims go beyond their evidence"],
@@ -148,6 +150,7 @@ scenes["02"] = function (s, t) {
     everything: ["全部通过", "everything passes"],
     merge: ["代码合进去了", "A merge"],
     release: ["已经发布", "a release"],
+    releaseName: ["发布", "a release"],
     deploy: ["部署成功了", "a deployment"],
     benefit2: ["实际效益", "actual benefit"],
     ownPart: ["只证明了它自己那一段", "proves only its own part"],
@@ -157,26 +160,29 @@ scenes["02"] = function (s, t) {
     written: ["已经写好的那些测试", "the tests someone wrote"],
     enough: ["这些测试够不够", "whether those tests are enough"],
     third: ["第三个", "The third"],
-    // The third name's clause opens on 是事实 / changes, before the words it quotes.
+    // The third difficulty is told from its clause, 是事实 / changes; its name, which keeps its subject, 事实, stands on
+    // its own words.
     n3: ["是事实", "changes are made"],
+    n3name: ["事实还没看清", "changes are made"],
     bCut: ["两个 Agent", "Two Agents"],
     branch: ["一条分支", "the same branch"],
     memory: ["过时的记忆", "an outdated memory"],
     writes: ["写下去", "writes"],
+    otherWork: ["另一个的工作", "the other one's work"],
     overwritten: ["被覆盖了", "overwritten"],
     vCut: ["同一个版本", "The same version"],
     gitlab: ["GitLab", "GitLab"],
     github: ["GitHub", "GitHub"],
-    platforms: ["两个平台", "code-hosting platforms"],
-    platforms2: ["两个平台", "platforms"],
     ok: ["一边成功", "succeeds on one"],
     fail: ["一边失败", "fails on the other"],
-    unclear: ["说不清", "nobody can say"],
+    unclear: ["谁也说不清", "nobody can say"],
     retry: ["再试一遍", "trying again"],
     s2Cut: ["因为请求", "A request that was sent"],
     sent: ["请求发出去了", "was sent"],
+    sentName: ["发出去了", "that was sent"],
     received: ["对方收下了", "received"],
     error: ["看到报错", "an error message"],
+    errorName: ["报错", "an error message"],
     nothing: ["什么都没发生", "nothing happened"],
     lCut: ["常见的办法", "The usual answer"],
     process: ["加流程", "more process"],
@@ -189,22 +195,30 @@ scenes["02"] = function (s, t) {
     burden: ["新的负担", "a burden of their own"],
   });
   // The index stands at the centre while each difficulty is introduced and at the top while it is shown. It rises on
-  // the words of each illustration's first mark, which waits until it has passed, and comes down just after the cut
+  // the last word that begins at least 0.32 s before the words of each illustration's first mark, or 0.45 s before
+  // them after a longer pause, so it has passed above the stage when the stage cuts in on those words and the stage's
+  // first name stands on them, while the docked index never stands alone for long; it comes down just after the cut
   // that ends the last, so it never passes through a stage's marks.
+  const riseFor = (at) => {
+    let start = s.words[0].start;
+    for (const w of s.words) {
+      if (w.start > at - 0.32) break;
+      start = w.start;
+    }
+    return Math.max(start + 0.05, at - 0.45);
+  };
+  const [upP, upE, upB] = [c.pCut, c.eCut, c.bCut].map(riseFor);
   const k =
-    soon(t, c.pCut + 0.05, 0.6) -
+    soon(t, upP, 0.6) -
     soon(t, c.second + 0.2, 0.6) +
-    soon(t, c.eCut + 0.05, 0.6) -
+    soon(t, upE, 0.6) -
     soon(t, c.third + 0.2, 0.6) +
-    soon(t, c.bCut + 0.05, 0.6);
+    soon(t, upB, 0.6);
   // The kicker shows while the index is docked: it fades in over the slow end of each rise, as the heading leaves the
   // centre, and out over the slow start of each descent, as the heading returns there.
   const docked = (up, down = Infinity) =>
     ramp(t, up + 0.2, 0.35) * (1 - ramp(t, down - 0.05, 0.25));
-  const kicker =
-    docked(c.pCut + 0.05, c.second + 0.2) +
-    docked(c.eCut + 0.05, c.third + 0.2) +
-    docked(c.bCut + 0.05);
+  const kicker = docked(upP, c.second + 0.2) + docked(upE, c.third + 0.2) + docked(upB);
   // The difficulty being told at full ink, the others at the second level; in the last thought all three step back.
   const told = [
     [c.n1, c.n2 - 0.15],
@@ -215,27 +229,27 @@ scenes["02"] = function (s, t) {
     ([from, to]) => ramp(t, from - 0.15, 0.4) * (1 - ramp(t, to - 0.15, 0.4)),
   );
   hardIndex(t, clamp(k), {
-    heading: L("难处", "Three ways"),
+    heading: L("难处", "Three parts"),
     headAt: c.head,
     names: L(
-      ["原意会走样", "结论超出了证据", "没看清，就先动了手"],
+      ["原意会走样", "结论超出了证据", "事实还没看清，就先动了手"],
       ["Meaning drifts", "Claims go beyond their evidence", "Changes before facts"],
     ),
-    ats: [c.n1, c.n2 - 0.15, c.n3 - 0.1],
+    ats: [c.n1, c.n2 - 0.15, c.n3name - 0.1],
     levels,
     kicker,
   });
-  // A stage that follows the index's rise cuts in on the same words once the index has passed above it.
-  const stage = (from, to, after = 0) =>
-    stageIn(t, c[from] + after) * (to ? stageOut(t, c[to]) : 1);
-  stagePerson(t, stage("pCut", "rCut", 0.32), c);
+  // Each stage cuts in on the words of its first mark. The ledgers cut in on the words that name their shelf, more
+  // process, so the shelf arrives with its name.
+  const stage = (from, to) => stageIn(t, c[from]) * (to ? stageOut(t, c[to]) : 1);
+  stagePerson(t, stage("pCut", "rCut"), c);
   stageRail(t, stage("rCut", "sCut"), c);
   stageSummaries(t, stage("sCut", "gCut"), c);
   stageWrongGoal(t, stage("gCut", "second"), c);
-  stageClaims(t, stage("eCut", "tCut", 0.32), c);
+  stageClaims(t, stage("eCut", "tCut"), c);
   stageTests(t, stage("tCut", "third"), c);
-  stageBranch(t, stage("bCut", "vCut", 0.32), c);
+  stageBranch(t, stage("bCut", "vCut"), c);
   stagePlatforms(t, stage("vCut", "s2Cut"), c);
-  stageSent(t, stage("s2Cut", "lCut"), c);
-  stageLedgers(t, stage("lCut", null), c);
+  stageSent(t, stage("s2Cut", "process"), c);
+  stageLedgers(t, stage("process", null), c);
 };

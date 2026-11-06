@@ -28,36 +28,42 @@ function proofMark(x, y, alpha) {
 
 /* 08.4. The finished work stands at the rail's start; on its words the commit it became is proved, the proof standing
  * over it and leaving its attestation beside; the maintainer reviews and authorizes it on the rail, and it joins the
- * protected development branch under its lock. It is then published along a link to each platform, the two drawn as
- * one group, and each platform's result is ticked on its own, one after the other. The names over the upper row, the
+ * protected development branch under its lock. It is then published: on the words that name each platform, the two
+ * platforms arrive as one group with their name, a link drawing out to each, and each platform's result is ticked on
+ * its own, one after the other. The names over the upper row, the
  * proof's, the attestation's and the maintainer's, end on one line clear of the tallest of their marks, the names
  * under the rail hang from one line clear of the commit's ring, and neighbouring names keep at least a word's space
- * between them. The finished work's name leaves with the Agent it stands under. The picture, from that name, as it
- * stands at the start, to the platforms', is centred on the frame. */
+ * between them; the branch's name stands on one line, and the links to the platforms turn just past its end. The
+ * finished work's name leaves with the Agent it stands under. The picture, from that name, as it stands at the start,
+ * to the platforms', is centred on the frame. */
 export function release(s, t, a) {
   if (a <= 0) return;
-  const [doneAt, commitAt, proofAt, attestAt, reviewAt, branchAt, publishAt, ownAt] = cues(s, [
-    ["改完以后", "When the work is committed"],
-    ["这一次提交", "that exact commit"],
-    ["完整的核验", "a full local proof"],
-    ["留下存证", "leaves an attestation"],
-    ["维护者审阅", "A maintainer reviews"],
-    ["受保护的开发分支", "the protected development branch"],
-    ["分别发布", "published to each platform"],
-    ["单独确认", "confirmed on its own"],
-  ]);
+  const [doneAt, commitAt, proofAt, attestAt, reviewAt, branchAt, publishAt, eachAt, ownAt] = cues(
+    s,
+    [
+      ["改完以后", "When the work is committed"],
+      ["这一次提交", "that exact commit"],
+      ["完整的核验", "a full local proof"],
+      ["留下存证", "leaves an attestation"],
+      ["维护者审阅", "A maintainer reviews"],
+      ["受保护的开发分支", "the protected development branch"],
+      ["分别发布", "published to each platform"],
+      ["每一个平台", "each platform"],
+      ["单独确认", "confirmed on its own"],
+    ],
+  );
   const DONE = L("改完以后", "The work"),
     OWN = L("单独确认", "Confirmed on its own"),
     EACH = L("每一个平台", "Each platform"),
     left = Math.min(220 - 2, 260 - nameWidth(DONE, 300) / 2),
-    right = 1600 + Math.max(70, nameWidth(OWN) / 2, nameWidth(EACH) / 2),
+    right = 1680 + Math.max(70, nameWidth(OWN) / 2, nameWidth(EACH) / 2),
     S = 960 - (left + right) / 2;
   const WX = 260 + S,
     CX = 570 + S,
     AX = 820 + S,
     MX = 1070 + S,
     BX = 1270 + S,
-    PX = 1600 + S,
+    PX = 1680 + S,
     UP = 410,
     // The two platforms stand well clear of the rail, one above it and one below.
     PY = [345, 655],
@@ -70,9 +76,10 @@ export function release(s, t, a) {
     at = a * named(t, attestAt),
     m = a * named(t, reviewAt),
     br = a * named(t, branchAt),
-    pub = a * named(t, publishAt);
-  // The rail runs on across the band until the work is published, then ends where it branches to the platforms.
-  const end = mix(1680 + S, BX + 90, soon(t, publishAt - 0.8, 0.5));
+    each = a * named(t, eachAt);
+  // The rail runs on across the band until the platforms are named, then ends where it branches to them, a moment
+  // before their name stands on its line.
+  const end = mix(1760 + S, BX + 90, soon(t, eachAt - 0.8, 0.5));
   journeyRail(220 + S, end, { alpha: a });
   railFlow(t, 220 + S, end, { alpha: a });
   // The finished work under the Agent that finished it, then the commit it became, proved and attested; the Agent
@@ -114,21 +121,22 @@ export function release(s, t, a) {
   lock(BX, RAIL_Y - 52, { alpha: br, color: P.ink, size: 0.9 });
   nameText(L("受保护的开发分支", "The protected development branch"), BX, below, {
     valign: "top",
-    width: 300,
+    width: 480,
     alpha: br,
   });
-  // Published to each platform along its own link, each result ticked on its own.
+  // Published to each platform along its own link: the platforms and their name come on the words that name them, the
+  // links drawing out to them, and each result is ticked on its own.
   PY.forEach((y, i) =>
     link(BX + 102, RAIL_Y, PX - 82, y, {
       route: "hvh",
-      mid: BX + 210,
-      alpha: pub,
-      upto: soon(t, publishAt + 0.05 + 0.25 * i, 0.6),
+      mid: BX + 250,
+      alpha: each,
+      upto: soon(t, eachAt + 0.05 + 0.25 * i, 0.6),
       flow: (flow + 0.5 * i) % 1,
     }),
   );
-  platforms(PX, PY, { alpha: pub, w: 140, h: 76 });
-  nameText(EACH, PX, RAIL_Y, { alpha: pub });
+  platforms(PX, PY, { alpha: each, w: 140, h: 76 });
+  nameText(EACH, PX, RAIL_Y, { alpha: each });
   PY.forEach((y, i) =>
     check(PX + 34, y + 12, 26, { alpha: a * named(t, ownAt + 0.7 * i), width: 3.5 }),
   );
@@ -149,7 +157,8 @@ export function release(s, t, a) {
     wx = mix(wx, to, soon(t, cueAt + 0.05, Math.max(0.9, Math.abs(to - from) / 390)));
     from = to;
   });
-  work(wx, RAIL_Y, a * (1 - ramp(t, publishAt + 0.6, 0.4)));
+  // It leaves the rail as the links to the platforms draw out from where it stops.
+  work(wx, RAIL_Y, a * (1 - ramp(t, Math.max(publishAt + 0.6, eachAt), 0.4)));
 }
 
 /* The four things a claim of actual benefit needs, each a mark and its words. */

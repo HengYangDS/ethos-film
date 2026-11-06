@@ -21,15 +21,17 @@ import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
-/* 08.9, first: the failed implementation and the model stand apart, a dashed line between them as they are told
- * apart; this time the fault is in the model, which takes the full ink while the code steps back. The two stand at one
- * distance either side of the dashed line on the frame's axis; until the clause that names the model begins the code
- * stands alone on that axis, and it steps left into its place as the model arrives. */
+/* 08.9, first: the failed implementation and the model stand apart, a line between them as they are told apart, solid
+ * since the film keeps dashes for what is unknown, missing or refused; this time the fault is in the model, which
+ * takes the full ink while the code steps back. The two stand at one distance either side of the line on the frame's
+ * axis; until the model is named the code stands alone on that axis, and it steps left into its place as the model
+ * arrives on its words. English says them just past two seconds into the thought, the reviewers' first instant, so its
+ * model leads them by a third of a second and already stands there, within a label's lead of its words. */
 export function faultApart(s, t, a) {
   if (a <= 0) return;
   const [codeAt, modelAt, apartAt, faultAt] = cues(s, [
     ["代码出错", "A failed implementation"],
-    ["不一定是模型的问题", "does not by itself mean"],
+    ["模型", "the model"],
     ["要先分清", "told apart first"],
     ["问题出在模型上", "the fault is in the model"],
   ]);
@@ -39,8 +41,9 @@ export function faultApart(s, t, a) {
     GAP = 170,
     CX = 960 - GAP - W / 2,
     MX = 960 + GAP + W / 2,
-    alone = (960 - CX) * (1 - soon(t, modelAt - 0.4, 0.8)),
-    m = a * named(t, modelAt),
+    shown = modelAt - L(0, 0.35),
+    alone = (960 - CX) * (1 - soon(t, shown - 0.4, 0.8)),
+    m = a * named(t, shown),
     d = a * named(t, apartAt),
     f = ramp(t, faultAt - 0.15, 0.6);
   terminalIcon(CX + alone - W / 2, Y0, W, H, { alpha: a * mix(1, 0.55, f) });
@@ -53,7 +56,7 @@ export function faultApart(s, t, a) {
     valign: "top",
     alpha: m,
   });
-  line(960, Y0, 960, Y0 + H, { color: P.line, alpha: d, dash: [8, 8] });
+  line(960, Y0, 960, Y0 + H, { color: P.line, alpha: d });
   nameText(L("要先分清", "Told apart first"), 960, Y0 - 20, { valign: "bottom", alpha: d });
   nameText(L("问题所在", "The fault"), MX, Y0 - 20, {
     valign: "bottom",
@@ -105,23 +108,21 @@ export function modelRevision(s, t, a) {
     GW = 400,
     GH = 225,
     DOC = [150, GH],
-    DOC_X = 700,
-    CHK = 960,
+    DOC_X = 730,
+    CHK = 1015,
     // The concept's cell, the last of the middle row, and its axis once it has grown a dimension.
     CELL0 = 3.5 * (GW / 4),
     CELL = CELL0 + 0.45 * (GW / 4),
     MID = GY + GH / 2,
     RECORD = L("同一条记录", "The same record"),
-    // The English name breaks before its article, so no line ends on "a".
-    DIM = L("少了一个维度", ["Missing", "a dimension"]),
+    DIM = L("少了一个维度", "Missing a dimension"),
     BOUND = L("最小范围", "The smallest boundary"),
-    // The English name of the Change is authored as its lines, so it breaks before the concept's two words.
-    CHANGE = L("新的正式变更", ["A new", "official Change"]),
+    CHANGE = L("新的正式变更", "A new official Change"),
     // The link is named by the contract's rendering of what it does; the checks by what they are.
     REVISES = L("修订模型", "Revising the model"),
     DEP = L("依赖它的检查", "Dependent checks"),
     COMPILE = L("重新编译", "Compiled again");
-  const left = -22 - nameWidth(DIM, 260),
+  const left = -22 - nameWidth(DIM, 280),
     right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2),
     right2 = Math.max(
       right1,
@@ -156,7 +157,7 @@ export function modelRevision(s, t, a) {
   });
   nameText(DIM, -22, MID, {
     align: "right",
-    width: 260,
+    width: 280,
     alpha: a * named(t, dimAt),
   });
   // The smallest boundary the problem touches: a thin solid outline around the grown cell, since it is a valid scope
@@ -390,7 +391,7 @@ export function goalKept(s, t, a) {
     rowNameTop([PY + 22.7 * 1.2, 620 + 22]),
     {
       valign: "top",
-      width: 340,
+      width: 380,
       alpha: al,
     },
   );

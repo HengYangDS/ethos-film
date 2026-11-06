@@ -6,8 +6,8 @@ import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
 import { box, dashed, dot, flowDot, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, cross, person, token } from "../../drawing/symbols.js";
-import { beats, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText } from "../../naming/names.js";
+import { beats, listIn, listLevel, named } from "../../naming/lists.js";
+import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { railNames, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
@@ -71,8 +71,9 @@ function railLine(alpha) {
 }
 /* The rail of a request's handoffs, shared by its two stages: the request at its start, three handlers standing over
  * it (a person, an Agent and a person, `heads` their tops; at this size a figure's head and shoulders read as one) and
- * its end, the five stations at one pitch. */
-const RAIL = { y: 690, x0: 440, x1: 1480, xs: [700, 960, 1220], heads: [604, 624, 604] };
+ * its end, the five stations at one pitch. The pitch leaves the English "What must not be done", which no line break
+ * can split, room on one line between its neighbours' names. */
+const RAIL = { y: 690, x0: 400, x1: 1520, xs: [680, 960, 1240], heads: [604, 624, 604] };
 function handlers(seen) {
   const { xs } = RAIL;
   person(xs[0], 640, { size: 1.1, alpha: seen[0] });
@@ -188,8 +189,9 @@ export function stageRail(t, a, c) {
 /* 02.3 At every handoff a summary takes the place of the words before it: on each handler a shorter copy than the
  * last, the original at the start. What drops out stands under the rail as it is named, in the order it is said: a
  * constraint never written down, which turns to an outline as its session ends, a constraint on what must not be done,
- * the benefit. The names over the rail, the original's and the summaries', hang on one baseline one gap over the
- * row's tallest mark, the first summary. */
+ * the benefit. English names the first by its noun, the constraint, with "never written down" joining under it on its
+ * words. The names over the rail, the original's and the summaries', hang on one baseline one gap over the row's
+ * tallest mark, the first summary. */
 export function stageSummaries(t, a, c) {
   if (a <= 0) return;
   const { y, x0, x1, xs, heads } = RAIL;
@@ -224,7 +226,7 @@ export function stageSummaries(t, a, c) {
     alpha: a * named(t, c.summary),
   });
   // What drops out: rows under the rail, the first solid until its session ends and then an outline.
-  const lost = [c.unwritten, c.mustNot, c.benefit],
+  const lost = [L(c.unwritten, c.anyConstraint), c.mustNot, c.benefit],
     LY = y + 34;
   xs.forEach((x, i) => {
     const on = a * ramp(t, lost[i] - 0.15, 0.4),
@@ -232,21 +234,26 @@ export function stageSummaries(t, a, c) {
     line(x - 44, LY, x + 44, LY, { color: P.ink, alpha: on * (1 - gone), width: 3 });
     dashed(x - 44, LY, x + 44, LY, { color: P.ink, alpha: on * gone * 0.85, width: 3 });
   });
-  // The second name keeps "must not" on one line, so its first line never reads as an obligation.
-  railNames(
-    L(
+  // The names hang one gap under the rows on one baseline, each centred on its row; the second English name stands on
+  // one line, since each of its breaks would end a line on "What", "must" or "not".
+  const terms = L(
       ["没写下来的约束", "不能做什么", "想要得到的好处"],
-      ["Never written down", ["What must not", "be done"], "The benefit"],
+      ["Any constraint", "What must not be done", "The benefit"],
     ),
-    xs,
-    LY,
-    { gap: NAME_GAP, alpha: (i) => a * listIn(t, lost, i), set: "lost" },
+    quals = L([[], [], []], [["never written down"], [], []]);
+  xs.forEach((x, i) =>
+    termRow(t, [terms[i]], [lost[i]], quals[i], [c.unwritten], x, LY + NAME_GAP, {
+      alpha: a * listLevel(t, lost, i),
+      align: "center",
+      set: "lost",
+    }),
   );
   ctx.restore();
 }
 
 /* 02.3 A specification can be complete and well formed and still aim at the wrong goal: a full document with its check,
- * its aim drawn to the goal it names, and that goal marked wrong. */
+ * its aim drawn to the goal it names, and that goal marked wrong. Each end is named by its noun on its words; Chinese
+ * says the goal before what is wrong with it, which joins under it as its qualifier. */
 export function stageWrongGoal(t, a, c) {
   if (a <= 0) return;
   const DX = 640,
@@ -260,11 +267,17 @@ export function stageWrongGoal(t, a, c) {
   check(DX + 70, DY + 91, 20, { color: P.ink, alpha: a, width: 3 });
   // The two ends of the aim are named on one baseline, under the deeper of the two: the document's check.
   const namesTop = rowNameTop([DY + 90 + 22, DY + 58]);
-  // Its clause begins with the stage, so the specification is named from the cut.
-  nameText(L("格式齐全、挑不出毛病", "Complete and well formed"), DX, namesTop, {
-    valign: "top",
-    alpha: a * named(t, c.gCut + 0.15),
-  });
+  // The specification is named by its words from the cut, and how well it is written joins under it on its own.
+  termRow(
+    t,
+    [L("需求", "A specification")],
+    [c.gCut],
+    [L("格式齐全、挑不出毛病", "complete and well formed")],
+    [c.wellFormed],
+    DX,
+    namesTop,
+    { width: 400, alpha: a, align: "center" },
+  );
   link(DX + 70, DY, TX - 58, DY, {
     alpha: a,
     upto: soon(t, c.gCut + 0.3, 0.6),
@@ -274,8 +287,18 @@ export function stageWrongGoal(t, a, c) {
   [58, 36].forEach((r) => ring(TX, DY, r, { color: P.ink, alpha: a, width: 2.5 }));
   dot(TX, DY, 10, { color: P.ink, alpha: a });
   cross(TX + 62, DY - 62, 26, { color: P.ink, alpha: aim, width: 3.5 });
-  nameText(L("从一开始就定错了", "Aimed at the wrong goal"), TX, namesTop, {
-    valign: "top",
-    alpha: a * named(t, c.wrong),
-  });
+  termRow(
+    t,
+    [L("目标", "The wrong goal")],
+    [c.goal],
+    L(["从一开始就定错了"], []),
+    [c.wrong],
+    TX,
+    namesTop,
+    {
+      width: 400,
+      alpha: a,
+      align: "center",
+    },
+  );
 }

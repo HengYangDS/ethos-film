@@ -1,7 +1,7 @@
-/* 08.1-08.3 one requirement's life, from the request to the handover: the rail of its journey draws on from the
- * requirement; the request is written into a Change and worked in a Work Lane of its own, held on record and checked
- * again before each write; halfway through, one Agent's session ends and the next takes over by reading, in ETHOS's
- * order, fresh facts, the Change and the attestations on record. */
+/* 08.1-08.3 one requirement's life, from the request to the handover: the rail of its journey stands as the chapter
+ * title rises, and the request is named at its start; the request is written into a Change and worked in a Work Lane
+ * of its own, held on record and checked again before each write; halfway through, one Agent's session ends and the
+ * next takes over by reading, in ETHOS's order, fresh facts, the Change and the attestations on record. */
 
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
@@ -11,78 +11,59 @@ import { bubble, folderIcon } from "../../drawing/workspace.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named } from "../../naming/lists.js";
-import { NOTE, nameText, rejectedName } from "../../naming/names.js";
+import { NOTE, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
-import { L, en } from "../../timeline.js";
-import { cue, cues } from "../../timing/cues.js";
+import { L } from "../../timeline.js";
+import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
+import { nameWidth } from "../p07/example.js";
 import { RAIL_Y, docMark, journeyRail, ordinal, railFlow, work } from "./rail.js";
 
-/* The requirement's document at the start of the rail, where 08.1 shows it and 08.2 names it as the request. Both
- * stages stand LIFE_DX right of their drawn places, so 08.2's stations, from the request's name to the rail's end,
- * are centred on the frame, and the request keeps its place across the cut. */
+/* The requirement's document at the start of the rail, where the request is named. */
 const REQ = [120, 150],
-  REQ_X = 250,
-  LIFE_DX = 34;
+  REQ_X = 250;
 const requirement = (alpha) =>
   docMark(REQ_X - REQ[0] / 2, RAIL_Y - REQ[1] / 2, REQ[0], REQ[1], { alpha, rows: 4 });
 
-/* 08.1. The requirement stands as the chapter title rises clear of it, and the rail draws on from it across the band
- * on the first words, named for the requirement's whole life. A point then travels the rail in voice time. Until the
- * rail draws on, the requirement and its name stand alone, centred on the frame; they glide to the rail's start as
- * the rail draws on beside them, the glide following the drawing a moment behind, so the picture keeps its centre
- * while the band fills and the requirement reaches its place in 08.2 before the cut. */
-export function lifeStart(s, t, a) {
-  if (a <= 0) return;
-  const [firstAt, thisAt] = cues(s, [
-    ["把这项需求", "Now follow"],
-    ["这项需求的一生", "this requirement"],
-  ]);
-  const NAME = L("这项需求的一生", "This requirement"),
-    nameX = REQ_X + REQ[0] / 2 + 24,
-    alone = 960 - (REQ_X - REQ[0] / 2 + nameX + measure(NAME)) / 2 - LIFE_DX;
-  ctx.save();
-  ctx.translate(LIFE_DX + alone * (1 - soon(t, firstAt + 0.13, 1.55)), 0);
-  requirement(a * clearOfTitle(s, t, RAIL_Y - REQ[1] / 2));
-  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a, upto: soon(t, firstAt + 0.05, 1.6) });
-  // The name may lead its clause a little, so the chapter's first thought is named on its first words.
-  nameText(NAME, nameX, RAIL_Y - 34, {
-    align: "left",
-    valign: "bottom",
-    alpha: a * ramp(t, thisAt - 0.4, 0.4),
-  });
-  if (en)
-    nameText("Its whole life", 1120, RAIL_Y - 34, {
-      valign: "bottom",
-      alpha: a * named(t, cue(s, "这项需求的一生", "its whole life")),
-    });
-  railFlow(t, REQ_X + 70, 1680, { alpha: a * soon(t, firstAt + 1.4, 0.4) });
-  ctx.restore();
-}
-
-/* The stations of 08.2 along the rail stand at one pitch from the request to the file, in both editions, so the
- * journey reads at an even step and the widest neighbours, the check and the file's name, keep a clear gap; the English
- * request's name breaks after its possessive, and its names wrap no narrower than the file's. The Work Lane's span runs
- * between its folder and its gate within one pitch, and its two records stand above it a fifth of a pitch from either
- * end, so their names stand apart. */
+/* The stations of 08.1 and 08.2 along the rail stand at one pitch from the request to the file, in both editions, so
+ * the journey reads at an even step. Each name stands on one line. The English file's name is wider than the share of
+ * the pitch that railNames gives a name between two neighbours, so it is set as its one line: as railStations pitches
+ * a rail, it and its one neighbour's name keep half of each name's width and more than a gap between their stations
+ * (about 58 px between their inks). The Work Lane's span runs between its folder and its gate within one pitch, and
+ * its two records stand above it a fifth of a pitch from either end, so their names stand apart. */
 const PITCH = (1556 - REQ_X) / 4;
 const XS = () => [0, 1, 2, 3, 4].map((k) => REQ_X + k * PITCH),
   STATION_WRAP = () => L(240, 340);
 const STATIONS = () => [
-  // Authored as its lines: wrapped by measure, the English name would break onto three, and no line is an article.
-  L("研究员的要求", ["The researcher's", "request"]),
+  L("研究员的要求", "Researcher's request"),
   L("正式变更", "Official Change"),
   L("工作通道", "Work Lane"),
   L("再查一次", "One more check"),
-  L("受版本管理的文件", "File under version control"),
+  L("受版本管理的文件", ["File under version control"]),
 ];
+/* How far the stations' picture stands right of its drawn place: from the request's name to the rail's end or the
+ * file's name, whichever reaches further, it is centred on the frame. A name wraps as railNames wraps it. */
+function stationsShift() {
+  const names = STATIONS(),
+    xs = XS(),
+    width = Math.min(STATION_WRAP(), PITCH - 30),
+    left = Math.min(REQ_X - REQ[0] / 2, xs[0] - nameWidth(names[0], width) / 2),
+    right = Math.max(1680 + 2, xs[4] + nameWidth(names[4], width) / 2);
+  return 960 - (left + right) / 2;
+}
 const LEASE_Y = 405;
 
-/* 08.2. The request is named where the requirement stood, and the work travels the rail station by station on the
- * words that name each: into the Change, into its own Work Lane, whose holder and term stand above it on record, up
- * to the gate before a tracked file, which checks again and opens on the words that let the write go ahead. */
+/* 08.1-08.2. The rail of the journey, the requirement's document at its start and the work the requirement has become
+ * appear across the band as the chapter title, which names the requirement's life, rises clear of them, so the picture
+ * keeps its balance while the title leaves and stands firm on the first word; on the request's first words its
+ * document is named, and a point travels the rail in voice time. The work then travels the rail station by station on
+ * the words that name each:
+ * into the Change, into its own Work Lane, whose holder and term stand above it on record, up to the gate before a
+ * tracked file, which checks again and opens on the words that let the write go ahead. The request and its Change are
+ * named in 08.1, and the lane, the file and its check in 08.2, so each thought's stations build as a list of their own
+ * and are whole again by its end. */
 export function lane(s, t, a) {
   if (a <= 0) return;
   const [reqAt, changeAt, laneAt, holdAt, untilAt, fileAt, checkAt, writeAt] = cues(s, [
@@ -96,16 +77,22 @@ export function lane(s, t, a) {
     ["能不能写", "whether the write may go ahead"],
   ]);
   const ats = [reqAt, changeAt, laneAt, checkAt, fileAt],
-    spoken = [...ats].sort((p, q) => p - q),
-    level = (i) => a * listIn(t, spoken, spoken.indexOf(ats[i])),
+    lists = [
+      [reqAt, changeAt],
+      [laneAt, fileAt, checkAt],
+    ].map((v) => v.sort((p, q) => p - q)),
+    level = (i) => {
+      const list = lists.find((v) => v.includes(ats[i]));
+      return a * listIn(t, list, list.indexOf(ats[i]));
+    },
     shown = (i) => a * named(t, ats[i]),
     xs = XS(),
     [x0, x1, x2, x3, x4] = xs;
   ctx.save();
-  ctx.translate(LIFE_DX, 0);
-  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a });
-  railFlow(t, REQ_X + 70, 1680, { alpha: a });
-  requirement(a);
+  ctx.translate(stationsShift(), 0);
+  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a * clearOfTitle(s, t, RAIL_Y) });
+  railFlow(t, REQ_X + 70, 1680, { alpha: a * soon(t, reqAt + 0.05, 0.4) });
+  requirement(a * clearOfTitle(s, t, RAIL_Y - REQ[1] / 2));
   docMark(x1 - 75, RAIL_Y - 85, 150, 170, { alpha: shown(1), rows: 5 });
   folderIcon(x2 - 36, RAIL_Y - 29, 72, 58, { alpha: shown(2) });
   // The lane's own track from its folder to its gate, drawn on its words over the rail.
@@ -164,7 +151,7 @@ export function lane(s, t, a) {
     [fileAt, x3 - 30 - 24],
     [writeAt, x3 + 30 + 26],
   ].forEach(([at, to]) => (wx = mix(wx, to, soon(t, at + 0.05, 0.9))));
-  work(wx, RAIL_Y, a);
+  work(wx, RAIL_Y, a * clearOfTitle(s, t, RAIL_Y));
   ctx.restore();
 }
 
@@ -262,12 +249,19 @@ export function handoff(s, t, a) {
   });
   agent(BX, AY, { size: 1.1, alpha: b });
   link(BX, AY + 28, BX, RAIL_Y - 20, { alpha: b * passed, upto: passed });
-  // Authored as its lines, so the English breaks before "that" rather than after it.
-  nameText(L("接手的 Agent", ["The Agent", "that takes over"]), BX, AY - 40, {
-    valign: "bottom",
-    width: 320,
-    alpha: b,
-  });
+  // The English sets what the Agent does as its name's qualifier: on one line the name would crowd the session's.
+  const taker = L(["接手的 Agent"], ["The Agent"]),
+    takes = L([], ["that takes over"]);
+  termRow(
+    t,
+    taker,
+    [overAt],
+    takes,
+    [overAt],
+    BX,
+    AY - 40 - termRowLayout(taker, takes, Infinity, false).height,
+    { alpha: a, align: "center", inline: false },
+  );
   // The last one's memory, held between them under the rail and refused.
   bubble((AX + BX) / 2, RAIL_Y + 80, 18, { alpha: m, color: P.muted });
   rejectedName(L("前一个的记忆", "The last one's memory"), (AX + BX) / 2, RAIL_Y + 130, {

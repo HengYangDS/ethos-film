@@ -22,9 +22,12 @@ scenes["03"] = function (s, t) {
     w4: ["工作", "Operational"],
     w5: ["打理", "Stewardship"],
     // 03.2 the path and its promises.
-    pCut: ["它想给", "It aims"],
-    travellers: ["人和可以互相替换的 Agent", "people and interchangeable Agents"],
-    reliable: ["一条靠得住的路", "one reliable path"],
+    // English names the travellers in the words that follow its first two, so its stage cuts in on those words.
+    pCut: ["它想给", "people and interchangeable Agents"],
+    // Chinese names the travellers in two clauses, the people and then the Agents; English in one phrase.
+    people: ["给人", "people and interchangeable Agents"],
+    agents: ["可以互相替换的 Agent", "people and interchangeable Agents"],
+    reliable: ["靠得住的路", "one reliable path"],
     st1: ["弄清一个问题", "a problem"],
     st2: ["改动代码仓库", "a repository"],
     st3: ["用起来到底怎么样", "in use"],
@@ -47,6 +50,7 @@ scenes["03"] = function (s, t) {
     rules: ["按固定的规则", "by fixed rules"],
     plan: ["一份计划", "a plan"],
     writeAt: ["真要写入的那一刻", "At the moment it writes"],
+    gateName: ["写入", "the moment it writes"],
     check: ["再核对一遍", "checks again"],
     recCut: ["最后把", "Then it records"],
     rec1: ["看到了什么", "what it observed"],
@@ -54,9 +58,10 @@ scenes["03"] = function (s, t) {
     rec3: ["做了什么", "and what it did"],
     newAtt: ["新的存证", "new attestations"],
     // 03.4 lifetimes.
-    lCut: ["这几样东西", "These things"],
+    // English cuts in on the words that bring the lifetimes, two words before their name, so the heading stands on it.
+    lCut: ["这几样东西", "last for different"],
     lifetimes: ["寿命不一样", "different lengths of time"],
-    intent: ["意图写在", "Intent lives"],
+    intent: ["意图写在", "Intent is written"],
     change: ["一份正式变更", "one official Change"],
     afresh: ["重新编译一份", "compiles it afresh"],
     facts: ["事实每次", "Facts are observed"],
@@ -72,15 +77,17 @@ scenes["03"] = function (s, t) {
     longTerm: ["长期留下的", "for the long term"],
     who: ["是谁出具的", "who verified it"],
     scope: ["在什么范围内成立", "where it holds"],
+    scopeName: ["范围", "where it holds"],
     later: ["回头去查", "check it later"],
     outside: ["出了这个范围", "outside that scope"],
     notCount: ["就不算数", "does not count"],
     // 03.6 the tools it relies on.
-    tCut: ["ETHOS 自己的代码", "ETHOS concentrates"],
+    tCut: ["ETHOS 自己的代码", "its own code"],
     ownCode: ["ETHOS 自己的代码", "its own code"],
     oneJob: ["内核这一件事", "the kernel's one job"],
     elseAt: ["别的功能", "everything else"],
     mature: ["现成、成熟的工具", "mature tools that already exist"],
+    exist: ["现成、成熟的工具", "that already exist"],
     git: ["Git", "Git"],
     less: ["就少得多", "much less"],
     // 03.7 the systems it leaves as they are, and what it owns in one place.
@@ -94,17 +101,19 @@ scenes["03"] = function (s, t) {
     vendor: ["不依赖哪一家平台", "without depending on any one vendor"],
     connect: ["接进来的系统", "connecting a system"],
     truth: ["真相的来源", "a source of truth"],
-    layerCut: ["所有仓库共有的部分", "What every repository shares"],
-    // The layer's name is cued on its own words; in English they follow the words that open the stage, in the same
-    // clause, so the stage names it ahead of them (tools.js).
+    // The layer's stage cuts in on the words that open its sentence in Chinese, which name the layer, and on the words
+    // of the layer's name in English, which follow the words that open the sentence, so the layer arrives named.
+    layerCut: ["所有仓库共有的部分", "ETHOS owns in one place"],
     owns: ["共有的部分", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "its own purpose"],
     // 03.8 design aims.
-    aimsCut: ["这些都是", "These are"],
+    // The aims' stage cuts in on the words that name it, so its heading stands on them.
+    aimsCut: ["设计目标", "design aims"],
     aims: ["设计目标", "design aims"],
     docs: ["它自己的文档", "its own documents"],
     alone: ["光有这个内核", "the kernel alone"],
+    wholePath: ["整条路", "the whole path"],
     delivered: ["已经走通", "has been delivered"],
   });
   // The English "the attestation" of 03.5 first occurs inside 03.3's "the attestations", so it is taken after its cut.

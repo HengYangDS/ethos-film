@@ -64,14 +64,20 @@ export function examplesStage(s, t, c, g) {
     // The cards' names stand one gap above them and 40 px under the heading.
     Y = heading.bottom + 40 + em + NAME_GAP,
     goesName = L("要去掉", "Goes"),
-    corrTerm = L(["同一只股票的更正"], ["A correction"]),
-    corrQual = L(["同一天"], ["same stock, same day"]),
+    // The Chinese names the correction in the order it is said, as one name; the English keeps its qualifier.
+    corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]),
+    corrQual = L([], ["same stock, same day"]),
     // Until the correction's verdict the pair reaches from the repeat's cross at its left to the end of the second
     // card or of its name at its right, and stands right of the axis by half their difference to centre them.
     reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10,
     reachRight =
       280 +
-      Math.max(EX_W, measure(corrTerm.join("")) + TERM_GAP + measure(corrQual.join(""), NOTE)) / 2,
+      Math.max(
+        EX_W,
+        measure(corrTerm.join("")) +
+          (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0),
+      ) /
+        2,
     joined = soon(t, c.correction + 0.05, 0.9),
     lean = ((reachLeft - reachRight) / 2) * joined * (1 - soon(t, c.stays + 0.05, 0.7)),
     X1 = 960 + lean - 280 * joined,
@@ -165,9 +171,10 @@ export function constraintsStage(s, t, c, g) {
     rows = [0, 1, 2].map((i) => CY + 50 + i * 45);
   card(CX, CY, CW, CH, { alpha: g });
   recordRows(CX + 36, rows[0], CW - 72, [0, 1, 2], { step: 45, alpha: g, color: P.ink });
+  // The original words are named on their words; until then the constraint's name under the card names it.
   nameText(L("原话", "The original words"), CX + CW / 2, CY - NAME_GAP, {
     valign: "bottom",
-    alpha: g,
+    alpha: g * named(t, c.originalAgain),
   });
   termRow(t, term, [c.constraint], qual, [c.accounted], CX + CW / 2, CY + CH + NAME_GAP, {
     alpha: g,
@@ -223,17 +230,23 @@ export function compileStage(s, t, c, g) {
       { alpha: g, align: "center" },
     ),
   ];
-  // Confirmed and accepted by a person: the seal is stamped on the words.
+  // Confirmed and accepted by a person: the person is named, what they did joins under the name, and the seal is
+  // stamped on the words.
   const who = g * named(t, c.confirmed);
   person(xs[1], Y - 6, { alpha: who, size: 1.2 });
   // The seal touches the figure's head, so the two read as one mark under one name.
   seal(xs[1] + 32, Y - 46, 16, { color: P.ink, alpha: who, stamp: g * ramp(t, c.accepted, 0.4) });
   names.push(
-    nameText(L("人确认过、采纳了", "Confirmed and accepted"), xs[1], under, {
-      valign: "top",
-      width: 260,
-      alpha: who,
-    }),
+    termRow(
+      t,
+      [L("人", "A person")],
+      [c.confirmed],
+      [L("确认过、采纳了", "has confirmed and accepted")],
+      [c.confirmedQual],
+      xs[1],
+      under,
+      { alpha: g, align: "center" },
+    ),
   );
   link(xs[0] + 70, Y, xs[1] - 44, Y, { alpha: who });
   // Compiled by fixed rules: the kernel turns while it compiles and on the repeat.

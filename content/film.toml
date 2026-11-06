@@ -45,6 +45,9 @@ caption_terms = [
   "status output",
   "any result other than pass",
   "its evidence or the fact that is missing",
+  "how it has been understood",
+  "is it accepted",
+  "what it is about to do",
 ]
 
 # The fonts the picture stages below fonts/, in this order: Noto Sans CJK SC, subset to the

@@ -62,7 +62,7 @@ function cuesOf(s) {
     never: cue(s, "从来不等于可以", "never permission"),
     example: cue(s, "比如 GitLab 和 GitHub 上的检查", "Take the checks on GitLab"),
     isUnknown: cue(s, "这一项就是未知", "their result is unknown"),
-    noProblem: cue(s, "不能算作没有问题", "does not count as no problem"),
+    noProblem: cue(s, "没有问题", "no problem"),
     nonPassFirst: cue(
       s,
       "按 ETHOS 的设计，只要不是通过",

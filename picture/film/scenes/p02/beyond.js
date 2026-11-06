@@ -5,19 +5,21 @@ import { CLAIM_DATUM, claimPanel, claimWidth } from "../claim.js";
 import { centring, glide } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
 import { link } from "../../drawing/links.js";
-import { box, measure, stroke } from "../../drawing/strokes.js";
+import { box, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { illustrative } from "../../framing/chapters.js";
-import { building, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, nameText } from "../../naming/names.js";
-import { P } from "../../palette.js";
+import { building, listIn, listLevel, named } from "../../naming/lists.js";
+import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
+import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { clamp, mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
 /* 02.4 Each step's evidence is a short solid block, and the claim made from it an outline that grows out of the block
  * on the claim's words and runs far past it: one machine and everything, a merge and a release, a deployment and actual
- * benefit. The evidence is named at the left, the claim at the outline's end. On the words that say each step proves
- * only its own part, each block lights and the outlines' overrun turns dashed. */
+ * benefit. The evidence is named at the left, the claim at the outline's end, each by its noun where the voice gives
+ * one: English names the first evidence as a run, with "passed on one machine" joining under it on its words, and
+ * Chinese names the second claim 发布, a release, on its word. On the words that say each step proves only its own
+ * part, each block lights and the outlines' overrun turns dashed. */
 export function stageClaims(t, a, c) {
   if (a <= 0) return;
   const X0 = 760,
@@ -32,12 +34,15 @@ export function stageClaims(t, a, c) {
     own = ramp(t, c.ownPart - 0.15, 0.4);
   const evidenceNames = L(
       ["本地跑通", "代码合进去", "部署成功"],
-      ["Passed on one machine", "A merge", "A deployment"],
+      ["A run", "A merge", "A deployment"],
     ),
+    evidenceQuals = L([[], [], []], [["passed on one machine"], [], []]),
     claimNames = L(
-      ["全部通过", "已经发布", "实际效益"],
+      ["全部通过", "发布", "实际效益"],
       ["Everything passes", "A release", "Actual benefit"],
-    );
+    ),
+    claimAts = [c.everything, L(c.releaseName, c.release), c.benefit2],
+    em = labelSize(LABEL);
   ys.forEach((y, i) => {
     // The first step stands from the cut, its clause already begun.
     const on = a * ramp(t, (i ? evidence[i] : c.eCut) - 0.15, 0.4),
@@ -69,14 +74,25 @@ export function stageClaims(t, a, c) {
         radius: 10,
         width: 3,
       });
-    nameText(evidenceNames[i], X0 - NAME_GAP, y, {
-      align: "right",
-      alpha: a * listIn(t, [c.eCut, ...evidence.slice(1)], i),
-      set: "evidence",
-    });
+    // Each evidence name stands on its row's line, its qualifier, where it has one, under it.
+    const said = [c.eCut, ...evidence.slice(1)];
+    termRow(
+      t,
+      [evidenceNames[i]],
+      [said[i]],
+      evidenceQuals[i],
+      [c.local],
+      X0 - NAME_GAP,
+      y - em / 2,
+      {
+        align: "right",
+        alpha: a * listLevel(t, said, i),
+        set: "evidence",
+      },
+    );
     nameText(claimNames[i], X0 + CW + NAME_GAP, y, {
       align: "left",
-      alpha: a * listIn(t, claims, i),
+      alpha: a * listIn(t, claimAts, i),
       set: "claims",
     });
   });

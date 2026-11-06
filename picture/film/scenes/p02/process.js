@@ -37,9 +37,9 @@ function record(x, y, w, h, { alpha = 1, stale = 0 } = {}) {
   });
 }
 
-/* The shelf the process stands on, named as more process from the cut; the three records arrive on it on their words,
- * each named over it. Kept up, each lights in turn; then the records go stale, cross each other where they meet and
- * press the shelf down, and what they have become is named under the shelf. */
+/* The shelf the process stands on, which cuts in named as more process on those words; the three records arrive on
+ * it on their words, each named over it. Kept up, each lights in turn; then the records go stale, cross each other
+ * where they meet and press the shelf down, and what they have become is named under the shelf. */
 export function stageLedgers(t, a, c) {
   if (a <= 0) return;
   const xs = [720, 960, 1200],
@@ -53,7 +53,7 @@ export function stageLedgers(t, a, c) {
   line(xs[0] - W / 2 - 40, SY, xs[2] + W / 2 + 40, SY, { color: P.ink, alpha: a, width: 3 });
   nameText(L("加流程", "More process"), 960, SY + NAME_GAP, {
     valign: "top",
-    alpha: a * named(t, c.lCut + 0.15),
+    alpha: a * named(t, c.process),
   });
   xs.forEach((x, i) => {
     const on = a * ramp(t, ats[i] - 0.15, 0.4),
@@ -68,9 +68,10 @@ export function stageLedgers(t, a, c) {
         width: 3,
       });
   });
-  // The third name breaks before the phrase that qualifies it, so no line ends on "of" or "the".
+  // The third English name stands on one line, which its share of the rail holds: no break leaves both lines balanced
+  // without ending one on "of" or "the".
   railNames(
-    L(["登记表", "台账", "重复的规定"], ["Register", "Ledger", ["Copy", "of the same rule"]]),
+    L(["登记表", "台账", "重复的规定"], ["Register", "Ledger", ["Copy of the same rule"]]),
     xs,
     SY - 4 - H,
     { side: -1, gap: NAME_GAP, alpha: (i) => a * listIn(t, ats, i), set: "process" },

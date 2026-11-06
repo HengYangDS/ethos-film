@@ -3,7 +3,7 @@
  * named on its words and the cinnabar datum last. */
 
 import { link } from "../../drawing/links.js";
-import { ethosMark, markExtent } from "../../drawing/mark.js";
+import { ethosMark } from "../../drawing/mark.js";
 import { box, flowDot, labelSize, line, measure, ring } from "../../drawing/strokes.js";
 import { agent, check, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot } from "../../drawing/workspace.js";
@@ -17,11 +17,13 @@ import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 import { STAGE_CUT, stageIn, stageOut } from "../../timing/stages.js";
 import { CLAIM_DATUM, CLAIM_H, claimPanel, claimWidth } from "../claim.js";
-import { nameWidth } from "../p07/example.js";
 import { scenes } from "../registry.js";
 
-/* 09.1-09.2. The opening sentence returns as it began: said by its Agent, which stands below it and to its left, its
- * link rising and turning into the panel as in 01, the two centred on the frame. In ETHOS the sentence has to come with
+/* 09.1-09.2. The opening sentence returns as it began in 01: its Agent, named, stands at the centre from the first
+ * word, and on the words that bring the sentence back it steps aside, below the sentence's place and to its left, as
+ * a link rises from it and turns to the panel, which arrives at the link's end, named where it began; its words fill
+ * the panel as they are said. The Agent and its sentence then stand centred on the frame. In ETHOS the sentence has
+ * to come with
  * attestations behind it: on the words that name ETHOS's way the picture steps left and a link draws out from the
  * sentence's datum while that clause is said, reaching the attestations' seal as they are named, so nothing stands
  * waiting at its end. Then each thing they let one look up arrives on its words, in rows fanned from the seal, and what
@@ -34,9 +36,10 @@ const BOUND_X = 700,
   // The datum's link ends this far right of the panel's centre, where the seal stands.
   BOUND_RUN = 440,
   // The Agent stands below the panel's left end, its link rising to the panel's left edge, as in 01, low enough that
-  // the sentence and its Agent alone fill the band's height as the reviewers measure a thought's picture.
+  // the sentence and its Agent alone fill the band's height as the reviewers measure a thought's picture, and high
+  // enough that, with the Agent's name under it, that picture stands balanced on the content centre line.
   AGENT_DX = 70,
-  AGENT_DY = 270,
+  AGENT_DY = 220,
   // English hangs its rows 20 px nearer the seal than Chinese; the seal's longer name still keeps clear of the trunk.
   FAN = () => L(210, 190),
   // The rows stand a pitch apart that keeps the seal's name, under the middle row, clear of the last row's line.
@@ -47,8 +50,9 @@ const BOUND_X = 700,
     L("核验了什么", "What the proof checked"),
     L("哪里还没有结果", "What still has no result"),
   ];
-/* How far the sentence's picture reaches left of the panel's centre: the Agent's outline below its left end. */
-const boundLeft = () => -claimWidth() / 2 - AGENT_DX - 40;
+/* How far the sentence's picture reaches left of the panel's centre: the Agent's outline or its name, below the
+ * panel's left end. */
+const boundLeft = () => -claimWidth() / 2 - AGENT_DX - Math.max(40, measure("Agent") / 2);
 /* Where the sentence stands once its attestations have come: the finished picture, from the Agent to the longest row,
  * is centred on the frame. 09.3 takes the sentence up from here. */
 export const boundShift = () =>
@@ -63,7 +67,7 @@ export const boundShift = () =>
 function bound(s, t, a) {
   if (a <= 0) return;
   const [beganAt, doneAt, wayAt, sealAt, commitAt, provedAt, openAt, lookAt, trustAt] = cues(s, [
-    ["开头那句", "where we began"],
+    ["回到开头那句", "back to where we began"],
     ["做完了", "Done"],
     ["按 ETHOS 的做法", "In ETHOS"],
     ["存证", "attestations"],
@@ -85,29 +89,40 @@ function bound(s, t, a) {
     ),
     PX = BOUND_X + off,
     Y = 470,
-    AX = PX - W / 2 - AGENT_DX,
-    AY = Y + AGENT_DY,
+    // The Agent steps aside from the centre as its sentence comes back, as in 01.
+    aside = soon(t, beganAt + 0.05, 0.6),
+    AX = mix(960, PX - W / 2 - AGENT_DX, aside),
+    AY = mix(560, Y + AGENT_DY, aside),
     // The question's top, at its gap under the panel; the seal's name shares its baseline.
     under = Y + CLAIM_H / 2 + 18,
     clear = a * clearOfTitle(s, t, Y - 60),
+    // The Agent stands at full ink by the first word; its sentence comes back on the words that bring it back.
+    seen = clear * ramp(t, s.voice_start - 0.3, 0.4),
+    back = clear * ramp(t, beganAt + 0.35, 0.4),
     way = a * ramp(t, wayAt - 0.15, 0.5),
     at = a * named(t, sealAt),
     end = PX + BOUND_RUN,
     rows = BOUND_ROWS,
     ats = [commitAt, provedAt, openAt],
     flow = (voiceTime(t) * 0.4) % 1;
-  agent(AX, AY, { size: 1.5, alpha: clear });
-  // The Agent's link carries a point to the sentence while the voice speaks, and ends in its quiet point there.
-  link(AX, AY - 33, PX - W / 2 - 6, Y, { route: "vh", alpha: clear, flow });
+  agent(AX, AY, { size: 1.5, alpha: seen });
+  nameText("Agent", AX, AY + 33 + NAME_GAP, { valign: "top", alpha: seen });
+  // The Agent's link draws out to the sentence and then carries a point to it while the voice speaks, ending in its
+  // quiet point there.
+  link(AX, AY - 33, PX - W / 2 - 6, Y, {
+    route: "vh",
+    alpha: seen,
+    upto: aside,
+    flow: aside >= 1 ? flow : null,
+  });
   const {
     datum: [dx, dy],
-  } = claimPanel(t, PX, Y, { alpha: clear, words: clear * named(t, doneAt) });
-  // English names where the sentence began as its clause begins, so the thought is named in its first second.
+  } = claimPanel(t, PX, Y, { alpha: back, words: clear * named(t, doneAt) });
   nameText(L("开头的那句话", "Where we began"), PX, Y - CLAIM_H / 2 - 44, {
     valign: "bottom",
     size: NOTE,
     color: P.muted,
-    alpha: clear * ramp(t, beganAt - (en ? 0.6 : 0.15), 0.4),
+    alpha: back,
   });
   // The question whether the sentence can be trusted is put while it still stands with its attestations, and rises
   // with it when the judgement takes the picture.
@@ -252,21 +267,27 @@ function judged(s, t, a, cutAt) {
   });
 }
 
-/* The mark of the close, centred and large. */
-const MARK = [960, 470, 640];
+/* The mark of the close, centred and large: its bowl holds every part's name beside the part. */
+const MARK = [960, 470, 900];
+/* The width the notes of the passages and the boundary wrap to: within it the Chinese notes stand on one line and the
+ * English ones break by measure into two. */
+const PART_NOTE = 220;
+/* Where the passages' names stand in the mouth between the passages, from the mark's origin: their left edge where
+ * the two have parted far enough to hold a name and a two-line note with about 12 px to spare on either side (the
+ * mouth is 117 px tall there and widens to the right), centred on the mouth's middle line. */
+const MOUTH = [120, 1];
 
 /* 09.4. The whole mark draws on as the ETHOS mark is named beneath it: its boundary first, in the second level of
- * ink, as the mark's outline. Then each part on its words, its name and what it stands for beside the mark: the
- * origin as a ring at the centre, named at the upper left; the two passages drawing out from it, named at the upper
- * right; the boundary taking full ink, named at the lower left; and last the cinnabar datum filling the origin, named
- * at the lower right. A point travels the boundary in voice time until the boundary is named. The names on the right
- * keep the same clearance from the mark's ink as those on the left, the two lower names stand on one line as the two
- * upper ones do, and each note is one short line, so the close is centred on the frame with the datum at its centre.
- * The mark, the film's emblem, stands on the frame's axis throughout. While the origin's names are the only ones beside
- * it, they stand above the mark, the name on the
- * origin's axis and the note under it, one gap clear of the boundary, so the picture is the mark's own, centred where
- * it stays; on the passages' words they glide round the boundary's upper left to their place, leftward first and then
- * down, keeping a gap clear of the boundary all the way. */
+ * ink, as the mark's outline. Then each part on its words, its name and what it stands for, each beside its part and
+ * none moving: the origin as a ring at the centre, named inside the bowl beside it at its left, as 06.3 names
+ * authority at the datum; the two passages drawing out from it, named in the mouth between them; the boundary taking
+ * full ink, named inside the bowl under its top, centred on its axis; and last the cinnabar datum filling the origin,
+ * named one gap under it, so the one point carries both of its names. A point travels the boundary in voice time until
+ * the boundary is named. The origin's names end one gap left of the point, their last line ending on its row; the
+ * cinnabar point's end at its right edge, where the English names, the longest, keep clear of the boundary; the
+ * boundary's term stands one gap under the ring's inner edge at the term's corners. Only the passages' names reach
+ * past the mark, out of its opening, so once the boundary has begun to fill out the close stands within about 40 px of
+ * the frame's axis in every state, and the mark, the film's emblem, stands on the axis throughout. */
 function close(s, t, a) {
   if (a <= 0) return;
   const [cutAt, markAt, originAt, beforeAt, twoAt, whereAt, boundaryAt, scopeAt, pointAt, boundAt] =
@@ -285,9 +306,7 @@ function close(s, t, a) {
   const [X, Y, S] = MARK,
     k = S / 512,
     r = 164 * k,
-    ORIGIN = L("一个起点", "One origin"),
-    ORIGIN_NOTE = L("先划清边界", "bounded before any change"),
-    ORIGIN_WIDTH = L(220, 380),
+    point = 14 * k,
     lit = ramp(t, boundaryAt - 0.15, 0.5),
     o = a * named(t, originAt),
     datum = named(t, pointAt),
@@ -300,7 +319,7 @@ function close(s, t, a) {
     alpha: a * mix(0.58, 1, lit),
   });
   ethosMark(X, Y, S, { datum: 0, boundary: 0, passages, alpha: a });
-  ring(X, Y, 14 * k, { color: P.ink, alpha: o * (1 - datum), width: 3 });
+  ring(X, Y, point, { color: P.ink, alpha: o * (1 - datum), width: 3 });
   ethosMark(X, Y, S, { datum, hole: 1, passages: 0, boundary: 0, alpha: a });
   // A point travels the boundary while the voice speaks, and once drawn, the passages.
   const q = (voiceTime(t) * 0.18) % 1,
@@ -314,66 +333,77 @@ function close(s, t, a) {
     valign: "top",
     alpha: a * ramp(t, markAt - (en ? 0.75 : 0.15), 0.4),
   });
-  // Names: each beside the mark with what it stands for.
-  const LEFT = X - r - 50,
-    RIGHT = X + markExtent(S).right + 40,
-    pair = (term, termAt, said, saidAt, x, y, align, width = 380) => {
-      nameText(term, x, y, {
-        align,
-        valign: "bottom",
-        alpha: a * named(t, termAt),
-        set: "09.4:parts",
-      });
-      nameText(said, x, y + 8, {
-        align,
-        valign: "top",
-        size: NOTE,
-        color: P.muted,
-        width,
-        alpha: a * named(t, saidAt),
-        set: "09.4:said",
-      });
-    };
-  // The origin's names above the mark while they stand alone: the name centred on the origin's axis, the note's last
-  // line one gap above the boundary. On the passages' words they go left over the boundary's top and then down beside
-  // it to their place, so their nearest corner keeps at least a gap from its ink.
-  const above =
-      Y +
-      markExtent(S).top -
-      NAME_GAP -
-      8 -
-      labelSize(NOTE) * (1 + LEADING * (wrapName(ORIGIN_NOTE, ORIGIN_WIDTH, NOTE).length - 1)),
-    OX = mix(X + nameWidth(ORIGIN) / 2, LEFT, soon(t, twoAt + 0.05, 0.9)),
-    OY = mix(above, Y - 96, soon(t, twoAt + 0.45, 0.6));
-  pair(ORIGIN, originAt, ORIGIN_NOTE, beforeAt, OX, OY, "right", ORIGIN_WIDTH);
-  // English shows what the passages stand for as its clause begins, so the origin's names, at their place by then,
-  // are balanced by the passages' within a moment; Chinese begins that clause on the note's own words.
+  // Names: each with what it stands for, the term ending on the pair's line and the note hanging below it.
+  const pair = (term, termAt, said, saidAt, x, y, align, width = 380) => {
+    nameText(term, x, y, {
+      align,
+      valign: "bottom",
+      alpha: a * named(t, termAt),
+      set: "09.4:parts",
+    });
+    nameText(said, x, y + 8, {
+      align,
+      valign: "top",
+      size: NOTE,
+      color: P.muted,
+      width,
+      alpha: a * named(t, saidAt),
+      set: "09.4:said",
+    });
+  };
+  // The point's names inside the bowl: the origin's one gap left of it, its note's last line ending on the point's
+  // row, and the cinnabar datum's one gap under it, ending at its right edge.
+  const beside = Y - labelSize(NOTE) - 8,
+    under = Y + point + NAME_GAP + labelSize(LABEL);
   pair(
-    L("两条路径", "Two passages"),
-    twoAt,
-    L("影响行动的地方", "only where they decide action"),
-    whereAt - (en ? 0.45 : 0),
-    RIGHT,
-    Y - 96,
-    "left",
+    L("一个起点", "One origin"),
+    originAt,
+    L("先划清边界", "bounded first"),
+    beforeAt,
+    X - point - NAME_GAP,
+    beside,
+    "right",
   );
+  // English shows what the passages stand for as its clause begins, so the passages' names stand whole within a
+  // moment; Chinese begins that clause on the note's own words. The name and its note stand as one block centred on
+  // the mouth's middle line.
+  const passagesName = L("两条路径", "Two passages"),
+    passagesSaid = L("影响行动的地方", "only where they decide action"),
+    noteLines = wrapName(passagesSaid, PART_NOTE, NOTE).length,
+    block = labelSize(LABEL) + 8 + labelSize(NOTE) * (1 + LEADING * (noteLines - 1));
   pair(
-    L("一道边界", "One boundary"),
+    passagesName,
+    twoAt,
+    passagesSaid,
+    whereAt - (en ? 0.45 : 0),
+    X + MOUTH[0],
+    Y + MOUTH[1] - block / 2 + labelSize(LABEL),
+    "left",
+    PART_NOTE,
+  );
+  // The boundary's name under the ring's top, inside it: the term's top one gap under the ring's inner edge at the
+  // term's corners, and its note under it, both centred on the mark's axis.
+  const boundary = L("一道边界", "One boundary"),
+    inner = r - 12.5 * k,
+    corner = Math.sqrt(inner ** 2 - (measure(boundary) / 2) ** 2);
+  pair(
+    boundary,
     boundaryAt,
     L("守在自己的范围里", "each keeping to their scope"),
     scopeAt,
-    LEFT,
-    Y + 70,
-    "right",
+    X,
+    Y - corner + NAME_GAP + labelSize(LABEL),
+    "center",
+    PART_NOTE,
   );
   pair(
     L("那一点朱红", "Cinnabar-red point"),
     pointAt,
     L("必须落到证据上", "bound to its evidence"),
     boundAt,
-    RIGHT,
-    Y + 70,
-    "left",
+    X + point,
+    under,
+    "right",
   );
 }
 

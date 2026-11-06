@@ -7,31 +7,28 @@
 import { ctx } from "../../canvas.js";
 import { along, link } from "../../drawing/links.js";
 import { modelGrid } from "../../drawing/models.js";
-import { box, dot, flowDot, measure, stroke } from "../../drawing/strokes.js";
+import { box, dot, flowDot, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { agent, documentIcon, person } from "../../drawing/symbols.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText, termRow, wrapName } from "../../naming/names.js";
+import { NAME_GAP, NOTE, TERM_STACK, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
-import { L } from "../../timeline.js";
+import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { voiceTime } from "../../timing/pauses.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
  * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once as the
- * meaning is said to be kept. The English statement is authored in two lines that break before its relative clause,
- * so no line ends on "the" and its left edge stays clear of the centred heading of the examples below. Returns the
- * heading's bottom. */
+ * meaning is said to be kept. The English statement's relative clause, "that is enough", stands under it in the
+ * qualifier's size and colour, so no line ends on "the", the statement reads as one line over its gloss, and its left
+ * edge stays clear of the centred heading of the examples below. Returns the heading's bottom. */
 export function ruleOneHeading(t, c, g) {
   const on = g * named(t, c.first4),
     h = ruleHeading(t, {
       number: L("第一条准则", "Rule one"),
       numberAt: c.first4,
-      statement: L("用刚好够用的模型，留住原意", [
-        "Preserve meaning with the smallest model",
-        "that is enough",
-      ]),
+      statement: L("用刚好够用的模型，留住原意", ["Preserve meaning with the smallest model"]),
       statementAt: c.statement,
       size: 560,
       glyph: { datum: 1, passages: 0, boundary: 0 },
@@ -39,7 +36,18 @@ export function ruleOneHeading(t, c, g) {
       alpha: g,
     });
   beats(t, h.mx, h.my, 26, [c.keep], { color: P.ink, alpha: g });
-  return h.bottom;
+  if (!en) return h.bottom;
+  // The gloss joins one stack gap under the statement, on the statement's left edge and on its own words, as a
+  // qualifier joins its term.
+  const under = h.bottom + TERM_STACK;
+  nameText("that is enough", h.tx, under, {
+    align: "left",
+    valign: "top",
+    size: NOTE,
+    color: P.muted,
+    alpha: g * named(t, c.keep),
+  });
+  return under + labelSize(NOTE);
 }
 
 /* A model of the right size: three concepts and the two links of their structure, one stroke each, with the meaning
@@ -234,14 +242,16 @@ export function changeStage(s, t, c, g) {
  * on what they read as well when it is named. */
 export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  // The English readers' name is authored as its phrases, so its first line does not end on "who".
-  const readers = L("后面接手的人和 Agent", ["Everyone", "who picks up the work"]),
+  // The English readers' name is their noun, and its relative clause joins under it as a smaller gloss on its own
+  // words, so no line ends on "who".
+  const readers = L(["后面接手的人和 Agent"], ["Everyone"]),
+    readersQual = L([], ["who picks up the work"]),
     same = L("同一份", "The same thing"),
     term = L(["正式变更"], ["The Change"]),
     qual = L(["只写在一处"], ["one copy"]),
     // The group's reach from the Change's left edge: the readers' name to the left, the Change or its name to the
     // right, and what they read beyond it.
-    left = 250 + Math.max(...wrapName(readers, 300).map((v) => measure(v))) / 2,
+    left = 250 + rowHalf(readers, readersQual),
     right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)),
     read = CHANGE_W + NAME_GAP + 10 + measure(same),
     DX = 960 + mix(left - right, left - read, soon(t, c.same + 0.05, 0.7)) / 2,
@@ -259,7 +269,10 @@ export function readersStage(s, t, c, g) {
   });
   person(RX, 540, { alpha: who, size: 1.1 });
   agent(RX, AY, { alpha: who });
-  nameText(readers, RX, names, { valign: "top", width: 300, alpha: who });
+  termRow(t, readers, [c.readers], readersQual, [c.readersWho], RX, names, {
+    alpha: g,
+    align: "center",
+  });
   // The person's link runs level into the Change; the Agent's turns up to its lower row.
   for (const [x, y, to, k] of [
     [RX + 34, DY + 90, DY + 90, 0],

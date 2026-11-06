@@ -8,7 +8,7 @@ import { box, dot, measure, ring, stroke } from "../../drawing/strokes.js";
 import { check, clock, documentIcon, person, stopSign } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
 import { beats, building, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -152,8 +152,8 @@ const JUDGED = () => [
   [L("推断的原因", "Inference"), L("多次更正", "the vendor can correct a value more than once")],
   [
     L("提出的补救办法", "Proposed remedy"),
-    // Authored as its lines in English, so its first line does not end on "by".
-    L("按修订编号区分记录", ["tell records apart", "by the revision number"]),
+    // Authored as its lines in English, the narration's words, so its first line does not end on "by".
+    L("按修订编号区分记录", ["to tell records apart", "by the revision number"]),
   ],
 ];
 const PANEL_W = 400,
@@ -184,7 +184,7 @@ export function judgement(s, t, a) {
     ["推断的原因", "The inference"],
     ["多次更正", "the vendor can correct"],
     ["提出的补救办法", "the proposed remedy"],
-    ["按厂商给的修订编号", "tell records apart"],
+    ["按厂商给的修订编号", "to tell records apart"],
   ]);
   const [wrongAt, standsAt, rejectAt, problemAt] = cues(s, [
     ["可能错", "can be wrong"],
@@ -204,10 +204,17 @@ export function judgement(s, t, a) {
     PY = TOP + DOC[1] / 2 - 22.7 * 1.5,
     names = rowNameTop([PY + 22.7 * 1.5, TOP + DOC[1] / 2]);
   person(PX, PY, { size: 1.5, alpha: p });
-  nameText(L("负责观察的人", ["The people watching", "the pipeline"]), PX, names, {
-    valign: "top",
-    alpha: p,
-  });
+  // The English names the people and sets what they do as the name's qualifier, under it.
+  termRow(
+    t,
+    L(["负责观察的人"], ["The people"]),
+    [peopleAt],
+    L([], ["watching the pipeline"]),
+    [peopleAt],
+    PX,
+    names,
+    { alpha: a, align: "center", inline: false },
+  );
   // The link spans the three panels; it draws on at the pace of a link across two of them.
   link(PX + 40, TOP, DX - DOC[0] / 2 - 12, TOP, {
     alpha: b,

@@ -11,7 +11,7 @@ import { agent, check, person } from "../../drawing/symbols.js";
 import { kernelIcon, recoverIcon } from "../../drawing/workspace.js";
 import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named, speaking } from "../../naming/lists.js";
-import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
+import { NAME_GAP, growName, nameText, rejectedName } from "../../naming/names.js";
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
@@ -133,39 +133,53 @@ export function stageName(s, t, a, c) {
   );
 }
 
-/* 03.2 One reliable path for people and interchangeable Agents: the travellers from the cut, named there; on the words
- * that say the path it draws out from under them to its end, as 03.1's path drew out, its name waiting at the end of
- * the travellers' heading until that end reaches it and then riding it, and its three stations arrive on their words.
- * On the words that say it promises three things the path rises and the promises build under it, each with its mark;
- * more governance stands under them, refused. Each state stands centred on what it shows: the travellers alone, by
- * their heading; then the path draws out under them, and once its end and name pass the heading's end the picture
- * glides left as they move right, so the travellers, the path and the name at its end stand centred together
- * throughout. The travellers' heading starts on the person's left edge. The promises hang from the first station's
- * name, their markers' left edge on its left edge, one and a half pitches below the stations' names, so that name does
- * not read as the list's heading; the refusal shares that left edge, one and a half pitches after the last promise, so
- * it reads as set apart from the list rather than as a fourth promise. */
+/* 03.2 One reliable path for people and interchangeable Agents: the travellers from the cut, standing on the path's
+ * start and named as they are said; the path draws out from under them to its end as the stage opens, as 03.1's path
+ * drew out, its name standing at that end on its words, and its three stations arrive on their words. On the words
+ * that say it promises three things the path rises and the promises build under it, each with its mark; more
+ * governance stands under them, refused. Each state stands centred on what it shows: the travellers alone, by what of
+ * their heading stands; then the path draws out under them, and once its end passes the heading's end the picture
+ * glides left as it moves right, so the travellers and the path, with the name at its end once it is said, stand
+ * centred together throughout. The travellers' heading starts on the person's left edge. The promises hang from the
+ * first station's name, their markers' left edge on its left edge, one and a half pitches below the stations' names,
+ * so that name does not read as the list's heading; the refusal shares that left edge, one and a half pitches after
+ * the last promise, so it reads as set apart from the list rather than as a fourth promise. */
 const PATH_LEN = 1080,
   PROMISE_PITCH = 80;
 export function stagePath(t, a, c) {
   if (a <= 0) return;
-  // The path is said at the end of the travellers' clause, so it is named within that clause, 1.2 s ahead of its
-  // words, which keeps the travellers' time alone short. It draws out over 1.8 s, and over 2.2 s in English, whose
-  // longer heading its end must pass alone before the picture glides, so that its end and its name, which travel
-  // furthest, never move more than about 32 px a frame and read as one mark moving.
-  const nameAt = c.reliable - 1.2,
-    drawn = soon(t, nameAt - 0.1, L(1.8, 2.2)),
-    on = a * ramp(t, nameAt - 0.15, 0.4),
+  // The path draws out from under the travellers as the stage opens, so the picture is never thin for long; they stand
+  // on its start, so it is one mark with them, named by their heading, until its own name stands at its end on its
+  // words. It draws out over 1.8 s, and over 2.2 s in English, whose longer heading its end must pass alone before the
+  // picture glides, so that its end, which travels furthest, never moves more than about 32 px a frame.
+  const nameAt = c.reliable,
+    from = c.pCut + 0.18,
+    drawn = soon(t, from, L(1.8, 2.2)),
+    on = a * ramp(t, from - 0.05, 0.4),
     endName = L("靠得住的路", "One reliable path"),
-    travellers = L("人和可以互相替换的 Agent", "People and interchangeable Agents"),
+    // The travellers' heading: Chinese builds it as the voice names them, the people and then the Agents with them;
+    // English names them in one phrase as the stage opens.
+    party = L(["人", "和可以互相替换的 Agent"], ["People and interchangeable Agents"]),
+    travellers = party.join(""),
+    // While the Chinese heading names only the people, the person ends what stands, 70 px right of the path's start;
+    // the Agent arrives with its name, and the picture glides to the whole heading as they join it.
+    heading = en
+      ? measure(travellers)
+      : mix(Math.max(60, measure(party[0])), measure(travellers), soon(t, c.agents + 0.05, 0.7)),
     // Where the path starts: the picture spans from it to the end of the travellers' heading, which starts 10 px
-    // right of it, or to the end of the name at the path's end, whichever reaches further, and stands centred.
+    // right of it, or to the path's end and, once it is said, the name there, whichever reaches further, and stands
+    // centred.
     X0 =
       960 -
-      Math.max(10 + measure(travellers), PATH_LEN * drawn + 7 + NAME_GAP + measure(endName)) / 2,
+      Math.max(
+        10 + heading,
+        PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * soon(t, nameAt - 0.1, 0.6),
+      ) /
+        2,
     PY = mix(560, 380, soon(t, c.three + 0.05, 0.7)),
     X1 = X0 + PATH_LEN,
     reach = mix(X0, X1, drawn),
-    // The name waits at the end of the travellers' heading, clear of the travellers, until the path's end reaches it.
+    // The name stands at the path's end, and never left of the end of the travellers' heading.
     nameX = Math.max(reach + 7 + NAME_GAP, X0 + 10 + measure(travellers) - measure(endName)),
     q = (voiceTime(t) * 0.35) % 1,
     names = STATION_NAMES(),
@@ -185,14 +199,15 @@ export function stagePath(t, a, c) {
     align: "left",
     alpha: a * named(t, nameAt),
   });
-  // The travellers stand at the path's start; their clause has begun, so they are named from the cut.
+  // The travellers stand on the path's start, their shoulders and the Agent's foot 8 px over it, from the cut, as their
+  // clause begins: English names them there; Chinese names the people on 给人, and the Agent arrives with its name.
   const TX = X0 + 40;
-  person(TX, PY - 50, { size: 1.3, alpha: a });
-  agent(TX + 64, PY - 44, { size: 1.1, alpha: a });
-  nameText(travellers, TX - 30, PY - 114, {
+  person(TX, PY - 38, { size: 1.3, alpha: a });
+  agent(TX + 64, PY - 32, { size: 1.1, alpha: a * (en ? 1 : ramp(t, c.agents - 0.15, 0.4)) });
+  growName(t, party, L([c.people, c.agents], [c.pCut + 0.15]), TX - 30, PY - 102, {
     valign: "bottom",
-    align: "left",
-    alpha: a * named(t, c.pCut + 0.15),
+    alpha: a,
+    build: true,
   });
   xs.forEach((x, i) => station(x, PY, i, a * ramp(t, sts[i] - 0.15, 0.4)));
   railNames(names, xs, PY + 28, {
@@ -235,7 +250,8 @@ export function stagePath(t, a, c) {
 
 /* 03.8 These are design aims: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
  * kernel holds up only the path's start, and ETHOS's own documents say the kernel alone does not prove the whole path
- * has been delivered. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
+ * has been delivered: that claim, with its subject, stands refused beside them, named on its words and struck as its
+ * predicate is said. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
  * over the middle one, the stretch's centre; the solid start is centred on the kernel. The kernel's and the
  * documents' names stand on one baseline, under the taller of the two, and the whole picture stands centred on the
  * frame by its extent. */
@@ -243,11 +259,13 @@ export function stageAims(t, a, c) {
   if (a <= 0) return;
   const names = STATION_NAMES(),
     kernelName = L("光有这个内核", "The kernel alone"),
-    deliveredName = L("已经走通", "Delivered"),
+    // The refused claim breaks before its predicate in English, so no line ends on an auxiliary.
+    claim = L(["整条路已经走通"], ["The whole path", "has been delivered"]),
+    claimWide = Math.max(...claim.map((v) => measure(v))),
     base = railStations(names, 850, 1390),
     // The rejected name's cross stands 16 px after its words and is 26 px wide.
     left = Math.min(600, 700 - measure(kernelName) / 2),
-    right = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1282 + measure(deliveredName) + 42),
+    right = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1282 + claimWide + 42),
     dx = 960 - (left + right) / 2;
   const PY = 430,
     X0 = 600 + dx,
@@ -279,9 +297,9 @@ export function stageAims(t, a, c) {
     valign: "top",
     alpha: a * named(t, c.docs),
   });
-  rejectedName(deliveredName, 1260 + NAME_GAP + dx, 636, {
+  rejectedName(claim, 1260 + NAME_GAP + dx, 636, {
     align: "left",
-    alpha: a * named(t, c.delivered),
+    alpha: a * named(t, c.wholePath),
     mark: ramp(t, c.delivered + 0.3, 0.4),
   });
 }
