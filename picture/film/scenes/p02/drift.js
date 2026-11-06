@@ -237,7 +237,7 @@ export function stageSummaries(t, a, c) {
   // The names hang one gap under the rows on one baseline, each centred on its row; the second English name stands on
   // one line, since each of its breaks would end a line on "What", "must" or "not".
   const terms = L(
-      ["没写下来的约束", "不能做什么", "想要得到的好处"],
+      ["没写下来的约束", "不能做什么", "本来要带来的效益"],
       ["Any constraint", "What must not be done", "The benefit"],
     ),
     quals = L([[], [], []], [["never written down"], [], []]);

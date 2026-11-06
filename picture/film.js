@@ -1906,7 +1906,7 @@ function stageSummaries(t, a, c) {
     dashed(x - 44, LY, x + 44, LY, { color: P.ink, alpha: on * gone * 0.85, width: 3 });
   });
   const terms = L(
-    ["没写下来的约束", "不能做什么", "想要得到的好处"],
+    ["没写下来的约束", "不能做什么", "本来要带来的效益"],
     ["Any constraint", "What must not be done", "The benefit"]
   ), quals = L([[], [], []], [["never written down"], [], []]);
   xs.forEach(
@@ -2781,7 +2781,7 @@ scenes["02"] = function(s, t) {
     anyConstraint: ["没写下来的约束", "any constraint"],
     gone: ["跟着没了", "ends with it"],
     mustNot: ["不能做什么", "what must not be done"],
-    benefit: ["想要得到的好处", "the benefit"],
+    benefit: ["本来要带来的效益", "the benefit"],
     gCut: ["需求哪怕", "A specification"],
     wellFormed: ["格式齐全", "complete and well formed"],
     goal: ["目标", "the wrong goal"],
