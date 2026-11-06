@@ -3182,7 +3182,9 @@ scenes["03"] = function(s, t) {
     gov: ["多加一层治理", "More governance"],
     notPromise: ["不在它的承诺里", "is not one of its promises"],
     // 03.3 the kernel.
-    kCut: ["这条路", "A small trust kernel"],
+    // The Chinese cut falls on the clause that brings the kernel, so the kernel stands on its own words; its name
+    // leads them as before. While "这条路" is said the path stays as 03.2 leaves it.
+    kCut: ["靠一个", "A small trust kernel"],
     kernel: ["很小的信任内核", "a small trust kernel"],
     takes: ["内核拿三样东西", "takes three inputs"],
     in1: ["已经采纳的意图", "the intent"],
