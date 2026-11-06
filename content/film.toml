@@ -43,6 +43,8 @@ caption_terms = [
   "version control",
   "issue tracker",
   "status output",
+  "any result other than pass",
+  "its evidence or the fact that is missing",
 ]
 
 # The fonts the picture stages below fonts/, in this order: Noto Sans CJK SC, subset to the
