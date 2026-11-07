@@ -5,12 +5,14 @@
 
 import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 import { ctx } from "../../canvas.js";
-import { FLOW_EVERY, flowAlong, flowClock, link, rounded } from "../../drawing/links.js";
+import { FLOW_EVERY, flowAlong, flowClock, link, rounded, sharedRun } from "../../drawing/links.js";
 import {
   box,
   dot,
+  drawnShare,
   fill,
   labelSize,
+  lengthOf,
   line,
   measure,
   path,
@@ -212,12 +214,13 @@ scenes["01"] = function (s, t) {
       valign: "top",
       alpha: stageA * named(t, lead) * (1 - gone),
     });
-    const handed = soon(t, hand + 0.05, 0.6),
-      corners = [
+    // The link draws on at the tip pace by its own length (drawnShare), as every drawn stroke of the film does.
+    const corners = [
         [AX, AY - AR],
         [AX, PY],
         [left, PY],
-      ];
+      ],
+      handed = drawnShare({ t, at: hand + 0.05 }, lengthOf(route(corners)));
     link(AX, AY - AR, left, PY, { route: "vh", alpha: seen, upto: handed, end: false });
     // The Agent steps aside as its link draws on, so the flow keeps one period as the link's length changes.
     flowAlong(route(corners), q, 6, { upto: handed, every: FLOW_EVERY, color: P.ink, alpha: seen });
@@ -237,21 +240,41 @@ scenes["01"] = function (s, t) {
     // The four questions, each a station on the rail with its mark in a ring; the rail keeps its spoken order and
     // stays centred while it builds.
     const names = L(
-      ["哪一次提交？", "哪些测试，在哪儿？", "是不是真正要的？", "能不能退回去？"],
+      ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能退回去？"],
       ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"],
     );
     const RY = 620,
       RR = 34,
       // The longest English question stands on one line within its share of the rail.
       base = railStations(names, 420, 1500, { wrap: 330 }),
-      shift = building(t, qs, (base[1] - base[0]) / 2),
+      step = (base[1] - base[0]) / 2,
+      shift = building(t, qs, step),
       xs = base.map((x) => x + shift),
-      mid = (PY + CLAIM_H / 2 + RY - RR) / 2;
+      mid = (PY + CLAIM_H / 2 + RY - RR) / 2,
+      wayTo = (x) =>
+        route([
+          [PX, PY + CLAIM_H / 2],
+          [PX, mid],
+          [x, mid],
+          [x, RY - RR],
+        ]),
+      ways = xs.map(wayTo);
+    // Every question's link leaves the panel by the same run down to its turn, and one that turns the way of the link
+    // before it runs on along that link: over the ink the earlier links have drawn it stands at once, unseen, and from
+    // where it leaves them it draws on at the tip pace by the length of its own way, as that way first stands, before
+    // the rail re-centres for it (drawShare). The fourth question opens with 要是做错了 / "And if it got something
+    // wrong" a second before its name, so its link may set off up to 0.4 s before that name.
+    const newWay = (i, at) => lengthOf(at[i]) - sharedRun(at[i], at.slice(0, i));
     xs.forEach((x, i) => {
       const on = stageA * ramp(t, qs[i] - 0.15, 0.4),
         lit = speaking(t, qs, i);
       if (on < 0.01) return;
-      const drawn = soon(t, qs[i] + 0.05, 0.5);
+      const way = ways[i],
+        whole = lengthOf(way),
+        inked = sharedRun(way, ways.slice(0, i)),
+        first = base.map((v) => wayTo(v + step * Math.min(qs.length - 1, qs.length - i))),
+        own = drawnShare({ t, at: qs[i] + 0.05, lead: 0.45 }, newWay(i, first)),
+        drawn = (inked + (whole - inked) * own) / whole;
       link(PX, PY + CLAIM_H / 2, x, RY - RR, {
         route: "vhv",
         mid,
@@ -259,12 +282,7 @@ scenes["01"] = function (s, t) {
         upto: drawn,
       });
       flowAlong(
-        route([
-          [PX, PY + CLAIM_H / 2],
-          [PX, mid],
-          [x, mid],
-          [x, RY - RR],
-        ]),
+        way,
         q,
         5,
         // The rail's stations glide while it builds, so the flow keeps one period.
@@ -407,13 +425,17 @@ scenes["01"] = function (s, t) {
       align: "left",
       alpha: stageC * named(t, writing),
     });
-    // The flat line draws on within its thought and its end point stands as it completes, so no point runs ahead of it.
-    const flat = stageC * ramp(t, flatAt - 0.15, 0.4),
-      flatDrawn = ease((t - flatAt + 0.1) / 1.3),
+    // The flat line draws on at the tip pace by its own length (drawnShare), whole within its thought, and its end
+    // point stands as it completes, so no point runs ahead of it. The Chinese thought ends on the line's own
+    // clause, 难的是，能不能信得过它, too soon after 能不能信得过它 for a line this long, so there the
+    // line sets off on the clause's first words; the ring that lights its end keeps to its own words.
+    const lineFrom = L(hard, flatAt),
+      flat = stageC * ramp(t, lineFrom - 0.15, 0.4),
+      flatDrawn = drawnShare({ t, at: lineFrom + 0.05 }, X1 - X0),
       flatReach = mix(X0, X1, flatDrawn);
     line(X0, Y0, flatReach, Y0, { color: P.ink, alpha: flat, width: 4 });
-    dot(X1, Y0, 7, { color: P.ink, alpha: flat * ramp(t, flatAt + 0.8, 0.4) });
-    beats(t, X1, Y0, 22, [hard - 0.1], { alpha: flat });
+    dot(X1, Y0, 7, { color: P.ink, alpha: flat * ease((flatDrawn - 0.85) / 0.15) });
+    beats(t, X1, Y0, 22, [hard - 0.1], { alpha: stageC * ramp(t, flatAt - 0.15, 0.4) });
     nameText(relyName, ends, Y0, {
       align: "left",
       width: 300,
@@ -464,24 +486,20 @@ scenes["01"] = function (s, t) {
         marks = [luck, cant],
         fork = stageD * ramp(t, two + 0.25, 0.3);
       XS.forEach((x, i) => {
-        const forked = soon(t, two + 0.4, 0.6);
+        const way = route([
+            [HX, FY],
+            [HX, MID],
+            [x, MID],
+            [x, BY],
+          ]),
+          forked = drawnShare({ t, at: two + 0.4 }, lengthOf(way));
         link(HX, FY, x, BY, {
           route: "vhv",
           mid: MID,
           alpha: fork,
           upto: forked,
         });
-        flowAlong(
-          route([
-            [HX, FY],
-            [HX, MID],
-            [x, MID],
-            [x, BY],
-          ]),
-          q,
-          5,
-          { upto: forked, color: P.ink, alpha: fork * speaking(t, ways, i) },
-        );
+        flowAlong(way, q, 5, { upto: forked, color: P.ink, alpha: fork * speaking(t, ways, i) });
         // The costs stay short: the die is luck, and the growing row of Agents and checks says how many there are.
         termRow(
           t,
@@ -496,7 +514,7 @@ scenes["01"] = function (s, t) {
         const on = stageD * ramp(t, marks[i] - 0.15, 0.4);
         // Each way's short link ends with its point clear above its cost's mark, so the checks' link does not land on
         // the middle Agent of the row.
-        link(x, LINK, x, GY - 42, { alpha: on, upto: soon(t, marks[i] - 0.1, 0.4) });
+        link(x, LINK, x, GY - 42, { alpha: on, draw: { t, at: marks[i] - 0.1 } });
       });
       die(XS[0], GY, 46, { alpha: stageD * ramp(t, luck - 0.15, 0.4) });
       const grid = stageD * ramp(t, cant - 0.15, 0.4);

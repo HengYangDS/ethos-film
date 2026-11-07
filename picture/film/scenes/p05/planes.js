@@ -24,16 +24,16 @@ export const PLANE_W = 700,
 export const PLANE_STATES = ["pass", "unknown", "none", "none", "none"];
 export const planeNames = () =>
   L(
-    [["在本地做的完整核验"], ["GitLab 和 GitHub 上的检查"], ["发布"], ["使用"], ["实际效益"]],
+    [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["使用"], ["实际效益"]],
     [
       ["The local proof"],
-      ["Checks on GitLab and GitHub"],
+      ["Automated checks on GitLab and GitHub"],
       ["Release"],
       ["In use"],
       ["Actual benefit"],
     ],
   );
-export const planeQualifier = () => L(["可以在本地接着往下走"], ["may move forward locally"]);
+export const planeQualifier = () => L(["可以在本地接着往下走"], ["the work may move forward locally"]);
 /* A state at the right of a plane: pass a check, unknown a question mark, and nothing yet an empty dashed ring. */
 export function planeState(kind, x, y, alpha) {
   if (kind === "none") ring(x, y, 15, { color: P.line, alpha, width: 2, dash: [5, 6] });

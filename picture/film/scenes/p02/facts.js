@@ -3,13 +3,15 @@
 
 import { centring } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
-import { flowClock, link } from "../../drawing/links.js";
+import { flowClock, link, linkPoints } from "../../drawing/links.js";
 import {
   box,
   dashed,
   dot,
+  drawnShare,
   fill,
   labelSize,
+  lengthOf,
   line,
   measure,
   ring,
@@ -23,7 +25,7 @@ import { building, listIn, listLevel, named } from "../../naming/lists.js";
 import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { ease, mix, ramp } from "../../timing/easing.js";
 import { drawShare, glideShare, glideSteps } from "../../timing/pauses.js";
 
 /* Two Agents drawn as one mark: their outlines one stroke and their cores one fill, so one name names the pair. */
@@ -145,16 +147,21 @@ export function stageBranch(t, a, c) {
     align: "right",
     alpha: a * named(t, c.memory),
   });
-  // It writes from that memory: its link reaches the place after the three commits it remembers.
-  const write = a * ramp(t, c.writes - 0.15, 0.4);
+  // It writes from that memory: its link reaches the place after the three commits it remembers, drawn on at the tip
+  // pace by its own length, and the commit it writes there lands as the link arrives.
+  const write = a * ramp(t, c.writes - 0.15, 0.4),
+    wrote = drawnShare(
+      { t, at: c.writes + 0.05 },
+      lengthOf(linkPoints(AX, AY + R, BX, Y - 9, { route: "vhv", mid: 560 })),
+    );
   link(AX, AY + R, BX, Y - 9, {
     route: "vhv",
     mid: 560,
     alpha: write,
-    upto: soon(t, c.writes + 0.05, 0.8),
+    upto: wrote,
     flow: flowClock(t),
   });
-  dot(BX, Y, 9 * soon(t, c.writes + 0.75, 0.3), { color: P.ink, alpha: a });
+  dot(BX, Y, 9 * ease((wrote - 0.8) / 0.2), { color: P.ink, alpha: a });
 }
 
 /* 02.5 The same version pushed to two platforms: one succeeds, the other fails, and between them the state nobody can
@@ -204,7 +211,7 @@ export function stagePlatforms(t, a, c) {
       route: "hvh",
       mid: 840,
       alpha: on,
-      upto: soon(t, come[i] + 0.05, 0.5),
+      draw: { t, at: come[i] + 0.05 },
       flow: q,
     });
     box(PX - W / 2, y - H / 2, W, H, { stroke: P.ink, alpha: on, radius: 14, width: 2.5 });
@@ -282,7 +289,7 @@ export function stageSent(t, a, c) {
     dot(X0, y, 10, { color: P.ink, alpha: on });
     link(X0 + 10, y, 930, y, {
       alpha: on,
-      upto: soon(t, near[i] + 0.05, 0.4),
+      draw: { t, at: near[i] + 0.05 },
       end: false,
       flow: q,
     });

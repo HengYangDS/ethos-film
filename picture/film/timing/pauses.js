@@ -105,6 +105,26 @@ export const drawTime = (length, least = 0.4) =>
   Math.max(least, (1.5 * Math.abs(length)) / DRAW_PACE, Math.sqrt((6 * Math.abs(length)) / GLIDE_PICKUP));
 export const drawShare = (t, at, length, least = 0.4) =>
   ease((voiceTime(t) - voiceTime(at)) / drawTime(length, least));
+/* When such a stroke sets off so that it is whole by its thought's quiet, HOLD after the thought's last word, and never
+ * rests part-drawn through a pause: at `at`, or, when its words come so late in their thought that it would still be
+ * drawing then, as much sooner as it needs, by at most `lead` seconds, DRAW_LEAD unless given, so it never sets off far
+ * ahead of the words that name it. */
+export const DRAW_LEAD = 0.35;
+export function drawStart(at, length, least = 0.4, lead = DRAW_LEAD) {
+  const need = drawTime(length, least),
+    whole = voiceTime(thoughtEnd(at) + HOLD) - 1e-3,
+    fits = (start) => voiceTime(start) + need <= whole;
+  if (fits(at)) return at;
+  let fitting = at - lead,
+    late = at;
+  if (!fits(fitting)) return fitting;
+  for (let i = 0; i < 20; i++) {
+    const middle = (fitting + late) / 2;
+    if (fits(middle)) fitting = middle;
+    else late = middle;
+  }
+  return fitting;
+}
 /* A mark that glides through several places in turn: it stands at `first` and glides to each next place from just
  * after the word that brings it, each step by the structural glide over its own way, so a step that sets off before
  * the last one has settled carries on from where the mark stands. Each step is [that word's time, the place]. */

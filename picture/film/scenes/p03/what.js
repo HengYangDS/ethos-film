@@ -71,7 +71,7 @@ scenes["03"] = function (s, t) {
     carried: ["要么执行", "carried out"],
     discarded: ["要么作废", "or discarded"],
     notKept: ["都不留下", "never kept"],
-    again2: ["重新编出来", "compiled again"],
+    again2: ["重新编译出来", "compiled again"],
     // 03.5 the attestation's scope.
     aCut: ["内核长期留下的", "The kernel keeps"],
     longTerm: ["长期留下的", "for the long term"],

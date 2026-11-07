@@ -10,9 +10,9 @@
 
 import { ctx } from "../../canvas.js";
 import { commitRow } from "../../drawing/history.js";
-import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
+import { FLOW_EVERY, flowClock, link, linkPoints } from "../../drawing/links.js";
 import { ethosMark, markExtent } from "../../drawing/mark.js";
-import { labelSize, measure, ring, stroke } from "../../drawing/strokes.js";
+import { drawnShare, labelSize, lengthOf, measure, ring, stroke } from "../../drawing/strokes.js";
 import { cross, documentIcon, stopSign } from "../../drawing/symbols.js";
 import { bubble, terminalIcon } from "../../drawing/workspace.js";
 import { ruleHeading, ruleHeadingLayout } from "../../framing/rules.js";
@@ -23,14 +23,14 @@ import {
   NOTE,
   TERM_GAP,
   TERM_STACK,
-  growName,
   nameText,
   termRow,
   termRowLayout,
 } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
+import { glideShare } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
 import { card } from "../p04/marks.js";
 import { claimPanel, claimWidth } from "../claim.js";
@@ -105,6 +105,10 @@ const VIEWS = () =>
   );
 const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
   VIEWS_NAME = () => L("给人看的视图", "Views");
+/* What 06.5's refusal says of the dashboard, and the judgment with its conditions. */
+const ROLE = () => L(["帮人看清楚"], ["Helps people see"]),
+  JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]),
+  CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["Ambiguous", " or stale"]);
 /* The opening's place for a mark at `size`, from its origin. */
 const openingOf = (size) => 0.82 * 164 * (size / 512);
 /* The parts beyond the opening, each with how far right of the mark's origin it reaches: the list of the four views,
@@ -131,6 +135,23 @@ function viewsReach(t, c) {
 function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right))) {
   const e = markExtent(VIEWS_SIZE, FULL);
   return { x: 960 - (e.left + reach) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
+}
+/* How far 06.5's refusal reaches right of the mark's origin at t. From the cut the dashboard stands with its role
+ * under it instead of its qualifier beside it, so the group narrows from the stale view's reach to that row's by the
+ * structural glide; then it widens, gliding, as the judgment's conditions and the judgment join the names' column on
+ * their words (reachAt), so what stands stays centred. */
+function refusalReach(t, c) {
+  const text = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT,
+    [first, second] = CONDITIONS(),
+    before = Math.max(...viewsParts().map(([, right]) => right)),
+    base = text + Math.max(measure(VIEWS()[1]), measure(ROLE()[0], NOTE)),
+    settled = mix(before, base, glideShare(t, c.first5b + 0.05, (before - base) / 2));
+  const parts = [
+    [c.ambiguous, text + measure(first, NOTE)],
+    [c.stale, text + measure(first + second, NOTE)],
+    [c.cannotPass, text + measure(JUDGMENT()[0])],
+  ];
+  return settled + reachAt(t, base, parts, 0.8) - base;
 }
 /* Where the views stand for the mark at `place`. */
 function viewsOf({ x, y, size }) {
@@ -178,23 +199,24 @@ function sources(t, c, g, { x, y, size }) {
   );
 }
 
-/* The mark at `place`, its boundary closing on the rule's words, with authority named inside at the datum's left. The
- * mark arrives in the cut on the rule's name and its boundary draws on from that cut, closing over the statement's
- * first words, so it grows from its start rather than appearing part drawn, and the parts the earlier rules drew stand
- * inside it within half a second. */
+/* The mark at `place`, its boundary closing round the parts the earlier rules drew, with authority named inside at the
+ * datum's left. The mark arrives in the cut on the rule's name. The boundary rule three adds fades in whole from that
+ * cut rather than drawing on: at the film's tip pace a ring this size takes about 2.4 s to close, so the mark would
+ * stand a second unnamed while it closed. Authority is named on the statement's mention of it, so the mark stands
+ * closed round its name within half a second of the cut. */
 function boundaryMark(t, c, g, { x, y, size }) {
   const k = size / 512;
+  ethosMark(x, y, size, { datum: g, hole: 1, passages: 1, boundary: 0, alpha: g });
   ethosMark(x, y, size, {
-    datum: g,
-    hole: 1,
-    passages: 1,
-    boundary: soon(t, c.markCut + STAGE_CUT, 1.2),
-    alpha: g,
+    datum: 0,
+    passages: 0,
+    boundary: 1,
+    alpha: g * ramp(t, c.markCut + STAGE_CUT - 0.05, 0.45),
   });
   beats(t, x, y, 21 * k, [c.inEthos], { alpha: g });
   nameText(L("权威依据", "Authority"), x - 14 * k - NAME_GAP, y, {
     align: "right",
-    alpha: g * named(t, c.authority),
+    alpha: g * ramp(t, c.authorityNamed - 0.35, 0.4),
   });
 }
 
@@ -225,15 +247,17 @@ function viewIcon(i, x, y, a) {
   } else if (i === 2) terminalIcon(x - 32, y - 26, 64, 52, { alpha: a });
   else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
-function views(t, c, g, place, { only = null, flow = null, since = null, linked = true, back = null } = {}) {
+function views(t, c, g, place, { only = null, flow = null, since = null, linked = true, back = null, role = null } = {}) {
   // The four views build and leave as one list; one view kept on alone after them is no longer that list's member. A
   // view that returns alone (`back`, the time its words bring it back) is computed again: its link draws out from the
   // opening from the cut, and the view arrives at its end. `flow` runs the links' flows from `since`, the time they
-  // begin, their dots entering from the opening then, each link's flow setting off in turn.
+  // begin, their dots entering from the opening then, each link's flow setting off in turn. A `role` ({text, at}) is
+  // said of the dashboard kept on alone: it stands as the name's gloss under it, in place of the inline qualifier, so
+  // that stage's dashboard is a set of its own rather than the green one of the stage before it.
   const ats = back === null ? c.views : c.views.map(() => back.at),
     names = VIEWS(),
     v = viewsOf(place),
-    set = only === null ? "views" : "view";
+    set = only === null ? "views" : role ? "dashboard" : "view";
   names.forEach((name, i) => {
     if (only !== null && only !== i) return;
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
@@ -242,7 +266,7 @@ function views(t, c, g, place, { only = null, flow = null, since = null, linked 
         route: "hvh",
         mid: v.open + 60,
         alpha: back === null ? on : g,
-        upto: back === null ? 1 : soon(t, back.cut, 0.4),
+        draw: back === null ? null : { t, at: back.cut },
         flow: flow ? flowClock(t, i * 0.25) : null,
         flowSince: since === null ? -Infinity : flowClock(since, i * 0.25),
         flowEvery: FLOW_EVERY,
@@ -253,14 +277,15 @@ function views(t, c, g, place, { only = null, flow = null, since = null, linked 
         t,
         [name],
         [ats[i]],
-        GREEN(),
-        [back?.at ?? c.thatGreen],
+        role ? role.text : GREEN(),
+        [role ? role.at : (back?.at ?? c.thatGreen)],
         v.text,
         v.ys[i] - labelSize(LABEL) / 2,
         {
           alpha: g * (only === null ? listLevel(t, ats, i) : 1),
           set,
           width: 1800 - v.text,
+          inline: role ? false : null,
         },
       );
     else
@@ -342,7 +367,7 @@ export function staleViewStage(s, t, c, g) {
   innerBranch(
     g * named(t, c.changes),
     place,
-    soon(t, c.changes + 0.05, 0.7),
+    drawnShare({ t, at: c.changes + 0.05, least: 0.7 }, BSTEP - 18),
     L("又变了", "Things change"),
     ramp(t, c.changes + 0.35, 0.45),
   );
@@ -356,22 +381,24 @@ export function staleViewStage(s, t, c, g) {
 /* 06.5 Not authority: the view helps people see, but taken as authority its relation back into the boundary is
  * struck at the opening, with what is refused under the cross, clear of the view; acting on it would overwrite the new
  * commit, someone else's work; and when authority is ambiguous or stale, the judgment cannot pass. The stop stands on
- * the icons' column and every line of the column starts on the names' column. */
+ * the icons' column and every line of the column starts on the names' column. Every name of the stage sets what is
+ * said of it as its gloss under it, as the film does elsewhere (M5-24): the view's role under the dashboard, and the
+ * conditions under the judgment. */
 export function notAuthorityStage(s, t, c, g) {
-  const place = viewsPlace(),
+  const place = viewsPlace(refusalReach(t, c)),
     v = viewsOf(place),
     b = branchOf(place);
   boundaryMark(t, c, g, place);
-  views(t, c, g, place, { only: 1, linked: false });
+  views(t, c, g, place, { only: 1, linked: false, role: { text: ROLE(), at: c.first5b } });
   innerBranch(g, place, 1);
-  nameText(L("帮人看清楚", "Helps people see"), v.text, v.ys[1] - 46, {
-    align: "left",
-    alpha: g * named(t, c.first5b),
-  });
   // Taken as authority: a dashed relation from the view back into the boundary, struck at the opening; acting on the
-  // view carries it on to the new commit, which it would overwrite.
+  // view carries it on to the new commit, which it would overwrite. Each reach draws on at the tip pace by its own
+  // length (drawnShare).
   const refused = g * named(t, c.never),
-    reach = mix(0.45, 1, soon(t, c.act + 0.05, 0.9)) * soon(t, c.never + 0.05, 0.5),
+    way = lengthOf(linkPoints(v.vx - 36, v.ys[1], b.end, b.by + 22, { route: "hv" })),
+    reach =
+      drawnShare({ t, at: c.never + 0.05 }, way, 0.45) +
+      drawnShare({ t, at: c.act + 0.05 }, way, 0.55),
     // What is refused is named in the narration's words: one line in Chinese, and in English two, broken by measure.
     counts = L("不是权威依据", "Never counts as authority"),
     // The cross stands in the gap between the opening and the view, its words centred under it, ending at least 20 px
@@ -406,25 +433,19 @@ export function notAuthorityStage(s, t, c, g) {
     b.by - 22 - NAME_GAP + 8 - termRowLayout(overwrite, whose, Infinity, false).height,
     { alpha: g, align: "center", inline: false },
   );
-  // The judgment cannot pass: a stop on the icons' column beside the views, its conditions above its words.
+  // The judgment cannot pass: a stop on the icons' column beside the views, its conditions its gloss under its words,
+  // each condition on its own words. The comma comes with the words after it, so the first condition waits for them
+  // without a trailing mark.
   const stop = g * named(t, c.cannotPass);
-  growName(
+  stopSign(v.vx, 372, 18, { color: P.ink, alpha: stop });
+  termRow(
     t,
-    // The comma comes with the words after it, so the first condition waits for them without a trailing mark.
-    L(["不明确", "，或者已经过时"], ["Ambiguous", " or stale"]),
+    JUDGMENT(),
+    [c.cannotPass],
+    CONDITIONS(),
     [c.ambiguous, c.stale],
     v.text,
-    318,
-    {
-      size: NOTE,
-      color: P.muted,
-      alpha: g,
-      build: true,
-    },
+    372 - labelSize(LABEL) / 2,
+    { alpha: g, inline: false, build: true },
   );
-  stopSign(v.vx, 372, 18, { color: P.ink, alpha: stop });
-  nameText(L("判断就不能通过", "The judgment cannot pass"), v.text, 372, {
-    align: "left",
-    alpha: stop,
-  });
 }

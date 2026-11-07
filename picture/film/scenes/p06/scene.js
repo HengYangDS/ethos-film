@@ -36,6 +36,8 @@ function cuesOf(s) {
     movedOn: cue(s, "分支已经往前走了", "the branch has moved on"),
     expected: cue(s, "跟计划里预想的不一样", "what the plan expected"),
     nothing: cue(s, "什么都不写", "nothing is written"),
+    // The clause that compiles the plan again from fresh facts, from its first word.
+    recompile: cue(s, "按刚观察到的事实", "and the plan is compiled again"),
     fresh: cue(s, "刚观察到的事实", "from fresh facts"),
     again: cue(s, "重新编译计划", "compiled again"),
     first2: cue(s, "核对和写入", "Checking and writing"),
@@ -79,8 +81,11 @@ function cuesOf(s) {
   // The branch moves on the word of the change, after the clause that names it has begun.
   c.changes = cueFrom(s, "又变了", "change", c.change);
   // The rule's mark comes in on the rule's name, on its last word, so the statement that names it is legible within
-  // 0.6 s of it, and its boundary closes from there over the statement's first words.
+  // 0.6 s of it, and its boundary fades in whole from there.
   c.markCut = cueFrom(s, "则", "three", c.number);
+  // Authority is named at the datum on the statement's mention of it, a quarter second ahead of the word, so the mark
+  // the cut brings stands named within 0.6 s while its boundary draws round it at the tip pace.
+  c.authorityNamed = cueFrom(s, "权威依据", "authority", c.markCut);
   c.sources = cues(s, [
     ["用户当下的指令", "current instruction"],
     ["仓库里的真实内容", "what the repository actually contains"],

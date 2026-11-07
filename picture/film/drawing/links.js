@@ -1,17 +1,21 @@
 /* Drawn relations: orthogonal links that end in a quiet point, and the flows that run along them. From ddwg-film v1.0.0 (c4e8aac), picture/film.js. */
 
 import { ctx } from "../canvas.js";
-import { dot, stroke } from "./strokes.js";
+import { along, dot, drawnShare, lengthOf, stroke } from "./strokes.js";
 import { P } from "../palette.js";
 import { clamp, ease } from "../timing/easing.js";
 import { voiceTime } from "../timing/pauses.js";
 
+export { along };
+
 /* A drawn relation follows the grid: a straight run when its ends share a row or a column, otherwise an orthogonal
- * route whose corners are quarter turns of radius `r` (never a diagonal). It draws on from its source along its length
- * and ends in a quiet point rather than an arrowhead; `flow`, a flow's clock (flowClock), runs the flow's dots along it
- * to show the way the relation runs (flowAlong), `flowSince` starts that flow later and `flowEvery` fixes its period,
- * which a relation whose ends glide must do, so its dots keep their places as its length changes. Routes: "vhv" leaves
- * vertically, crosses at `mid` and arrives vertically; "hvh" the reverse; "vh" and "hv" turn once. */
+ * route whose corners are quarter turns of radius `r` (never a diagonal). It draws on from its source along its
+ * length and ends in a quiet point rather than an arrowhead; `draw` ({t, at, least, lead}) draws it on from `at`
+ * over `upto` of its length at the film's tip pace by its own length (drawnShare), so no tip races. `flow`, a flow's
+ * clock (flowClock), runs the flow's dots along it to show the way the relation runs (flowAlong), `flowSince` starts
+ * that flow later and `flowEvery` fixes its period, which a relation whose ends glide must do, so its dots keep
+ * their places as its length changes. Routes: "vhv" leaves vertically, crosses at `mid` and arrives vertically;
+ * "hvh" the reverse; "vh" and "hv" turn once. */
 export function rounded(corners, r) {
   const out = [corners[0]];
   for (let i = 1; i < corners.length - 1; i++) {
@@ -35,27 +39,34 @@ export function rounded(corners, r) {
   out.push(corners.at(-1));
   return out;
 }
-/* The point at share q of a polyline's length, and the polyline up to it. */
-export function along(points, q) {
-  const lengths = points
-      .slice(1)
-      .map((pt, i) => Math.hypot(pt[0] - points[i][0], pt[1] - points[i][1])),
-    total = lengths.reduce((a, b) => a + b, 0);
-  let left = clamp(q) * total;
-  const kept = [points[0]];
-  for (let i = 0; i < lengths.length; i++) {
-    if (left >= lengths[i]) {
-      kept.push(points[i + 1]);
-      left -= lengths[i];
-      continue;
+/* How far the polyline `way` runs from its start over `others`, polylines that leave from the same point: its length up
+ * to where it leaves the one it follows furthest, so a link that sets off along the ink of earlier ones draws on from
+ * where it leaves them. */
+export function sharedRun(way, others) {
+  const total = lengthOf(way),
+    near = ([x, y], other) =>
+      other.slice(1).some(([bx, by], k) => {
+        const [ax, ay] = other[k],
+          dx = bx - ax,
+          dy = by - ay,
+          d2 = dx * dx + dy * dy,
+          u = d2 ? clamp(((x - ax) * dx + (y - ay) * dy) / d2) : 0;
+        return Math.hypot(x - ax - u * dx, y - ay - u * dy) < 0.5;
+      });
+  let run = 0;
+  for (const other of others) {
+    if (total <= 0 || !near(way[0], other)) continue;
+    if (near(along(way, 1).point, other)) return total;
+    let on = 0,
+      off = total;
+    for (let k = 0; k < 16; k++) {
+      const middle = (on + off) / 2;
+      if (near(along(way, middle / total).point, other)) on = middle;
+      else off = middle;
     }
-    const f = lengths[i] ? left / lengths[i] : 0,
-      a = points[i],
-      b = points[i + 1];
-    kept.push([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
-    break;
+    run = Math.max(run, on);
   }
-  return { point: kept.at(-1), kept };
+  return run;
 }
 /* A flow shows the way a relation runs: dots that cross the path at FLOW_PACE px/s, whatever its length, so every flow
  * in the film moves at one calm, even pace, and rest with the voice in the quiet between thoughts. On a path that takes
@@ -121,27 +132,9 @@ export function flowAlong(
     dot(x, y, r * size, { color, alpha });
   }
 }
-export function link(
-  x1,
-  y1,
-  x2,
-  y2,
-  {
-    route = null,
-    mid = null,
-    r = 14,
-    color = P.line,
-    alpha = 1,
-    upto = 1,
-    width = 2,
-    dash = null,
-    flow = null,
-    flowSince = -Infinity,
-    flowEvery = null,
-    end = true,
-  } = {},
-) {
-  if (alpha < 0.01 || upto <= 0 || Math.hypot(x2 - x1, y2 - y1) < 1) return;
+/* The way a link from (x1, y1) to (x2, y2) takes on the screen, as the polyline it draws, so a mark that lands with a
+ * link, or a share drawn of it, can be paced by its length. */
+export function linkPoints(x1, y1, x2, y2, { route = null, mid = null, r = 14 } = {}) {
   const kind = route ?? (Math.abs(x1 - x2) < 0.5 || Math.abs(y1 - y2) < 0.5 ? "straight" : "vhv");
   const m = mid ?? (kind === "vhv" ? (y1 + y2) / 2 : (x1 + x2) / 2);
   const corners = {
@@ -172,8 +165,34 @@ export function link(
       [x2, y2],
     ],
   }[kind];
-  const points = rounded(corners, r),
-    drawn = along(points, upto).kept;
+  return rounded(corners, r);
+}
+export function link(
+  x1,
+  y1,
+  x2,
+  y2,
+  {
+    route = null,
+    mid = null,
+    r = 14,
+    color = P.line,
+    alpha = 1,
+    upto = 1,
+    draw = null,
+    width = 2,
+    dash = null,
+    flow = null,
+    flowSince = -Infinity,
+    flowEvery = null,
+    end = true,
+  } = {},
+) {
+  if (alpha < 0.01 || upto <= 0 || Math.hypot(x2 - x1, y2 - y1) < 1) return;
+  const points = linkPoints(x1, y1, x2, y2, { route, mid, r });
+  if (draw) upto = drawnShare(draw, lengthOf(points), clamp(upto));
+  if (upto <= 0) return;
+  const drawn = along(points, upto).kept;
   if (drawn.length > 1)
     stroke(() => drawn.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))), {
       color,

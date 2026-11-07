@@ -66,7 +66,7 @@ function cuesOf(s) {
     intent: cue(s, "意图", "The intent"),
     into: cue(s, "写进一份正式变更", "goes into"),
     change: cue(s, "正式变更", "one official Change"),
-    only: cue(s, "只写在这一处", "only there"),
+    only: cue(s, "只写在那里", "only there"),
     f1: cue(s, "要解决什么", "what is to be solved"),
     first5: cue(s, "只写在一处", "With one copy"),
     readers: cue(s, "后面接手的人和 Agent", "everyone who picks up"),

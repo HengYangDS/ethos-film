@@ -21,7 +21,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom, cues } from "../../timing/cues.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { drawShare, glideShare } from "../../timing/pauses.js";
 import { verdictMark } from "../p04/marks.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
@@ -117,7 +117,7 @@ export function droppedPush(s, t, a) {
   const note = a * named(t, noteAt);
   link(NOTE_X, ROW_Y - DOC[1] / 2 - 10, NOTE_X, RAIL_Y + 6, {
     alpha: note,
-    upto: soon(t, noteAt + 0.05, 0.5),
+    draw: { t, at: noteAt + 0.05 },
   });
   docMark(NOTE_X - DOC[0] / 2, ROW_Y - DOC[1] / 2, DOC[0], DOC[1], { alpha: note, rows: 3 });
   termRow(
@@ -134,7 +134,7 @@ export function droppedPush(s, t, a) {
   const report = a * named(t, afterAt);
   link(REPORT_X, ROW_Y - DOC[1] / 2 - 10, REPORT_X, RAIL_Y + 6, {
     alpha: report,
-    upto: soon(t, afterAt + 0.05, 0.5),
+    draw: { t, at: afterAt + 0.05 },
   });
   docMark(REPORT_X - DOC[0] / 2, ROW_Y - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
   termRow(
@@ -151,7 +151,7 @@ export function droppedPush(s, t, a) {
   const next = a * named(t, nextAt);
   link(REPORT_X + DOC[0] / 2 + 10, ROW_Y, NEXT_X - STEP_R - 10, ROW_Y, {
     alpha: next,
-    upto: soon(t, nextAt + 0.05, 0.5),
+    draw: { t, at: nextAt + 0.05 },
     flow: flowClock(t),
   });
   ring(NEXT_X, ROW_Y, STEP_R, { color: P.ink, alpha: next, width: 2.5 });

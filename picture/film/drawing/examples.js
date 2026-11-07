@@ -9,12 +9,21 @@ import { clamp, mix } from "../timing/easing.js";
 
 /* The film's two running examples. A pipeline: a feed, one run and the stored records. `flow`, a flow's clock
  * (flowClock), moves points along it, and
- * `back` draws the way a rerun returns from the records to the feed. Returns where its parts stand. */
+ * `back` draws the way a rerun returns from the records to the feed, the share of it drawn; with `backDraw` ({t, at})
+ * that way draws on from `at` at the film's tip pace by its own length. Returns where its parts stand. */
 export function pipelineMark(
   x,
   y,
   w,
-  { alpha = 1, flow = null, back = 0, lit = 0, color = P.ink, backColor = P.evidence } = {},
+  {
+    alpha = 1,
+    flow = null,
+    back = 0,
+    backDraw = null,
+    lit = 0,
+    color = P.ink,
+    backColor = P.evidence,
+  } = {},
 ) {
   const k = w / 1200,
     feedX = x - w / 2 + 40 * k,
@@ -73,13 +82,14 @@ export function pipelineMark(
   );
   line(feedX + r, y, x - runW / 2, y, { alpha });
   line(x + runW / 2, y, storeX - storeW / 2, y, { alpha });
-  if (back > 0)
+  if (back > 0 || backDraw)
     link(storeX, y + storeH / 2, feedX, y + r, {
       route: "vhv",
       mid: place.loop,
       color: backColor,
       alpha,
-      upto: back,
+      upto: backDraw ? 1 : back,
+      draw: backDraw,
     });
   if (flow !== null)
     // A pipeline may glide and change its size, so its flow keeps one period.

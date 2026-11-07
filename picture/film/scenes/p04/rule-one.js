@@ -7,28 +7,30 @@
 import { ctx } from "../../canvas.js";
 import { flowAlong, flowClock, link } from "../../drawing/links.js";
 import { modelGrid } from "../../drawing/models.js";
-import { box, dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { box, dot, measure, stroke } from "../../drawing/strokes.js";
 import { agent, documentIcon, person } from "../../drawing/symbols.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listIn, named, reachAt } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, TERM_STACK, nameText, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
-import { L, en } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { L } from "../../timeline.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { glideShare } from "../../timing/pauses.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
- * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once as the
- * meaning is said to be kept. The English statement's relative clause, "that is enough", stands under it in the
- * qualifier's size and colour, so no line ends on "the", the statement reads as one line over its gloss, and its left
- * edge stays clear of the centred heading of the examples below. Returns the heading's bottom. */
+ * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once on the
+ * statement's last words, 留住原意 and "that is enough". The English statement stands whole in the statement's size on
+ * one line, wrapped at RULE_ONE_WRAP, so its relative clause keeps its phrase, no line ends on "the" and no short line
+ * stands over a long one (M5-22). Returns the heading's bottom. */
+const RULE_ONE_WRAP = 780;
 export function ruleOneHeading(t, c, g) {
   const on = g * named(t, c.first4),
     h = ruleHeading(t, {
       number: L("第一条准则", "Rule one"),
       numberAt: c.first4,
-      statement: L("用刚好够用的模型，留住原意", ["Preserve meaning with the smallest model"]),
+      statement: L("用刚好够用的模型，留住原意", "Preserve meaning with the smallest model that is enough"),
+      wrap: L(undefined, RULE_ONE_WRAP),
       statementAt: c.statement,
       size: 560,
       glyph: { datum: 1, passages: 0, boundary: 0 },
@@ -36,18 +38,7 @@ export function ruleOneHeading(t, c, g) {
       alpha: g,
     });
   beats(t, h.mx, h.my, 26, [c.keep], { color: P.ink, alpha: g });
-  if (!en) return h.bottom;
-  // The gloss joins one stack gap under the statement, on the statement's left edge and on its own words, as a
-  // qualifier joins its term.
-  const under = h.bottom + TERM_STACK;
-  nameText("that is enough", h.tx, under, {
-    align: "left",
-    valign: "top",
-    size: NOTE,
-    color: P.muted,
-    alpha: g * named(t, c.keep),
-  });
-  return under + labelSize(NOTE);
+  return h.bottom;
 }
 
 /* A model of the right size: three concepts and the two links of their structure, one stroke each, with the meaning
@@ -181,7 +172,7 @@ export function changeStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = fieldNames(),
     term = L(["正式变更"], ["One official Change"]),
-    qual = L(["只写在这一处"], ["only there"]),
+    qual = L(["只写在那里"], ["only there"]),
     ats = [c.f1, c.f2, c.f3],
     // The group spans the Change's name where it is wider than the document, at either side, and the field names
     // that stand: it reaches `over` left of the Change and right to the end of its name or, once they stand, of the
@@ -222,7 +213,7 @@ export function changeStage(s, t, c, g) {
   names.forEach((v, i) => {
     link(DX + CHANGE_W, fieldY(DY, i), FX - 14, fieldY(DY, i), {
       alpha: g * fields[i],
-      upto: soon(t, ats[i] + 0.05, 0.4),
+      draw: { t, at: ats[i] + 0.05 },
     });
     nameText(v, FX, fieldY(DY, i), { align: "left", alpha: g * listIn(t, ats, i), set: "fields" });
   });
@@ -272,7 +263,7 @@ export function readersStage(s, t, c, g) {
     link(x, y, DX, to, {
       route: "hvh",
       alpha: reading,
-      upto: soon(t, c.same + 0.05, 0.5),
+      draw: { t, at: c.same + 0.05 },
       flow: flowClock(t, k),
     });
   nameText(same, DX + CHANGE_W + NAME_GAP + 10, DY + 120, { align: "left", alpha: reading });

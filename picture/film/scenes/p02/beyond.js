@@ -5,13 +5,13 @@ import { CLAIM_DATUM, claimPanel, claimWidth } from "../claim.js";
 import { centring } from "../p03/kernel.js";
 import { ctx } from "../../canvas.js";
 import { flowClock, link } from "../../drawing/links.js";
-import { box, labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { box, drawnShare, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { illustrative } from "../../framing/chapters.js";
 import { building, listIn, listLevel, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { clamp, mix, ramp, soon } from "../../timing/easing.js";
+import { clamp, mix, ramp } from "../../timing/easing.js";
 import { glideSteps } from "../../timing/pauses.js";
 
 /* 02.4 Each step's evidence is a short solid block, and the claim made from it an outline that grows out of the block
@@ -44,9 +44,10 @@ export function stageClaims(t, a, c) {
     claimAts = [c.everything, L(c.releaseName, c.release), c.benefit2],
     em = labelSize(LABEL);
   ys.forEach((y, i) => {
-    // The first step stands from the cut, its clause already begun.
+    // The first step stands from the cut, its clause already begun. The claim's outline draws out of the block, its
+    // far end leading at the tip pace over its own way (drawnShare).
     const on = a * ramp(t, (i ? evidence[i] : c.eCut) - 0.15, 0.4),
-      grow = soon(t, claims[i] - 0.1, 0.6),
+      grow = drawnShare({ t, at: claims[i] - 0.1 }, CW - EW),
       w = mix(EW, CW, grow);
     if (on < 0.01) return;
     box(X0, y - H / 2, EW, H, { fill: P.ink, alpha: on, radius: 6 });

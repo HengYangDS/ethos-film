@@ -13,7 +13,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom, cues } from "../../timing/cues.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { glideShare, glideTime, voiceTime } from "../../timing/pauses.js";
 
 /* The pipeline of the example, drawn here as the vendor's feed, the run and a store of two slots. */
@@ -233,10 +233,10 @@ export function judgement(s, t, a) {
     names,
     { alpha: a, align: "center", inline: false },
   );
-  // The link spans the three panels; it draws on at the pace of a link across two of them.
+  // The link spans the three panels; it draws on at the tip pace by its own length (drawnShare).
   link(PX + 40, TOP, DX - DOC[0] / 2 - 12, TOP, {
     alpha: b,
-    upto: soon(t, backAt + 0.05, Math.max(0.8, (DX - DOC[0] / 2 - 52 - PX) / 760)),
+    draw: { t, at: backAt + 0.05 },
     flow: flowClock(t),
   });
   documentIcon(DX - DOC[0] / 2, TOP - DOC[1] / 2, DOC[0], DOC[1], { alpha: b, rows: 0 });

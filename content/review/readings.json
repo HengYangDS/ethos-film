@@ -93,6 +93,40 @@
         "primary": 1,
         "weak": [2]
       }
+    },
+    "conflict": {
+      "noun": {
+        "phones": "K AA1 N F L IH0 K T",
+        "primary": 1,
+        "weak": [2]
+      },
+      "verb": {
+        "phones": "K AH0 N F L IH1 K T",
+        "primary": 2,
+        "weak": [1]
+      }
+    },
+    "re-run": {
+      "noun": {
+        "phones": "R IY1 R AH2 N",
+        "primary": 1,
+        "secondary": [2]
+      },
+      "verb": {
+        "phones": "R IY2 R AH1 N",
+        "primary": 2,
+        "secondary": [1]
+      }
+    },
+    "leads": {
+      "noun": {
+        "phones": "L IY1 D Z",
+        "primary": 1
+      },
+      "metal": {
+        "phones": "L EH1 D Z",
+        "primary": 1
+      }
     }
   },
   "variants": {},
@@ -150,6 +184,15 @@
     },
     "closes": {
       "07:879": "verb"
+    },
+    "conflict": {
+      "05:1098": "noun"
+    },
+    "re-run": {
+      "05:860": "noun"
+    },
+    "leads": {
+      "04:1954": "noun"
     }
   }
 }

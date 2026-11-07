@@ -21,7 +21,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { glideShare, voiceTime } from "../../timing/pauses.js";
 
 /* The rows of the example's two makings and two owners, and the sizes of their marks. */
@@ -197,7 +197,7 @@ export function makings(s, t, a) {
     route: "hvh",
     mid,
     alpha: sIn,
-    upto: soon(t, scriptAt + 0.05, 0.5),
+    draw: { t, at: scriptAt + 0.05 },
     flow,
     flowEvery: FLOW_EVERY,
   });
@@ -205,7 +205,7 @@ export function makings(s, t, a) {
     route: "hvh",
     mid,
     alpha: hIn,
-    upto: soon(t, sheetAt + 0.05, 0.5),
+    draw: { t, at: sheetAt + 0.05 },
     flow: flowClock(t, 0.5),
     flowEvery: FLOW_EVERY,
   });
@@ -277,7 +277,7 @@ export function makings(s, t, a) {
     const shown = a * named(t, at);
     link(spans[i][0], y, spans[i][1], y, {
       alpha: shown,
-      upto: soon(t, at + 0.05, 0.6),
+      draw: { t, at: at + 0.05 },
       flow: flowClock(t, 0.5 * i),
       flowEvery: FLOW_EVERY,
     });
@@ -383,7 +383,7 @@ export function ghost(s, t, a) {
   // Someone takes the script up.
   const f = a * named(t, foundAt);
   person(FX, Y + 8, { size: 1.3, alpha: f });
-  link(FX + 40, Y, GX - SCRIPT[0] / 2 - 10, Y, { alpha: f, upto: soon(t, foundAt + 0.05, 0.5) });
+  link(FX + 40, Y, GX - SCRIPT[0] / 2 - 10, Y, { alpha: f, draw: { t, at: foundAt + 0.05 } });
   nameText(FOUND, FX, Y + 60 + NAME_GAP, {
     valign: "top",
     width: 220,

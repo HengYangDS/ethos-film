@@ -3,6 +3,7 @@
 import { ctx, layout, resolution, sceneFade, wordFade } from "../canvas.js";
 import { LABEL, P, TYPE } from "../palette.js";
 import { clamp } from "../timing/easing.js";
+import { drawShare, drawStart } from "../timing/pauses.js";
 
 /* Drawing primitives. Every painted text registers its box for the geometry check. */
 export function font(size, bold, sample) {
@@ -138,22 +139,76 @@ export function dot(x, y, r, { color = P.evidence, alpha = 1, hollow = false, wi
   if (hollow) stroke(() => ctx.arc(x, y, r, 0, Math.PI * 2), { color, alpha, width });
   else fill(() => ctx.arc(x, y, r, 0, Math.PI * 2), { color, alpha });
 }
-export function path(points, { upto = 1, ...o } = {}) {
-  if (points.length < 2 || upto <= 0) return;
-  const n = Math.max(2, Math.round(points.length * clamp(upto)));
-  stroke(
-    () => points.slice(0, n).forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))),
-    { width: 2.5, color: P.ink, ...o },
-  );
+/* The length of a polyline. */
+export const lengthOf = (points) =>
+  points
+    .slice(1)
+    .reduce((v, pt, i) => v + Math.hypot(pt[0] - points[i][0], pt[1] - points[i][1]), 0);
+/* The point at share q of a polyline's length, and the polyline up to it. */
+export function along(points, q) {
+  const lengths = points
+      .slice(1)
+      .map((pt, i) => Math.hypot(pt[0] - points[i][0], pt[1] - points[i][1])),
+    total = lengths.reduce((a, b) => a + b, 0);
+  let left = clamp(q) * total;
+  const kept = [points[0]];
+  for (let i = 0; i < lengths.length; i++) {
+    if (left >= lengths[i]) {
+      kept.push(points[i + 1]);
+      left -= lengths[i];
+      continue;
+    }
+    const f = lengths[i] ? left / lengths[i] : 0,
+      a = points[i],
+      b = points[i + 1];
+    kept.push([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
+    break;
+  }
+  return { point: kept.at(-1), kept };
+}
+/* The share drawn of a stroke that `draw` ({t, at, least, lead}) draws on from `at` over `extent` (the share of its
+ * full `length` it reaches) at the film's tip pace (drawShare): a long stroke takes longer than a short one, so no tip
+ * races; it rests with the voice in a quiet, and one whose words come late in their thought sets off a little sooner,
+ * by at most `lead`, so it is whole by the thought's quiet (drawStart). */
+export const drawnShare = (draw, length, extent = 1) => {
+  const least = draw.least ?? 0.4,
+    way = length * extent;
+  return extent * drawShare(draw.t, drawStart(draw.at, way, least, draw.lead), way, least);
+};
+/* A polyline drawn on from its start: `upto` is the share of its length drawn, so it grows continuously rather than a
+ * segment at a time; with `draw` it draws on over that share, paced by its own length (drawnShare). */
+export function path(points, { upto = 1, draw = null, ...o } = {}) {
+  if (points.length < 2) return;
+  if (draw) upto = drawnShare(draw, lengthOf(points), clamp(upto));
+  if (upto <= 0) return;
+  const drawn = upto >= 1 ? points : along(points, upto).kept;
+  stroke(() => drawn.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))), {
+    width: 2.5,
+    color: P.ink,
+    ...o,
+  });
 }
 export function ring(
   x,
   y,
   r,
-  { color = P.evidence, alpha = 1, width = 2, upto = 1, start = -Math.PI / 2, dash = null } = {},
+  {
+    color = P.evidence,
+    alpha = 1,
+    width = 2,
+    upto = 1,
+    draw = null,
+    start = -Math.PI / 2,
+    dash = null,
+  } = {},
 ) {
+  if (draw) upto = drawnShare(draw, 2 * Math.PI * r, clamp(upto));
   if (upto <= 0) return;
-  stroke(() => ctx.arc(x, y, r, start, start + Math.PI * 2 * clamp(upto)), {
+  // The start is brought into one turn first: from a large start angle (a ring turning with voice time) the canvas
+  // reads a whole turn as almost none and draws nothing for that frame.
+  const turn = 2 * Math.PI,
+    from = ((start % turn) + turn) % turn;
+  stroke(() => ctx.arc(x, y, r, from, from + turn * clamp(upto)), {
     color,
     alpha,
     width,

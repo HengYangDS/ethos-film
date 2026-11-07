@@ -5,9 +5,9 @@
 
 import { ctx } from "../../canvas.js";
 import { pipelineMark } from "../../drawing/examples.js";
-import { along, flowClock, link } from "../../drawing/links.js";
+import { along, flowClock, link, linkPoints } from "../../drawing/links.js";
 import { blend } from "../../drawing/colour.js";
-import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { dot, drawnShare, labelSize, lengthOf, measure, stroke } from "../../drawing/strokes.js";
 import { check, documentIcon, person } from "../../drawing/symbols.js";
 import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named, reachAt } from "../../naming/lists.js";
@@ -22,7 +22,7 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { ease, mix, ramp, soon } from "../../timing/easing.js";
-import { drawShare, glideShare } from "../../timing/pauses.js";
+import { drawShare, drawStart, drawTime, glideShare } from "../../timing/pauses.js";
 import { agents, card, recordRows, valueCell } from "./marks.js";
 
 /* The request in the researcher's words and the line two handoffs leave of it. The Chinese lines drop a particle of the
@@ -97,7 +97,7 @@ export function requestStage(s, t, c, g) {
   const m = pipelineMark(960, Y, 900, {
     alpha: g,
     flow: flowClock(t),
-    back: soon(t, c.runAgain + 0.05, 0.6),
+    backDraw: { t, at: c.runAgain + 0.05 },
   });
   const term = [L("行情数据管线", "Market-data pipeline")],
     qual = [L("可以再跑一遍", "can be run again")],
@@ -176,7 +176,14 @@ export function handoffStage(s, t, c, g) {
     [Y0, Y1, Y2, Y3] = [380, 465, 550, 640],
     h = g * named(t, c.handoffs);
   requestCard(x0, Y0, { alpha: g });
-  const draw = soon(t, c.handoffs + 0.05, 0.6);
+  // The two handoffs draw on together at the tip pace, by the longer one's length (drawShare).
+  const handoffs = [
+      linkPoints(x0 + cw, Y0, a1, Y1 - 22, { route: "hv" }),
+      linkPoints(a1 + 22, Y1, a2, Y2 - 22, { route: "hv" }),
+    ],
+    longest = Math.max(...handoffs.map(lengthOf)),
+    drawFrom = drawStart(c.handoffs + 0.05, longest),
+    draw = drawShare(t, drawFrom, longest);
   link(x0 + cw, Y0, a1, Y1 - 22, { route: "hv", alpha: h, upto: draw });
   link(a1 + 22, Y1, a2, Y2 - 22, { route: "hv", alpha: h, upto: draw });
   agents(
@@ -202,7 +209,7 @@ export function handoffStage(s, t, c, g) {
       [a2, Y1],
       [a2, Y2],
     ],
-    p = drawShare(t, c.handoffs + 0.65, 470);
+    p = drawShare(t, drawFrom + drawTime(longest), 470);
   if (p > 0 && p < 1)
     dot(
       ...along(path, p).point,
@@ -212,7 +219,7 @@ export function handoffStage(s, t, c, g) {
       { color: P.ink, alpha: g },
     );
   const q = g * named(t, c.single);
-  link(a2, Y2 + 22, qx, Y3, { route: "vh", alpha: q, upto: soon(t, c.single + 0.05, 0.4) });
+  link(a2, Y2 + 22, qx, Y3, { route: "vh", alpha: q, draw: { t, at: c.single + 0.05 } });
   quoteCard(qx, Y3, { alpha: q, words: g * named(t, c.quote) });
   // The line is named by its noun on its word, 一句 / "a single line".
   nameText(L("一句", "One line"), qx + qw / 2, Y3 + 32 + NAME_GAP, {
@@ -237,7 +244,7 @@ export function deleteStage(s, t, c, g) {
     qw = quoteWidth(),
     qy = 300;
   quoteCard(tx + TW / 2 - qw / 2, qy, { alpha: g });
-  link(tx + TW / 2, qy + 32, tx + TW / 2, ty, { alpha: g, upto: soon(t, c.follow + 0.05, 0.5) });
+  link(tx + TW / 2, qy + 32, tx + TW / 2, ty, { alpha: g, draw: { t, at: c.follow + 0.05 } });
   nameText(L("照这句话去做", "To the letter"), tx + TW / 2 + NAME_GAP, (qy + 32 + ty) / 2, {
     align: "left",
     alpha: g * named(t, c.follow),
@@ -249,15 +256,15 @@ export function deleteStage(s, t, c, g) {
     step = 38;
   recordRows(rx, ry, rw, [0, 1, 3], { step, alpha: g });
   // The corrections stand brighter once they are named, each with a ring at its start; they are struck when the line
-  // is said to delete them, and step back.
-  const named2 = g * named(t, c.corrections),
-    struck = soon(t, c.deleted + 0.05, 0.5);
+  // is said to delete them, each strike drawn on at the tip pace by its own length, and step back.
+  const v1 = valueCell(rx, rw)[1],
+    named2 = g * named(t, c.corrections),
+    struck = drawnShare({ t, at: c.deleted + 0.05 }, v1 + 10 - (rx - 8));
   recordRows(rx, ry, rw, [2, 4], {
     step,
     alpha: g * mix(1, 0.5, struck),
     color: blend(P.muted, P.ink, named2),
   });
-  const v1 = valueCell(rx, rw)[1];
   stroke(
     () => {
       for (const r of [2, 4]) {

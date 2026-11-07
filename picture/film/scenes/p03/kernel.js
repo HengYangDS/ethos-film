@@ -4,8 +4,20 @@
 import { paper, papers } from "../p02/drift.js";
 import { ctx } from "../../canvas.js";
 import { writeGate } from "../../drawing/lanes.js";
-import { flowAlong, flowClock, link } from "../../drawing/links.js";
-import { box, dot, fill, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
+import { flowAlong, flowClock, link, linkPoints } from "../../drawing/links.js";
+import {
+  box,
+  dot,
+  drawnShare,
+  fill,
+  labelSize,
+  lengthOf,
+  line,
+  measure,
+  path,
+  ring,
+  stroke,
+} from "../../drawing/strokes.js";
 import { check, cross, person, seal } from "../../drawing/symbols.js";
 import { folderIcon, kernelIcon } from "../../drawing/workspace.js";
 import { listIn, listLevel, named, saidShare, speaking } from "../../naming/lists.js";
@@ -22,8 +34,15 @@ import {
 import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
-import { ease, mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare, glideSteps, voiceTime } from "../../timing/pauses.js";
+import { clamp, ease, mix, ramp, soon } from "../../timing/easing.js";
+import {
+  drawShare,
+  drawStart,
+  drawTime,
+  glideShare,
+  glideSteps,
+  voiceTime,
+} from "../../timing/pauses.js";
 
 /* 03.3 A small trust kernel supports the path: the path at the top, the kernel under it on its words. Its three inputs
  * stand at its left, each linked to it on its words: the accepted intent, the fresh facts, the attestations on record.
@@ -57,8 +76,9 @@ export function stageKernel(t, a, c) {
       ["Intent", "Fresh facts", "Attestations"],
     ),
     intentQual = ["that has been accepted"],
-    // The attestation is first shown here, before 03.5 explains it, so it carries under its name what it states.
-    attQual = [L("谁出具、在哪儿成立", "who verified it, where it holds")],
+    // The attestation is first shown here, before 03.5 explains it: in Chinese it carries under its name what it
+    // states; in English the voice's own words, already on record.
+    attQual = [L("谁出具、在哪儿成立", "already on record")],
     inputsWide = Math.max(
       ...inputNames.map((v) => measure(v)),
       en ? measure(intentQual.join(""), NOTE) : 0,
@@ -139,7 +159,7 @@ export function stageKernel(t, a, c) {
       route: "hvh",
       mid: KX - KR - 120,
       alpha: on,
-      upto: soon(t, at + 0.05, 0.5),
+      draw: { t, at: at + 0.05 },
       flow: q,
     });
   });
@@ -167,13 +187,13 @@ export function stageKernel(t, a, c) {
   });
   qualified(2, inputNames[2], c.in3, attQual, c.in3);
   // By fixed rules, a plan; the gate that checks again at the moment of writing; the new attestation, which returns to
-  // the inputs round the names under the diagram.
+  // the inputs round the names under the diagram. Every link draws on at the tip pace by its own length (drawnShare).
   const rules = a * ramp(t, c.rules - 0.15, 0.4),
     plan = a * ramp(t, c.plan - 0.15, 0.4),
     gate = a * ramp(t, c.writeAt - 0.15, 0.4),
     rec = a * ramp(t, c.rec1 - 0.15, 0.4),
     stamped = a * ramp(t, c.newAtt - 0.15, 0.4);
-  link(KX + KR * 0.87, KY, PX, KY, { alpha: rules, upto: soon(t, c.rules + 0.05, 0.6), flow: q });
+  link(KX + KR * 0.87, KY, PX, KY, { alpha: rules, draw: { t, at: c.rules + 0.05 }, flow: q });
   nameText(L("按固定的规则", "By fixed rules"), (KX + KR * 0.87 + PX) / 2, KY - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.rules),
@@ -183,7 +203,7 @@ export function stageKernel(t, a, c) {
     valign: "top",
     alpha: a * named(t, c.plan),
   });
-  link(PX + 70, KY, GX - 30, KY, { alpha: gate, upto: soon(t, c.writeAt + 0.05, 0.4) });
+  link(PX + 70, KY, GX - 30, KY, { alpha: gate, draw: { t, at: c.writeAt + 0.05 } });
   writeGate(GX, KY, 100, {
     alpha: gate,
     color: P.ink,
@@ -195,16 +215,17 @@ export function stageKernel(t, a, c) {
     alpha: a,
     align: "center",
   });
-  link(GX + 30, KY, SX - 34, KY, { alpha: rec, upto: soon(t, c.rec1 + 0.05, 0.4) });
+  link(GX + 30, KY, SX - 34, KY, { alpha: rec, draw: { t, at: c.rec1 + 0.05 } });
   // The new attestation fills in as what it records is said: its ring draws on a third on each part's words, from where
-  // the link reaches it, and its inner ring and stamp land on the words that name it, so no empty circle waits.
+  // the link reaches it, each third at the tip pace, and its inner ring and stamp land on the words that name it, so no
+  // empty circle waits.
   const recordAts = [c.rec1, c.rec2, c.rec3];
   ring(SX, KY, 34, {
     color: P.ink,
     // The ring's ink rises as its first third draws on, so its first arc never stands at full ink at once.
     alpha: a * ramp(t, c.rec1 + 0.05, 0.3),
     width: 3,
-    upto: saidShare(t, recordAts),
+    upto: saidShare(t, recordAts, 2 * Math.PI * 34),
     start: Math.PI,
   });
   ring(SX, KY, 34 * 0.74, { color: P.ink, alpha: stamped * 0.6, width: 1.5 });
@@ -222,20 +243,27 @@ export function stageKernel(t, a, c) {
     valign: "top",
     alpha: a * named(t, c.newAtt),
   });
-  // The loop draws on in two legs, the second from where the first ends, as the first completes.
-  const back = soon(t, c.newAtt + 0.05, 0.25);
-  // Each leg's ink rises as it draws on, so no part of the loop stands at full ink at once.
-  link(SX + 34, KY, RX, LOOP, {
-    route: "hv",
-    alpha: a * ramp(t, c.newAtt + 0.05, 0.25),
-    upto: back,
-    end: false,
-  });
-  link(RX, LOOP, IX, ys[2] + 28, {
-    route: "hv",
-    alpha: stamped,
-    upto: soon(t, c.newAtt + 0.3, 0.3),
-    flow: q,
+  // The loop returns the new attestation to the inputs, round the names under the diagram: one stroke, both legs one
+  // polyline, the second from where the first ends, drawn on at the tip pace by its whole length, its ink rising as it
+  // sets off, so no part of it stands at full ink at once and no second stroke appears where the first leg turns. At
+  // that pace it takes far longer than the words that name the new attestation, which end the thought, so it sets off
+  // with the record it returns, as late as lets it arrive by the thought's quiet (drawStart), and never before the
+  // record is announced. Its quiet end point lands as a link's does, over the last tenth of the drawing, and the flow
+  // runs along the second leg once the loop is whole.
+  const first = linkPoints(SX + 34, KY, RX, LOOP, { route: "hv" }),
+    second = linkPoints(RX, LOOP, IX, ys[2] + 28, { route: "hv" }),
+    points = [...first, ...second.slice(1)],
+    loop = lengthOf(points),
+    loopFrom = drawStart(c.newAtt + 0.05, loop, 0.4, c.newAtt + 0.05 - c.recCut),
+    looped = drawShare(t, loopFrom, loop),
+    loopInk = a * ramp(t, loopFrom, 0.25);
+  path(points, { upto: looped, color: P.line, alpha: loopInk, width: 2 });
+  const end = 4.5 * ease((looped - 0.9) / 0.1);
+  if (end > 0.3) dot(IX, ys[2] + 28, end, { color: P.line, alpha: loopInk });
+  flowAlong(second, q, 4, {
+    upto: clamp((looped * loop - lengthOf(first)) / lengthOf(second)),
+    color: P.line,
+    alpha: loopInk,
   });
 }
 
@@ -338,7 +366,8 @@ export function stageLifetimes(t, a, c) {
       { color: P.ink, alpha: facts, width: 3 },
     );
   }
-  // Plans: two that end, carried out and discarded, then not kept; another compiled again.
+  // Plans: two that end, carried out and discarded, then not kept; another compiled again. Each plan's line draws on at
+  // the tip pace by its own length (drawnShare).
   const p1 = a * ramp(t, c.carried - 0.15, 0.4),
     p2 = a * ramp(t, c.discarded - 0.15, 0.4),
     gone = 1 - 0.6 * ramp(t, c.notKept - 0.15, 0.4),
@@ -347,11 +376,11 @@ export function stageLifetimes(t, a, c) {
     () => {
       if (p1 > 0.01) {
         ctx.moveTo(M0 + 40, ys[2]);
-        ctx.lineTo(M0 + 40 + 180 * soon(t, c.carried, 0.5), ys[2]);
+        ctx.lineTo(M0 + 40 + 180 * drawnShare({ t, at: c.carried }, 180), ys[2]);
       }
       if (p2 > 0.01) {
         ctx.moveTo(M0 + 300, ys[2]);
-        ctx.lineTo(M0 + 300 + 180 * soon(t, c.discarded, 0.5), ys[2]);
+        ctx.lineTo(M0 + 300 + 180 * drawnShare({ t, at: c.discarded }, 180), ys[2]);
       }
     },
     { color: P.ink, alpha: Math.max(p1, p2) * gone, width: 6 },
@@ -366,7 +395,7 @@ export function stageLifetimes(t, a, c) {
     alpha: p2 * gone * ramp(t, c.discarded + 0.35, 0.4),
     width: 3.5,
   });
-  line(M0 + 560, ys[2], M0 + 560 + 100 * soon(t, c.again2, 0.6), ys[2], {
+  line(M0 + 560, ys[2], M0 + 560 + 100 * drawnShare({ t, at: c.again2 }, 100), ys[2], {
     color: P.ink,
     alpha: p3,
     width: 6,
@@ -420,12 +449,16 @@ export function stageScope(t, a, c) {
       copyAt + 90 + Math.max(measure(outsideName), measure(voidName, NOTE)) / 2,
     ),
     cardAt = c.att - L(0.15, 0.45),
+    // The card's link draws on at the tip pace by its own length (drawShare).
+    cardLink = 1000 - W / 2 - (K0 + 44 * 0.87),
+    cardFrom = drawStart(cardAt + 0.05, cardLink),
+    linked = cardFrom + drawTime(cardLink),
     // Before the attestation's name joins it, the heading reaches as far as its first part does.
     headRight = 1000 + L(measure(head.join("")) / 2 - measure(head[1]), measure(head[0]) / 2),
     // The picture glides to take the scope in once the card's link has drawn on, so the link never grows while its
     // ends slide.
     dx = glideSteps(t, centring(left, headRight), [
-      [cardAt + 0.4, centring(left, scopeEnd)],
+      [linked - 0.05, centring(left, scopeEnd)],
       [c.outside, centring(left, right)],
     ]);
   const CX = 1000 + dx,
@@ -444,7 +477,7 @@ export function stageScope(t, a, c) {
   });
   link(KX + 44 * 0.87, CY, CX - W / 2, CY, {
     alpha: card,
-    upto: soon(t, cardAt + 0.05, 0.4),
+    upto: drawShare(t, cardFrom, cardLink),
     flow: q,
   });
   box(CX - W / 2, CY - H / 2, W, H, { stroke: P.ink, alpha: card, radius: 14, width: 2.5 });
@@ -487,7 +520,7 @@ export function stageScope(t, a, c) {
   person(CX, RY, { size: 1.0, alpha: later });
   link(CX, RY - 34, CX, bottom + 2, {
     alpha: later,
-    upto: soon(t, c.reader + 0.05, 0.5),
+    draw: { t, at: c.reader + 0.05 },
     flow: q,
     end: false,
   });

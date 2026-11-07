@@ -3,10 +3,10 @@
 
 import { ctx } from "../../canvas.js";
 import { FLOW_EVERY, along, flowAlong, rounded } from "../../drawing/links.js";
-import { box, ring, stroke, text } from "../../drawing/strokes.js";
+import { box, drawnShare, lengthOf, ring, stroke, text } from "../../drawing/strokes.js";
 import { check, stopSign } from "../../drawing/symbols.js";
 import { P } from "../../palette.js";
-import { ease } from "../../timing/easing.js";
+import { clamp, ease } from "../../timing/easing.js";
 
 /* A card: a rounded outline that holds a text or a few records. */
 export function card(x, y, w, h, { alpha = 1, color = P.line, dash = null, width = 2.5 } = {}) {
@@ -71,10 +71,11 @@ export function agents(points, { alpha = 1, size = 1, color = P.ink } = {}) {
 /* Several relations drawn as one mark: their orthogonal routes one stroke and their quiet end points one stroke of
  * small discs, so links that leave one source together are named once rather than waiting as members. Each route is
  * [x1, y1, x2, y2, kind, mid] as `link` takes them; `flow`, a flow's clock (flowClock), runs a flow along each, the
- * routes' flows setting off in turn. */
+ * routes' flows setting off in turn. With `draw` ({t, at}) the routes draw on together from `at` at the film's tip
+ * pace by the longest route's length (drawnShare), so no tip races. */
 export function linkSet(
   routes,
-  { alpha = 1, upto = 1, color = P.line, width = 2, flow = null, end = true } = {},
+  { alpha = 1, upto = 1, draw = null, color = P.line, width = 2, flow = null, end = true } = {},
 ) {
   if (alpha < 0.01 || upto <= 0) return;
   const paths = routes.map(([x1, y1, x2, y2, kind, mid]) => {
@@ -105,6 +106,8 @@ export function linkSet(
     }[kind];
     return rounded(corners, 14);
   });
+  if (draw) upto = drawnShare(draw, Math.max(...paths.map(lengthOf)), clamp(upto));
+  if (upto <= 0) return;
   stroke(
     () =>
       paths.forEach((points) =>

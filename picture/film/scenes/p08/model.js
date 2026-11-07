@@ -190,7 +190,7 @@ export function modelRevision(s, t, a) {
   docMark(DOC_X - DOC[0] / 2, GY, DOC[0], DOC[1], { alpha: c, rows: 4 });
   link(DOC_X - DOC[0] / 2 - 12, MID, cx1 + 10, MID, {
     alpha: a * named(t, revisesAt),
-    upto: soon(t, revisesAt + 0.05, 0.6),
+    draw: { t, at: revisesAt + 0.05 },
     flow,
   });
   nameText(CHANGE, DOC_X, below, {
@@ -207,7 +207,7 @@ export function modelRevision(s, t, a) {
       route: "hvh",
       mid: (DOC_X + DOC[0] / 2 + CHK) / 2,
       alpha: k,
-      upto: soon(t, checksAt + 0.05 + 0.15 * i, 0.6),
+      draw: { t, at: checksAt + 0.05 + 0.15 * i },
       flow: flowClock(t, i / 3),
       flowEvery: FLOW_EVERY,
     }),
@@ -226,8 +226,8 @@ export function modelRevision(s, t, a) {
 }
 
 /* 08.8, third: the one model, and beside it the ways around it, each refused on its words. The refusals are one
- * left-aligned list whose crosses stand in one column after its longest name, and the picture is centred on the
- * frame. */
+ * left-aligned list, each name carrying its cross one fixed gap after it, as every refused name of the film does, and
+ * the picture is centred on the frame. */
 export function noWayAround(s, t, a) {
   if (a <= 0) return;
   const ats = cues(s, [
@@ -258,7 +258,6 @@ export function noWayAround(s, t, a) {
       align: "left",
       alpha: a * named(t, ats[i]),
       mark: ramp(t, ats[i] + 0.3, 0.4),
-      markLeft: NX + widest + 16,
       set: "08.8:refused",
     }),
   );
@@ -311,7 +310,7 @@ export function meanwhile(s, t, a) {
   // The lanes are named by what they carry, the outcomes by what happens to them.
   const DEPEND = L("依赖它的改动", "Dependent changes"),
     WAIT = L("先停下", "Wait"),
-    OTHER = L("不相关的工作", "Unrelated work"),
+    OTHER = L("和它无关的工作", "Unrelated work"),
     ON = L("照常进行", "Goes on as usual"),
     Y1 = 520,
     Y2 = 670,
@@ -337,7 +336,7 @@ export function meanwhile(s, t, a) {
   modelGrid(GATE - 130, 300, 200, 112, { alpha: d, cell: [3, 1], lit: 1, grow: 1 });
   link(GATE - 30, 418, GATE - 30, Y1 - 50, {
     alpha: d,
-    upto: soon(t, dependAt + 0.05, 0.6),
+    draw: { t, at: dependAt + 0.05 },
     end: false,
   });
   nameText(DEPEND, 600, Y1 - 40, {
@@ -409,7 +408,7 @@ export function goalKept(s, t, a) {
   // The only way the goal changes: an explicit, authorized realignment, from the authority's seal up to the lock.
   person(PX, PY, { size: 1.2, alpha: al });
   seal(LOCK, 620, 22, { alpha: al, color: P.ink });
-  link(LOCK, 594, LOCK, LY + 22, { alpha: al, upto: soon(t, alignAt + 0.05, 0.6), flow });
+  link(LOCK, 594, LOCK, LY + 22, { alpha: al, draw: { t, at: alignAt + 0.05 }, flow });
   nameText(
     L("经授权重新对齐意图", "Authorized intent alignment"),
     (PX - 28 + LOCK + 22) / 2,

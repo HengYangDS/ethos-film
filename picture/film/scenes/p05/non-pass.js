@@ -14,7 +14,7 @@ import { listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { docMark } from "../p08/rail.js";
 import { verdictMark } from "../p04/marks.js";
 import {
@@ -142,7 +142,7 @@ export function nonPassStage(s, t, c, g) {
       route: "hvh",
       mid: x + col.trunk,
       alpha: on,
-      upto: soon(t, ats[i] + 0.05, 0.5),
+      draw: { t, at: ats[i] + 0.05 },
       flow: flowClock(t, i / 5),
       flowEvery: FLOW_EVERY,
     });

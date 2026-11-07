@@ -15,7 +15,7 @@ import { NAME_GAP, growName, nameText, rejectedName } from "../../naming/names.j
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { drawShare, glideShare, voiceTime } from "../../timing/pauses.js";
 
 /* A path from x0 to x1 at y, in pieces that leave the rings of the stations at `gaps` clear, so no line runs under a
@@ -161,15 +161,15 @@ const PATH_LEN = 1080,
 const softMax = (a, b, s = 80) => (a + b + Math.hypot(a - b, s)) / 2;
 export function stagePath(t, a, c) {
   if (a <= 0) return;
-  // The path draws out from under the travellers as the stage opens, so the picture is never thin for long; they stand
-  // on its start, so it is one mark with them, named by their heading, until its own name stands at its end on its
-  // words. Its end, which travels furthest, leads it out as a stroke drawing on (drawShare) over 1.8 s, and over 2 s in
+  // The path draws out from under the travellers as the stage opens, at full ink from the cut that brings it, so the
+  // picture is never thin while the travellers ink in; they stand on its start, so it is one mark with them, named by
+  // their heading, until its own name stands at its end on its words. Its end, which travels furthest, leads it out as a stroke drawing on (drawShare) over 1.8 s, and over 2 s in
   // English, whose longer heading its end must pass alone before the picture glides; once the picture glides, the end
   // and the travellers each move at half the drawing's pace.
   const nameAt = c.reliable,
     from = c.pCut + 0.18,
     drawn = drawShare(t, from, PATH_LEN, L(1.8, 2.0)),
-    on = a * ramp(t, from - 0.05, 0.4),
+    on = a * ramp(t, from - 0.4, 0.4),
     endName = L("靠得住的路", "One reliable path"),
     // The travellers' heading: Chinese builds it as the voice names them, the people and then the Agents with them;
     // English names them in one phrase as the stage opens.
@@ -311,7 +311,7 @@ export function stageAims(t, a, c) {
   // The kernel alone, under the path's start, holding up only that part of it.
   const kernel = a * ramp(t, c.alone - 0.15, 0.4);
   kernelIcon(KX, 640, 46, { alpha: kernel, color: P.ink, turn: 0.12 * voiceTime(t) });
-  link(KX, 594, KX, PY + 3, { alpha: kernel, upto: soon(t, c.alone + 0.05, 0.5), end: false });
+  link(KX, 594, KX, PY + 3, { alpha: kernel, draw: { t, at: c.alone + 0.05 }, end: false });
   nameText(kernelName, KX, namesTop, {
     valign: "top",
     alpha: a * named(t, c.alone),

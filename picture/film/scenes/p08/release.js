@@ -17,7 +17,7 @@ import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare, glideSteps, glideTime } from "../../timing/pauses.js";
+import { DRAW_LEAD, glideShare, glideSteps, glideTime } from "../../timing/pauses.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
 /* The proof: a check in its ring, the executed check of one commit. */
@@ -97,14 +97,14 @@ export function release(s, t, a) {
   commitDot(CX, RAIL_Y, { alpha: c, r: 14, picked: c });
   nameText(L("这次提交", "That exact commit"), CX, below, { valign: "top", alpha: c });
   proofMark(CX, UP, p);
-  link(CX, UP + 30, CX, RAIL_Y - 24, { alpha: p, upto: soon(t, proofAt + 0.05, 0.4) });
+  link(CX, UP + 30, CX, RAIL_Y - 24, { alpha: p, draw: { t, at: proofAt + 0.05 } });
   nameText(L("本地的完整核验", "A full local proof"), CX, above, { valign: "bottom", alpha: p });
-  link(CX + 30, UP, AX - 34, UP, { alpha: at, upto: soon(t, attestAt + 0.05, 0.5) });
+  link(CX + 30, UP, AX - 34, UP, { alpha: at, draw: { t, at: attestAt + 0.05 } });
   seal(AX, UP, 22, { alpha: at, color: P.ink });
   nameText(L("存证", "Attestation"), AX, above, { valign: "bottom", alpha: at });
   // Review and authorization on the rail, then the protected branch.
   person(MX, UP + 4, { size: 1.15, alpha: m });
-  link(MX, UP + 40, MX, RAIL_Y - 12, { alpha: m, upto: soon(t, reviewAt + 0.05, 0.5) });
+  link(MX, UP + 40, MX, RAIL_Y - 12, { alpha: m, draw: { t, at: reviewAt + 0.05 } });
   // English names the person and sets what the maintainer does as the name's qualifier, under it.
   if (en) {
     const term = ["A maintainer"],
@@ -131,7 +131,7 @@ export function release(s, t, a) {
       route: "hvh",
       mid: BX + 250,
       alpha: each,
-      upto: soon(t, eachAt + 0.05 + 0.25 * i, 0.6),
+      draw: { t, at: eachAt + 0.05 + 0.25 * i },
       flow: flowClock(t, 0.5 * i),
       flowEvery: FLOW_EVERY,
     }),
@@ -176,9 +176,11 @@ function needMark(i, x, y, alpha) {
 const NEEDS = () => [
   L("上线的那个版本", "That version"),
   L("真实运行的环境", "The environment"),
-  L("原来的做法", "The old way"),
+  L("原来的做法", "How things were done before"),
   L("约定的一段时间", "A set period"),
 ];
+/* The needs' names wrap at NEED_WRAP, wide enough that each stands on one line. */
+const NEED_WRAP = 420;
 const NEED_Y = [350, 450, 550, 650],
   NEED_X = 1340;
 
@@ -200,7 +202,7 @@ export function liveUse(s, t, a) {
     ["约定的一段时间", "a set period"],
   ]);
   const needs = NEEDS(),
-    NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v) => nameWidth(v, 360))),
+    NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v) => nameWidth(v, NEED_WRAP))),
     S = 960 - (220 - 2 + NEEDS_END) / 2;
   const QX = 1100,
     QY = RAIL_Y - 11,
@@ -222,7 +224,7 @@ export function liveUse(s, t, a) {
   tagIcon(TX - 30, RAIL_Y, 64, 34, { alpha: v, color: P.ink });
   nameText(L("版本上线", "The version"), TX, NAMES, { alpha: v });
   person(UX, RAIL_Y - 66, { size: 1.15, alpha: u });
-  link(UX, RAIL_Y - 30, UX, RAIL_Y - 10, { alpha: u, upto: soon(t, useAt + 0.05, 0.4) });
+  link(UX, RAIL_Y - 30, UX, RAIL_Y - 10, { alpha: u, draw: { t, at: useAt + 0.05 } });
   nameText(L("实际使用", "Real use"), UX, NAMES, { alpha: u });
   askIcon(QX, QY, 30, { alpha: q, color: P.ink });
   nameText(L("管不管用", "Whether it works"), QX, QY - 30 - NAME_GAP, {
@@ -237,14 +239,14 @@ export function liveUse(s, t, a) {
       route: "hvh",
       mid: QX + 150,
       alpha: n,
-      upto: soon(t, ats[i] + 0.05, 0.6),
+      draw: { t, at: ats[i] + 0.05 },
       flow: flowClock(t, i / 4),
       flowEvery: FLOW_EVERY,
     });
     needMark(i, NEED_X, y, n);
     nameText(v2, NEED_X + 50, y, {
       align: "left",
-      width: 360,
+      width: NEED_WRAP,
       alpha: a * listIn(t, ats, i),
       set: "08.6:needs",
     });
@@ -334,6 +336,8 @@ export function overview(s, t, a) {
   // dropped push, linked up to the name of each stretch: to the stretch ETHOS is designed for, already named, as they
   // arrive, and to the handover and the dropped push as each is named, so they never stand alone; each link leaves them
   // as the rail's links leave their marks, so all are one mark. What they say hangs one gap under them on its words.
+  // The first link is long, and at the tip pace it would reach its name about 0.9 s after the documents stand, so it
+  // sets off DRAW_LEAD before their words, unseen until their ink rises, and reaches the name within half a second.
   const NY = 700,
     BX = (B[0] + B[1]) / 2,
     DX = (D[0] + D[1]) / 2,
@@ -344,18 +348,18 @@ export function overview(s, t, a) {
   link(AXIS + DOC[0] / 2 + 10, NY, DX, db.bottom + 12, {
     route: "hv",
     alpha: docs,
-    upto: soon(t, docsAt + 0.05, 0.6),
+    draw: { t, at: docsAt - DRAW_LEAD },
   });
   link(AXIS - DOC[0] / 2 - 10, NY, BX, hb.bottom + 12, {
     route: "hv",
     alpha: h,
-    upto: soon(t, handoverAt + 0.05, 0.6),
+    draw: { t, at: handoverAt + 0.05 },
   });
   link(AXIS, NY - DOC[1] / 2 - 10, AXIS, eb.bottom + 12, {
     alpha: dp,
-    upto: soon(t, droppedAt + 0.05, 0.4),
+    draw: { t, at: droppedAt + 0.05 },
   });
-  nameText(L("还没有完成验收", "Not yet accepted"), AXIS, NY + DOC[1] / 2 + NAME_GAP, {
+  nameText(L("还没有完成验收", "Acceptance not yet complete"), AXIS, NY + DOC[1] / 2 + NAME_GAP, {
     valign: "top",
     alpha: acc,
   });

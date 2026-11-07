@@ -12,7 +12,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { ramp, soon } from "../../timing/easing.js";
+import { ramp } from "../../timing/easing.js";
 import { glideShare, voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 import { scenes } from "../registry.js";
@@ -82,13 +82,13 @@ function upkeep(s, t, a) {
     alpha: a * named(t, staleAt),
   });
   person(640, PY, { size: 1.3, alpha: m });
-  link(678, GY, GX - R - 12, GY, { alpha: m, upto: soon(t, maintainAt + 0.05, 0.5), flow });
+  link(678, GY, GX - R - 12, GY, { alpha: m, draw: { t, at: maintainAt + 0.05 }, flow });
   // Each person is named as who they are, someone to maintain it and someone to explain it.
   nameText(L("有人维护", "Someone to maintain it"), 640, top, { valign: "top", alpha: m });
   person(1280, PY, { size: 1.3, alpha: e });
   link(1242, GY, GX + R + 12, GY, {
     alpha: e,
-    upto: soon(t, explainAt + 0.05, 0.5),
+    draw: { t, at: explainAt + 0.05 },
     flow: flowClock(t, 0.5),
   });
   nameText(L("有人解释", "Someone to explain it"), 1280, top, { valign: "top", alpha: e });

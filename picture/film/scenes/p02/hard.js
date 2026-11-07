@@ -35,7 +35,7 @@ const INDEX_XS = [420, 960, 1500],
   DOCK_GAP = 12,
   DOCK_POINT = 6,
   DOCK_R = 16,
-  WRAP = 460;
+  WRAP = 520;
 const halfName = (v) => Math.max(...wrapName(v, WRAP).map((line) => measure(line))) / 2;
 /* How far the docked index reaches past its first and last stations: a named station's name or ring, an unnamed
  * station's point, and over the first station the kicker. */
@@ -236,7 +236,7 @@ scenes["02"] = function (s, t) {
     headAt: c.head,
     names: L(
       ["原意会走样", "结论超出了证据", "事实还没看清，就先动了手"],
-      ["Meaning drifts", "Claims go beyond their evidence", "Acting before the facts"],
+      ["Meaning drifts", "Claims go beyond their evidence", "Changes before the facts are checked"],
     ),
     ats: [c.n1, c.n2 - 0.15, c.n3name - 0.1],
     levels,

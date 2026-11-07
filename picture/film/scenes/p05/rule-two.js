@@ -9,7 +9,8 @@
 import { ctx } from "../../canvas.js";
 import { flowClock, link } from "../../drawing/links.js";
 import { cross } from "../../drawing/symbols.js";
-import { dot, labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { markLengths } from "../../drawing/mark.js";
+import { dot, drawnShare, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { ruleHeading } from "../../framing/rules.js";
 import { beats, listLevel, named, reachAt } from "../../naming/lists.js";
 import {
@@ -118,7 +119,12 @@ export function ruleTwoHeading(t, c, g) {
     statementAt: c.statement,
     size: 560,
     glyph: { datum: 1, passages: 1, boundary: 0 },
-    shares: { datum: g, hole: 1, passages: soon(t, c.first3 + 0.2, 1.1), boundary: 0 },
+    shares: {
+      datum: g,
+      hole: 1,
+      passages: drawnShare({ t, at: c.first3 + 0.2 }, markLengths(560).passage),
+      boundary: 0,
+    },
     alpha: g,
   });
 }
@@ -141,7 +147,7 @@ export function separateStage(s, t, c, g) {
   });
   linkSet(
     reach.map((d, i) => [nx, rowOf(TOP, i), nx + d - STEP_R, rowOf(TOP, i), "hv"]),
-    { alpha: steps, upto: soon(t, c.nextStep + 0.05, 0.6), flow: q, end: false },
+    { alpha: steps, draw: { t, at: c.nextStep + 0.05 }, flow: q, end: false },
   );
   stroke(
     () =>
@@ -195,7 +201,7 @@ export function verifiedStage(s, t, c, g) {
   link(edge.left, PY, x + PLANE_W, one, {
     route: "hvh",
     alpha: g * named(t, c.tell),
-    upto: soon(t, c.tell + 0.05, 0.6),
+    draw: { t, at: c.tell + 0.05 },
     flow: flowClock(t),
   });
   nameText(L("实际确认过的", "Verified this time"), PX, edge.bottom + NAME_GAP, {
@@ -265,7 +271,7 @@ export function outcomesStage(s, t, c, g) {
   link(x + PLANE_W, two, LX - 26, ys[2], {
     route: "hvh",
     alpha: example,
-    upto: soon(t, c.isUnknown + 0.05, 0.5),
+    draw: { t, at: c.isUnknown + 0.05 },
     flow: flowClock(t),
   });
   rejectedName(L("没有问题", "No problem"), x + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
@@ -293,7 +299,7 @@ export function refusedStage(s, t, c, g) {
     t,
     L(["一个区分"], ["A distinction"]),
     [c.distinction],
-    L(["改变不了任何行动"], ["would not change any action"]),
+    L(["改变不了任何行动"], ["that would not change any action"]),
     [c.sixth],
     x + 24,
     sy + PLANE_H / 2 - 15,

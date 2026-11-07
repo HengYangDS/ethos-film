@@ -15,7 +15,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { clamp, mix, ramp, soon } from "../../timing/easing.js";
+import { clamp, mix, ramp } from "../../timing/easing.js";
 import { glideShare, voiceTime } from "../../timing/pauses.js";
 import { listRows, nameWidth, taskList } from "./example.js";
 
@@ -171,7 +171,7 @@ export function ruleFour(s, t, a) {
   });
   link(kx + measure(every) + KEY_GAP, ky, kx + measure(every) + KEY_GAP + KEY_RUN, ky, {
     alpha: a * named(t, heads[1]),
-    upto: soon(t, heads[1] + 0.05, 0.4),
+    draw: { t, at: heads[1] + 0.05 },
   });
   nameText(one, kx + keyWidth - measure(one), ky, {
     align: "left",
@@ -187,7 +187,7 @@ export function ruleFour(s, t, a) {
   });
   link(C1, d1.bottom + 12, C1, OWN - KERNEL - 12, {
     alpha: e,
-    upto: soon(t, ethosAt + 0.05, 0.5),
+    draw: { t, at: ethosAt + 0.05 },
     flow,
   });
   kernelIcon(C1, OWN, KERNEL, { alpha: e, color: P.ink });
@@ -204,7 +204,7 @@ export function ruleFour(s, t, a) {
   });
   link(C2, d2.bottom + 12, C2, OWN - REPO[1] / 2 - 12, {
     alpha: o,
-    upto: soon(t, ownAt + 0.05, 0.5),
+    draw: { t, at: ownAt + 0.05 },
     flow: flowClock(t, 0.5),
   });
   repoGroup(G, OWN, REPO[0], REPO[1], { alpha: r, checks: o });
@@ -253,14 +253,14 @@ export function ownRepository(s, t, a) {
     route: "hvh",
     mid: MID,
     alpha: o,
-    upto: soon(t, ownAt + 0.05, 0.8),
+    draw: { t, at: ownAt + 0.05 },
     flow,
   });
   link(LX + 50, 500, G[0] - 62, 690, {
     route: "hvh",
     mid: MID,
     alpha: l,
-    upto: soon(t, sameAt + 0.05, 0.6),
+    draw: { t, at: sameAt + 0.05 },
     flow: flowClock(t, 0.5),
   });
   ownRepo(OWNX, 330, o, named(t, sameAt + 0.4));
@@ -319,7 +319,7 @@ export function replacement(s, t, a) {
   // part, so the line never grows while its ends slide fast.
   link(827 + S, 430, 1093 + S, 430, {
     alpha: Math.min(n, o),
-    upto: soon(t, Math.max(newAt, oldAt) + L(0.05, 0.35), 0.6),
+    draw: { t, at: Math.max(newAt, oldAt) + L(0.05, 0.35) },
     flow: flowClock(t),
   });
   if (en)
@@ -409,7 +409,7 @@ export function closing(s, t, a) {
   // The unfinished rows go on record.
   link(LX + BX + 4, RY, RX - 62, RY, {
     alpha: r,
-    upto: soon(t, recordAt + 0.05, 0.7),
+    draw: { t, at: recordAt + 0.05 },
     flow: flowClock(t),
   });
   ledger(RX, RY, 110, 140, { alpha: r });

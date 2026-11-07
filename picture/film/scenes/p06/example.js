@@ -7,9 +7,9 @@
 import { ctx } from "../../canvas.js";
 import { pipelineMark } from "../../drawing/examples.js";
 import { commitRow } from "../../drawing/history.js";
-import { flowClock, link } from "../../drawing/links.js";
+import { flowClock, link, linkPoints } from "../../drawing/links.js";
 import { writeGate } from "../../drawing/lanes.js";
-import { dot, measure, ring, stroke } from "../../drawing/strokes.js";
+import { dot, drawnShare, lengthOf, measure, ring, stroke } from "../../drawing/strokes.js";
 import { documentIcon, stopSign } from "../../drawing/symbols.js";
 import { commitDot, ledger, tagIcon } from "../../drawing/workspace.js";
 import { beats, listIn, named } from "../../naming/lists.js";
@@ -18,8 +18,8 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom } from "../../timing/cues.js";
-import { clamp, ease, mix, ramp, soon } from "../../timing/easing.js";
-import { drawShare, glideShare } from "../../timing/pauses.js";
+import { clamp, ease, mix, ramp } from "../../timing/easing.js";
+import { drawShare, drawStart, glideShare } from "../../timing/pauses.js";
 import { agents, card, linkSet } from "../p04/marks.js";
 import { planeState } from "../p05/planes.js";
 
@@ -96,7 +96,7 @@ function branch(t, g, { moved = 0, landed = moved, nameAlpha = g, nameTop = ROW_
   stroke(
     () => {
       ctx.moveTo(HEAD + 9, Y);
-      ctx.lineTo(mix(HEAD + 9, NEW - 9, clamp(moved * 1.6)), Y);
+      ctx.lineTo(mix(HEAD + 9, NEW - 9, clamp(moved)), Y);
     },
     { color: P.ink, alpha: g, width: 2.5 },
   );
@@ -168,7 +168,8 @@ export function staleStage(s, t, c, g) {
   link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: write });
   link(GATE_X + 30, Y, BRANCH_X - 9, Y, { alpha: real });
   branch(t, real, {
-    moved: soon(t, c.changed + 0.05, 0.8),
+    // The line to the new commit draws on at the tip pace by its own length (drawnShare).
+    moved: drawnShare({ t, at: c.changed + 0.05 }, NEW - HEAD - 18),
     // The new commit lands over 0.45 s as the line reaches it.
     landed: ramp(t, c.changed + 0.3, 0.45),
     nameTop: mix(Y + COMMIT + NAME_GAP, ROW_NAMES, glideShare(t, c.plan + 0.05, ROW_NAMES - Y - COMMIT - NAME_GAP, 0.6)),
@@ -242,13 +243,18 @@ export function checkStage(s, t, c, g) {
     valign: "top",
     alpha: stop,
   });
-  // Fresh facts run from the branch's real head back over the gate to the plan.
-  const fresh = g * named(t, c.fresh);
+  // Fresh facts run from the branch's real head back over the gate to the plan, drawn on at the tip pace by their own
+  // length. English names them as its thought ends, too late for a way this long, so there the way sets off on the
+  // clause that compiles the plan again from them, as late as lets it be whole by the quiet, its ink rising as it sets
+  // off; their name keeps to its words.
+  const fresh = g * named(t, c.fresh),
+    freshWay = lengthOf(linkPoints(NEW, Y - 22, PLAN_X, Y - 60, { route: "vhv", mid: 340 })),
+    freshFrom = drawStart(c.fresh + 0.05, freshWay, 0.4, c.fresh + 0.05 - (c.recompile - 0.3));
   link(NEW, Y - 22, PLAN_X, Y - 60, {
     route: "vhv",
     mid: 340,
-    alpha: fresh,
-    upto: soon(t, c.fresh + 0.05, 0.8),
+    alpha: g * ramp(t, Math.min(c.fresh, freshFrom + 0.15) - 0.15, 0.4),
+    upto: drawShare(t, freshFrom, freshWay),
     flow: flowClock(t),
   });
   nameText(L("刚观察到的事实", "Fresh facts"), (PLAN_X + NEW) / 2, 340 - NAME_GAP + 6, {
@@ -292,7 +298,7 @@ export function oneStepStage(s, t, c, g) {
   link(GX + 70, Y, BX - 9, Y, { alpha: g });
   nameText(L("分支", "The branch"), BX + 2 * BSTEP, names, { valign: "top", alpha: g });
   // The write lands as a new commit; its result is read back to a check above the step.
-  const wrote = soon(t, c.afterwards + 0.3, 0.6);
+  const wrote = drawnShare({ t, at: c.afterwards + 0.3, least: 0.6 }, BSTEP - 18);
   stroke(
     () => {
       ctx.moveTo(BX + 4 * BSTEP + 9, Y);
@@ -308,7 +314,7 @@ export function oneStepStage(s, t, c, g) {
     route: "vhv",
     mid: 330,
     alpha: back,
-    upto: soon(t, c.readBack + 0.05, 0.8),
+    draw: { t, at: c.readBack + 0.05 },
     flow: flowClock(t),
   });
   planeState("pass", GX, 330, back * ramp(t, c.confirm - 0.15, 0.4));
@@ -359,7 +365,7 @@ export function platformsStage(s, t, c, g) {
   });
   linkSet(
     ys.map((y) => [VX + 60, Y, PX, y, "hvh"]),
-    { alpha: several, upto: soon(t, c.several + 0.05, 0.5) },
+    { alpha: several, draw: { t, at: c.several + 0.05 } },
   );
   stroke(() => ys.forEach((y) => ctx.roundRect(PX, y - 30, PW, 60, 12)), {
     color: P.line,
@@ -380,7 +386,7 @@ export function platformsStage(s, t, c, g) {
   const kept = g * named(t, c.recorded);
   linkSet(
     ys.map((y) => [PX + PW, y, LX - 56, Y, "hvh"]),
-    { alpha: kept, upto: soon(t, c.recorded + 0.05, 0.6), flow: flowClock(t) },
+    { alpha: kept, draw: { t, at: c.recorded + 0.05 }, flow: flowClock(t) },
   );
   ledger(LX, Y, 100, 130, { alpha: kept });
   nameText(recordName, LX, ends, { valign: "top", alpha: kept });

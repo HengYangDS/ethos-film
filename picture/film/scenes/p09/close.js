@@ -3,8 +3,8 @@
  * named on its words and the cinnabar datum last. */
 
 import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
-import { ethosMark } from "../../drawing/mark.js";
-import { box, labelSize, line, measure, ring } from "../../drawing/strokes.js";
+import { ethosMark, markLengths } from "../../drawing/mark.js";
+import { box, drawnShare, labelSize, line, measure, ring } from "../../drawing/strokes.js";
 import { agent, check, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot } from "../../drawing/workspace.js";
 import { clearOfTitle, illustrative } from "../../framing/chapters.js";
@@ -13,7 +13,7 @@ import { LEADING, NAME_GAP, NOTE, nameText, rejectedName, wrapName } from "../..
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { glideShare } from "../../timing/pauses.js";
 import { STAGE_CUT, stageIn, stageOut } from "../../timing/stages.js";
 import { CLAIM_DATUM, CLAIM_H, claimPanel, claimWidth } from "../claim.js";
@@ -140,8 +140,8 @@ function bound(s, t, a) {
     alpha: clear * named(t, trustAt),
   });
   // ETHOS's way: the datum's link draws out while its clause is said and reaches the seal as the attestations are
-  // named, its quiet point arriving under the seal.
-  const drawn = soon(t, wayAt + 0.05, Math.max(0.9, sealAt - wayAt));
+  // named, its quiet point arriving under the seal; its tip moves at most at the film's tip pace (drawnShare).
+  const drawn = drawnShare({ t, at: wayAt + 0.05, least: Math.max(0.9, sealAt - wayAt) }, end - dx - 16);
   link(dx + 16, dy, end, dy, { alpha: way, upto: drawn, flow });
   nameText(L("ETHOS 的做法", "In ETHOS"), (dx + end) / 2, dy - 22, {
     valign: "bottom",
@@ -164,7 +164,7 @@ function bound(s, t, a) {
       route: "hvh",
       mid: x - 30,
       alpha: r,
-      upto: soon(t, ats[i] + 0.05, 0.5),
+      draw: { t, at: ats[i] + 0.05 },
     });
     if (i === 0) commitDot(x, y, { alpha: r, r: 11 });
     else if (i === 1) check(x, y + 2, 26, { alpha: r, width: 3.5 });
@@ -294,10 +294,10 @@ const MOUTH = [120, 1];
  * none moving: the origin as a ring at the centre, named inside the bowl beside it at its left, as 06.3 names
  * authority at the datum; the two passages drawing out from it, named in the mouth between them; the boundary taking
  * full ink, named inside the bowl under its top, centred on its axis; and last the cinnabar datum filling the origin,
- * named two gaps under it, so the one point carries both of its names. A point travels the boundary in voice time
- * until the boundary is named. The origin's names end one gap left of the point and the passages' names start in the
- * mouth, the two blocks centred on one line through the point; the cinnabar point's names end at its right edge, two
- * gaps under it so they clear the origin's block, where the English names, the longest, keep clear of the boundary;
+ * named under it, so the one point carries both of its names. A point travels the boundary in voice time until the
+ * boundary is named. The origin's names end one gap left of the point and the passages' names start in the mouth, the
+ * two blocks centred on one line through the point; the cinnabar point's names centre under it, four gaps down, so
+ * they clear both blocks and the lower passage and keep inside the boundary;
  * the boundary's term stands one gap under the ring's inner edge at the term's corners. Only the passages' names reach
  * past the mark, out of its opening, so once the boundary has begun to fill out the close stands within about 40 px of
  * the frame's axis in every state, and the mark, the film's emblem, stands on the axis throughout. */
@@ -323,12 +323,15 @@ function close(s, t, a) {
     lit = ramp(t, boundaryAt - 0.15, 0.5),
     o = a * named(t, originAt),
     datum = named(t, pointAt),
-    passages = soon(t, twoAt + 0.05, 1.0);
-  // The boundary draws on from the cut at the second level, and takes full ink as it is named.
+    lengths = markLengths(S),
+    passages = drawnShare({ t, at: twoAt + 0.05 }, lengths.passage);
+  // The boundary draws on from the cut at the second level, at the film's tip pace by its own length, from the
+  // opening's lower end, so its first stretch passes the mark's name under it, and takes full ink as it is named.
   ethosMark(X, Y, S, {
     datum: 0,
     passages: 0,
-    boundary: soon(t, cutAt, 1.6),
+    boundary: drawnShare({ t, at: cutAt }, lengths.boundary),
+    start: "lower",
     alpha: a * mix(0.58, 1, lit),
   });
   // The passages ink in over their first quarter second, so their round starts do not stand at full ink at the origin
@@ -371,7 +374,9 @@ function close(s, t, a) {
   };
   // Where a term stands, as `pair` places it by its bottom, so that it and its note make one block centred on the
   // mouth's middle line, through the point. The point's names inside the bowl: the origin's one gap left of it, and
-  // the cinnabar datum's two gaps under it, ending at its right edge, so they clear the origin's block.
+  // the cinnabar datum's centred under it, four gaps down, so they clear both the origin's and the passages' blocks and
+  // the lower passage, which the English, the longest, would touch three gaps down, and stand on the mark's axis,
+  // inside the boundary.
   const centred = (said, width) =>
       Y +
       MOUTH[1] -
@@ -380,7 +385,7 @@ function close(s, t, a) {
         labelSize(NOTE) * (1 + LEADING * (wrapName(said, width, NOTE).length - 1))) /
         2 +
       labelSize(LABEL),
-    under = Y + point + 2 * NAME_GAP + labelSize(LABEL),
+    under = Y + point + 4 * NAME_GAP + labelSize(LABEL),
     originSaid = L("先划清边界", "bounded first");
   pair(
     L("一个起点", "One origin"),
@@ -426,9 +431,9 @@ function close(s, t, a) {
     pointAt,
     L("必须落到证据上", "bound to its evidence"),
     boundAt,
-    X + point,
+    X,
     under,
-    "right",
+    "center",
   );
 }
 

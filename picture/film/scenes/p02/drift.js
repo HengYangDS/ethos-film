@@ -11,7 +11,7 @@ import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { railNames, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { glideShare, glideSteps } from "../../timing/pauses.js";
 
 /* Documents drawn as one mark: their outlines and folds one stroke and their rows another, so a set of copies reads as
@@ -231,7 +231,7 @@ export function stageSummaries(t, a, c) {
     alpha: a * named(t, c.orig - 0.1),
   });
   papers(sheets, a * ramp(t, c.summary - 0.15, 0.4));
-  nameText(L("一份总结顶替一次", "A summary takes the place"), (xs[0] + x1) / 2, above, {
+  nameText(L("原话被一份总结顶替", "A summary takes their place"), (xs[0] + x1) / 2, above, {
     valign: "bottom",
     alpha: a * named(t, c.summary),
   });
@@ -288,9 +288,10 @@ export function stageWrongGoal(t, a, c) {
     namesTop,
     { width: 400, alpha: a, align: "center" },
   );
+  // The aim draws on at the tip pace by its own length (drawnShare).
   link(DX + 70, DY, TX - 58, DY, {
     alpha: a,
-    upto: soon(t, c.gCut + 0.3, 0.6),
+    draw: { t, at: c.gCut + 0.3 },
     flow: q,
     width: 2.5,
   });

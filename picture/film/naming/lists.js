@@ -5,7 +5,7 @@ import { ring } from "../drawing/strokes.js";
 import { P } from "../palette.js";
 import { phraseEnd, wordEnd } from "../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../timing/easing.js";
-import { glideShare, pauseHold, thoughtEnd } from "../timing/pauses.js";
+import { drawShare, glideShare, pauseHold, thoughtEnd } from "../timing/pauses.js";
 import { stageCuts } from "../timing/stages.js";
 
 /* A name arrives on its words and stays while its mark stands; it leaves with its stage or its mark. */
@@ -57,9 +57,15 @@ export const speaking = (t, ats, i) => {
   return ramp(t, ats[i] - 0.15, 0.3) * (1 - ramp(t, until, 0.3));
 };
 /* How much of a list has been said: each part adds its share on its own words, so a mark drawn to this share grows
- * one step per part as the parts are named. */
-export const saidShare = (t, ats) =>
-  ats.reduce((v, at) => v + soon(t, at + 0.05, 0.35), 0) / ats.length;
+ * one step per part as the parts are named. Given the mark's `length`, a stroke, each step draws on at the film's tip
+ * pace by its own length (drawShare). */
+export const saidShare = (t, ats, length = null) =>
+  ats.reduce(
+    (v, at) =>
+      v +
+      (length === null ? soon(t, at + 0.05, 0.35) : drawShare(t, at + 0.05, length / ats.length)),
+    0,
+  ) / ats.length;
 /* One beat for each part said over a single mark: the mark's ring flashes on the part's words, within its own extent,
  * so a list spoken at one place shows each part arriving. */
 export function beats(t, x, y, r, ats, { color = P.ink, alpha = 1 } = {}) {

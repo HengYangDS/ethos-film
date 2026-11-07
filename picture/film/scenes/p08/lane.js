@@ -100,7 +100,7 @@ export function lane(s, t, a) {
     color: P.ink,
     width: 3,
     alpha: shown(2),
-    upto: soon(t, laneAt + 0.05, 0.8),
+    draw: { t, at: laneAt + 0.05 },
     end: false,
   });
   writeGate(x3, RAIL_Y, 110, { alpha: shown(3), open: glideShare(t, writeAt + 0.05, 70, 0.6) });
@@ -123,12 +123,12 @@ export function lane(s, t, a) {
   // Each holds its record above the lane, as the lane's own track holds it, so neither ends in a point.
   link(hx, RAIL_Y - 6, hx, LEASE_Y + 30, {
     alpha: h,
-    upto: soon(t, holdAt + 0.05, 0.5),
+    draw: { t, at: holdAt + 0.05 },
     end: false,
   });
   link(ux, RAIL_Y - 6, ux, LEASE_Y + 30, {
     alpha: u,
-    upto: soon(t, untilAt + 0.05, 0.5),
+    draw: { t, at: untilAt + 0.05 },
     end: false,
   });
   nameText(L("由谁持有", "Who holds that lane"), hx, LEASE_Y - 34, {
@@ -268,7 +268,7 @@ export function handoff(s, t, a) {
       route: "hvh",
       mid: ORDER_X + S - 60,
       alpha: r,
-      upto: soon(t, Math.max(terms[i], factsAt + 0.45) + 0.05, 0.6),
+      draw: { t, at: Math.max(terms[i], factsAt + 0.45) + 0.05 },
       flow: flowClock(t, i / 3),
       flowEvery: FLOW_EVERY,
     });

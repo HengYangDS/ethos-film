@@ -16,7 +16,7 @@ import { LEADING, NAME_GAP, NOTE, nameText, rejectedName, termRow } from "../../
 import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { mix, ramp } from "../../timing/easing.js";
 import { drawShare, glideShare } from "../../timing/pauses.js";
 import { card } from "../p04/marks.js";
 import { PLANE_H, PLANE_W, plane } from "./planes.js";
@@ -36,7 +36,8 @@ const FRAME_TOP = 340,
 const names = () => ({
   produces: L("产生证据的程序", ["What produces", "the evidence"]),
   checks: L("核对证据的程序", "What checks it"),
-  identity: L("独立控制的身份", ["Independently", "controlled identity"]),
+  // The English breaks between two-word phrases, never leaving one word alone on a line (M5-23).
+  identity: L("独立控制的账户", ["An independently", "controlled identity"]),
   whether: L("要不要做", "Whether one is needed"),
   decides: L("看风险和规定", "depends on risk and policy"),
 });
@@ -116,13 +117,13 @@ export function boundaryStage(s, t, c, g) {
     nameText(name, x, nameTop, { valign: "top", alpha });
     link(CX + side * (IDENTITY_R + 10), ROW_Y, x - side * (PROGRAM[0] / 2 + 10), ROW_Y, {
       alpha,
-      upto: soon(t, at + 0.05, 0.5),
+      draw: { t, at: at + 0.05 },
       flow: flowClock(t, i / 2),
       flowEvery: FLOW_EVERY,
     });
     link(x, ROW_Y - rise, x, PLANE_TOP + PLANE_H + 8, {
       alpha,
-      upto: soon(t, at + 0.35, 0.4),
+      draw: { t, at: at + 0.35 },
     });
   });
   // So local proof alone cannot rule out forgery: refused under the boundary, on its centre.
@@ -156,7 +157,7 @@ export function boundaryStage(s, t, c, g) {
   // Under the identity, on the line of the names in the row, whether this layer is needed and what decides that.
   link(OX, under.bottom + 12, OX, nameTop - 12, {
     alpha: g * named(t, c.whether),
-    upto: soon(t, c.whether + 0.05, 0.4),
+    draw: { t, at: c.whether + 0.05 },
   });
   termRow(t, [n.whether], [c.whether], [n.decides], [c.risk], OX, nameTop, {
     alpha: g,

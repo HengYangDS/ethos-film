@@ -5,7 +5,7 @@
 
 import { ctx } from "../../canvas.js";
 import { flowClock, link } from "../../drawing/links.js";
-import { labelSize, measure, stroke } from "../../drawing/strokes.js";
+import { drawnShare, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check, cross, documentIcon, person, seal, stopSign } from "../../drawing/symbols.js";
 import { bubble, kernelIcon, layersIcon } from "../../drawing/workspace.js";
 import { beats, listIn, named } from "../../naming/lists.js";
@@ -89,7 +89,7 @@ export function examplesStage(s, t, c, g) {
     q = flowClock(t);
   // The repeat: its second record is struck as it goes.
   const one = g * named(t, c.exact),
-    goes = soon(t, c.goes + 0.05, 0.5),
+    goes = drawnShare({ t, at: c.goes + 0.05 }, EX_W - 52),
     gone = g * named(t, c.goes);
   exampleCard(X1, Y, false, one);
   stroke(
@@ -130,7 +130,7 @@ export function examplesStage(s, t, c, g) {
     qw = measure(QUOTE()) + 56,
     turn = Y + EX_H + 40,
     tried = g * named(t, c.quote2),
-    draw = soon(t, c.quote2 + 0.05, 0.6);
+    draw = { t, at: c.quote2 + 0.05 };
   card(960 - qw / 2, qy - 32, qw, 64, { alpha: g, color: P.ink });
   nameText(QUOTE(), 960, qy, { alpha: g });
   linkSet(
@@ -138,7 +138,7 @@ export function examplesStage(s, t, c, g) {
       [960 - qw / 2 + 40, qy - 32, X1, Y + EX_H, "vhv", turn],
       [960 + qw / 2 - 40, qy - 32, X2, Y + EX_H, "vhv", turn],
     ],
-    { alpha: tried, upto: draw, flow: q },
+    { alpha: tried, draw, flow: q },
   );
   const fails = g * named(t, c.fails),
     sx = 960 + qw / 2 - 40,
@@ -186,7 +186,7 @@ export function constraintsStage(s, t, c, g) {
   const MX = CX + CW + 150;
   names.forEach((v, i) => {
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
-    link(CX + CW - 20, rows[i], MX - 30, rows[i], { alpha: on, upto: soon(t, ats[i] + 0.05, 0.4) });
+    link(CX + CW - 20, rows[i], MX - 30, rows[i], { alpha: on, draw: { t, at: ats[i] + 0.05 } });
     if (kinds[i] === "cross") cross(MX, rows[i], 22, { color: P.ink, alpha: on, width: 3.5 });
     else verdictMark(kinds[i], MX, rows[i], 17, { alpha: on });
     nameText(v, MX + 26 + NAME_GAP, rows[i], {
