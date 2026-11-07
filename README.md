@@ -14,7 +14,7 @@ The films of `v1.0.1` are the published editions. A later release that changes o
 
 ## Rebuilding the films
 
-The films are built by filmkit, the film engine, at the release that `pyproject.toml` pins by its tag `v0.1.1` and `uv.lock` by its commit; this repository holds the film's sources and none of the engine's. A rebuild needs an Apple-silicon Mac with [mise](https://mise.jdx.dev), which installs the locked Node, Python, uv and ETHOS, and three Homebrew tools: FFmpeg with VideoToolbox, ExifTool and rsync 3.
+The films are built by filmkit, the film engine, at the release that `pyproject.toml` pins by its tag `v0.12.0` and `uv.lock` by its commit; this repository holds the film's sources and none of the engine's. A rebuild needs an Apple-silicon Mac with [mise](https://mise.jdx.dev), which installs the locked Node, Python, uv and ETHOS, and three Homebrew tools: FFmpeg with VideoToolbox, ExifTool and rsync 3.
 
 ```bash
 brew install mise ffmpeg exiftool rsync
@@ -58,18 +58,18 @@ The comparison refuses a published asset or a film-bound source that differs fro
 
 ## Checks
 
-`mise run check` runs the picture tests, the Markdown format check and the Python tests. The picture tests check that `picture/film.js` is the bundle of the modules under `picture/film/` and run the composition of each edition on the engine's headless runtime. The repository is governed by [ETHOS](https://github.com/HengYangDS/ethos): `ethos prove --full --execute` runs the portable proof that hosted CI also runs, including the `film-checks` gate, which runs the Python checks of the declaration, the engine pin, the narration mirrors, the listening plan, the players and the fonts through the installed engine, and after a rebuild `ethos prove --host --gate film-media --gate film-reproduction --execute` verifies the films and their reproduction on this host.
+`mise run check` runs the picture tests, the Markdown format check and the Python tests. The picture tests check that `picture/film.js` is the bundle of the modules under `picture/film/` and run the composition of each edition on the engine's headless runtime. The repository is governed by [ETHOS](https://github.com/HengYangDS/ethos): `ethos prove --full --execute` runs the portable proof that hosted CI also runs, including the `film-checks` gate, which runs the Python checks of the declaration, the engine pin, the narration mirrors, the listening plan and the fonts through the installed engine, and after a rebuild `ethos prove --host --gate film-media --gate film-reproduction --execute` verifies the films and their reproduction on this host.
 
 ## Layout
 
-| Path                            | Contents                                                                                                                                                        |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `content/`                      | The film's declaration `film.toml`, both editions' scripts, casts, narration texts and players, the entry page, the source manifest and the listening readings. |
-| `picture/`                      | The picture composition: its modules under `picture/film/`, the bundle `picture/film.js` that the engine reads, and the page and styles that stage it.          |
-| `assets/`                       | The narrator's reference recordings, the covers and the fonts.                                                                                                  |
-| `tests/`                        | The film's tests: the composition of both editions, the declaration, the narration mirrors, the players and the fonts.                                          |
-| `openspec/`                     | The accepted specification and any open Change.                                                                                                                 |
-| `system/gates.toml`, `.config/` | The ETHOS gates, the check policies, the CI declaration and the locked toolchain with its tasks.                                                                |
+| Path                            | Contents                                                                                                                                                                                      |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content/`                      | The film's declaration `film.toml` with each player's summary and colours, both editions' scripts, casts and narration texts, the entry page, the source manifest and the listening readings. |
+| `picture/`                      | The picture composition: its modules under `picture/film/`, the bundle `picture/film.js` that the engine reads, and the page and styles that stage it.                                        |
+| `assets/`                       | The narrator's reference recordings, the covers and the fonts.                                                                                                                                |
+| `tests/`                        | The film's tests: the composition of both editions, the declaration, the narration mirrors and the fonts.                                                                                     |
+| `openspec/`                     | The accepted specification and any open Change.                                                                                                                                               |
+| `system/gates.toml`, `.config/` | The ETHOS gates, the check policies, the CI declaration and the locked toolchain with its tasks.                                                                                              |
 
 ## License
 

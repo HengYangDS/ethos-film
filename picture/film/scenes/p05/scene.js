@@ -3,7 +3,8 @@
  * with its own next step, and a "done" names what was verified (05.3); local proof's trust boundary, which only an
  * independent identity can cross (05.4); a judgment's three outcomes, of which only pass permits action (05.5); what
  * every result other than pass says (05.6); and a distinction that changes no action is never added (05.7). The
- * Illustrative chip stands while the opening sentence's scenario shows. */
+ * Illustrative chip stands on every stage that draws the opening sentence: while it is taken apart, and while it says
+ * "done" beside the planes. */
 
 import { illustrative } from "../../framing/chapters.js";
 import { scenes } from "../registry.js";
@@ -27,7 +28,7 @@ function cuesOf(s) {
     release: cue(s, "版本还没发布", "Nothing has been released"),
     use: cue(s, "还没有人在用", "No one is using it"),
     benefit: cue(s, "实际效益", "actual benefit"),
-    noObs: cue(s, "一点观察都还没有", "no observation at all"),
+    noObs: cue(s, "一点都没观察过", "no observation at all"),
     first3: cue(s, "这就是第二条准则", "That is rule two"),
     statement: cue(s, "只在影响行动的地方做区分", "distinguish only what changes action"),
     separate: cue(s, "各自独立的证据", "separate planes of evidence"),
@@ -103,6 +104,7 @@ scenes["05"] = function (s, t) {
   if (H > 0) outcomesStage(s, t, c, H);
   if (N > 0) nonPassStage(s, t, c, N);
   if (I > 0) refusedStage(s, t, c, I);
-  // The opening sentence's scenario is made up: its chip stands while the sentence is taken apart.
-  illustrative(A);
+  // The opening sentence's scenario is made up: its chip stands while the sentence is taken apart and while it stands
+  // beside the planes as the "done" that names what was verified.
+  illustrative(A + G2);
 };

@@ -46,6 +46,11 @@ The owner watched and heard earlier editions and rejected each of the following.
 7. A concept rendering that narrows, personifies or literally translates its concept, such as a person standing in for authority (concept_fidelity).
 8. Phrasing that sounds machine-written: staged not-X-but-Y contrasts, one-line closers, forced triads, roadmap run-ups, dashes, translationese or stock phrases (language_quality).
 9. A runtime that is not a whole multiple of five minutes (credits_and_deliverable_craft).
+10. A name said other than its declared form, such as ETHOS as /ˈɛθɒs/ where it is /ˈiːθɒs/, or a Chinese sentence that loses the number the other edition carries, such as 「越来越多是 Agent」 for "more and more Agents" (pronunciation, concept_fidelity).
+11. A sentence that makes a first-time listener stop and wonder what or whom it means, such as 「也可能是当初想要得到的好处」, which leaves open whose wish it was and when 当初 was (narrative_and_clarity, language_quality).
+12. A pause inside a phrase where the text has no mark, such as 0.49 s before a second Agent (narration_performance).
+13. A mark that halts dead or sets off at full speed, pops in or out, jumps, flickers or races outside a stage cut, such as flow dots that stop at the end of every thought (visual_explanation_and_motion).
+14. A player whose links open raw files, or whose captions cannot be turned off (credits_and_deliverable_craft).
 
 ## Score anchors
 Every dimension and both editions use the same anchors:
@@ -56,9 +61,16 @@ Every dimension and both editions use the same anchors:
 - 85-89: one material finding.
 - Below 85: more than one material finding.
 
+## Levels
+Judge the film as a first-time viewer by three levels, each as a whole; a strong score in one never makes up for a fault in another. A level passes only when every dimension it holds scores at least the floor and no material finding remains in it:
+{levels}
+
+## Every sentence
+{sentences} lists every sentence of this edition with its id and its start and end in the timeline. Hear each one as speech, at the pace of the narration, and judge it at each level: is it true to the source, understood the first time it is heard, and what a fluent speaker would say? Give every sentence a verdict: "ok", or the ids of the findings that concern it.
+
 ## Findings
-For every finding give: edition and location (language, file SHA-256, segment, start-end timecode); observation (what is visible or audible vs inference); impact and cause; repair; reverification; severity (material / minor / note). Material means the audience cannot follow, a fidelity error, a likely mispronunciation, a readability or continuity failure, or a delivery defect. Minor means a careful first-time viewer would notice it without losing the argument. A note is anything smaller.
+For every finding give: edition and location (language, file SHA-256, segment, start-end timecode); observation (what is visible or audible vs inference); impact and cause; repair; reverification; severity (material / minor / note); level (信, 达 or 雅). Material means the audience cannot follow, a fidelity error, a likely mispronunciation, a readability or continuity failure, or a delivery defect. Minor means a careful first-time viewer would notice it without losing the argument. A note is anything smaller.
 
 ## Output
-Write {out}/{code}-review.md (scope, limits, scores with justification, findings table, and a short list of items for the later human acceptance, which does not affect the scores) and {out}/review-{code}.json with: {{"reviewer", "editions": {{"{code}": {{"media": [{{"path","sha256"}}], "scores": {{one score for each dimension, by its name}}, "overall", "findings": [{{"id","severity","segment","start","end","observation","impact","repair","reverification"}}], "human_listening_checklist": [...]}}}}}}. Put working files under {out}/{code}/.
+Write {out}/{code}-review.md (scope, limits, scores with justification, findings table, and a short list of items for the later human acceptance, which does not affect the scores) and {out}/review-{code}.json with: {{"reviewer", "editions": {{"{code}": {{"media": [{{"path","sha256"}}], "scores": {{one score for each dimension, by its name}}, "overall", "levels": {{"信": {{"verdict": "pass" | "fail", "findings": [ids]}}, "达": {{...}}, "雅": {{...}}}}, "findings": [{{"id","severity","level","segment","start","end","observation","impact","repair","reverification"}}], "sentences": {{"<id>": "ok" | [finding ids]}}, "human_listening_checklist": [...]}}}}}}. Put working files under {out}/{code}/.
 Reply to me briefly: the dimension scores, overall, the count of material findings and each material finding in one line.

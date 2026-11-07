@@ -59,9 +59,8 @@ export const outcomeQuals = () =>
   );
 
 /* The outcomes list's columns, from the stack's left edge: the list's mark at `mark`, the names after it, and the
- * conditions in one column after the widest name. The heading's qualifier follows its term (`natural`) and, once the
- * conditions form their column, joins it (`heading`) when its term ends before it, so the heading row reads on the
- * list's grid without waiting on a column that has not formed. */
+ * conditions in one column after the widest name. The heading's qualifier stands in that column (`heading`), or after
+ * its term (`natural`) where the term ends past it, so the heading row reads on the list's grid. */
 export function outcomesColumns() {
   const mark = PLANE_W + 80,
     names = mark + 18 + NAME_GAP,
@@ -96,9 +95,17 @@ export function buildingReach(t, parts) {
   const [first, ...rest] = [...parts].sort((a, b) => a[0] - b[0]);
   return reachAt(t, first[1], rest);
 }
-/* Where the stack stands while the outcomes are listed beside it: the stack and what of the list stands, taken
- * together, centred on the content centre. */
-const outcomesAt = (t, c) => 960 - buildingReach(t, outcomesParts(c)) / 2;
+/* Where the stack stands while the outcomes are listed beside it: still, so nothing moves as a part of the list joins.
+ * It stands where the stack and the finished list are centred on the content centre, moved toward where the list's
+ * first part would centre them by a quarter of what the later parts add, at most 50 px, so neither the opening list
+ * nor the finished one stands far off the centre. */
+const outcomesAt = (c) => {
+  const parts = outcomesParts(c),
+    final = Math.max(...parts.map(([, reach]) => reach)),
+    // The heading, its qualifier in the conditions' column: the first two parts.
+    first = Math.max(parts[0][1], parts[1][1]);
+  return 960 - final / 2 + Math.min(50, (final - first) / 4);
+};
 
 /* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the
  * rule is named, from the heading's first frame, so the glyph stands whole beside its number before the statement
@@ -202,11 +209,11 @@ export function verifiedStage(s, t, c, g) {
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
  * next three. "never permission" is said of unknown, so it stands as a second line of unknown's condition, in the
  * condition's note style, column and lowercase, rather than as a fourth row of the list. The checks with no result are linked
- * to unknown, and "no problem" is refused. The stack stands where the stack and the list, together, stand on the
- * content centre, and it shifts on the words of each condition that widens the list. */
+ * to unknown, and "no problem" is refused. Each part of the list stands in its place from its words, so nothing moves
+ * as the list builds; the stack stands still beside it (outcomesAt). */
 export function outcomesStage(s, t, c, g) {
   const top = 340,
-    x = outcomesAt(t, c),
+    x = outcomesAt(c),
     col = outcomesColumns(),
     LX = x + col.mark,
     em = labelSize(LABEL),
@@ -230,7 +237,8 @@ export function outcomesStage(s, t, c, g) {
     {
       alpha: g,
       width: 1824 - LX,
-      qualLeft: x + mix(col.natural, col.heading, glideShare(t, columnAt(c) + 0.05, col.heading - col.natural, 0.6)),
+      // The qualifier stands in the conditions' column from its words, so it does not move as the column forms.
+      qualLeft: x + col.heading,
     },
   );
   const restated = [[c.onlyPass], [c.isBlock], [c.isUnknownToo]];

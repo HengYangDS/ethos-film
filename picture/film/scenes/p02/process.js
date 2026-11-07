@@ -1,5 +1,5 @@
 /* 02.6 The usual answer is more process: another register, another ledger, another copy of the same rule. Each needs
- * keeping up; over time they go stale, contradict each other and become a burden of their own. */
+ * someone to maintain it; over time they go stale, contradict each other and become a burden of their own. */
 
 import { ctx } from "../../canvas.js";
 import { box, line, stroke } from "../../drawing/strokes.js";

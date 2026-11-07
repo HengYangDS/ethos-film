@@ -80,7 +80,7 @@ function cuesOf(s) {
     fails: cue(s, "过不了第二个例子", "fails that second example"),
     saved: cue(s, "保住了", "saved"),
     first6: cue(s, "原话里相关的每一条约束", "Every relevant constraint"),
-    constraint: cue(s, "每一条约束", "Every relevant constraint"),
+    constraint: cue(s, "相关的每一条约束", "Every relevant constraint"),
     accounted: cue(s, "都要有个交代", "accounted for"),
     kept: cue(s, "要么留下", "kept excluded"),
     excluded: cue(s, "经授权明确排除", "excluded by an authorized decision"),

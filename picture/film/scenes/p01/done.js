@@ -146,14 +146,15 @@ scenes["01"] = function (s, t) {
     qs = cues(s, [
       ["哪一次提交", "Which commit"],
       ["哪些测试", "Which tests ran"],
-      ["是不是当初真正要的", "really asked for"],
+      ["是不是提需求的人真正要的", "really asked for"],
       ["能不能退回去", "can you get back"],
     ]);
-  // Chinese says the Agents before the code they change and what makes them interchangeable last. The stage still cuts
-  // in on 替我们, whose 改代码 names the row and its code within half a second, as no earlier word can, and the
-  // Agents' name, the concept's rendering, stands on 可以互相替换.
+  // Chinese says the Agents before the code they change and what makes them interchangeable last. The stage cuts in on
+  // 越来越多, the clause that brings the Agents, and its 改代码 names the row and its code from the cut, within its
+  // clause and under a second and a half ahead of its words; the Agents' name, the concept's rendering, stands on
+  // 可以互相替换.
   const [relay, codeAt, inter, ends, pick] = cues(s, [
-    ["替我们", "our code"],
+    ["越来越多", "our code"],
     ["改代码", "our code"],
     ["可以互相替换", "interchangeable Agents"],
     ["会话结束了", "session ends"],
@@ -162,8 +163,8 @@ scenes["01"] = function (s, t) {
   const [writing, easier, flatAt, rely, hard] = cues(s, [
     ["写一个改动", "Writing code"],
     ["越来越容易", "keeps getting easier"],
-    ["能不能放心依靠它", "Knowing whether"],
-    ["能不能放心依靠它", "whether you can rely on it"],
+    ["能不能信得过它", "Knowing whether"],
+    ["能不能信得过它", "whether you can rely on it"],
     ["难的是", "does not"],
   ]);
   const [heard, people, two, trust, again, luck, cant, cantName, many] = cues(s, [
@@ -236,12 +237,13 @@ scenes["01"] = function (s, t) {
     // The four questions, each a station on the rail with its mark in a ring; the rail keeps its spoken order and
     // stays centred while it builds.
     const names = L(
-      ["哪一次提交？", "哪些测试，在哪儿？", "是不是当初真正要的？", "能不能退回去？"],
-      ["Which commit?", "Which tests ran?", "Really asked for?", "Can you get back?"],
+      ["哪一次提交？", "哪些测试，在哪儿？", "是不是真正要的？", "能不能退回去？"],
+      ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"],
     );
     const RY = 620,
       RR = 34,
-      base = railStations(names, 420, 1500, { wrap: 300 }),
+      // The longest English question stands on one line within its share of the rail.
+      base = railStations(names, 420, 1500, { wrap: 330 }),
       shift = building(t, qs, (base[1] - base[0]) / 2),
       xs = base.map((x) => x + shift),
       mid = (PY + CLAIM_H / 2 + RY - RR) / 2;
@@ -283,7 +285,7 @@ scenes["01"] = function (s, t) {
     });
     railNames(names, xs, RY + RR, {
       gap: NAME_GAP,
-      wrap: 300,
+      wrap: 330,
       alpha: (i) => stageA * listIn(t, qs, i),
       set: "questions",
     });
@@ -327,7 +329,7 @@ scenes["01"] = function (s, t) {
     if (!en)
       nameText("改代码", (xs[2] + R + RX - RW / 2) / 2, Y - NAME_GAP, {
         valign: "bottom",
-        alpha: stageB * named(t, codeAt),
+        alpha: stageB,
       });
     else
       nameText("Our code", RX, namesTop, {
@@ -357,9 +359,9 @@ scenes["01"] = function (s, t) {
       dash: [7, 7],
     });
     // The session's name stands over its frame: as the session ends, its first part is centred on the dashed frame,
-    // a final comma hung; as another Agent picks up the work, the whole name glides with the frame and stands centred
-    // over it at the next Agent, the middle of the row.
-    const parts = L(["会话结束了，", "换一个"], ["Session ends, ", "another picks up"]),
+    // without the comma, which comes with the words after it; as another Agent picks up the work, the whole name glides
+    // with the frame and stands centred over it at the next Agent, the middle of the row.
+    const parts = L(["会话结束了", "，换一个"], ["Session ends", ", another picks up"]),
       ending = parts[0].trimEnd(),
       hung = /[、，。；：！？]$/u.test(ending) ? 0.3 * labelSize(LABEL) : 0,
       alone = xs[0] - measure(ending) / 2 + hung,
@@ -380,7 +382,7 @@ scenes["01"] = function (s, t) {
       X1 = 1300,
       Y0 = 610,
       writingName = L("写一个改动", "Writing code"),
-      relyName = L("能不能放心依靠它", "Whether you can rely on it"),
+      relyName = L("能不能信得过它", "Whether you can rely on it"),
       relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))),
       ends = X1 + 7 + NAME_GAP,
       centre = (w) => 960 - (X0 + ends + w) / 2,

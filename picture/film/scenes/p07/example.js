@@ -97,7 +97,7 @@ const CHECK_NAME = () => L("仓库自己声明的检查", "Declared check");
 const NAME_WRAP = 420;
 
 /* The example's context, its market-data pipeline, small at the top of the frame as 06.1 shows it once the second
- * Agent's view builds, and named as the example one gap after its records, which the name stands beside in their row;
+ * Agent's view builds, and named as the example on the same side as there, one gap before its feed in the feed's row;
  * the two are centred together on the frame. It stands while the first Agent and its makings are told and leaves as
  * the owners arrive, before the obligations' names take the band under it. Its height keeps the opening, the context
  * over the first Agent, about 9% above the content centre two seconds into the thought, inside the reviewers' 12%, and
@@ -107,9 +107,9 @@ const CONTEXT_W = 400,
 function exampleContext(alpha, flow) {
   const name = L("例子", "The example"),
     // The pipeline spans its width about its centre.
-    x = 960 - (NAME_GAP + measure(name)) / 2;
+    x = 960 + (NAME_GAP + measure(name)) / 2;
   pipelineMark(x, CONTEXT_Y, CONTEXT_W, { alpha, flow });
-  nameText(name, x + CONTEXT_W / 2 + NAME_GAP, CONTEXT_Y, { align: "left", alpha });
+  nameText(name, x - CONTEXT_W / 2 - NAME_GAP, CONTEXT_Y, { align: "right", alpha });
 }
 
 /* 07.1. In the example, whose pipeline stands named at the top from the scene's first words until the owners arrive,
@@ -257,7 +257,7 @@ export function makings(s, t, a) {
       MX + SCRIPT[0] / 2,
       OX - OWNER[0] / 2,
       dedupAt,
-      L(["去重"], ["Obligation"]),
+      L(["去重这项义务"], ["Obligation"]),
       L([], ["to deduplicate"]),
     ],
     [R2, MX + SHEET[0] / 2, OX - LIST[0] / 2, progressAt, L(["进度"], ["Progress"]), []],

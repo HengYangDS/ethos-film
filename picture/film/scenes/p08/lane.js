@@ -10,7 +10,7 @@ import { agent, clock, seal } from "../../drawing/symbols.js";
 import { bubble, folderIcon } from "../../drawing/workspace.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { clearOfTitle } from "../../framing/chapters.js";
-import { listIn, named, reachAt } from "../../naming/lists.js";
+import { listIn, named } from "../../naming/lists.js";
 import { NOTE, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
@@ -182,11 +182,10 @@ function sourceMark(i, x, y, alpha) {
  * Agent dims, and the Agent that takes over arrives on its words as the work passes to it. The last one's memory is
  * refused between them. Until the reading begins the handover is centred on the frame, the rail reaching about as far
  * either side of it; then it steps left and the rail draws back to the new Agent as the three sources arrive on the
- * right in ETHOS's order, each linked from the new Agent with what it tells. The picture, from the rail's start to the
- * furthest of the sources' words that stand, is centred on the frame from the first source on: each term or tell that
- * reaches further than those before it widens the picture, and the whole glides to its new centre just after its
- * words, so the finished picture, to the longest of what the sources tell, is centred too. Each source's term stands
- * on its marker's line from its first word, and what it tells hangs beneath. */
+ * right in ETHOS's order, each linked from the new Agent with what it tells. From the first source on, the picture
+ * stands where it is centred on the frame by its finished extent, from the rail's start to the longest of what the
+ * sources tell, and each source stands in its place from its words, so nothing moves as the next one joins. Each
+ * source's term stands on its marker's line from its first word, and what it tells hangs beneath. */
 export function handoff(s, t, a) {
   if (a <= 0) return;
   const [halfAt, endsAt, overAt, memoryAt, factsAt, nowAt, changeAt, doneAt, attestAt, passedAt] =
@@ -205,20 +204,13 @@ export function handoff(s, t, a) {
   const sources = SOURCES(),
     terms = [factsAt, changeAt, attestAt],
     tells = [nowAt, doneAt, passedAt],
-    // The sources' words in the order they are said, each with how far right of the sources' text column it reaches.
-    parts = sources
-      .flatMap(([term, tell], i) => [
-        [terms[i], measure(term)],
-        [tells[i], measure(tell, NOTE)],
-      ])
-      .sort((p, q) => p[0] - q[0]);
-  // How far the sources reach at t: a part that reaches further than those before it widens them, gliding from just
-  // after its words (reachAt).
-  const reach = reachAt(t, parts[0][1], parts.slice(1));
+    // How far right of the sources' text column the longest of their words reaches.
+    reach = Math.max(...sources.flatMap(([term, tell]) => [measure(term), measure(tell, NOTE)]));
   const S = 960 - (560 - 320 - 2 + TEXT_X + reach) / 2,
-    // The stage steps to its place by the structural glide over that step.
-    reading = glideShare(t, factsAt - 0.4, 960 - (560 + 820) / 2 - (960 - (560 - 320 - 2 + TEXT_X + parts[0][1]) / 2), 0.8),
-    off = mix(960 - (560 + 820) / 2, S, reading),
+    alone = 960 - (560 + 820) / 2,
+    // The stage steps to its place as the reading begins, by the structural glide over that step.
+    reading = glideShare(t, factsAt - 0.4, alone - S, 0.8),
+    off = mix(alone, S, reading),
     AX = 560 + off,
     BX = 820 + off,
     AY = 410,

@@ -102,19 +102,19 @@
       "03:959": "noun",
       "07:946": "noun",
       "08:158": "noun",
-      "08:629": "noun",
-      "08:2629": "noun"
+      "08:639": "noun",
+      "08:2645": "noun"
     },
     "records": {
       "03:786": "verb",
       "04:362": "noun",
-      "08:2250": "noun",
-      "08:3022": "noun"
+      "08:2266": "noun",
+      "08:3038": "noun"
     },
     "use": {
       "03:288": "noun",
       "07:368": "verb",
-      "08:1382": "noun"
+      "08:1398": "noun"
     },
     "read": {
       "06:512": "past",
@@ -130,14 +130,14 @@
     },
     "duplicate": {
       "04:352": "adjective",
-      "08:3012": "adjective"
+      "08:3028": "adjective"
     },
     "lived": {
       "02:160": "verb"
     },
     "live": {
-      "08:1297": "adjective",
-      "08:1457": "adjective"
+      "08:1313": "adjective",
+      "08:1473": "adjective"
     },
     "contract": {
       "04:54": "noun"

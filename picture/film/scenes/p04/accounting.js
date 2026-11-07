@@ -157,11 +157,11 @@ export function constraintsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(
       ["留下", "经授权明确排除", "标明还没解决"],
-      ["Kept", "Excluded by authorization", "Marked unresolved"],
+      ["Kept", "Excluded by an authorized decision", "Marked unresolved"],
     ),
     kinds = ["pass", "cross", "unknown"],
     ats = [c.kept, c.excluded, c.unresolved],
-    term = L(["每一条约束"], ["Every relevant constraint"]),
+    term = L(["相关的每一条约束"], ["Every relevant constraint"]),
     qual = L(["都要有个交代"], ["accounted for"]),
     CW = 280,
     CH = 190,

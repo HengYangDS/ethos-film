@@ -130,7 +130,7 @@ export function droppedPush(s, t, a) {
   docMark(REPORT_X - DOC[0] / 2, ROW_Y - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
   termRow(
     t,
-    [L("事后说明", "Afterwards reports")],
+    [L("事后说清楚", "Afterwards reports")],
     [afterAt],
     [L("写进去没有", "whether anything was written")],
     [writtenAt],

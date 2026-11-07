@@ -1,6 +1,6 @@
 # Sources whose SHA-256 the film's build records bind and that film-media checks against a
 # build's receipts: the reference recordings, covers and fonts, the scripts and casts, the source
-# manifest, the player and entry pages, and the composition and its page. A new production
+# manifest, the entry page, and the composition and its page. A new production
 # changes them together, through a full render and review.
 [[ownership]]
 id = "film-media-bound-sources"
@@ -14,11 +14,9 @@ paths = [
   "assets/fonts/noto-sans-cjk-sc-subset-bold.otf",
   "assets/fonts/noto-sans-cjk-sc-subset-regular.otf",
   "content/en/film-script.json",
-  "content/en/player.html",
   "content/en/voice-reference.json",
   "content/film-script.json",
   "content/index.html",
-  "content/player.html",
   "content/source-manifest.json",
   "content/voice-performance.json",
   "content/voice-reference.json",

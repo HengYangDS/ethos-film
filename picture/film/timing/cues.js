@@ -3,7 +3,9 @@
 import { L } from "../timeline.js";
 
 export const units = (v) => v.replace(/[^\p{L}\p{N}]/gu, "").toLowerCase();
-export const phraseEnd = new Map();
+/* For a cue's first word, when the clause that names it has been said (at most 4.5 s on), and when its own words end. */
+export const phraseEnd = new Map(),
+  wordEnd = new Map();
 const cueCache = new Map();
 /* Clause boundaries of a segment's text, as counts of letters and digits before each boundary. The words are aligned
  * to the written text, so its letters are counted, not those of the spoken forms. */
@@ -49,6 +51,7 @@ export function cue(s, zh, english, { last = false, end = false } = {}) {
     first,
     Math.max(phraseEnd.get(first) ?? 0, Math.min(said ?? close, first + 4.5), close),
   );
+  wordEnd.set(first, Math.max(wordEnd.get(first) ?? 0, close));
   const value = end ? close : first;
   cueCache.set(key, value);
   return value;
@@ -69,5 +72,8 @@ export function cueFrom(s, zh, english, from) {
     throw Error(`Missing spoken cue ${s.id}:${zh}:${english} after ${from}`);
   let i = starts.length - 1;
   while (starts[i] > index) i--;
+  let j = i;
+  while (j + 1 < starts.length && starts[j + 1] < index + target.length) j++;
+  wordEnd.set(s.words[i].start, Math.max(wordEnd.get(s.words[i].start) ?? 0, s.words[j].end));
   return s.words[i].start;
 }

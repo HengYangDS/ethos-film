@@ -195,7 +195,7 @@ scenes["02"] = function (s, t) {
     register: ["登记表", "register"],
     ledger: ["台账", "ledger"],
     copyRule: ["重复的规定", "copy of the same rule"],
-    keepUp: ["有人维护", "someone to keep it up"],
+    keepUp: ["有人维护", "someone to maintain it"],
     stale: ["过期", "go stale"],
     fight: ["互相打架", "contradict each other"],
     burden: ["新的负担", "a burden of their own"],
@@ -236,7 +236,7 @@ scenes["02"] = function (s, t) {
     headAt: c.head,
     names: L(
       ["原意会走样", "结论超出了证据", "事实还没看清，就先动了手"],
-      ["Meaning drifts", "Claims go beyond their evidence", "Changes before facts"],
+      ["Meaning drifts", "Claims go beyond their evidence", "Acting before the facts"],
     ),
     ats: [c.n1, c.n2 - 0.15, c.n3name - 0.1],
     levels,

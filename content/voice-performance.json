@@ -445,11 +445,6 @@
             "target_reading": "dāng xià"
           },
           {
-            "term": "当初",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "dāng chū"
-          },
-          {
             "term": "当时",
             "kind": "contextual-mandarin-word",
             "target_reading": "dāng shí"
@@ -859,6 +854,12 @@
             "term": "靠得住",
             "kind": "contextual-mandarin-word",
             "target_reading": "kào de zhù"
+          },
+          {
+            "term": "信得过",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "xìn de guò",
+            "dictionary_disagreement": "得 is the potential-complement particle de in 信得过; the dictionary reads 得 alone as dé."
           }
         ],
         "sandhi": "Natural Mandarin connected-speech tone sandhi and weak grammatical syllables; never force isolated citation tones.",

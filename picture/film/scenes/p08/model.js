@@ -11,7 +11,8 @@ import { writeGate } from "../../drawing/lanes.js";
 import { modelGrid } from "../../drawing/models.js";
 import { folderIcon, terminalIcon } from "../../drawing/workspace.js";
 import { nameWidth, resultCard } from "../p07/example.js";
-import { docMark } from "./rail.js";
+import { recordRows, valueCell } from "../p04/marks.js";
+import { docMark, ordinal } from "./rail.js";
 import { beats, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText, rejectedName } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
@@ -87,7 +88,9 @@ function checkGroup(t, x, ys, { alpha = 1, at = Infinity } = {}) {
 }
 
 /* 08.8, second: the model with its concept of the same record, a cell that lacks a dimension and grows one on its
- * words; a new Change revises the model at the smallest boundary drawn around that cell, and the checks that depend
+ * words, filling as it grows with what the new dimension separates: two revisions of one record, the same code and
+ * date with two values, numbered in the cell's new part; a new Change revises the model at the smallest boundary drawn
+ * around that cell, and the checks that depend
  * on the model are compiled again, re-lighting one after another. The Change and the checks are drawn as tall as the
  * model, so the names over the row end on one line and the names under it hang from one line, one gap under each of
  * their marks whichever has arrived, and neighbouring names keep a word's space between them. The stage steps left
@@ -162,6 +165,16 @@ export function modelRevision(s, t, a) {
     width: 280,
     alpha: a * named(t, dimAt),
   });
+  // What the new dimension separates, on its words: two revisions of one record, its rows in the cell's first part and
+  // their numbers in the part it grows, each once the cell has grown room for it.
+  const RX = CELL0 - 0.5 * (GW / 4) + 14,
+    RW = 110,
+    revisions = a * ramp(t, dimAt + 0.3, 0.4),
+    numbered = a * ramp(t, dimAt + 0.5, 0.4);
+  recordRows(RX, MID - 24, RW, [0, 1], { step: 48, alpha: revisions });
+  const [v0, v1] = valueCell(RX, RW);
+  line(v0, MID + 24, v1, MID + 24, { color: P.ink, alpha: revisions, width: 4 });
+  [1, 2].forEach((n, i) => ordinal(n, CELL0 + 0.5 * (GW / 4) + 34, MID - 24 + 48 * i, numbered));
   // The smallest boundary the problem touches: a thin solid outline around the grown cell, since it is a valid scope
   // and the film keeps dashes for what is unknown, missing or refused.
   const cx0 = 3 * (GW / 4) - 6,

@@ -276,8 +276,8 @@ export function stagePath(t, a, c) {
 
 /* 03.8 These are design aims: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
  * kernel holds up only the path's start, and ETHOS's own documents say the kernel alone does not prove the whole path
- * has been delivered: that claim, with its subject, stands refused beside them, named on its words and struck as its
- * predicate is said. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
+ * has been delivered: that claim, with its subject, stands refused beside them, named on its words and carrying its
+ * cross from its first frame, since the voice refuses it before it names it. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
  * over the middle one, the stretch's centre; the solid start is centred on the kernel. The kernel's and the
  * documents' names stand on one baseline, under the taller of the two, and the whole picture stands centred on the
  * frame by its extent. */
@@ -326,6 +326,6 @@ export function stageAims(t, a, c) {
   rejectedName(claim, 1260 + NAME_GAP + dx, 636, {
     align: "left",
     alpha: a * named(t, c.wholePath),
-    mark: ramp(t, c.delivered + 0.3, 0.4),
+    mark: 1,
   });
 }

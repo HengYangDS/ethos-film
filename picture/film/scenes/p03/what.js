@@ -95,7 +95,7 @@ scenes["03"] = function (s, t) {
     systems: ["原有的系统", "the systems you already have"],
     sys1: ["描述业务用的模型", "the model that describes your business"],
     sys2: ["持续集成", "automated checks"],
-    sys3: ["运行 Agent 的应用", "the apps your Agents run in"],
+    sys3: ["运行那些 Agent 的应用", "the apps your Agents run in"],
     sys4: ["问题跟踪系统", "your issue tracker"],
     machine: ["自己的机器", "your own machine"],
     vendor: ["不依赖哪一家平台", "without depending on any one vendor"],
@@ -106,7 +106,7 @@ scenes["03"] = function (s, t) {
     layerCut: ["所有仓库共有的部分", "ETHOS owns in one place"],
     owns: ["共有的部分", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
-    own: ["自己特有的事", "its own purpose"],
+    own: ["自己特有的事", "only what is its own"],
     // 03.8 design aims.
     // The aims' stage cuts in on the words that name it, so its heading stands on them.
     aimsCut: ["设计目标", "design aims"],
@@ -114,12 +114,13 @@ scenes["03"] = function (s, t) {
     docs: ["它自己的文档", "its own documents"],
     alone: ["光有这个内核", "the kernel alone"],
     wholePath: ["整条路", "the whole path"],
-    delivered: ["已经走通", "has been delivered"],
   });
   // The English "the attestation" of 03.5 first occurs inside 03.3's "the attestations", so it is taken after its cut.
   c.att = cueFrom(s, "只有存证", "the attestation", c.aCut);
   // The English "someone" first occurs in 03.2.
   c.reader = cueFrom(s, "后来的人", "someone", c.aCut);
+  // The tools arrive on the words that turn to them in Chinese, and on the word that names them in English.
+  c.toolsAt = cueFrom(s, "别的功能", "tools", c.elseAt);
   const stage = (from, to) => (from ? stageIn(t, c[from]) : 1) * (to ? stageOut(t, c[to]) : 1);
   stageName(s, t, stage(null, "pCut"), c);
   stagePath(t, stage("pCut", "kCut"), c);

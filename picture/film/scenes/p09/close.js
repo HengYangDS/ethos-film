@@ -185,7 +185,7 @@ function bound(s, t, a) {
   line(x - 16, ruleY, x + 30 + Math.max(...ATTESTED().map((v) => measure(v))), ruleY, {
     alpha: look,
   });
-  nameText(L("查得到", "All on record"), x - 16, rows[2] + 1.5 * pitch, {
+  nameText(L("找得到", "All on record"), x - 16, rows[2] + 1.5 * pitch, {
     align: "left",
     alpha: look,
   });
@@ -294,10 +294,11 @@ const MOUTH = [120, 1];
  * none moving: the origin as a ring at the centre, named inside the bowl beside it at its left, as 06.3 names
  * authority at the datum; the two passages drawing out from it, named in the mouth between them; the boundary taking
  * full ink, named inside the bowl under its top, centred on its axis; and last the cinnabar datum filling the origin,
- * named one gap under it, so the one point carries both of its names. A point travels the boundary in voice time until
- * the boundary is named. The origin's names end one gap left of the point, their last line ending on its row; the
- * cinnabar point's end at its right edge, where the English names, the longest, keep clear of the boundary; the
- * boundary's term stands one gap under the ring's inner edge at the term's corners. Only the passages' names reach
+ * named two gaps under it, so the one point carries both of its names. A point travels the boundary in voice time
+ * until the boundary is named. The origin's names end one gap left of the point and the passages' names start in the
+ * mouth, the two blocks centred on one line through the point; the cinnabar point's names end at its right edge, two
+ * gaps under it so they clear the origin's block, where the English names, the longest, keep clear of the boundary;
+ * the boundary's term stands one gap under the ring's inner edge at the term's corners. Only the passages' names reach
  * past the mark, out of its opening, so once the boundary has begun to fill out the close stands within about 40 px of
  * the frame's axis in every state, and the mark, the film's emblem, stands on the axis throughout. */
 function close(s, t, a) {
@@ -366,33 +367,40 @@ function close(s, t, a) {
       set: "09.4:said",
     });
   };
-  // The point's names inside the bowl: the origin's one gap left of it, its note's last line ending on the point's
-  // row, and the cinnabar datum's one gap under it, ending at its right edge.
-  const beside = Y - labelSize(NOTE) - 8,
-    under = Y + point + NAME_GAP + labelSize(LABEL);
+  // Where a term stands, as `pair` places it by its bottom, so that it and its note make one block centred on the
+  // mouth's middle line, through the point. The point's names inside the bowl: the origin's one gap left of it, and
+  // the cinnabar datum's two gaps under it, ending at its right edge, so they clear the origin's block.
+  const centred = (said, width) =>
+      Y +
+      MOUTH[1] -
+      (labelSize(LABEL) +
+        8 +
+        labelSize(NOTE) * (1 + LEADING * (wrapName(said, width, NOTE).length - 1))) /
+        2 +
+      labelSize(LABEL),
+    under = Y + point + 2 * NAME_GAP + labelSize(LABEL),
+    originSaid = L("先划清边界", "bounded first");
   pair(
     L("一个起点", "One origin"),
     originAt,
-    L("先划清边界", "bounded first"),
+    originSaid,
     beforeAt,
     X - point - NAME_GAP,
-    beside,
+    centred(originSaid, 380),
     "right",
   );
   // English shows what the passages stand for as its clause begins, so the passages' names stand whole within a
   // moment; Chinese begins that clause on the note's own words. The name and its note stand as one block centred on
   // the mouth's middle line.
   const passagesName = L("两条路径", "Two passages"),
-    passagesSaid = L("影响行动的地方", "only where they decide action"),
-    noteLines = wrapName(passagesSaid, PART_NOTE, NOTE).length,
-    block = labelSize(LABEL) + 8 + labelSize(NOTE) * (1 + LEADING * (noteLines - 1));
+    passagesSaid = L("影响行动的地方", "only where they decide action");
   pair(
     passagesName,
     twoAt,
     passagesSaid,
     whereAt - (en ? 0.45 : 0),
     X + MOUTH[0],
-    Y + MOUTH[1] - block / 2 + labelSize(LABEL),
+    centred(passagesSaid, PART_NOTE),
     "left",
     PART_NOTE,
   );

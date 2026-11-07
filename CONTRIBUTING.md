@@ -13,7 +13,7 @@ This guide is for maintainers who change, rebuild or release the films. Watching
 
 ## What the repository owns
 
-The repository holds the two introduction films' sources: the scripts, casts, narration texts, players, the picture composition and the assets. The engine is the [filmkit](https://github.com/HengYangDS/filmkit) release that `pyproject.toml` and `uv.lock` pin. Never patch the installed engine or copy it here: an engine change goes through filmkit's own Change and release, and then a lock update here.
+The repository holds the two introduction films' sources: the scripts, casts, narration texts, the picture composition and the assets; the engine renders each edition's player from the declaration. The engine is the [filmkit](https://github.com/HengYangDS/filmkit) release that `pyproject.toml` and `uv.lock` pin. Never patch the installed engine or copy it here: an engine change goes through filmkit's own Change and release, and then a lock update here.
 
 The scripts, casts and composition are the reviewed films. Each edition is exactly 900 seconds of native 60 fps 2D picture with the selected narrator, small single-line captions and no music, and natural phrase tails and thought-group pauses are kept; a runtime is never reached by deleting necessary punctuation or forcing a uniform pace. The films explain ETHOS as the documents that [`content/source-manifest.json`](content/source-manifest.json) pins state it, and describe planned capabilities as design.
 

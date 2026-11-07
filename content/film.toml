@@ -13,21 +13,24 @@ source_manifest = "content/source-manifest.json"
 # What each concept the film names means in those documents, and each edition's words for it.
 concepts = "content/concepts.toml"
 
-# Each edition's folder of script, cast and player, and its 16:9 cover.
+# Each edition's folder of script and cast, its 16:9 cover, and the summary its player shows.
 [editions.zh]
 sources = "content"
+summary = "这部 15 分钟的影片介绍 ETHOS。一个 Agent 交回一句“做完了，测试全过”，这句话到底说明了多少？影片先说人和可以互相替换的 Agent 一起改代码时难在哪里，再说 ETHOS 是什么、为什么这样设计，用一项行情数据需求讲它的四条准则：留住原意，只区分影响行动的，把权威依据和视图分开，义务没了就让机制退场；最后回到开头那句话和 ETHOS 的标志。片中的行情数据管线是假设的例子；规划中的能力按设计说明。"
 cover = "assets/cover/ethos-cover.png"
 
 [editions.en]
 sources = "content/en"
+summary = "A 15-minute introduction to ETHOS. An Agent reports “Done. All tests pass.” How much does that establish? The film shows why relying on such a report is hard when people and interchangeable Agents change one repository, what ETHOS is, and why it is designed around four rules: preserve meaning with the smallest model, distinguish only what changes action, keep authority separate from views, and retire a mechanism when its obligation disappears. One market-data requirement carries the rules from request to real use, and the film returns to the opening sentence and the ETHOS mark. The pipeline is illustrative; planned capabilities are described as design."
 cover = "assets/cover/ethos-cover-en.png"
 # A term that reads as one name stays on one caption line, as does a modifier and the noun it
-# qualifies.
+# qualifies, or a phrase whose parts would leave a caption too short to read. Terms are written in
+# lowercase: the engine matches them against the lowercased words of the text.
 caption_terms = [
-  "Work Lane",
+  "work lane",
   "trust kernel",
-  "official Change",
-  "Product Design Contract",
+  "official change",
+  "product design contract",
   "market-data pipeline",
   "code-hosting platforms",
   "local proof",
@@ -48,6 +51,15 @@ caption_terms = [
   "how it has been understood",
   "is it accepted",
   "what it is about to do",
+  "well formed",
+  "picks up the work later",
+  "the same input",
+  "temporary deduplication script",
+  "own declared check",
+  "an original value",
+  "single correction",
+  "for everything else turns first to mature tools",
+  "and a distinction that would not change any action",
 ]
 
 # The fonts the picture stages below fonts/, in this order: Noto Sans CJK SC, subset to the
@@ -60,6 +72,15 @@ fonts = [
   "assets/fonts/ibm-plex-sans-regular.ttf",
   "assets/fonts/ibm-plex-sans-bold.ttf",
 ]
+
+# The colours of each edition's player page: its ground, text, quieter text, rules and borders,
+# and the accent of a chosen or focused control.
+[player]
+background = "#0E1B20"
+text = "#F6F1E8"
+muted = "#C8CED0"
+line = "#5F7680"
+accent = "#CF6A52"
 
 [review]
 # The reviewer prompt: a str.format template that each round fills for each edition.
@@ -123,3 +144,40 @@ credits_and_deliverable_craft = """\
   the film opens on its title card and closes on its signature; covers match the title card; \
   Yang HENG metadata; subtitles and transcript match the speech; chapters; player; a runtime that \
   is a whole multiple of five minutes; opening, ending, covers and entry form one edition."""
+
+# The review's three levels, the owner's 信、达、雅, by which a first-time viewer judges the whole film: each asks one
+# thing of the film and holds some of the dimensions, every dimension in one level. A review passes only when each
+# level does, with every dimension it holds at the floor and no material finding in it.
+[review.levels."信"]
+asks = """\
+  faithful: every statement says what its cited source says, with its conditions, modality and scope; each concept \
+  keeps its contract rendering and one name, and the Chinese carries a Latin term's number in the noun's own clause; \
+  names and readings are said as declared; both editions say the same things in the same order, and the picture names \
+  what the voice says, in its words."""
+dimensions = ["subject_and_faithfulness", "concept_fidelity", "pronunciation"]
+
+[review.levels."达"]
+asks = """\
+  conveyed: a newcomer understands each sentence the first time it is heard, with a clear subject, familiar \
+  collocations and every term explained where it first appears; the argument moves step by step and the ending \
+  returns to the opening; the voice speaks in thought groups, with no pause inside a phrase and no swallowed ending; \
+  the picture shows what is said as it is said; the player, transcript and files work as a viewer expects."""
+dimensions = [
+  "narrative_and_clarity",
+  "narration_performance",
+  "sound_picture_continuity",
+  "credits_and_deliverable_craft",
+]
+
+[review.levels."雅"]
+asks = """\
+  graceful: plain spoken words a fluent speaker would say, Chinese that is not a translation of the English, and no \
+  machine tells; a clear, warm voice; every movement eases in and out, and nothing halts, sets off, pops, jumps or \
+  races outside a stage cut; text aligned, even and tidy, frames balanced, one palette."""
+dimensions = [
+  "language_quality",
+  "voice_quality",
+  "visual_explanation_and_motion",
+  "composition_and_typography",
+  "visual_aesthetics_and_color",
+]

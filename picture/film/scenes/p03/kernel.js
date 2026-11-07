@@ -5,18 +5,10 @@ import { paper, papers } from "../p02/drift.js";
 import { ctx } from "../../canvas.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { flowAlong, flowClock, link } from "../../drawing/links.js";
-import {
-  box,
-  dot,
-  fill,
-  labelSize,
-  line,
-  measure,
-  stroke,
-} from "../../drawing/strokes.js";
+import { box, dot, fill, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { check, cross, person, seal } from "../../drawing/symbols.js";
 import { folderIcon, kernelIcon } from "../../drawing/workspace.js";
-import { listIn, listLevel, named, speaking } from "../../naming/lists.js";
+import { listIn, listLevel, named, saidShare, speaking } from "../../naming/lists.js";
 import {
   LEADING,
   NAME_GAP,
@@ -30,7 +22,7 @@ import {
 import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
+import { ease, mix, ramp, soon } from "../../timing/easing.js";
 import { glideShare, glideSteps, voiceTime } from "../../timing/pauses.js";
 
 /* 03.3 A small trust kernel supports the path: the path at the top, the kernel under it on its words. Its three inputs
@@ -46,8 +38,9 @@ import { glideShare, glideSteps, voiceTime } from "../../timing/pauses.js";
  * the gate and the new attestation hang from one baseline, one gap under the tallest of them, the kernel; the gate is
  * named by the moment it stands for, 写入 / "The moment it writes", and what it does then, checks again, joins under
  * that name on its words. What the kernel records stands over the new attestation, one clause to a line, each line
- * centred on it, and grows upward from one gap over it as its clauses are said; the loop turns down clear of the
- * new attestation's name and runs back under the gate's. */
+ * centred on it, the last one gap over it: each line stands in its place from its words, as a list written on a board grows, and the new attestation's ring draws on a third on each, its stamp
+ * landing on the words that name it; the loop turns down clear of the new attestation's name and runs back under the
+ * gate's. */
 const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
 /* The shift that centres the extent from x0 to x1 on the frame. */
 export const centring = (x0, x1) => 960 - (x0 + x1) / 2;
@@ -71,9 +64,11 @@ export function stageKernel(t, a, c) {
       en ? measure(intentQual.join(""), NOTE) : 0,
       measure(attQual.join(""), NOTE),
     );
-  // What the kernel records: each clause on its own line, a part carrying the space before it.
+  // What the kernel records: each clause on its own line, a part carrying the space before it. The Chinese clauses stand
+  // as a list, one to a line, so the line breaks part them and no enumeration mark stands at a line's end: the words of
+  // every line centre on one axis.
   const parts = L(
-      ["看到了什么、", "判断了什么、", "做了什么"],
+      ["看到了什么", "判断了什么", "做了什么"],
       ["What it observed,", " what it decided", " and what it did"],
     ),
     recordWidth = Math.max(...parts.map((v) => measure(v.trim()))) + 1,
@@ -201,18 +196,22 @@ export function stageKernel(t, a, c) {
     align: "center",
   });
   link(GX + 30, KY, SX - 34, KY, { alpha: rec, upto: soon(t, c.rec1 + 0.05, 0.4) });
-  seal(SX, KY, 34, { color: P.ink, alpha: rec, stamp: stamped });
-  // The record grows from its place over the new attestation: its last line stands one gap over the seal, and in the
-  // half second before each next line's words the lines already there lift one line, so the new line arrives in its
-  // place under them and the record never stands away from what it names.
-  const recordAts = [c.rec1, c.rec2, c.rec3],
-    lift =
-      labelSize(LABEL) *
-      LEADING *
-      growTexts(parts, recordWidth)
-        .slice(1)
-        .reduce((v, line) => v + 1 - soon(t, recordAts[line[0][0]] - 0.5, 0.5), 0);
-  growName(t, parts, recordAts, SX, KY - 34 - NAME_GAP + lift, {
+  // The new attestation fills in as what it records is said: its ring draws on a third on each part's words, from where
+  // the link reaches it, and its inner ring and stamp land on the words that name it, so no empty circle waits.
+  const recordAts = [c.rec1, c.rec2, c.rec3];
+  ring(SX, KY, 34, {
+    color: P.ink,
+    // The ring's ink rises as its first third draws on, so its first arc never stands at full ink at once.
+    alpha: a * ramp(t, c.rec1 + 0.05, 0.3),
+    width: 3,
+    upto: saidShare(t, recordAts),
+    start: Math.PI,
+  });
+  ring(SX, KY, 34 * 0.74, { color: P.ink, alpha: stamped * 0.6, width: 1.5 });
+  check(SX, KY + 34 * 0.05, 34 * 0.8, { color: P.ink, alpha: stamped });
+  // The record stands over the new attestation, its last line one gap over it; each line stands in its place from its
+  // words, so no line moves as the next one joins.
+  growName(t, parts, recordAts, SX, KY - 34 - NAME_GAP, {
     width: recordWidth,
     valign: "bottom",
     align: "center",
@@ -225,7 +224,13 @@ export function stageKernel(t, a, c) {
   });
   // The loop draws on in two legs, the second from where the first ends, as the first completes.
   const back = soon(t, c.newAtt + 0.05, 0.25);
-  link(SX + 34, KY, RX, LOOP, { route: "hv", alpha: stamped, upto: back, end: false });
+  // Each leg's ink rises as it draws on, so no part of the loop stands at full ink at once.
+  link(SX + 34, KY, RX, LOOP, {
+    route: "hv",
+    alpha: a * ramp(t, c.newAtt + 0.05, 0.25),
+    upto: back,
+    end: false,
+  });
   link(RX, LOOP, IX, ys[2] + 28, {
     route: "hv",
     alpha: stamped,
@@ -234,9 +239,16 @@ export function stageKernel(t, a, c) {
   });
 }
 
+/* The facts row of 03.4: its ticks, the pace of the lit run along them in ticks per second of voice time (156 px/s),
+ * and the run's full core and soft edge either side of its middle, in ticks. */
+const FACT_TICKS = 13,
+  FACT_PACE = 3,
+  FACT_CORE = 1.2,
+  FACT_EDGE = 1;
+
 /* 03.4 These things last for different lengths of time: three rows over one stroke of lines, named by the heading from
  * the cut. Intent stays, one bar from its Change, which copies drop from each time the kernel compiles it; facts are
- * marks seen afresh, a window of them passing that never stays; plans end, one carried out and one discarded, and are
+ * marks seen afresh, a lit run of them passing that never stays; plans end, one carried out and one discarded, and are
  * not kept, and a new one is compiled again. Each row's marks touch its line, so the rows are one mark with the
  * lines; a point runs along each row once its term is said. The lines stand centred on the frame; the heading shares
  * their left edge with the rows' terms, one line height above the first term, so it heads the rows rather than the
@@ -263,13 +275,14 @@ export function stageLifetimes(t, a, c) {
       [
         [L("刚观察到的事实", "Fresh facts")],
         [c.facts],
-        L(["每次都重新去看，", "从不存下来"], ["observed again every time, ", "never stored"]),
+        // A part that waits for the next one holds no trailing mark: the mark comes with the words after it.
+        L(["每次都重新去看", "，从不存下来"], ["observed again every time", ", never stored"]),
         [c.again, c.never],
       ],
       [
         [L("计划", "A plan")],
         [c.planRow],
-        L(["要么执行，", "要么作废"], ["carried out ", "or discarded"]),
+        L(["要么执行", "，要么作废"], ["carried out", " or discarded"]),
         [c.carried, c.discarded],
       ],
     ],
@@ -304,22 +317,27 @@ export function stageLifetimes(t, a, c) {
     [1160, 1380, 1580].map((x) => [x - 12, ys[0] + 6, 24, 30, 2]),
     a * ramp(t, c.afresh - 0.15, 0.4),
   );
-  // Facts: a passing window of fresh marks, none of which stays.
-  const facts = a * ramp(t, c.facts - 0.15, 0.4),
-    w = (voiceTime(t) * 0.25) % 1;
-  if (facts > 0.01)
+  // Facts: a passing run of fresh marks, none of which stays. The run travels the row from before its first tick to past
+  // its last at FACT_PACE ticks per second of voice time, so it rests in the quiet between thoughts, and enters again
+  // only once it has left, so it never stands at both ends at once. Each tick's ink follows its distance from the run's
+  // edge: it rises from the row's line to full height within FACT_CORE ticks of the run's middle and sinks back FACT_EDGE
+  // ticks further, so it rises and falls over a third of a second. The ticks are one stroke, one mark with the line.
+  const facts = a * ramp(t, c.facts - 0.15, 0.4);
+  if (facts > 0.01) {
+    const reach = FACT_CORE + FACT_EDGE,
+      middle = -reach + ((FACT_PACE * voiceTime(t)) % (FACT_TICKS - 1 + 2 * reach));
     stroke(
       () => {
-        for (let k = 0; k < 13; k++) {
-          const x = M0 + 20 + k * 52,
-            d = Math.abs(k / 12 - w);
-          if (Math.min(d, 1 - d) > 0.14) continue;
-          ctx.moveTo(x, ys[1] - 18);
-          ctx.lineTo(x, ys[1]);
+        for (let k = 0; k < FACT_TICKS; k++) {
+          const h = 18 * ease((reach - Math.abs(k - middle)) / FACT_EDGE);
+          if (h < 0.5) continue;
+          ctx.moveTo(M0 + 20 + k * 52, ys[1] - h);
+          ctx.lineTo(M0 + 20 + k * 52, ys[1]);
         }
       },
       { color: P.ink, alpha: facts, width: 3 },
     );
+  }
   // Plans: two that end, carried out and discarded, then not kept; another compiled again.
   const p1 = a * ramp(t, c.carried - 0.15, 0.4),
     p2 = a * ramp(t, c.discarded - 0.15, 0.4),
@@ -404,8 +422,10 @@ export function stageScope(t, a, c) {
     cardAt = c.att - L(0.15, 0.45),
     // Before the attestation's name joins it, the heading reaches as far as its first part does.
     headRight = 1000 + L(measure(head.join("")) / 2 - measure(head[1]), measure(head[0]) / 2),
+    // The picture glides to take the scope in once the card's link has drawn on, so the link never grows while its
+    // ends slide.
     dx = glideSteps(t, centring(left, headRight), [
-      [cardAt, centring(left, scopeEnd)],
+      [cardAt + 0.4, centring(left, scopeEnd)],
       [c.outside, centring(left, right)],
     ]);
   const CX = 1000 + dx,

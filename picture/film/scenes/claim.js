@@ -18,8 +18,9 @@ import { L } from "../timeline.js";
 export const CLAIM_H = 84,
   CLAIM_PAD = 60,
   CLAIM_DATUM = 12;
-/* The sentence in its two parts, which may arrive on their own words. */
-export const claimParts = () => L(["“做完了，", "测试全过”"], ["“Done. ", "All tests pass.”"]);
+/* The sentence in its two parts, which may arrive on their own words; the comma that joins the Chinese parts comes with
+ * the second, so the first waits for it without a trailing mark. */
+export const claimParts = () => L(["“做完了", "，测试全过”"], ["“Done. ", "All tests pass.”"]);
 export const claimWidth = () => measure(claimParts().join("")) + 2 * CLAIM_PAD;
 /* The datum alone, at radius `r`: the mark's first part, which the film's later parts complete. */
 export const datumMark = (x, y, r = CLAIM_DATUM, alpha = 1) =>

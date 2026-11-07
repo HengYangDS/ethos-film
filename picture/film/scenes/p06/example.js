@@ -299,7 +299,9 @@ export function oneStepStage(s, t, c, g) {
     },
     { color: P.ink, alpha: g * ramp(wrote, 0, 0.1), width: 2.5 },
   );
-  commitDot(end, Y, { alpha: g * ramp(wrote, 0.6, 0.4), picked: g * ramp(wrote, 0.6, 0.4) });
+  // The written commit lands over 0.45 s as the line reaches it.
+  const landed = g * ramp(t, c.afterwards + 0.6, 0.45);
+  commitDot(end, Y, { alpha: landed, picked: landed });
   const back = g * named(t, c.readBack);
   link(end, Y - 30, GX, Y - 100, {
     route: "vhv",
@@ -320,7 +322,7 @@ export function oneStepStage(s, t, c, g) {
  * still pending, each named on its words; all three are recorded, and one joint outcome is refused under the
  * platforms. The names at the two ends of the fan share one line under the deeper end, the record; until the record
  * arrives, the version's name hangs one gap under its tag. The version and the platforms stand centred together, and
- * glide left as the record joins them, so the fan stands centred whole. */
+ * glide left as the record joins them, from its first frame, so the fan stands centred whole. */
 export function platformsStage(s, t, c, g) {
   // The platforms centre on the middle of the fan, between the version and the record.
   const VX = 540,
@@ -338,7 +340,7 @@ export function platformsStage(s, t, c, g) {
     left = Math.min(VX - 60 - 1.25, VX - measure(versionName) / 2),
     fanned = 960 - (left + PX + PW + 1.25) / 2,
     whole = 960 - (left + Math.max(LX + 50 + 1.25, LX + measure(recordName) / 2)) / 2,
-    joined = glideShare(t, c.recorded + 0.05, fanned - whole, 0.8);
+    joined = glideShare(t, c.recorded - 0.15, fanned - whole, 0.8);
   ctx.save();
   ctx.translate(mix(fanned, whole, joined), 0);
   const version = g * named(t, c.version);
@@ -382,7 +384,7 @@ export function platformsStage(s, t, c, g) {
   ledger(LX, Y, 100, 130, { alpha: kept });
   nameText(recordName, LX, ends, { valign: "top", alpha: kept });
   rejectedName(
-    L("同时成功、同时失败", "All succeed or fail together"),
+    L("要么都成功，要么都失败", "All succeed or fail together"),
     PX + PW / 2,
     ys[2] + 30 + 70,
     {

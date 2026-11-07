@@ -8,7 +8,7 @@ import { box, dot, measure, ring, stroke } from "../../drawing/strokes.js";
 import { check, clock, documentIcon, person, stopSign } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
 import { beats, building, listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, growName, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -166,7 +166,7 @@ export function corrections(s, t, a) {
 /* Each term is the concept as the contract renders it; what it says is a qualifier, short in Chinese, whose caption
  * already carries the whole sentence. */
 const JUDGED = () => [
-  [L("观察到的", "Observation"), L("更正不见了", "the first correction has disappeared")],
+  [L("观察到的", "Observation"), L("第一次更正不见了", "the first correction has disappeared")],
   [L("推断的原因", "Inference"), L("多次更正", "the vendor can correct a value more than once")],
   [
     L("提出的补救办法", "Proposed remedy"),
@@ -198,7 +198,7 @@ export function judgement(s, t, a) {
     ["把情况报了回来", "report this back"],
     ["分开判断", "judged separately"],
     ["观察到的，是", "The observation is"],
-    ["更正不见了", "the first correction has disappeared"],
+    ["第一次更正不见了", "the first correction has disappeared"],
     ["推断的原因", "The inference"],
     ["多次更正", "the vendor can correct"],
     ["提出的补救办法", "the proposed remedy"],
@@ -293,13 +293,22 @@ export function judgement(s, t, a) {
       }),
     { alpha: apart, width: 4 },
   );
-  // Why they stay apart: each verdict named under its panel on its words.
-  [L("照样成立", "Still stands"), L("可能错", "Can be wrong"), L("被否掉", "Rejected")].forEach(
-    (v, i) =>
-      nameText(v, PANEL_X[i] + shift, PANEL_Y + PANEL_H / 2 + NAME_GAP, {
-        valign: "top",
-        alpha: a * named(t, verdicts[i]),
-        set: "08.7:verdicts",
-      }),
+  // Why they stay apart: each verdict named under its panel on its words. The remedy's is said as a condition in
+  // English, each part on its words, so it reads in the same mood as the other two rather than as what happened to
+  // this remedy; its comma comes with the words after it.
+  const verdictNames = [
+    [L("照样成立", "Still stands")],
+    [L("可能错", "Can be wrong")],
+    L(["被否掉"], ["If rejected", ", the problem stays"]),
+  ];
+  verdictNames.forEach((parts, i) =>
+    growName(
+      t,
+      parts,
+      i === 2 ? [rejectAt, problemAt] : [verdicts[i]],
+      PANEL_X[i] + shift,
+      PANEL_Y + PANEL_H / 2 + NAME_GAP,
+      { align: "center", alpha: a, build: true, set: "08.7:verdicts" },
+    ),
   );
 }

@@ -42,7 +42,7 @@ export function release(s, t, a) {
     s,
     [
       ["改完以后", "When the work is committed"],
-      ["这一次提交", "that exact commit"],
+      ["这次提交", "that exact commit"],
       ["完整的核验", "a full local proof"],
       ["留下存证", "leaves an attestation"],
       ["维护者审阅", "A maintainer reviews"],
@@ -95,10 +95,10 @@ export function release(s, t, a) {
   });
   // The commit is larger than the work's point, so the two are never read as one list of points.
   commitDot(CX, RAIL_Y, { alpha: c, r: 14, picked: c });
-  nameText(L("这一次提交", "That exact commit"), CX, below, { valign: "top", alpha: c });
+  nameText(L("这次提交", "That exact commit"), CX, below, { valign: "top", alpha: c });
   proofMark(CX, UP, p);
   link(CX, UP + 30, CX, RAIL_Y - 24, { alpha: p, upto: soon(t, proofAt + 0.05, 0.4) });
-  nameText(L("完整的核验", "A full local proof"), CX, above, { valign: "bottom", alpha: p });
+  nameText(L("本地的完整核验", "A full local proof"), CX, above, { valign: "bottom", alpha: p });
   link(CX + 30, UP, AX - 34, UP, { alpha: at, upto: soon(t, attestAt + 0.05, 0.5) });
   seal(AX, UP, 22, { alpha: at, color: P.ink });
   nameText(L("存证", "Attestation"), AX, above, { valign: "bottom", alpha: at });
@@ -177,7 +177,7 @@ const NEEDS = () => [
   L("上线的那个版本", "That version"),
   L("真实运行的环境", "The environment"),
   L("原来的做法", "The old way"),
-  L("一段时间", "A set period"),
+  L("一段约定的时间", "A set period"),
 ];
 const NEED_Y = [350, 450, 550, 650],
   NEED_X = 1340;
@@ -197,7 +197,7 @@ export function liveUse(s, t, a) {
     ["上线的那个版本", "the version that went live"],
     ["真实运行的环境", "the environment"],
     ["原来的做法", "how things were done before"],
-    ["一段时间", "a set period"],
+    ["一段约定的时间", "a set period"],
   ]);
   const needs = NEEDS(),
     NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v) => nameWidth(v, 360))),

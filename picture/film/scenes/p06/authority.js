@@ -45,14 +45,15 @@ const RULE = () => ({
 });
 /* The heading drawn in the rules' shared place, without a glyph; the note joins it on its own words. It stands from the
  * thought's first words, its number arriving over the example it names, and stays while the mark is the rule's
- * stage. */
+ * stage. The statement leads its words by a fifth of a second, within their clause, so it names the mark that comes in
+ * on the rule's name within 0.6 s. */
 export function ruleThreeHeading(t, c, g) {
   const { number, statement, note } = RULE(),
     h = ruleHeading(t, {
       number,
       numberAt: c.number,
       statement,
-      statementAt: c.statement,
+      statementAt: c.statement - 0.2,
       alpha: g,
     });
   nameText(note, h.tx, h.bottom + TERM_STACK, {
@@ -140,15 +141,16 @@ function viewsOf({ x, y, size }) {
 
 /* The six sources of authority, three above the passages and three below, centred in the bowl on the mark's ink
  * centre, which in 06.3 is the frame's axis and the heading's: a centred list, so its rows have no points before them.
- * Each is named as a short noun, so the list names the inputs rather than re-setting the sentence that reads them. */
+ * Each is named in the narration's words, as a noun, so the list names the inputs rather than re-setting the sentence
+ * that reads them. */
 const SOURCES = () =>
   L(
     [
       "用户当下的指令",
-      "仓库内容",
+      "仓库里的真实内容",
       "已经采纳的正式变更",
       "刚观察到的事实",
-      "适用规则",
+      "适用的规则",
       "仍然有效的存证",
     ],
     [
@@ -177,15 +179,16 @@ function sources(t, c, g, { x, y, size }) {
 }
 
 /* The mark at `place`, its boundary closing on the rule's words, with authority named inside at the datum's left. The
- * boundary draws on from the cut on those words, where the mark arrives, so it grows from its start rather than
- * appearing part drawn. */
+ * mark arrives in the cut on the rule's name and its boundary draws on from that cut, closing over the statement's
+ * first words, so it grows from its start rather than appearing part drawn, and the parts the earlier rules drew stand
+ * inside it within half a second. */
 function boundaryMark(t, c, g, { x, y, size }) {
   const k = size / 512;
   ethosMark(x, y, size, {
     datum: g,
     hole: 1,
     passages: 1,
-    boundary: soon(t, c.statement + STAGE_CUT, 1.2),
+    boundary: soon(t, c.markCut + STAGE_CUT, 1.2),
     alpha: g,
   });
   beats(t, x, y, 21 * k, [c.inEthos], { alpha: g });
@@ -195,9 +198,9 @@ function boundaryMark(t, c, g, { x, y, size }) {
   });
 }
 
-/* 06.3 Authority inside the boundary: from the statement's words the mark stands in its place under the heading, its
- * boundary closing on them, so the mark arrives with the words that name it; authority is named at the datum and its
- * six sources build as a list on their words. */
+/* 06.3 Authority inside the boundary: from the rule's name the mark stands in its place under the heading, and its
+ * boundary closes on the rule's statement, so the mark arrives with the words that name it; authority is named at the
+ * datum and its six sources build as a list on their words. */
 export function authorityStage(s, t, c, g) {
   const at = authorityPlace();
   boundaryMark(t, c, g, at);
@@ -299,7 +302,7 @@ function branchOf({ x, y }) {
   const bx = x - 180;
   return { bx, by: y - 126, end: bx + 4 * BSTEP, mid: bx + 2 * BSTEP };
 }
-function innerBranch(a, place, moved, says = null) {
+function innerBranch(a, place, moved, says = null, landed = ramp(moved, 0.6, 0.4)) {
   const b = branchOf(place);
   commitRow(b.bx, BSTEP, b.by, 4, { alpha: a, single: true });
   stroke(
@@ -309,7 +312,7 @@ function innerBranch(a, place, moved, says = null) {
     },
     { color: P.ink, alpha: a * ramp(moved, 0, 0.1), width: 2.5 },
   );
-  ring(b.end, b.by, 9, { color: P.ink, alpha: a * ramp(moved, 0.6, 0.4), width: 3 });
+  ring(b.end, b.by, 9, { color: P.ink, alpha: a * landed, width: 3 });
   if (says)
     nameText(says, b.mid, b.by - 22 - NAME_GAP + 8, {
       valign: "bottom",
@@ -335,11 +338,13 @@ export function staleViewStage(s, t, c, g) {
     align: "left",
     alpha: g * named(t, L(cut + 0.15, back.at)),
   });
+  // The new commit lands over 0.45 s as the line reaches it.
   innerBranch(
     g * named(t, c.changes),
     place,
     soon(t, c.changes + 0.05, 0.7),
-    L("又变了", "A change"),
+    L("又变了", "Things change"),
+    ramp(t, c.changes + 0.35, 0.45),
   );
   beats(t, v.vx, v.ys[1], 36, [c.notShown, c.turnedGreen], { alpha: g });
   nameText(L("看不出来", "Not shown"), v.text, v.ys[1] + 46, {
@@ -405,7 +410,8 @@ export function notAuthorityStage(s, t, c, g) {
   const stop = g * named(t, c.cannotPass);
   growName(
     t,
-    L(["不明确，", "或者已经过时"], ["Ambiguous", " or stale"]),
+    // The comma comes with the words after it, so the first condition waits for them without a trailing mark.
+    L(["不明确", "，或者已经过时"], ["Ambiguous", " or stale"]),
     [c.ambiguous, c.stale],
     v.text,
     318,

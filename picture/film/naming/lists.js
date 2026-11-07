@@ -3,7 +3,7 @@
 import { layout } from "../canvas.js";
 import { ring } from "../drawing/strokes.js";
 import { P } from "../palette.js";
-import { phraseEnd } from "../timing/cues.js";
+import { phraseEnd, wordEnd } from "../timing/cues.js";
 import { clamp, mix, ramp, soon } from "../timing/easing.js";
 import { glideShare, pauseHold, thoughtEnd } from "../timing/pauses.js";
 import { stageCuts } from "../timing/stages.js";
@@ -11,22 +11,25 @@ import { stageCuts } from "../timing/stages.js";
 /* A name arrives on its words and stays while its mark stands; it leaves with its stage or its mark. */
 export const named = (t, at) => ramp(t, at - 0.15, 0.4);
 /* A spoken list builds: each item arrives on its own words and stays, so the whole set forms on the screen. While the
- * list is spoken, the item being named stands at full ink and the items already named share one second level; once
- * the last item has been said the whole set returns to full ink, and it leaves as a whole when the argument moves on
- * at `until`. None of these changes falls in a pause. */
-const SECOND = 0.58;
+ * list is spoken, the item being named stands at full ink and the items already named share one second level; as the
+ * last item's words end the whole set returns to full ink, so it stands whole for at least WHOLE seconds before the
+ * argument moves on, and it leaves as a whole when the argument moves on at `until`. None of these changes falls in a
+ * pause. */
+const SECOND = 0.58,
+  WHOLE = 0.6;
 export const listLevel = (t, ats, i, until = Infinity) => {
-  // The set has been said once the last item's clause has ended. It is whole again within that item's own thought, so
-  // the return never waits through the pause for a next thought that may already show another stage: when the clause
-  // ends too close to the pause, the set returns as its last item arrives, quickly enough to settle before the pause.
-  // A stage cut later in the same thought bounds the return in the same way, so the set leaves whole.
+  // The set has been said once the last item's words have ended, and it returns to full ink from then. It is whole again
+  // within that item's own thought, WHOLE seconds before the thought ends or a stage cut later in the thought takes its
+  // stage, so it is seen whole before it leaves and the return never waits through the pause for a next thought that
+  // may already show another stage: when the last item's words end too close to that end, the set returns as its last
+  // item arrives, quickly enough to settle before the pause.
   const last = ats.at(-1),
-    said = pauseHold(Math.max(last + 1.5, (phraseEnd.get(last) ?? last) + 0.3), 0.4);
+    spoken = wordEnd.get(last) ?? last;
   const cut = Math.min(
     ...[...(stageCuts.get(layout.scene) ?? [])].filter((c) => c > last && c < thoughtEnd(last)),
   );
   const end = Math.min(thoughtEnd(last), cut);
-  const done = Math.min(said, Math.max(last - 0.1, end - 0.45)),
+  const done = Math.max(last - 0.1, Math.min(spoken, end - WHOLE - 0.4)),
     back = Math.min(0.4, Math.max(0.15, end - 0.05 - done));
   // An item dims when the next one arrives, unless the set is whole again before that dim could settle.
   const dims = i + 1 < ats.length && done - ats[i + 1] > 0.6;

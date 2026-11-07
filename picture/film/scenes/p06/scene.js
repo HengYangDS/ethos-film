@@ -1,8 +1,9 @@
 /* 06 Rule three, authority and views. Back in the example, a second Agent's stale view meets ETHOS's check at the
  * write, and the platforms' outcomes are recorded as they are (06.1-06.2); rule three is named over that example, and
  * its statement closes the mark's boundary around what a judgment may rest on, with the views derived from it outside
- * (06.3-06.4); and a stale view is refused as authority (06.5). The Illustrative chip stands while the example
- * shows. */
+ * (06.3-06.4); and a stale view is refused as authority (06.5). The Illustrative chip stands on every stage that
+ * draws the example: the second Agent's case, and the views from 06.4 on, which hold the example's dashboard and its
+ * opening sentence. */
 
 import { illustrative } from "../../framing/chapters.js";
 import { scenes } from "../registry.js";
@@ -49,7 +50,7 @@ function cuesOf(s) {
     failed: cue(s, "失败", "failed"),
     pending: cue(s, "还没推", "still pending"),
     recorded: cue(s, "都照实记下来", "are all recorded"),
-    together: cue(s, "同时成功", "succeed or fail together"),
+    together: cue(s, "要么都成功", "succeed or fail together"),
     first3: cue(s, "这就是第三条准则", "That is rule three"),
     number: cue(s, "第三条准则", "rule three"),
     statement: cue(s, "把权威依据和视图分开", "keep authority separate from views"),
@@ -77,6 +78,9 @@ function cuesOf(s) {
   };
   // The branch moves on the word of the change, after the clause that names it has begun.
   c.changes = cueFrom(s, "又变了", "change", c.change);
+  // The rule's mark comes in on the rule's name, on its last word, so the statement that names it is legible within
+  // 0.6 s of it, and its boundary closes from there over the statement's first words.
+  c.markCut = cueFrom(s, "则", "three", c.number);
   c.sources = cues(s, [
     ["用户当下的指令", "current instruction"],
     ["仓库里的真实内容", "what the repository actually contains"],
@@ -100,11 +104,12 @@ scenes["06"] = function (s, t) {
   const J1 = stageOut(t, c.first1b),
     J2 = stageIn(t, c.first1b) * stageOut(t, c.first2),
     K1 = stageIn(t, c.first2) * stageOut(t, c.first2b),
-    // Rule three is named over the example it names: the example stands until the rule's statement, on which the
-    // rule's stage, the mark, cuts in under the heading that has stood since the thought's first words.
-    K2 = stageIn(t, c.first2b) * stageOut(t, c.statement),
+    // Rule three is named over the example it names: the example stands until the rule's name, on which the rule's
+    // stage, the mark, cuts in under the heading that has stood since the thought's first words; its boundary closes
+    // on the rule's statement.
+    K2 = stageIn(t, c.first2b) * stageOut(t, c.markCut),
     H3 = stageIn(t, c.first3) * stageOut(t, c.first4),
-    L3 = stageIn(t, c.statement) * stageOut(t, c.first4),
+    L3 = stageIn(t, c.markCut) * stageOut(t, c.first4),
     M4 = stageIn(t, c.first4) * stageOut(t, c.first5),
     N1 = stageIn(t, c.first5) * stageOut(t, c.first5b),
     N2 = stageIn(t, c.first5b);
@@ -117,6 +122,7 @@ scenes["06"] = function (s, t) {
   if (M4 > 0) viewsStage(s, t, c, M4);
   if (N1 > 0) staleViewStage(s, t, c, N1);
   if (N2 > 0) notAuthorityStage(s, t, c, N2);
-  // The example is made up: its chip stands while the second Agent's case shows.
-  illustrative(J1 + J2 + K1 + K2);
+  // The example is made up: its chip stands while the second Agent's case shows, and while the views show its dashboard
+  // and its opening sentence.
+  illustrative(J1 + J2 + K1 + K2 + M4 + N1 + N2);
 };

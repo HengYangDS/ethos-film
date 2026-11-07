@@ -49,14 +49,19 @@ test("every paint of a scene is traced to its line of film.js, however deep its 
   const lines = (await readFile(COMPOSITION, "utf8")).split("\n");
   const traced = origins.filter(([scene]) => scene).map(([, origin]) => origin);
   assert.ok(traced.length > 0 && traced.every(Boolean));
-  for (const origin of traced.filter(Boolean)) {
+  // A scene's own code is its body or a module the bundle places below picture/film/scenes/; since
+  // filmkit 0.12.0 a paint no scene drew takes the innermost line of film.js that drew it.
+  const sceneCode = (origin) => {
     const line = Number(/^film\.js:(\d+)$/.exec(origin)[1]),
       above = lines.slice(0, line);
     const opened = above.findLastIndex((v) => /^scenes\["\d+"\] = function/.test(v));
-    assert.ok(opened >= 0 && opened > above.slice(0, -1).lastIndexOf("};"), origin);
-  }
+    const inBody = opened >= 0 && opened > above.slice(0, -1).lastIndexOf("};");
+    return inBody || /(^|\/)scenes\/[^/]+\//.test(composition.module(origin) ?? "");
+  };
+  for (const origin of traced.filter(Boolean)) assert.ok(sceneCode(origin), origin);
   // The caption and the running head are painted outside every scene.
-  assert.ok(origins.filter(([scene]) => !scene).every(([, origin]) => origin === null));
+  const outside = origins.filter(([scene]) => !scene).map(([, origin]) => origin);
+  assert.ok(outside.every((origin) => origin === null || !sceneCode(origin)));
 });
 
 test("the film's own camera frames each scene", async () => {
