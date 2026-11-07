@@ -6918,7 +6918,7 @@ function overview(s, t, a) {
     alpha: dp,
     upto: soon(t, droppedAt + 0.05, 0.4)
   });
-  nameText(L("尚未完成验收", "Not yet accepted"), AXIS, NY + DOC2[1] / 2 + NAME_GAP, {
+  nameText(L("还没有完成验收", "Not yet accepted"), AXIS, NY + DOC2[1] / 2 + NAME_GAP, {
     valign: "top",
     alpha: acc
   });

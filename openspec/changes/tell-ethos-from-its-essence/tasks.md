@@ -3,7 +3,7 @@
 ## 1. Sources and concepts
 
 - [x] 1.1 Re-pin `content/source-manifest.json` to the latest ETHOS release and re-read every passage the script cites at that commit; verify each digest against a clone and that every cited section still states its part's claims. Re-pinned on 2026-11-05 to v0.2.0-beta.1 (`ea72a93`), the latest release, with every digest computed from the clone; against alpha.28 only `docs/reference/command-plane.md` changed among the cited documents, in Proof Depth, which no segment cites, and `docs/plans/terminal-governance-product-design.md` joins for 08.
-- [x] 1.2 Write `content/concepts.toml` from the concept table the user approved on 2026-11-01, with each concept's exact passage at the pinned commit; verify that the `filmkit` concept check finds every quotation in its pinned document. 23 concepts since 2026-11-05, `safe-next-action` added for 05 and 08; the check verifies every quotation at beta.1 and 92 declarations.
+- [x] 1.2 Write `content/concepts.toml` from the concept table the user approved on 2026-11-01, with each concept's exact passage at the pinned commit; verify that the `filmkit` concept check finds every quotation in its pinned document. 23 concepts since 2026-11-05, `safe-next-action` added for 05 and 08; the check verifies every quotation at beta.1 and 92 declarations. On 2026-11-07, under `filmkit` 0.12.0, the check also refuses a Chinese clause that says a Latin-script term with no number word where the English uses its plural; it finds 08.6's 换 Agent 接手, which the contract declares an exception with its reason for the round-10 review while the owner decides its wording, and the contract lists "facts" as an English form of fresh facts (EN-R9-10); the check verifies every quotation at beta.1.
 
 ## 2. Engine
 

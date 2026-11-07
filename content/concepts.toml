@@ -44,7 +44,7 @@ term = "Facts"
 essence = "Observed again for each judgment, never stored as truth."
 source = { path = "docs/reference/glossary.md", quote = "Fresh observations of the repository and its governed environment." }
 zh = { rendering = "刚观察到的事实", forms = ["事实"] }
-en = { rendering = "fresh facts" }
+en = { rendering = "fresh facts", forms = ["facts"] }
 
 [[concept]]
 id = "plan"
@@ -189,3 +189,10 @@ essence = "What a source or request means, kept intact through every handoff; di
 source = { path = "docs/governance/product-design-contract.md", quote = "preserve meaning with the smallest model" }
 zh = { rendering = "原意", avoid = ["本意"] }
 en = { rendering = "meaning" }
+
+# A clause that says a Latin-script term with no number word where the English uses its plural, and why it may. The
+# exception of 08.6 is declared for the round-10 review while the owner decides its wording (2026-11-07).
+[number]
+exceptions = [
+  { thought = "08.6", term = "Agent", reason = "换 Agent 接手 names a stretch of the path by its act, one Agent taking over from another, which the English names the handover between Agents; 换 already says that another Agent takes over." },
+]
