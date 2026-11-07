@@ -213,6 +213,8 @@ On 2026-11-07 the film moves to `filmkit` 0.12.0, which keeps HyperFrames 0.9.9,
 
 On 2026-11-08 the film moves to `filmkit` 0.13.0, which changes no supply: the uv lock moves only `filmkit`, the npm lock does not move and mlx-audio stays at 0.6.4. Each edition stages and renders an uncaptioned picture beside the captioned one, and the player's captions control switches between them; `filmkit.tools caption-equivalence` finds the two pictures painting alike outside the caption band at all 2,516 Chinese and 2,490 English instants it compares.
 
+On 2026-11-08 the film moves to `filmkit` 0.14.0, which changes no supply either: the uv lock moves only `filmkit`. The engine's comparison of the encoded pictures refused one shared keyframe of each edition under its 50 dB floor (Chinese frame 50580 at 49.76 dB, English frames 50520 and 50550 at 49.75 and 49.86 dB), where the encoder's noise spreads thinly over the whole frame (largest tile 1.85 levels against a limit of 4); 0.14.0 sets the floor at 45 dB, which still refuses a missing label by its tiles and a uniform shift of 2 levels. The round-12 pictures are kept: the stage records bind their inputs, not the engine, and the picture gate, whose record binds the engine version, runs again before the comparison.
+
 ## Alternatives Considered
 
 | Approach                                       | Trade-off                                                                                                                         | Decision |

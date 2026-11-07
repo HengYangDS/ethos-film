@@ -7,7 +7,7 @@
 
 ## 2. Engine
 
-- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.12.0 is pinned since 2026-11-07 and installs with the supply of design §8, the uv lock moving only `filmkit`, reporting 0.12.0 with mlx-audio 0.6.4 and HyperFrames 0.9.9; the picture tests, the Markdown check and every film check but the release manifest's pass, and `mise run check` waits for the release manifest (7.1). On 2026-11-08 `filmkit` 0.13.0 is pinned (design §8), the uv lock moving only `filmkit`; the picture tests, the Markdown check and every film check but the release manifest's pass.
+- [ ] 2.1 Depend on the `filmkit` release that checks concept contracts and readings, through its uv Git source and tag; verify that `uv sync --frozen` installs it and that `mise run check` passes. filmkit 0.12.0 is pinned since 2026-11-07 and installs with the supply of design §8, the uv lock moving only `filmkit`, reporting 0.12.0 with mlx-audio 0.6.4 and HyperFrames 0.9.9; the picture tests, the Markdown check and every film check but the release manifest's pass, and `mise run check` waits for the release manifest (7.1). On 2026-11-08 `filmkit` 0.13.0 is pinned (design §8), the uv lock moving only `filmkit`; the picture tests, the Markdown check and every film check but the release manifest's pass. Later the same day `filmkit` 0.14.0 is pinned, the uv lock again moving only `filmkit`; the same checks pass and the release manifest's two still wait for 7.1.
 
 ## 3. Script
 
