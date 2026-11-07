@@ -3799,7 +3799,7 @@ function handoffStage(s, t, c, g) {
     [a1, Y1],
     [a2, Y1],
     [a2, Y22]
-  ], p = glideShare(t, c.summary - 0.15, 470);
+  ], p = drawShare(t, c.handoffs + 0.65, 470);
   if (p > 0 && p < 1)
     dot(
       ...along(path2, p).point,
@@ -6789,7 +6789,7 @@ var NEEDS = () => [
   L("上线的那个版本", "That version"),
   L("真实运行的环境", "The environment"),
   L("原来的做法", "The old way"),
-  L("一段约定的时间", "A set period")
+  L("约定的一段时间", "A set period")
 ];
 var NEED_Y = [350, 450, 550, 650];
 var NEED_X = 1340;
@@ -6803,7 +6803,7 @@ function liveUse(s, t, a) {
     ["上线的那个版本", "the version that went live"],
     ["真实运行的环境", "the environment"],
     ["原来的做法", "how things were done before"],
-    ["一段约定的时间", "a set period"]
+    ["约定的一段时间", "a set period"]
   ]);
   const needs = NEEDS(), NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v2) => nameWidth(v2, 360))), S = 960 - (220 - 2 + NEEDS_END) / 2;
   const QX = 1100, QY = RAIL_Y - 11, TX = 380, UX = 740, NAMES = NEED_Y[2], ats = [versionAt, envAt, baseAt, periodAt], back = soon(t, versionAt - 0.2, 0.7), v = a * named(t, liveAt), q = a * named(t, worksAt), u = a * named(t, useAt);
@@ -6856,7 +6856,7 @@ function overview(s, t, a) {
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
     ["它的文档也写明", "its own documents"],
-    ["换 Agent 接手", "the handover between Agents"],
+    ["换 Agent 接手", "the handover to another Agent"],
     ["断线再推", "the dropped push"],
     ["都还没有完成验收", "has not yet completed acceptance"]
   ]);
@@ -6889,12 +6889,11 @@ function overview(s, t, a) {
     }
   );
   const hb = nameText(
-    L("换 Agent 接手那一段", "The handover between Agents"),
+    L("换 Agent 接手那一段", "The handover to another Agent"),
     (B[0] + B[1]) / 2,
     RAIL_Y + 30,
     {
       valign: "top",
-      width: 300,
       alpha: h
     }
   );

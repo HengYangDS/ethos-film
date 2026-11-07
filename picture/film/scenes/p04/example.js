@@ -22,7 +22,7 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { ease, mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { drawShare, glideShare } from "../../timing/pauses.js";
 import { agents, card, recordRows, valueCell } from "./marks.js";
 
 /* The request in the researcher's words and the line two handoffs leave of it. The Chinese lines drop a particle of the
@@ -192,8 +192,9 @@ export function handoffStage(s, t, c, g) {
     alpha: g * named(t, c.summaryName),
   });
   // The request travels from the card through both Agents, smaller after each, until the one line stands: it sets off
-  // as the summary is named and travels by the film's structural glide, entering and leaving by its size and easing
-  // to its smaller size as it reaches each Agent.
+  // once both handoffs have drawn on and travels as a stroke's tip draws, entering and leaving by its size and easing
+  // to its smaller size as it reaches each Agent. It runs ahead of the chain's glide, so by the time the chain gathers
+  // speed the request is well on its way to the second Agent and never stands still against the chain moving under it.
   const path = [
       [x0 + cw, Y0],
       [a1, Y0],
@@ -201,7 +202,7 @@ export function handoffStage(s, t, c, g) {
       [a2, Y1],
       [a2, Y2],
     ],
-    p = glideShare(t, c.summary - 0.15, 470);
+    p = drawShare(t, c.handoffs + 0.65, 470);
   if (p > 0 && p < 1)
     dot(
       ...along(path, p).point,

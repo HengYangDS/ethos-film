@@ -177,7 +177,7 @@ const NEEDS = () => [
   L("上线的那个版本", "That version"),
   L("真实运行的环境", "The environment"),
   L("原来的做法", "The old way"),
-  L("一段约定的时间", "A set period"),
+  L("约定的一段时间", "A set period"),
 ];
 const NEED_Y = [350, 450, 550, 650],
   NEED_X = 1340;
@@ -197,7 +197,7 @@ export function liveUse(s, t, a) {
     ["上线的那个版本", "the version that went live"],
     ["真实运行的环境", "the environment"],
     ["原来的做法", "how things were done before"],
-    ["一段约定的时间", "a set period"],
+    ["约定的一段时间", "a set period"],
   ]);
   const needs = NEEDS(),
     NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v) => nameWidth(v, 360))),
@@ -274,7 +274,7 @@ export function overview(s, t, a) {
     ["从这里往后", "From here on"],
     ["设计要走通的一段路", "ETHOS is designed for"],
     ["它的文档也写明", "its own documents"],
-    ["换 Agent 接手", "the handover between Agents"],
+    ["换 Agent 接手", "the handover to another Agent"],
     ["断线再推", "the dropped push"],
     ["都还没有完成验收", "has not yet completed acceptance"],
   ]);
@@ -315,12 +315,11 @@ export function overview(s, t, a) {
     },
   );
   const hb = nameText(
-    L("换 Agent 接手那一段", "The handover between Agents"),
+    L("换 Agent 接手那一段", "The handover to another Agent"),
     (B[0] + B[1]) / 2,
     RAIL_Y + 30,
     {
       valign: "top",
-      width: 300,
       alpha: h,
     },
   );
