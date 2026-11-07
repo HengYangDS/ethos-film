@@ -17,7 +17,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { drawShare, glideShare } from "../../timing/pauses.js";
 import { card } from "../p04/marks.js";
 import { PLANE_H, PLANE_W, plane } from "./planes.js";
 
@@ -142,9 +142,10 @@ export function boundaryStage(s, t, c, g) {
     valign: "top",
     alpha: g * named(t, c.independent),
   });
+  // The dashed re-run draws on as every stroke's tip does, at most 820 px/s.
   link(OX - IDENTITY_R - 10, PLANE_CY, px + PLANE_W + 8, PLANE_CY, {
     alpha: rerun,
-    upto: soon(t, c.rerun + 0.05, 0.6),
+    upto: drawShare(t, c.rerun + 0.05, OX - IDENTITY_R - 18 - px - PLANE_W, 0.6),
     dash: [8, 9],
     flow,
   });

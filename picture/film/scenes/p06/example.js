@@ -19,7 +19,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom } from "../../timing/cues.js";
 import { clamp, ease, mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { drawShare, glideShare } from "../../timing/pauses.js";
 import { agents, card, linkSet } from "../p04/marks.js";
 import { planeState } from "../p05/planes.js";
 
@@ -214,13 +214,14 @@ export function checkStage(s, t, c, g) {
       alpha: g,
     });
   branch(t, g, { moved: 1 });
-  // ETHOS checks again: a dashed look from the gate along the branch to where the plan expected its head.
+  // ETHOS checks again: a dashed look from the gate along the branch to where the plan expected its head, drawing on as
+  // every stroke's tip does, at most 820 px/s.
   const look = g * named(t, c.checks);
   link(GATE_X, Y - 75, HEAD, Y - 22, {
     route: "hv",
     alpha: look,
     dash: [8, 9],
-    upto: soon(t, c.checks + 0.05, 0.6),
+    upto: drawShare(t, c.checks + 0.05, Math.abs(HEAD - GATE_X) + 53, 0.6),
   });
   nameText(L("ETHOS 又核对了一遍", "ETHOS checks again"), (GATE_X + HEAD) / 2, Y - 75 - NAME_GAP, {
     valign: "bottom",

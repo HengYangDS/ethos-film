@@ -12,7 +12,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { clamp, ramp, soon } from "../../timing/easing.js";
+import { ramp, soon } from "../../timing/easing.js";
 import { glideShare, voiceTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 import { scenes } from "../registry.js";
@@ -127,20 +127,24 @@ function burden(s, t, a) {
     SHELF = [700, 1280],
     MIDX = (SHELF[0] + SHELF[1]) / 2,
     S = 960 - (NX - nameWidth(PILE_NAME, PILE_WRAP) + SHELF[1] + 2) / 2;
-  const kept = 1 + Math.floor((PILE.length - 1) * clamp((t - goneAt - 0.05) / 0.6)),
-    sag = 34 * glideShare(t, burdenAt + 0.05, 68, 1.2),
+  const sag = 34 * glideShare(t, burdenAt + 0.05, 68, 1.2),
     depth = (x) => sag * (1 - ((x - MIDX) / (MIDX - SHELF[0])) ** 2),
     g = a * named(t, goneAt),
     b = a * named(t, govAt);
   ctx.save();
   ctx.translate(S, 0);
+  // The mechanisms join the pile one after another over 0.6 s from the words, each growing from its axis over 0.3 s,
+  // so none appears whole in one frame; the pile stays one stroke, so its one name names every mechanism in it.
   stroke(
     () =>
-      PILE.slice(0, kept).forEach(([x, y, r, turn]) => {
-        const cy = y + depth(x);
-        gearPath(x, cy, r, turn);
-        ctx.moveTo(x + r * 0.3, cy);
-        ctx.arc(x, cy, r * 0.3, 0, Math.PI * 2);
+      PILE.forEach(([x, y, r, turn], k) => {
+        const grown = k ? ramp(t, goneAt - 0.05 + (0.6 * k) / (PILE.length - 1), 0.3) : 1;
+        if (grown <= 0) return;
+        const cy = y + depth(x),
+          size = r * grown;
+        gearPath(x, cy, size, turn);
+        ctx.moveTo(x + size * 0.3, cy);
+        ctx.arc(x, cy, size * 0.3, 0, Math.PI * 2);
       }),
     { color: P.line, alpha: g, width: 3, dash: [9, 7] },
   );

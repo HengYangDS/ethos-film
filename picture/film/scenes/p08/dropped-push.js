@@ -22,7 +22,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom, cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { drawShare, glideShare } from "../../timing/pauses.js";
 import { verdictMark } from "../p04/marks.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
@@ -65,8 +65,12 @@ export function droppedPush(s, t, a) {
     below = rowNameTop([RAIL_Y + PLATFORM[1] / 2, RAIL_Y + 19]),
     rowTop = rowNameTop([ROW_Y + DOC[1] / 2, ROW_Y + STEP_R]);
   // The rail: solid up to the cut, and beyond it solid until the connection drops, then dashed; its end draws back to
-  // the platform's near edge as the platform begins to arrive, clear of it before the platform is a fifth drawn.
-  const end = mix(PX + PLATFORM[0] / 2, PX - PLATFORM[0] / 2 - 8, soon(t, firstAt - 0.25, 0.35));
+  // the platform's near edge as a stroke's tip draws (drawShare), and is clear of it as the platform begins to arrive.
+  const end = mix(
+    PX + PLATFORM[0] / 2,
+    PX - PLATFORM[0] / 2 - 8,
+    drawShare(t, firstAt - 0.5, PLATFORM[0] + 8),
+  );
   journeyRail(X0, CUT - CUT_GAP, { alpha: a });
   journeyRail(CUT - CUT_GAP, CUT + CUT_GAP, { alpha: a * (1 - dropped) });
   journeyRail(CUT + CUT_GAP, end, { alpha: a * (1 - dropped) });
@@ -85,12 +89,17 @@ export function droppedPush(s, t, a) {
   platforms(PX, [RAIL_Y], { alpha: first, w: PLATFORM[0], h: PLATFORM[1] });
   nameText(L("上一次", "The first push"), PX, below, { valign: "top", alpha: first });
   verdictMark("unknown", PX, RAIL_Y + 13, 15, { alpha: a * named(t, landedAt) });
-  // The second push, in doubt: it leaves the work and stops at a question.
+  // The second push, in doubt: it leaves the work and stops at a question, drawing on at most 820 px/s.
   const again = a * named(t, againAt);
   link(STOP, RAIL_Y - 26, ASK[0] - ASK_R - 8, ASK[1], {
     route: "vh",
     alpha: again,
-    upto: soon(t, againAt + 0.05, 0.7),
+    upto: drawShare(
+      t,
+      againAt + 0.05,
+      Math.abs(ASK[1] - RAIL_Y + 26) + Math.abs(ASK[0] - ASK_R - 8 - STOP),
+      0.7,
+    ),
     dash: [8, 9],
     end: false,
   });

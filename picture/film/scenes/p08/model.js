@@ -20,7 +20,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { drawShare, glideShare } from "../../timing/pauses.js";
 
 /* 08.9, first: the failed implementation and the model stand apart, a line between them as they are told apart, solid
  * since the film keeps dashes for what is unknown, missing or refused; this time the fault is in the model, which
@@ -262,10 +262,11 @@ export function noWayAround(s, t, a) {
       set: "08.8:refused",
     }),
   );
+  // Each dashed way draws on as every stroke's tip does, at most 820 px/s.
   rows.forEach((y, i) =>
     link(edge[i], y, NX - 16, y, {
       alpha: a * named(t, ats[i]) * 0.9,
-      upto: soon(t, ats[i] + 0.05, 0.5),
+      upto: drawShare(t, ats[i] + 0.05, NX - 16 - edge[i], 0.5),
       dash: [6, 6],
       end: false,
     }),

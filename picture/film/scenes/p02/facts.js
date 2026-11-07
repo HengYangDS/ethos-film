@@ -24,7 +24,7 @@ import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare, glideSteps } from "../../timing/pauses.js";
+import { drawShare, glideShare, glideSteps } from "../../timing/pauses.js";
 
 /* Two Agents drawn as one mark: their outlines one stroke and their cores one fill, so one name names the pair. */
 function agentPair(xs, y, { alpha = 1, size = 1 } = {}) {
@@ -226,12 +226,13 @@ export function stagePlatforms(t, a, c) {
     align: "left",
     alpha: a * named(t, c.unclear),
   });
-  // Trying again: a second push, dashed, that ends in the same question.
+  // Trying again: a second push, dashed, that ends in the same question. It draws on as every stroke's tip does
+  // (drawShare), at most 820 px/s, over its whole way.
   const again = a * ramp(t, c.retry - 0.15, 0.4);
   link(VX + 70, VY + 28, VX + 70 + 300, RY, {
     route: "vh",
     alpha: again,
-    upto: soon(t, c.retry + 0.05, 0.6),
+    upto: drawShare(t, c.retry + 0.05, Math.abs(RY - VY - 28) + 300, 0.6),
     dash: [8, 8],
   });
   unknownMark(VX + 70 + 330, RY, again * ramp(t, c.retry + 0.5, 0.4));

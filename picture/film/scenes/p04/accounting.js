@@ -13,7 +13,7 @@ import { NAME_GAP, NOTE, TERM_GAP, nameText, termRow } from "../../naming/names.
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { drawShare, glideShare } from "../../timing/pauses.js";
 import { QUOTE } from "./example.js";
 import { card, linkSet, recordRows, valueCell, verdictMark } from "./marks.js";
 import { ruleOneHeading, rowHalf } from "./rule-one.js";
@@ -297,14 +297,14 @@ export function compileStage(s, t, c, g) {
     valign: "bottom",
     alpha: g * named(t, c.sameChecks),
   });
-  // The checks cannot prove the interpretation right: the relation back to it is dashed and refused. It runs 47 px
-  // under the lowest name of the row.
+  // The checks cannot prove the interpretation right: the relation back to it is dashed and refused, drawing on as
+  // every stroke's tip does, at most 820 px/s. It runs 47 px under the lowest name of the row.
   const refused = g * named(t, c.cannot),
     ry = Math.max(...names.map((v) => v.bottom)) + 47;
   link(xs[3], ry, xs[0], ry, {
     alpha: refused,
     dash: [8, 9],
-    upto: soon(t, c.cannot + 0.05, 0.6),
+    upto: drawShare(t, c.cannot + 0.05, xs[3] - xs[0], 0.6),
     route: "straight",
   });
   cross(mid, ry, 20, { color: P.ink, alpha: refused, width: 3 });

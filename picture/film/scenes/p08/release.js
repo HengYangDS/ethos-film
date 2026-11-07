@@ -283,11 +283,14 @@ export function overview(s, t, a) {
     acc = a * named(t, acceptAt),
     [A, B, C, E, D] = STRETCHES;
   // The stretches already walked are one stroke, so the name at its end names them all; the handover and the dropped
-  // push leave that stroke on their words and stand dashed under their own names.
-  const solid = [A, C, ...(t < handoverAt - 0.15 ? [B] : []), ...(t < droppedAt - 0.15 ? [E] : [])];
+  // push leave that stroke on their words and stand dashed under their own names. Each draws back from its far end
+  // over 0.4 s while its dashed stretch inks in, so neither leaves the walked stroke in one frame.
+  const back = (at, [x0, x1]) => [x0, mix(x1, x0, ramp(t, at - 0.15, 0.4))];
+  const solid = [A, C, back(handoverAt, B), back(droppedAt, E)];
   stroke(
     () =>
       solid.forEach(([x0, x1]) => {
+        if (x1 - x0 < 0.5) return;
         ctx.moveTo(x0, RAIL_Y);
         ctx.lineTo(x1, RAIL_Y);
       }),

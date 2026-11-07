@@ -331,7 +331,9 @@ function close(s, t, a) {
     boundary: soon(t, cutAt, 1.6),
     alpha: a * mix(0.58, 1, lit),
   });
-  ethosMark(X, Y, S, { datum: 0, boundary: 0, passages, alpha: a });
+  // The passages ink in over their first quarter second, so their round starts do not stand at full ink at the origin
+  // in the frame they appear.
+  ethosMark(X, Y, S, { datum: 0, boundary: 0, passages, alpha: a * ramp(t, twoAt + 0.05, 0.25) });
   ring(X, Y, point, { color: P.ink, alpha: o * (1 - datum), width: 3 });
   ethosMark(X, Y, S, { datum, hole: 1, passages: 0, boundary: 0, alpha: a });
   // A point travels the boundary while the voice speaks, and once drawn, the passages.

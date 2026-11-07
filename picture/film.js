@@ -2691,7 +2691,7 @@ function stagePlatforms(t, a, c) {
   link(VX + 70, VY + 28, VX + 70 + 300, RY, {
     route: "vh",
     alpha: again,
-    upto: soon(t, c.retry + 0.05, 0.6),
+    upto: drawShare(t, c.retry + 0.05, Math.abs(RY - VY - 28) + 300, 0.6),
     dash: [8, 8]
   });
   unknownMark(VX + 70 + 330, RY, again * ramp(t, c.retry + 0.5, 0.4));
@@ -4305,7 +4305,7 @@ function compileStage(s, t, c, g) {
   link(xs[3], ry, xs[0], ry, {
     alpha: refused,
     dash: [8, 9],
-    upto: soon(t, c.cannot + 0.05, 0.6),
+    upto: drawShare(t, c.cannot + 0.05, xs[3] - xs[0], 0.6),
     route: "straight"
   });
   cross(mid, ry, 20, { color: P.ink, alpha: refused, width: 3 });
@@ -4613,7 +4613,7 @@ function boundaryStage(s, t, c, g) {
   });
   link(OX - IDENTITY_R - 10, PLANE_CY, px + PLANE_W + 8, PLANE_CY, {
     alpha: rerun,
-    upto: soon(t, c.rerun + 0.05, 0.6),
+    upto: drawShare(t, c.rerun + 0.05, OX - IDENTITY_R - 18 - px - PLANE_W, 0.6),
     dash: [8, 9],
     flow
   });
@@ -5514,7 +5514,7 @@ function checkStage(s, t, c, g) {
     route: "hv",
     alpha: look,
     dash: [8, 9],
-    upto: soon(t, c.checks + 0.05, 0.6)
+    upto: drawShare(t, c.checks + 0.05, Math.abs(HEAD - GATE_X) + 53, 0.6)
   });
   nameText(L("ETHOS 又核对了一遍", "ETHOS checks again"), (GATE_X + HEAD) / 2, Y - 75 - NAME_GAP, {
     valign: "bottom",
@@ -6330,15 +6330,17 @@ function burden(s, t, a) {
     ["治理本身就成了负担", "becomes the burden"]
   ]);
   const PILE_NAME = L("没有义务的机制", "Mechanisms without an obligation"), [mx, my, mr] = PILE[4], NX = mx - mr - 30, SHELF = [700, 1280], MIDX = (SHELF[0] + SHELF[1]) / 2, S = 960 - (NX - nameWidth(PILE_NAME, PILE_WRAP) + SHELF[1] + 2) / 2;
-  const kept = 1 + Math.floor((PILE.length - 1) * clamp((t - goneAt - 0.05) / 0.6)), sag = 34 * glideShare(t, burdenAt + 0.05, 68, 1.2), depth = (x) => sag * (1 - ((x - MIDX) / (MIDX - SHELF[0])) ** 2), g = a * named(t, goneAt), b = a * named(t, govAt);
+  const sag = 34 * glideShare(t, burdenAt + 0.05, 68, 1.2), depth = (x) => sag * (1 - ((x - MIDX) / (MIDX - SHELF[0])) ** 2), g = a * named(t, goneAt), b = a * named(t, govAt);
   ctx.save();
   ctx.translate(S, 0);
   stroke(
-    () => PILE.slice(0, kept).forEach(([x, y, r, turn]) => {
-      const cy = y + depth(x);
-      gearPath(x, cy, r, turn);
-      ctx.moveTo(x + r * 0.3, cy);
-      ctx.arc(x, cy, r * 0.3, 0, Math.PI * 2);
+    () => PILE.forEach(([x, y, r, turn], k) => {
+      const grown = k ? ramp(t, goneAt - 0.05 + 0.6 * k / (PILE.length - 1), 0.3) : 1;
+      if (grown <= 0) return;
+      const cy = y + depth(x), size = r * grown;
+      gearPath(x, cy, size, turn);
+      ctx.moveTo(x + size * 0.3, cy);
+      ctx.arc(x, cy, size * 0.3, 0, Math.PI * 2);
     }),
     { color: P.line, alpha: g, width: 3, dash: [9, 7] }
   );
@@ -6413,7 +6415,11 @@ function droppedPush(s, t, a) {
   ]);
   const whatAt = cueFrom(s, "要做什么", "what it is about to do", noteAt), firstAt = cueFrom(s, "上一次", "The first push", againAt);
   const dropped = ramp(t, dropAt - 0.1, 0.4), wx = mix(FROM, STOP, glideShare(t, nameAt, STOP - FROM, 0.9)), below = rowNameTop([RAIL_Y + PLATFORM[1] / 2, RAIL_Y + 19]), rowTop = rowNameTop([ROW_Y2 + DOC[1] / 2, ROW_Y2 + STEP_R2]);
-  const end = mix(PX + PLATFORM[0] / 2, PX - PLATFORM[0] / 2 - 8, soon(t, firstAt - 0.25, 0.35));
+  const end = mix(
+    PX + PLATFORM[0] / 2,
+    PX - PLATFORM[0] / 2 - 8,
+    drawShare(t, firstAt - 0.5, PLATFORM[0] + 8)
+  );
   journeyRail(X0, CUT - CUT_GAP, { alpha: a });
   journeyRail(CUT - CUT_GAP, CUT + CUT_GAP, { alpha: a * (1 - dropped) });
   journeyRail(CUT + CUT_GAP, end, { alpha: a * (1 - dropped) });
@@ -6433,7 +6439,12 @@ function droppedPush(s, t, a) {
   link(STOP, RAIL_Y - 26, ASK[0] - ASK_R - 8, ASK[1], {
     route: "vh",
     alpha: again,
-    upto: soon(t, againAt + 0.05, 0.7),
+    upto: drawShare(
+      t,
+      againAt + 0.05,
+      Math.abs(ASK[1] - RAIL_Y + 26) + Math.abs(ASK[0] - ASK_R - 8 - STOP),
+      0.7
+    ),
     dash: [8, 9],
     end: false
   });
@@ -6861,9 +6872,11 @@ function overview(s, t, a) {
     ["都还没有完成验收", "has not yet completed acceptance"]
   ]);
   const h = a * named(t, handoverAt), dp = a * named(t, droppedAt), acc = a * named(t, acceptAt), [A, B, C, E, D] = STRETCHES;
-  const solid = [A, C, ...t < handoverAt - 0.15 ? [B] : [], ...t < droppedAt - 0.15 ? [E] : []];
+  const back = (at, [x0, x1]) => [x0, mix(x1, x0, ramp(t, at - 0.15, 0.4))];
+  const solid = [A, C, back(handoverAt, B), back(droppedAt, E)];
   stroke(
     () => solid.forEach(([x0, x1]) => {
+      if (x1 - x0 < 0.5) return;
       ctx.moveTo(x0, RAIL_Y);
       ctx.lineTo(x1, RAIL_Y);
     }),
@@ -7301,7 +7314,7 @@ function noWayAround(s, t, a) {
   rows.forEach(
     (y, i) => link(edge[i], y, NX - 16, y, {
       alpha: a * named(t, ats[i]) * 0.9,
-      upto: soon(t, ats[i] + 0.05, 0.5),
+      upto: drawShare(t, ats[i] + 0.05, NX - 16 - edge[i], 0.5),
       dash: [6, 6],
       end: false
     })
@@ -7631,7 +7644,7 @@ function close(s, t, a) {
     boundary: soon(t, cutAt2, 1.6),
     alpha: a * mix(0.58, 1, lit)
   });
-  ethosMark(X, Y3, S, { datum: 0, boundary: 0, passages, alpha: a });
+  ethosMark(X, Y3, S, { datum: 0, boundary: 0, passages, alpha: a * ramp(t, twoAt + 0.05, 0.25) });
   ring(X, Y3, point, { color: P.ink, alpha: o * (1 - datum), width: 3 });
   ethosMark(X, Y3, S, { datum, hole: 1, passages: 0, boundary: 0, alpha: a });
   flowAlong(
