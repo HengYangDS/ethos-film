@@ -2542,7 +2542,7 @@ function stageClaims(t, a, c) {
       set: "claims"
     });
   });
-  nameText(L("它自己那一段", "Its own part"), X02 + CW / 2, ys[2] + H / 2 + 40, {
+  nameText(L("它自己那一段", "Its own part"), X02 + EW / 2, ys[2] + H / 2 + 40, {
     valign: "top",
     alpha: a * named(t, c.ownName)
   });
@@ -5206,7 +5206,7 @@ var VIEWS = () => L(
 );
 var GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
 var VIEWS_NAME = () => L("给人看的视图", "Views");
-var ROLE = () => L(["帮人看清楚"], ["helps people see"]);
+var ROLE = () => L(["帮人看清楚"], ["help people see"]);
 var JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]);
 var CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["ambiguous", " or stale"]);
 var openingOf = (size) => 0.82 * 164 * (size / 512);
@@ -5601,7 +5601,6 @@ function checkStage(s, t, c, g) {
   link(GATE_X, Y - 75, HEAD, Y - 22, {
     route: "hv",
     alpha: look,
-    dash: [8, 9],
     upto: drawShare(t, c.checks + 0.05, Math.abs(HEAD - GATE_X) + 53, 0.6)
   });
   nameText(L("ETHOS 又核对了一遍", "ETHOS checks again"), (GATE_X + HEAD) / 2, Y - 75 - NAME_GAP, {

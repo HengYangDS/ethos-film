@@ -97,7 +97,8 @@ export function stageClaims(t, a, c) {
       set: "claims",
     });
   });
-  nameText(L("它自己那一段", "Its own part"), X0 + CW / 2, ys[2] + H / 2 + 40, {
+  // The part each step proves is its solid block, so its name stands under the blocks' column, not under the claim.
+  nameText(L("它自己那一段", "Its own part"), X0 + EW / 2, ys[2] + H / 2 + 40, {
     valign: "top",
     alpha: a * named(t, c.ownName),
   });

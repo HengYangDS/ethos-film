@@ -105,8 +105,9 @@ const VIEWS = () =>
   );
 const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
   VIEWS_NAME = () => L("给人看的视图", "Views");
-/* What 06.5's refusal says of the dashboard, and the judgment with its conditions. */
-const ROLE = () => L(["帮人看清楚"], ["helps people see"]),
+/* What 06.5's refusal says of the dashboards, agreeing with their plural name above it, and the judgment with its
+ * conditions. */
+const ROLE = () => L(["帮人看清楚"], ["help people see"]),
   JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]),
   CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["ambiguous", " or stale"]);
 /* The opening's place for a mark at `size`, from its origin. */

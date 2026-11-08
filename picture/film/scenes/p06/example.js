@@ -184,7 +184,7 @@ export function staleStage(s, t, c, g) {
 
 /* 06.1 The moment of writing: the write is carried to the gate, ETHOS checks the branch again and finds it moved on,
  * so the gate stays shut and nothing is written; fresh facts run back over the gate to the plan, which is compiled
- * again. What ETHOS does is named over the middle of its dashed look, and "moved on" under the ring it names. */
+ * again. What ETHOS does is named over the middle of its look, and "moved on" under the ring it names. */
 export function checkStage(s, t, c, g) {
   ctx.save();
   ctx.translate(exampleShift(t, c), DROP);
@@ -215,13 +215,13 @@ export function checkStage(s, t, c, g) {
       alpha: g,
     });
   branch(t, g, { moved: 1 });
-  // ETHOS checks again: a dashed look from the gate along the branch to where the plan expected its head, drawing on as
-  // every stroke's tip does, at most 820 px/s.
+  // ETHOS checks again: a solid look from the gate along the branch to where the plan expected its head, since the check
+  // is real and a dash marks only what is unknown, refused or stale; it draws on as every stroke's tip does, at most
+  // 820 px/s.
   const look = g * named(t, c.checks);
   link(GATE_X, Y - 75, HEAD, Y - 22, {
     route: "hv",
     alpha: look,
-    dash: [8, 9],
     upto: drawShare(t, c.checks + 0.05, Math.abs(HEAD - GATE_X) + 53, 0.6),
   });
   nameText(L("ETHOS 又核对了一遍", "ETHOS checks again"), (GATE_X + HEAD) / 2, Y - 75 - NAME_GAP, {
