@@ -46,7 +46,7 @@ scenes["03"] = function (s, t) {
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
-    in3: ["留下的存证", "attestations already on record"],
+    in3: ["以前留下的存证", "attestations already on record"],
     rules: ["按固定的规则", "by fixed rules"],
     plan: ["一份计划", "a plan"],
     writeAt: ["真要写入的那一刻", "At the moment it writes"],

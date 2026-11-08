@@ -863,7 +863,7 @@ function credits(t) {
   text(L("旁白为合成语音", "Narration: synthetic voice"), 1624, 902, 24, {
     align: "right",
     color: P.muted,
-    alpha: ramp(t, start + 0.1, 0.35),
+    alpha: ramp(t, start + 0.45, 0.35),
     role: "title"
   });
 }
@@ -1658,7 +1658,7 @@ scenes["01"] = function(s, t) {
   ]);
   const [heard, people, two, trust, again, luck, cant, cantName, many] = cues(s, [
     ["这样一句话", "a sentence like that"],
-    ["人", "people"],
+    ["人一般", "people"],
     ["两种做法", "two things"],
     ["照单全收", "take it on trust"],
     ["从头再查一遍", "check everything again"],
@@ -1704,7 +1704,7 @@ scenes["01"] = function(s, t) {
       ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能退回去？"],
       ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"]
     );
-    const RY = 620, RR = 34, base = railStations(names2, 420, 1500, { wrap: 330 }), step = (base[1] - base[0]) / 2, shift = building(t, qs, step), xs = base.map((x) => x + shift), mid = (PY + CLAIM_H / 2 + RY - RR) / 2, wayTo2 = (x) => route([
+    const RY = 620, RR = 34, WRAP2 = 400, base = railStations(names2, 420, 1500, { wrap: WRAP2 }), step = (base[1] - base[0]) / 2, shift = building(t, qs, step), xs = base.map((x) => x + shift), mid = (PY + CLAIM_H / 2 + RY - RR) / 2, wayTo2 = (x) => route([
       [PX2, PY + CLAIM_H / 2],
       [PX2, mid],
       [x, mid],
@@ -1743,7 +1743,7 @@ scenes["01"] = function(s, t) {
     });
     railNames(names2, xs, RY + RR, {
       gap: NAME_GAP,
-      wrap: 330,
+      wrap: WRAP2,
       alpha: (i) => stageA * listIn(t, qs, i),
       set: "questions"
     });
@@ -2148,9 +2148,9 @@ function stageKernel(t, a, c) {
   if (a <= 0) return;
   const PY = 380, KY = 560, KR = 54, ys = [440, 560, 680], LOOP = 780, q = flowClock(t);
   const inputNames = L(
-    ["已经采纳的意图", "刚观察到的事实", "留下的存证"],
+    ["已经采纳的意图", "刚观察到的事实", "以前留下的存证"],
     ["Intent", "Fresh facts", "Attestations"]
-  ), intentQual = ["that has been accepted"], attQual = [L("谁出具、在哪儿成立", "already on record")], inputsWide = Math.max(
+  ), intentQual = ["that has been accepted"], attQual = en ? ["already on record"] : [], inputsWide = Math.max(
     ...inputNames.map((v) => measure(v)),
     en ? measure(intentQual.join(""), NOTE) : 0,
     measure(attQual.join(""), NOTE)
@@ -2225,7 +2225,13 @@ function stageKernel(t, a, c) {
     alpha: a * listIn(t, ats, 1),
     set: "inputs"
   });
-  qualified(2, inputNames[2], c.in3, attQual, c.in3);
+  if (en) qualified(2, inputNames[2], c.in3, attQual, c.in3);
+  else
+    nameText(inputNames[2], NX, ys[2], {
+      align: "right",
+      alpha: a * listIn(t, ats, 2),
+      set: "inputs"
+    });
   const rules = a * ramp(t, c.rules - 0.15, 0.4), plan2 = a * ramp(t, c.plan - 0.15, 0.4), gate = a * ramp(t, c.writeAt - 0.15, 0.4), rec = a * ramp(t, c.rec1 - 0.15, 0.4), stamped = a * ramp(t, c.newAtt - 0.15, 0.4);
   link(KX + KR * 0.87, KY, PX2, KY, { alpha: rules, draw: { t, at: c.rules + 0.05 }, flow: q });
   nameText(L("按固定的规则", "By fixed rules"), (KX + KR * 0.87 + PX2) / 2, KY - NAME_GAP, {
@@ -3495,7 +3501,7 @@ scenes["03"] = function(s, t) {
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
-    in3: ["留下的存证", "attestations already on record"],
+    in3: ["以前留下的存证", "attestations already on record"],
     rules: ["按固定的规则", "by fixed rules"],
     plan: ["一份计划", "a plan"],
     writeAt: ["真要写入的那一刻", "At the moment it writes"],
@@ -3941,7 +3947,7 @@ function deleteStage(s, t, c, g) {
   );
 }
 function replaceStage(s, t, c, g) {
-  const cw = requestWidth(), qw = quoteWidth(), gone = L("没人再回头看", "No one goes back"), summary = [L("总结", "The summary")], takes = [L("顶替了原话", "takes the place")], nameW = Math.max(measure(summary[0]), measure(takes[0], NOTE)), col = Math.max(cw, qw), left = 960 - (col + 40 + Math.max(measure(gone), nameW)) / 2, start = 960 - (cw + 160 + qw + 40 + measure(summary[0])) / 2;
+  const cw = requestWidth(), qw = quoteWidth(), gone = L("没人再回头看", "No one goes back"), summary = [L("总结", "The summary")], takes = [L("顶替了原话", "takes their place")], nameW = Math.max(measure(summary[0]), measure(takes[0], NOTE)), col = Math.max(cw, qw), left = 960 - (col + 40 + Math.max(measure(gone), nameW)) / 2, start = 960 - (cw + 160 + qw + 40 + measure(summary[0])) / 2;
   const step = glideShare(t, c.replace + 0.05, 270, 0.6), take = glideShare(t, c.replace + 0.35, Math.hypot(start + cw + 160 - left - (col - qw) / 2, 160), 0.7), fade = soon(t, c.noOne + 0.05, 1);
   const ox = mix(start, left + (col - cw) / 2, take), oy = mix(400, 670, step), qx = mix(start + cw + 160, left + (col - qw) / 2, take), qy = mix(560, 400, take);
   link(start + cw, 400, start + cw + 160 + qw / 2, 528, {
@@ -4800,7 +4806,7 @@ function buildingReach(t, parts2) {
 }
 var outcomesAt = (c) => {
   const parts2 = outcomesParts(c), final = Math.max(...parts2.map(([, reach]) => reach)), first = Math.max(parts2[0][1], parts2[1][1]);
-  return 960 - final / 2 + Math.min(50, (final - first) / 4);
+  return 960 - final / 2 + Math.min(30, (final - first) / 4);
 };
 function ruleTwoHeading(t, c, g) {
   ruleHeading(t, {
@@ -5198,9 +5204,9 @@ var VIEWS = () => L(
 );
 var GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
 var VIEWS_NAME = () => L("给人看的视图", "Views");
-var ROLE = () => L(["帮人看清楚"], ["Helps people see"]);
+var ROLE = () => L(["帮人看清楚"], ["helps people see"]);
 var JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]);
-var CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["Ambiguous", " or stale"]);
+var CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["ambiguous", " or stale"]);
 var openingOf = (size) => 0.82 * 164 * (size / 512);
 function viewsParts(c = {}) {
   const run = openingOf(VIEWS_SIZE) + VIEW_RUN, names2 = VIEWS();
@@ -6901,7 +6907,7 @@ function liveUse(s, t, a) {
     ["约定的一段时间", "a set period"]
   ]);
   const needs = NEEDS(), NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v2) => nameWidth(v2, NEED_WRAP))), S = 960 - (220 - 2 + NEEDS_END) / 2;
-  const QX = 1100, QY = RAIL_Y - 11, TX = 380, UX = 740, NAMES = NEED_Y[2], ats = [versionAt, envAt, baseAt, periodAt], back = soon(t, versionAt - 0.2, 0.7), v = a * named(t, liveAt), q = a * named(t, worksAt), u = a * named(t, useAt);
+  const QX = 1100, QY = RAIL_Y - 11, TX = 380, UX = 740, NAMES = NEED_Y[2], ats = [versionAt, envAt, baseAt, periodAt], back = drawShare(t, versionAt - 0.2, NEEDS_END - 20 - (QX + 40)), v = a * named(t, liveAt), q = a * named(t, worksAt), u = a * named(t, useAt);
   ctx.save();
   ctx.translate(S, 0);
   journeyRail(220, QX - 40, { alpha: a });

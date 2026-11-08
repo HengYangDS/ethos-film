@@ -72,13 +72,14 @@ export function stageKernel(t, a, c) {
     LOOP = 780,
     q = flowClock(t);
   const inputNames = L(
-      ["已经采纳的意图", "刚观察到的事实", "留下的存证"],
+      ["已经采纳的意图", "刚观察到的事实", "以前留下的存证"],
       ["Intent", "Fresh facts", "Attestations"],
     ),
     intentQual = ["that has been accepted"],
-    // The attestation is first shown here, before 03.5 explains it: in Chinese it carries under its name what it
-    // states; in English the voice's own words, already on record.
-    attQual = [L("谁出具、在哪儿成立", "already on record")],
+    // The attestation is first shown here, before 03.5 explains it. Each edition names it in the voice's words: the
+    // Chinese name holds them whole, 以前留下的存证, as the other two inputs' names do; the English qualifies its term
+    // with them, already on record.
+    attQual = en ? ["already on record"] : [],
     inputsWide = Math.max(
       ...inputNames.map((v) => measure(v)),
       en ? measure(intentQual.join(""), NOTE) : 0,
@@ -185,7 +186,13 @@ export function stageKernel(t, a, c) {
     alpha: a * listIn(t, ats, 1),
     set: "inputs",
   });
-  qualified(2, inputNames[2], c.in3, attQual, c.in3);
+  if (en) qualified(2, inputNames[2], c.in3, attQual, c.in3);
+  else
+    nameText(inputNames[2], NX, ys[2], {
+      align: "right",
+      alpha: a * listIn(t, ats, 2),
+      set: "inputs",
+    });
   // By fixed rules, a plan; the gate that checks again at the moment of writing; the new attestation, which returns to
   // the inputs round the names under the diagram. Every link draws on at the tip pace by its own length (drawnShare).
   const rules = a * ramp(t, c.rules - 0.15, 0.4),

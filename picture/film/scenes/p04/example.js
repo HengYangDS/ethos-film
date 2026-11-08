@@ -306,7 +306,7 @@ export function replaceStage(s, t, c, g) {
     qw = quoteWidth(),
     gone = L("没人再回头看", "No one goes back"),
     summary = [L("总结", "The summary")],
-    takes = [L("顶替了原话", "takes the place")],
+    takes = [L("顶替了原话", "takes their place")],
     nameW = Math.max(measure(summary[0]), measure(takes[0], NOTE)),
     col = Math.max(cw, qw),
     left = 960 - (col + 40 + Math.max(measure(gone), nameW)) / 2,

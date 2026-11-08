@@ -16,8 +16,8 @@ import { nameWidth } from "../p07/example.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
-import { mix, ramp, soon } from "../../timing/easing.js";
-import { DRAW_LEAD, glideShare, glideSteps, glideTime } from "../../timing/pauses.js";
+import { mix, ramp } from "../../timing/easing.js";
+import { DRAW_LEAD, drawShare, glideShare, glideSteps, glideTime } from "../../timing/pauses.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
 /* The proof: a check in its ring, the executed check of one commit. */
@@ -210,7 +210,7 @@ export function liveUse(s, t, a) {
     UX = 740,
     NAMES = NEED_Y[2],
     ats = [versionAt, envAt, baseAt, periodAt],
-    back = soon(t, versionAt - 0.2, 0.7),
+    back = drawShare(t, versionAt - 0.2, NEEDS_END - 20 - (QX + 40)),
     v = a * named(t, liveAt),
     q = a * named(t, worksAt),
     u = a * named(t, useAt);

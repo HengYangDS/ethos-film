@@ -171,7 +171,7 @@ scenes["01"] = function (s, t) {
   ]);
   const [heard, people, two, trust, again, luck, cant, cantName, many] = cues(s, [
     ["这样一句话", "a sentence like that"],
-    ["人", "people"],
+    ["人一般", "people"],
     ["两种做法", "two things"],
     ["照单全收", "take it on trust"],
     ["从头再查一遍", "check everything again"],
@@ -243,10 +243,13 @@ scenes["01"] = function (s, t) {
       ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能退回去？"],
       ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"],
     );
+    // Every question stands on one line within its share of the rail, as a row of questions reads: the longest,
+    // 是不是提需求的人真正要的？, is 13 characters, about 379 px at the label size, under the 360 px pitch less half
+    // of each neighbour and the gap.
     const RY = 620,
       RR = 34,
-      // The longest English question stands on one line within its share of the rail.
-      base = railStations(names, 420, 1500, { wrap: 330 }),
+      WRAP = 400,
+      base = railStations(names, 420, 1500, { wrap: WRAP }),
       step = (base[1] - base[0]) / 2,
       shift = building(t, qs, step),
       xs = base.map((x) => x + shift),
@@ -303,7 +306,7 @@ scenes["01"] = function (s, t) {
     });
     railNames(names, xs, RY + RR, {
       gap: NAME_GAP,
-      wrap: 330,
+      wrap: WRAP,
       alpha: (i) => stageA * listIn(t, qs, i),
       set: "questions",
     });

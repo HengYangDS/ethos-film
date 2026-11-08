@@ -106,9 +106,9 @@ const VIEWS = () =>
 const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
   VIEWS_NAME = () => L("给人看的视图", "Views");
 /* What 06.5's refusal says of the dashboard, and the judgment with its conditions. */
-const ROLE = () => L(["帮人看清楚"], ["Helps people see"]),
+const ROLE = () => L(["帮人看清楚"], ["helps people see"]),
   JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]),
-  CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["Ambiguous", " or stale"]);
+  CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["ambiguous", " or stale"]);
 /* The opening's place for a mark at `size`, from its origin. */
 const openingOf = (size) => 0.82 * 164 * (size / 512);
 /* The parts beyond the opening, each with how far right of the mark's origin it reaches: the list of the four views,

@@ -24,8 +24,8 @@ sources = "content/en"
 summary = "A 15-minute introduction to ETHOS. An Agent reports “Done. All tests pass.” How much does that establish? The film shows why relying on such a report is hard when people and interchangeable Agents change one repository, what ETHOS is, and why it is designed around four rules: preserve meaning with the smallest model, distinguish only what changes action, keep authority separate from views, and retire a mechanism when its obligation disappears. One market-data requirement carries the rules from request to real use, and the film returns to the opening sentence and the ETHOS mark. The pipeline is illustrative; planned capabilities are described as design."
 cover = "assets/cover/ethos-cover-en.png"
 # A term that reads as one name stays on one caption line, as does a modifier and the noun it
-# qualifies, or a phrase whose parts would leave a caption too short to read. Terms are written in
-# lowercase: the engine matches them against the lowercased words of the text.
+# qualifies, or a phrase whose parts would leave a caption too short to read. The engine matches each
+# term whatever its case.
 caption_terms = [
   "work lane",
   "trust kernel",
@@ -72,6 +72,9 @@ caption_terms = [
   "stored away as truth",
   "the concepts and structure",
   "everyone who picks up the work later",
+  "the original words",
+  "the words before it",
+  "the kernel compiles it afresh",
 ]
 
 # The fonts the picture stages below fonts/, in this order: Noto Sans CJK SC, subset to the

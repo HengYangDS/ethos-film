@@ -98,14 +98,16 @@ export function buildingReach(t, parts) {
 }
 /* Where the stack stands while the outcomes are listed beside it: still, so nothing moves as a part of the list joins.
  * It stands where the stack and the finished list are centred on the content centre, moved toward where the list's
- * first part would centre them by a quarter of what the later parts add, at most 50 px, so neither the opening list
- * nor the finished one stands far off the centre. */
+ * first part would centre them by a quarter of what the later parts add, at most 30 px, so neither the opening list
+ * nor the finished one stands far off the centre: with at most 50 px the finished English list's ink stood 50.6 px
+ * off, past the reviewers' 50 px for a settled picture, which filmkit 0.16.0 refuses; at 30 px the opening list stands
+ * about 39 px left and the finished one about 39 px right. */
 const outcomesAt = (c) => {
   const parts = outcomesParts(c),
     final = Math.max(...parts.map(([, reach]) => reach)),
     // The heading, its qualifier in the conditions' column: the first two parts.
     first = Math.max(parts[0][1], parts[1][1]);
-  return 960 - final / 2 + Math.min(50, (final - first) / 4);
+  return 960 - final / 2 + Math.min(30, (final - first) / 4);
 };
 
 /* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the
