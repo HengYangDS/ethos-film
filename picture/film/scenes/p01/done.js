@@ -33,7 +33,7 @@ import {
   termRow,
   wrapName,
 } from "../../naming/names.js";
-import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
+import { railStations, rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
 import { L, en } from "../../timeline.js";
@@ -243,9 +243,9 @@ scenes["01"] = function (s, t) {
       ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能退回去？"],
       ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"],
     );
-    // Every question stands on one line within its share of the rail, as a row of questions reads: the longest,
-    // 是不是提需求的人真正要的？, is 13 characters, about 379 px at the label size, under the 360 px pitch less half
-    // of each neighbour and the gap.
+    // Every question stands on one line within its share of the rail, as a row of questions reads. The stations keep
+    // each pair of neighbours half of each name's width plus a gap apart (railStations), so the widest question,
+    // 是不是提需求的人真正要的？, stands whole between its neighbours at the 360 px pitch.
     const RY = 620,
       RR = 34,
       WRAP = 400,
@@ -304,12 +304,17 @@ scenes["01"] = function (s, t) {
       if (i === 2) documentIcon(x - 13, RY - 17, 26, 34, { alpha: on, rows: 3 });
       if (i === 3) recoverIcon(x, RY, 15, { color: P.ink, alpha: on });
     });
-    railNames(names, xs, RY + RR, {
-      gap: NAME_GAP,
-      wrap: WRAP,
-      alpha: (i) => stageA * listIn(t, qs, i),
-      set: "questions",
-    });
+    // railNames would give each name its nearer neighbour's distance less 30 px, 330 px at this pitch, and break the
+    // widest question; the stations already keep each pair half of each name's width plus a gap apart, so each name
+    // is set whole under its station.
+    names.forEach((v, i) =>
+      nameText(v, xs[i], RY + RR + NAME_GAP, {
+        valign: "top",
+        align: "center",
+        alpha: stageA * listIn(t, qs, i),
+        set: "questions",
+      }),
+    );
   }
   // 4. The work is now done by Agents: the code they change, and the row of interchangeable Agents joined to it. Its
   // session frame stands around the Agent at work; when the session ends the frame turns to a dashed outline, and when

@@ -1741,12 +1741,14 @@ scenes["01"] = function(s, t) {
       if (i === 2) documentIcon(x - 13, RY - 17, 26, 34, { alpha: on, rows: 3 });
       if (i === 3) recoverIcon(x, RY, 15, { color: P.ink, alpha: on });
     });
-    railNames(names2, xs, RY + RR, {
-      gap: NAME_GAP,
-      wrap: WRAP2,
-      alpha: (i) => stageA * listIn(t, qs, i),
-      set: "questions"
-    });
+    names2.forEach(
+      (v, i) => nameText(v, xs[i], RY + RR + NAME_GAP, {
+        valign: "top",
+        align: "center",
+        alpha: stageA * listIn(t, qs, i),
+        set: "questions"
+      })
+    );
   }
   if (stageB > 0) {
     const xs = [560, 720, 880], Y3 = 500, R = 33, S = 48, RX = 1330, RW = 260, RH = 200;
