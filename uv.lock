@@ -209,7 +209,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "filmkit", git = "https://github.com/HengYangDS/filmkit?tag=v0.16.0" }]
+requires-dist = [{ name = "filmkit", git = "https://github.com/HengYangDS/filmkit?tag=v0.18.0" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -231,8 +231,8 @@ wheels = [
 
 [[package]]
 name = "filmkit"
-version = "0.16.0"
-source = { git = "https://github.com/HengYangDS/filmkit?tag=v0.16.0#d6de89569ddb336363186ca99c39e5a45d018cb1" }
+version = "0.18.0"
+source = { git = "https://github.com/HengYangDS/filmkit?tag=v0.18.0#acc1eda13ad06ab1881fec9fd8a8372f7b2ba4d9" }
 dependencies = [
     { name = "mlx-audio" },
     { name = "numpy" },
