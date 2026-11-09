@@ -13,6 +13,7 @@ import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
 import { glideShare, glideSteps } from "../../timing/pauses.js";
+import { STAGE_CUT } from "../../timing/stages.js";
 
 /* Documents drawn as one mark: their outlines and folds one stroke and their rows another, so a set of copies reads as
  * one thing and a sheet's rows as its own lines rather than a list of marks to name. Sheets are outlines without a
@@ -217,12 +218,14 @@ export function stageSummaries(t, a, c) {
   requestDoc(a);
   railEnd(a);
   handlers([a, a, a]);
+  // One point at a time runs along the rail. The cut keeps the rail and brings the point, so its clock starts at the
+  // cut: the first point sets off from the rail's start and grows in by its size, as a flow's points enter.
   flowAlong(
     [
       [x0 + 44, y],
       [x1 - 20, y],
     ],
-    flowClock(t),
+    flowClock(t) - flowClock(c.sCut + STAGE_CUT),
     7,
     { single: true, color: P.ink, alpha: a },
   );

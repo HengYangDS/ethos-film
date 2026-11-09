@@ -17,6 +17,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
 import { glideShare } from "../../timing/pauses.js";
+import { STAGE_CUT } from "../../timing/stages.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
  * its ink hole opens as it settles, the one part rule one adds (the passages are rule two's). It beats once on the
@@ -164,6 +165,23 @@ export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1
   });
 }
 
+/* The Change's name in 04.4, its term and qualifier. */
+const changeName = () => [L(["正式变更"], ["One official Change"]), L(["只写在那里"], ["only there"])];
+/* Where the Change's left edge stands in 04.4 at t, the place 04.5 carries it from. The group spans the Change's name
+ * where it is wider than the document, at either side, and the field names that stand: it reaches `over` left of the
+ * Change and right to the end of its name or, once they stand, of the widest field name. */
+function changeX(t, c) {
+  const [term, qual] = changeName(),
+    ats = [c.f1, c.f2, c.f3],
+    over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2),
+    reach = reachAt(
+      t,
+      CHANGE_W + over,
+      fieldNames().map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)]),
+    );
+  return 960 - (reach - over) / 2;
+}
+
 /* 04.4 One Change: the intent, named, moves into a Change, which is named with "only there"; then its three fields
  * arrive on their words, each a row of the document linked to its name at the right. The Change stands centred while
  * it is alone, the intent named at its left and moving into it; as each field name that reaches further than those
@@ -171,20 +189,10 @@ export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1
 export function changeStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = fieldNames(),
-    term = L(["正式变更"], ["One official Change"]),
-    qual = L(["只写在那里"], ["only there"]),
+    [term, qual] = changeName(),
     ats = [c.f1, c.f2, c.f3],
-    // The group spans the Change's name where it is wider than the document, at either side, and the field names
-    // that stand: it reaches `over` left of the Change and right to the end of its name or, once they stand, of the
-    // widest field name.
-    over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2),
     alone = 960 - CHANGE_W / 2,
-    reach = reachAt(
-      t,
-      CHANGE_W + over,
-      names.map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)]),
-    ),
-    DX = 960 - (reach - over) / 2,
+    DX = changeX(t, c),
     DY = 440,
     FX = DX + CHANGE_W + 90,
     // The intent's way, from its place to the head of the Change as the Change stands alone.
@@ -222,7 +230,7 @@ export function changeStage(s, t, c, g) {
 /* 04.5 One copy: the Change and, at its left, a person and an Agent who pick the work up later; each reads it along
  * a link, and what they read is the same. The readers' name and the Change's hang from one line under the lower of
  * their marks, the Agent. The readers and the Change stand centred together, and the group glides as one unit to centre
- * on what they read as well when it is named. */
+ * on what they read as well when it is named. The Change is carried there from its place in 04.4. */
 export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   // The English readers' name is their noun, and its relative clause joins under it as a smaller gloss on its own
@@ -237,15 +245,24 @@ export function readersStage(s, t, c, g) {
     left = 250 + rowHalf(readers, readersQual),
     right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)),
     read = CHANGE_W + NAME_GAP + 10 + measure(same),
-    DX = 960 + mix(left - right, left - read, glideShare(t, c.same + 0.05, (read - right) / 2, 0.7)) / 2,
+    seat = 960 + mix(left - right, left - read, glideShare(t, c.same + 0.05, (read - right) / 2, 0.7)) / 2,
+    // The Change comes from where 04.4 left it: from the cut it glides with its name to its seat by the structural
+    // glide, so the figure the voice names is carried there rather than moved in one frame. The readers, who join it
+    // later, arrive at rest in their places beside that seat.
+    cut = c.first5 + STAGE_CUT,
+    from = changeX(cut, c),
+    arrive = glideShare(t, cut, 960 + (left - right) / 2 - from),
+    DX = mix(from, seat, arrive),
     DY = 440,
-    RX = DX - 250,
+    RX = seat - 250,
     AY = 666,
-    names = rowNameTop([AY + 22, DY + CHANGE_H]),
+    names = mix(rowNameTop([DY + CHANGE_H]), rowNameTop([AY + 22, DY + CHANGE_H]), arrive),
     who = g * named(t, c.readers),
     reading = g * named(t, c.same);
   changeDocument(DX, DY, { alpha: g });
-  termRow(t, term, [c.first5], qual, [c.first5], DX + CHANGE_W / 2, names, {
+  // What the cut brings inks in from it: the qualifier, and in English the Change's shorter name; the Chinese name is
+  // 04.4's own and stands on.
+  termRow(t, term, [L(c.change, cut + 0.15)], qual, [cut + 0.15], DX + CHANGE_W / 2, names, {
     alpha: g,
     align: "center",
   });

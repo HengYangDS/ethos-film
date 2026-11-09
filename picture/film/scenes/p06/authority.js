@@ -29,6 +29,7 @@ import {
 } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
+import { cueFrom } from "../../timing/cues.js";
 import { mix, ramp } from "../../timing/easing.js";
 import { glideShare } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
@@ -139,14 +140,14 @@ function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right)))
 }
 /* How far 06.5's refusal reaches right of the mark's origin at t. From the cut the dashboard stands with its role
  * under it instead of its qualifier beside it, so the group narrows from the stale view's reach to that row's by the
- * structural glide; then it widens, gliding, as the judgment's conditions and the judgment join the names' column on
- * their words (reachAt), so what stands stays centred. */
+ * structural glide, which sets off from rest at the cut; then it widens, gliding, as the judgment's conditions and the
+ * judgment join the names' column on their words (reachAt), so what stands stays centred. */
 function refusalReach(t, c) {
   const text = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT,
     [first, second] = CONDITIONS(),
     before = Math.max(...viewsParts().map(([, right]) => right)),
     base = text + Math.max(measure(VIEWS()[1]), measure(ROLE()[0], NOTE)),
-    settled = mix(before, base, glideShare(t, c.first5b + 0.05, (before - base) / 2));
+    settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
   const parts = [
     [c.ambiguous, text + measure(first, NOTE)],
     [c.stale, text + measure(first + second, NOTE)],
@@ -390,7 +391,12 @@ export function notAuthorityStage(s, t, c, g) {
     v = viewsOf(place),
     b = branchOf(place);
   boundaryMark(t, c, g, place);
-  views(t, c, g, place, { only: 1, linked: false, role: { text: ROLE(), at: c.first5b } });
+  // The view's role joins under the dashboard on its own words, which follow the stage's first words.
+  views(t, c, g, place, {
+    only: 1,
+    linked: false,
+    role: { text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) },
+  });
   innerBranch(g, place, 1);
   // Taken as authority: a dashed relation from the view back into the boundary, struck at the opening; acting on the
   // view carries it on to the new commit, which it would overwrite. Each reach draws on at the tip pace by its own

@@ -2052,7 +2052,7 @@ function stageSummaries(t, a, c) {
       [x0 + 44, y],
       [x1 - 20, y]
     ],
-    flowClock(t),
+    flowClock(t) - flowClock(c.sCut + STAGE_CUT),
     7,
     { single: true, color: P.ink, alpha: a }
   );
@@ -2493,7 +2493,7 @@ function stageScope(t, a, c) {
 // picture/film/scenes/p02/beyond.js
 function stageClaims(t, a, c) {
   if (a <= 0) return;
-  const X02 = 760, EW = 130, CW = 500, H = 30, ys = [430, 570, 710].map((y) => y + building(t, [c.eCut, c.merge, c.deploy], 105)), evidence = [c.local, c.merge, c.deploy], claims = [c.everything, c.release, c.benefit2], own = ramp(t, c.ownPart - 0.15, 0.4);
+  const X02 = 760, EW = 130, CW = 500, H = 30, ys = [430, 570, 710].map((y) => y + building(t, [c.eCut, c.merge, c.deploy], 105)), evidence = [c.local, c.merge, c.deploy], said = [c.eCut + STAGE_CUT + 0.15, ...evidence.slice(1)], claims = [c.everything, c.release, c.benefit2], own = ramp(t, c.ownPart - 0.15, 0.4);
   const evidenceNames = L(
     ["本地跑通", "代码合进去", "部署成功"],
     ["A run", "A merge", "A deployment"]
@@ -2502,7 +2502,7 @@ function stageClaims(t, a, c) {
     ["Everything passes", "A release", "Actual benefit"]
   ), claimAts = [c.everything, L(c.releaseName, c.release), c.benefit2], em = labelSize(LABEL);
   ys.forEach((y, i) => {
-    const on = a * ramp(t, (i ? evidence[i] : c.eCut) - 0.15, 0.4), grow = drawnShare({ t, at: claims[i] - 0.1 }, CW - EW), w = mix(EW, CW, grow);
+    const on = a * ramp(t, said[i] - 0.15, 0.4), grow = drawnShare({ t, at: claims[i] - 0.1 }, CW - EW), w = mix(EW, CW, grow);
     if (on < 0.01) return;
     box(X02, y - H / 2, EW, H, { fill: P.ink, alpha: on, radius: 6 });
     box(X02, y - H / 2, w, H, {
@@ -2526,7 +2526,6 @@ function stageClaims(t, a, c) {
         radius: 10,
         width: 3
       });
-    const said = [c.eCut, ...evidence.slice(1)];
     termRow(
       t,
       [evidenceNames[i]],
@@ -4180,13 +4179,18 @@ function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1 } = {}
       );
   });
 }
-function changeStage(s, t, c, g) {
-  ruleOneHeading(t, c, g);
-  const names2 = fieldNames(), term = L(["正式变更"], ["One official Change"]), qual = L(["只写在那里"], ["only there"]), ats = [c.f1, c.f2, c.f3], over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2), alone = 960 - CHANGE_W / 2, reach = reachAt(
+var changeName = () => [L(["正式变更"], ["One official Change"]), L(["只写在那里"], ["only there"])];
+function changeX(t, c) {
+  const [term, qual] = changeName(), ats = [c.f1, c.f2, c.f3], over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2), reach = reachAt(
     t,
     CHANGE_W + over,
-    names2.map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)])
-  ), DX = 960 - (reach - over) / 2, DY = 440, FX = DX + CHANGE_W + 90, into = glideShare(t, c.change - 0.1, Math.hypot(242 + Math.max(0, alone - DX), 124), 0.7), fields = ats.map((at) => ramp(t, at - 0.15, 0.4));
+    fieldNames().map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)])
+  );
+  return 960 - (reach - over) / 2;
+}
+function changeStage(s, t, c, g) {
+  ruleOneHeading(t, c, g);
+  const names2 = fieldNames(), [term, qual] = changeName(), ats = [c.f1, c.f2, c.f3], alone = 960 - CHANGE_W / 2, DX = changeX(t, c), DY = 440, FX = DX + CHANGE_W + 90, into = glideShare(t, c.change - 0.1, Math.hypot(242 + Math.max(0, alone - DX), 124), 0.7), fields = ats.map((at) => ramp(t, at - 0.15, 0.4));
   changeDocument(DX, DY, { alpha: g * named(t, c.change), fields, intent: 0 });
   const ix = mix(alone - 190, DX + 52, into), iy = mix(DY + 150, DY + 26, into), meant = g * named(t, c.intent);
   documentIcon(ix, iy, 46, 58, { alpha: meant, rows: 2, fold: false });
@@ -4208,9 +4212,9 @@ function changeStage(s, t, c, g) {
 }
 function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const readers = L(["后面接手的人和 Agent"], ["Everyone"]), readersQual = L([], ["who picks up the work"]), same = L("同一份", "The same thing"), term = L(["正式变更"], ["The Change"]), qual = L(["只写在一处"], ["one copy"]), left = 250 + rowHalf(readers, readersQual), right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)), read = CHANGE_W + NAME_GAP + 10 + measure(same), DX = 960 + mix(left - right, left - read, glideShare(t, c.same + 0.05, (read - right) / 2, 0.7)) / 2, DY = 440, RX = DX - 250, AY = 666, names2 = rowNameTop([AY + 22, DY + CHANGE_H]), who = g * named(t, c.readers), reading = g * named(t, c.same);
+  const readers = L(["后面接手的人和 Agent"], ["Everyone"]), readersQual = L([], ["who picks up the work"]), same = L("同一份", "The same thing"), term = L(["正式变更"], ["The Change"]), qual = L(["只写在一处"], ["one copy"]), left = 250 + rowHalf(readers, readersQual), right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)), read = CHANGE_W + NAME_GAP + 10 + measure(same), seat = 960 + mix(left - right, left - read, glideShare(t, c.same + 0.05, (read - right) / 2, 0.7)) / 2, cut = c.first5 + STAGE_CUT, from = changeX(cut, c), arrive = glideShare(t, cut, 960 + (left - right) / 2 - from), DX = mix(from, seat, arrive), DY = 440, RX = seat - 250, AY = 666, names2 = mix(rowNameTop([DY + CHANGE_H]), rowNameTop([AY + 22, DY + CHANGE_H]), arrive), who = g * named(t, c.readers), reading = g * named(t, c.same);
   changeDocument(DX, DY, { alpha: g });
-  termRow(t, term, [c.first5], qual, [c.first5], DX + CHANGE_W / 2, names2, {
+  termRow(t, term, [L(c.change, cut + 0.15)], qual, [cut + 0.15], DX + CHANGE_W / 2, names2, {
     alpha: g,
     align: "center"
   });
@@ -5265,7 +5269,7 @@ function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right)))
   return { x: 960 - (e.left + reach) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
 }
 function refusalReach(t, c) {
-  const text2 = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, [first, second] = CONDITIONS(), before = Math.max(...viewsParts().map(([, right]) => right)), base = text2 + Math.max(measure(VIEWS()[1]), measure(ROLE()[0], NOTE)), settled = mix(before, base, glideShare(t, c.first5b + 0.05, (before - base) / 2));
+  const text2 = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, [first, second] = CONDITIONS(), before = Math.max(...viewsParts().map(([, right]) => right)), base = text2 + Math.max(measure(VIEWS()[1]), measure(ROLE()[0], NOTE)), settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
   const parts2 = [
     [c.ambiguous, text2 + measure(first, NOTE)],
     [c.stale, text2 + measure(first + second, NOTE)],
@@ -5443,7 +5447,11 @@ function staleViewStage(s, t, c, g) {
 function notAuthorityStage(s, t, c, g) {
   const place = viewsPlace(refusalReach(t, c)), v = viewsOf(place), b = branchOf(place);
   boundaryMark(t, c, g, place);
-  views(t, c, g, place, { only: 1, linked: false, role: { text: ROLE(), at: c.first5b } });
+  views(t, c, g, place, {
+    only: 1,
+    linked: false,
+    role: { text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) }
+  });
   innerBranch(g, place, 1);
   const refused = g * named(t, c.never), way = lengthOf(linkPoints(v.vx - 36, v.ys[1], b.end, b.by + 22, { route: "hv" })), reach = drawnShare({ t, at: c.never + 0.05 }, way, 0.45) + drawnShare({ t, at: c.act + 0.05 }, way, 0.55), counts = L("不是权威依据", "Never counts as authority"), room = v.vx - 30 - 20 - (v.open - 16), mouth = v.open - 16 + room / 2;
   link(v.vx - 36, v.ys[1], b.end, b.by + 22, {

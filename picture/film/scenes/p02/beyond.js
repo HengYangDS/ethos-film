@@ -13,6 +13,7 @@ import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { clamp, mix, ramp } from "../../timing/easing.js";
 import { glideSteps } from "../../timing/pauses.js";
+import { STAGE_CUT } from "../../timing/stages.js";
 
 /* 02.4 Each step's evidence is a short solid block, and the claim made from it an outline that grows out of the block
  * on the claim's words and runs far past it: one machine and everything, a merge and a release, a deployment and actual
@@ -30,6 +31,9 @@ export function stageClaims(t, a, c) {
     // picture under the index stays balanced.
     ys = [430, 570, 710].map((y) => y + building(t, [c.eCut, c.merge, c.deploy], 105)),
     evidence = [c.local, c.merge, c.deploy],
+    // When each step is named: the first step's clause has begun by the cut, which keeps the index and brings the
+    // step, so the step and its name ink in from the cut; the others arrive on their words.
+    said = [c.eCut + STAGE_CUT + 0.15, ...evidence.slice(1)],
     claims = [c.everything, c.release, c.benefit2],
     own = ramp(t, c.ownPart - 0.15, 0.4);
   const evidenceNames = L(
@@ -44,9 +48,8 @@ export function stageClaims(t, a, c) {
     claimAts = [c.everything, L(c.releaseName, c.release), c.benefit2],
     em = labelSize(LABEL);
   ys.forEach((y, i) => {
-    // The first step stands from the cut, its clause already begun. The claim's outline draws out of the block, its
-    // far end leading at the tip pace over its own way (drawnShare).
-    const on = a * ramp(t, (i ? evidence[i] : c.eCut) - 0.15, 0.4),
+    // The claim's outline draws out of the block, its far end leading at the tip pace over its own way (drawnShare).
+    const on = a * ramp(t, said[i] - 0.15, 0.4),
       grow = drawnShare({ t, at: claims[i] - 0.1 }, CW - EW),
       w = mix(EW, CW, grow);
     if (on < 0.01) return;
@@ -76,7 +79,6 @@ export function stageClaims(t, a, c) {
         width: 3,
       });
     // Each evidence name stands on its row's line, its qualifier, where it has one, under it.
-    const said = [c.eCut, ...evidence.slice(1)];
     termRow(
       t,
       [evidenceNames[i]],
