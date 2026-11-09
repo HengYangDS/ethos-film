@@ -431,6 +431,7 @@ function ring(x, y, r, {
 // picture/film/framing/captions.js
 var CAPTION_JOIN = 0.3;
 var HANGING = /[\u4e00-\u9fff].*[\u3001\uff0c\u3002\uff1b\uff1a\uff01\uff1f\uff09\u300d\u300f\u201d\u300b\u3011]$/u;
+var OPENING = /^[\uff08\u300c\u300e\u201c\u300a\u3010].*[\u4e00-\u9fff]/u;
 var HUNG_SHIFT = 6.5;
 function caption(t) {
   const caps = film.captions;
@@ -442,7 +443,8 @@ function caption(t) {
   const c = caps[i];
   const a = (joined(caps[i - 1], c) ? 1 : ramp(t, c.start - 0.04, 0.12)) * (joined(c, caps[i + 1]) ? 1 : 1 - ramp(t, c.end - 0.1, 0.1));
   const line2 = (c.display_text ?? c.text).trim();
-  text(line2, HANGING.test(line2) ? 960 + HUNG_SHIFT : 960, 970, 26, {
+  const x = 960 + (HANGING.test(line2) ? HUNG_SHIFT : 0) - (OPENING.test(line2) ? HUNG_SHIFT : 0);
+  text(line2, x, 970, 26, {
     align: "center",
     color: P.ink,
     alpha: 0.94 * Math.max(a, 1e-3),
@@ -6163,11 +6165,11 @@ function repoGroup(xs, y, w, h, { alpha = 1, checks = 0 } = {}) {
     );
 }
 var GLYPH = 240;
-var OPENING = 500;
+var OPENING2 = 500;
 var FULL2 = { datum: 1, passages: 1, boundary: 1 };
 function ruleHeading2(t, { kick, kickAt, rule, ruleAt, settleAt, alpha }) {
-  const rest = ruleHeadingLayout(kick, rule, GLYPH, FULL2), lift = 500 - (rest.top + rest.bottom) / 2, wider = Math.max(0, Math.max(...rest.lines.map((v) => measure(v))) - measure(kick, NOTE)), aside = wider / 2 * (1 - glideShare(t, ruleAt + 0.05, wider / 2, 0.7)), open = ruleHeadingLayout(kick, rule, OPENING, FULL2, { dy: lift, cx: 960 + aside }), drift = 0.12 * clamp((voiceTime(t) - voiceTime(kickAt)) / 4), way = Math.hypot(open.mx - rest.mx, open.my - rest.my), q = drift + (1 - drift) * glideShare(t, settleAt + 0.05, way, 0.9), dy = mix(lift, 0, q), TX = mix(open.tx, rest.tx, q);
-  ethosMark(mix(open.mx, rest.mx, q), mix(open.my, rest.my, q), mix(OPENING, GLYPH, q), { alpha });
+  const rest = ruleHeadingLayout(kick, rule, GLYPH, FULL2), lift = 500 - (rest.top + rest.bottom) / 2, wider = Math.max(0, Math.max(...rest.lines.map((v) => measure(v))) - measure(kick, NOTE)), aside = wider / 2 * (1 - glideShare(t, ruleAt + 0.05, wider / 2, 0.7)), open = ruleHeadingLayout(kick, rule, OPENING2, FULL2, { dy: lift, cx: 960 + aside }), drift = 0.12 * clamp((voiceTime(t) - voiceTime(kickAt)) / 4), way = Math.hypot(open.mx - rest.mx, open.my - rest.my), q = drift + (1 - drift) * glideShare(t, settleAt + 0.05, way, 0.9), dy = mix(lift, 0, q), TX = mix(open.tx, rest.tx, q);
+  ethosMark(mix(open.mx, rest.mx, q), mix(open.my, rest.my, q), mix(OPENING2, GLYPH, q), { alpha });
   nameText(kick, TX, KICK_Y + dy, {
     align: "left",
     size: NOTE,
