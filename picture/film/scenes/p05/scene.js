@@ -60,10 +60,10 @@ function cuesOf(s) {
     isBlock: cue(s, "结果是拦下", "makes it block"),
     onlyPass: cue(s, "只有通过", "Only pass"),
     ahead: cue(s, "才允许动手", "lets the work go ahead"),
-    never: cue(s, "从来不等于可以", "never permission"),
+    never: cue(s, "暂不动手", "it waits"),
     example: cue(s, "比如 GitLab 和 GitHub 上的检查", "Take the checks on GitLab"),
     isUnknown: cue(s, "这一项就是未知", "their result is unknown"),
-    noProblem: cue(s, "没有问题", "no problem"),
+    noProblem: cue(s, "没有问题", "whether there is a problem"),
     nonPassFirst: cue(
       s,
       "按 ETHOS 的设计，只要不是通过",

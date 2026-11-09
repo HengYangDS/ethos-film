@@ -133,7 +133,7 @@ export function stageTools(t, a, c) {
 /* 03.7 ETHOS does not take over the systems already in use: ETHOS at the centre with its name from the cut, and the
  * systems' four places around it, one mark drawn with the heading that names them on its words; each system is named in
  * its place as it is said, and left as it is. ETHOS stands on the user's own machine, depending on no vendor; on the words that connect
- * them the systems are linked to ETHOS's sides, and becoming a source of truth is refused. */
+ * them the systems are linked to ETHOS's sides, and becoming part of ETHOS's own record is refused. */
 export function stageSystems(t, a, c) {
   if (a <= 0) return;
   const KX = 960,
@@ -197,9 +197,9 @@ export function stageSystems(t, a, c) {
     560 + 76 + NAME_GAP - 6,
     { width: 560, alpha: a, align: "center" },
   );
-  // The negation comes before the words it refuses in both editions ("不会成为" / "does not become"), so the cross
-  // arrives with the name: in Chinese the stage cuts 1.3 s after the words, too soon for a cross that followed them.
-  rejectedName(L("真相的来源", "A source of truth"), KX, 800, {
+  // The negation comes before the words it refuses in both editions ("不会因此纳入" / "does not make"), so the
+  // cross arrives with the name: in Chinese the stage cuts soon after the words, too soon for a cross that followed them.
+  rejectedName(L("纳入 ETHOS 自己的记录", "Part of ETHOS's own record"), KX, 800, {
     alpha: a * named(t, c.truth),
     mark: ramp(t, c.truth - 0.05, 0.35),
   });

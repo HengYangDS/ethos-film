@@ -8,6 +8,11 @@ import { ramp } from "../timing/easing.js";
 /* Cues closer than this are lines of one speech: the earlier holds through the gap and the next replaces it in place,
  * so the caption band does not blink to ground between them. A cue fades only beside a longer quiet. */
 const CAPTION_JOIN = 0.3;
+/* A Chinese line that ends in a full-width mark sets that mark in the left half of its em, so its ink ends half an em
+ * short of its advance. Such a line is centred with that half hung past its edge, so its ink stands on the frame's
+ * centre: the size is 26 px, and half of a 13 px hang moves the line 6.5 px. */
+const HANGING = /[\u4e00-\u9fff].*[\u3001\uff0c\u3002\uff1b\uff1a\uff01\uff1f\uff09\u300d\u300f\u201d\u300b\u3011]$/u;
+const HUNG_SHIFT = 6.5;
 export function caption(t) {
   const caps = film.captions;
   const joined = (a, b) => a && b && b.start - a.end <= CAPTION_JOIN;
@@ -19,7 +24,8 @@ export function caption(t) {
   const a =
     (joined(caps[i - 1], c) ? 1 : ramp(t, c.start - 0.04, 0.12)) *
     (joined(c, caps[i + 1]) ? 1 : 1 - ramp(t, c.end - 0.1, 0.1));
-  text((c.display_text ?? c.text).trim(), 960, 970, 26, {
+  const line = (c.display_text ?? c.text).trim();
+  text(line, HANGING.test(line) ? 960 + HUNG_SHIFT : 960, 970, 26, {
     align: "center",
     color: P.ink,
     alpha: 0.94 * Math.max(a, 0.001),

@@ -73,7 +73,7 @@ export function outcomesColumns() {
 const columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
 /* The parts of the outcomes list, each with how far right it reaches from the stack's left edge: the heading, its term
  * and qualifier taken as one, its qualifier again once it joins the conditions' column, then each name, each condition
- * and "never permission", a second line of unknown's condition. `c` gives when each arrives. */
+ * and "it waits", a second line of unknown's condition. `c` gives when each arrives. */
 export function outcomesParts(c) {
   const col = outcomesColumns(),
     names = outcomeNames(),
@@ -87,7 +87,7 @@ export function outcomesParts(c) {
       at,
       col.quals + measure(quals[i].join(""), NOTE),
     ]),
-    [c.never, col.quals + measure(L("不等于可以", "never permission"), NOTE)],
+    [c.never, col.quals + measure(L("暂不动手", "it waits"), NOTE)],
   ];
 }
 /* How far right a row of parts, each [when it arrives, how far it reaches], reaches at t as they build: a part that
@@ -213,9 +213,9 @@ export function verifiedStage(s, t, c, g) {
 }
 
 /* 05.5 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
- * with what it alone permits and block and unknown with their conditions; unknown is never permission. The list keeps
+ * with what it alone permits and block and unknown with their conditions; while unknown, the work waits. The list keeps
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
- * next three. "never permission" is said of unknown, so it stands as a second line of unknown's condition, in the
+ * next three. "it waits" is said of unknown, so it stands as a second line of unknown's condition, in the
  * condition's note style, column and lowercase, rather than as a fourth row of the list. The checks with no result are linked
  * to unknown, and "no problem" is refused. Each part of the list stands in its place from its words, so nothing moves
  * as the list builds; the stack stands still beside it (outcomesAt). */
@@ -260,7 +260,7 @@ export function outcomesStage(s, t, c, g) {
       qualLeft,
     });
   });
-  nameText(L("不等于可以", "never permission"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
+  nameText(L("暂不动手", "it waits"), qualLeft, ys[2] + labelSize(NOTE) * LEADING, {
     align: "left",
     size: NOTE,
     color: P.muted,

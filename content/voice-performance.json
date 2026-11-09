@@ -2,7 +2,7 @@
   "pronunciation": {
     "schema_version": 2,
     "status": "planned-not-listened",
-    "control_boundary": "Dictionary and occurrence targets are acceptance criteria. Native Qwen Base does not consume IPA or SSML. The normalization below carries the spoken forms the previous ETHOS film adopted after heard errors, and three homophones adopted on 2026-11-03 after minimal pairs showed the narration saying 重 as zhòng in 去重 and 当 as dāng in 就当 and 当真相; no further normalization is proposed without an observed error.",
+    "control_boundary": "Dictionary and occurrence targets are acceptance criteria. Native Qwen Base does not consume IPA or SSML. The normalization below carries the spoken forms the previous ETHOS film adopted after heard errors, and two homophones adopted on 2026-11-03 after minimal pairs showed the narration saying 重 as zhòng in 去重 and 当 as dāng in 就当 (a third, for 当真相, left with those words on 2026-11-09); no further normalization is proposed without an observed error.",
     "sources": [
       {
         "id": "cmudict",
@@ -70,13 +70,6 @@
             "spoken": "就荡",
             "kind": "homophone",
             "reading": "jiù dàng",
-            "source": "measured-misreading"
-          },
-          {
-            "display": "当真相",
-            "spoken": "荡真相",
-            "kind": "homophone",
-            "reading": "dàng zhēn xiàng",
             "source": "measured-misreading"
           }
         ],
@@ -185,6 +178,16 @@
             "target_reading": "huì huà"
           },
           {
+            "term": "传回来",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "chuán huí lái"
+          },
+          {
+            "term": "作为",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zuò wéi"
+          },
+          {
             "term": "假",
             "kind": "contextual-mandarin-word",
             "target_reading": "jiǎ"
@@ -231,6 +234,11 @@
             "term": "几样",
             "kind": "contextual-mandarin-word",
             "target_reading": "jǐ yàng"
+          },
+          {
+            "term": "分不清",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "fēn bù qīng"
           },
           {
             "term": "分别",
@@ -372,6 +380,11 @@
             "term": "和",
             "kind": "contextual-mandarin-word",
             "target_reading": "hé"
+          },
+          {
+            "term": "哪一种",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "nǎ yī zhǒng"
           },
           {
             "term": "因为",
@@ -601,19 +614,9 @@
             "target_reading": "zhēn zhèng"
           },
           {
-            "term": "真相",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "zhēn xiàng"
-          },
-          {
             "term": "着",
             "kind": "contextual-mandarin-word",
             "target_reading": "zhe"
-          },
-          {
-            "term": "答案",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "dá àn"
           },
           {
             "term": "算数",

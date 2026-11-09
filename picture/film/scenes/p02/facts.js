@@ -6,7 +6,6 @@ import { ctx } from "../../canvas.js";
 import { flowClock, link, linkPoints } from "../../drawing/links.js";
 import {
   box,
-  dashed,
   dot,
   drawnShare,
   fill,
@@ -21,8 +20,8 @@ import {
 import { check, cross, stopSign } from "../../drawing/symbols.js";
 import { commitRow } from "../../drawing/history.js";
 import { commitDot, tagIcon } from "../../drawing/workspace.js";
-import { building, listIn, listLevel, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
+import { listIn, named } from "../../naming/lists.js";
+import { NAME_GAP, NOTE, TERM_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { ease, mix, ramp } from "../../timing/easing.js";
@@ -164,27 +163,25 @@ export function stageBranch(t, a, c) {
   dot(BX, Y, 9 * ease((wrote - 0.8) / 0.2), { color: P.ink, alpha: a });
 }
 
-/* 02.5 The same version pushed to two platforms: one succeeds, the other fails, and between them the state nobody can
- * name; trying again adds a second push that ends in the same question. The row grows to the right as it is told, so it
- * stands centred on what stands: the version alone from the cut, then the version with its platforms, its results and
- * the state between them, gliding as one on the words of each part that widens it. Each platform arrives with its link
- * and its name on the words that name it. While the version stands alone, which English holds for most of three
- * seconds before it names a platform, and with the first platform, the stage stands 40 px lower, so it stays balanced
- * under the docked index; on the second platform's name it rises as one to its place. */
+/* 02.5 The same version pushed to two platforms: one succeeds, the other reports an error, and between them the state
+ * nobody can name. The row grows to the right as it is told, so it stands centred on what stands: the version alone
+ * from the cut, then the version with its platforms, its results and the state between them, gliding as one on the
+ * words of each part that widens it. Each platform arrives with its link and its name on the words that name it. While
+ * the version stands alone, which English holds for most of three seconds before it names a platform, and with the
+ * first platform, the stage stands 40 px lower, so it stays balanced under the docked index; on the second platform's
+ * name it rises as one to its place. */
 export function stagePlatforms(t, a, c) {
   if (a <= 0) return;
   const VX = 470,
     VY = 600 + 40 * (1 - glideShare(t, c.github + 0.05, 40, 0.7)),
     PX = 1100,
     ys = [VY - 140, VY + 140],
-    RY = VY + 240,
     W = 220,
     H = 84,
     q = flowClock(t);
   const versionName = L("同一个版本", "The same version"),
-    resultNames = L(["一边成功", "一边失败"], ["Succeeds on one", "Fails on the other"]),
-    unclearName = L("谁也说不清", "Nobody can say"),
-    retryName = L("再试一遍", "Trying again");
+    resultNames = L(["一边成功", "一边报错"], ["Succeeds on one", "Reports an error on the other"]),
+    unclearName = L("谁也说不清", "Nobody can say");
   const come = [c.gitlab, c.github],
     results = [c.ok, c.fail];
   const from = Math.min(VX, VX + 70 - measure(versionName) / 2),
@@ -196,7 +193,6 @@ export function stagePlatforms(t, a, c) {
       [come[0], from, PX + W / 2],
       ...results.map((at, i) => [at, from, after + measure(resultNames[i])]),
       [c.unclear, from, after + measure(unclearName)],
-      [c.retry, from, VX + 70 + 330 + UNKNOWN_R + 16 + measure(retryName)],
     ]),
     0,
   );
@@ -233,85 +229,121 @@ export function stagePlatforms(t, a, c) {
     align: "left",
     alpha: a * named(t, c.unclear),
   });
-  // Trying again: a second push, dashed, that ends in the same question. It draws on as every stroke's tip does
-  // (drawShare), at most 820 px/s, over its whole way.
-  const again = a * ramp(t, c.retry - 0.15, 0.4);
-  link(VX + 70, VY + 28, VX + 70 + 300, RY, {
-    route: "vh",
-    alpha: again,
-    upto: drawShare(t, c.retry + 0.05, Math.abs(RY - VY - 28) + 300, 0.6),
-    dash: [8, 8],
+  ctx.restore();
+}
+
+/* The row of the error and of the second push: below the docked index, so that picture and index stand balanced while
+ * only that row stands. */
+const FORK_Y = 720;
+
+/* 02.5 The error may mean either: from the error a link runs to a question, and the question forks to the two things
+ * the error may mean, the push failed, and the push went through with only its reply lost, each named on its words, the
+ * lost reply joining after its name. The error and its question stand from the cut; the fork stands centred on what
+ * stands, gliding as one as each part widens it. */
+export function stageFork(t, a, c) {
+  if (a <= 0) return;
+  const EX = 640,
+    QX = 900,
+    OX = 1150,
+    Y = FORK_Y,
+    ys = [Y - 100, Y + 100],
+    q = flowClock(t);
+  const errorName = L("报错的那一边", "The error"),
+    outcomeNames = L(["失败了", "已经成功"], ["The push failed", "Went through"]),
+    outcomeQuals = L([[], ["回复没有传回来"]], [[], ["only the reply was lost"]]),
+    ats = [c.failed, c.through],
+    after = OX + 36,
+    left = EX - 20 - NAME_GAP - measure(errorName),
+    reach = (i) =>
+      after +
+      measure(outcomeNames[i]) +
+      (outcomeQuals[i].length ? TERM_GAP + measure(outcomeQuals[i].join(""), NOTE) : 0);
+  ctx.save();
+  ctx.translate(
+    standing(t, [
+      [-Infinity, left, QX + UNKNOWN_R],
+      [ats[0], left, after + measure(outcomeNames[0])],
+      [ats[1], left, after + Math.max(measure(outcomeNames[0]), measure(outcomeNames[1]))],
+      [c.lost, left, Math.max(reach(0), reach(1))],
+    ]),
+    0,
+  );
+  stopSign(EX, Y, 20, { color: P.ink, alpha: a });
+  nameText(errorName, EX - 20 - NAME_GAP, Y, { align: "right", alpha: a * named(t, c.xName) });
+  link(EX + 20, Y, QX - UNKNOWN_R, Y, {
+    alpha: a,
+    draw: { t, at: c.xCut + 0.05 },
+    end: false,
+    flow: q,
   });
-  unknownMark(VX + 70 + 330, RY, again * ramp(t, c.retry + 0.5, 0.4));
-  // Its name stands as far from its mark as the results' names stand from theirs.
-  nameText(retryName, VX + 70 + 330 + UNKNOWN_R + 16, RY, {
-    align: "left",
-    alpha: a * named(t, c.retry),
+  unknownMark(QX, Y, a * ramp(t, c.xCut + 0.3, 0.4));
+  ys.forEach((y, i) => {
+    const on = a * ramp(t, ats[i] - 0.15, 0.4);
+    link(QX + UNKNOWN_R, Y, OX - 24, y, {
+      route: "hvh",
+      mid: QX + 90,
+      alpha: on,
+      draw: { t, at: ats[i] + 0.05 },
+      flow: q,
+    });
+    if (i === 0) cross(OX, y, 24, { color: P.ink, alpha: on, width: 4 });
+    else check(OX, y, 30, { color: P.ink, alpha: on, width: 4 });
+    termRow(
+      t,
+      [outcomeNames[i]],
+      [ats[i]],
+      outcomeQuals[i],
+      [c.lost],
+      after,
+      y - labelSize(LABEL) / 2,
+      { alpha: a * listIn(t, ats, i), set: "outcomes" },
+    );
   });
   ctx.restore();
 }
 
-/* 02.5 A request that was sent may not have been received, and an error does not mean nothing happened: each pair a
- * link that stops at a question, so the far end cannot be read from the near one. The near ends are named by their
- * nouns, the request with "sent" joining under it on its words and the error message. The pairs stand centred on what
- * stands: the first pair's near half from the cut, its link run out to the question's place, and each half that
- * widens the pairs glides them as one on its words. */
-export function stageSent(t, a, c) {
+/* 02.5 Trying again cannot tell which; only checking that platform can. A second push, dashed, runs from the version to
+ * a question and stops there; then the platform stands beside it with a lens over it, named on the words that send the
+ * viewer there. The two names over their marks share one line, and the stage glides as one as each part widens it. */
+export function stageCheck(t, a, c) {
   if (a <= 0) return;
-  const X0 = 760,
-    X1 = 1160,
-    // The pairs stand lower while the second is still to come, so the picture under the index stays balanced.
-    ys = [560, 760].map((y) => y + building(t, [c.s2Cut, c.error], 100)),
-    near = [c.sent, c.error],
-    far = [c.received, c.nothing],
-    q = flowClock(t);
-  const nearNames = L(["请求", "报错"], ["A request", "An error message"]),
-    nearQuals = L([["发出去了"], []], [["that was sent"], []]),
-    nearAts = [L(c.sent, c.s2Cut), L(c.errorName, c.error)],
-    farNames = L(["对方收下了", "什么都没发生"], ["Received", "Nothing happened"]),
-    nearLeft = (i) =>
-      X0 - 10 - NAME_GAP - Math.max(measure(nearNames[i]), measure(nearQuals[i].join(""), NOTE)),
-    farRight = (i) => X1 + 14 + NAME_GAP + measure(farNames[i]);
+  const TX = 470,
+    QX = 860,
+    PX = 1330,
+    Y = FORK_Y,
+    W = 220,
+    H = 84,
+    NY = Y - H / 2 - NAME_GAP;
+  const retryName = L("再试一遍", "Trying again"),
+    whichName = L("分不清是哪一种", "Cannot tell which"),
+    lookName = L("去那个平台查看", "Looking at that platform"),
+    left = Math.min(TX, TX + 70 - measure(retryName) / 2),
+    whichRight = QX + UNKNOWN_R + 16 + measure(whichName);
   ctx.save();
   ctx.translate(
     standing(t, [
-      [-Infinity, nearLeft(0), 930],
-      [far[0], nearLeft(0), farRight(0)],
-      [near[1], nearLeft(1), 930],
-      [far[1], nearLeft(1), farRight(1)],
+      [-Infinity, left, QX + UNKNOWN_R],
+      [c.which, left, whichRight],
+      [c.look, left, Math.max(whichRight, PX + W / 2, PX + measure(lookName) / 2)],
     ]),
     0,
   );
-  ys.forEach((y, i) => {
-    // The first pair stands from the cut, its clause already begun.
-    const on = a * ramp(t, (i ? near[i] : c.s2Cut) - 0.15, 0.4),
-      off = a * ramp(t, far[i] - 0.15, 0.4);
-    dot(X0, y, 10, { color: P.ink, alpha: on });
-    link(X0 + 10, y, 930, y, {
-      alpha: on,
-      draw: { t, at: near[i] + 0.05 },
-      end: false,
-      flow: q,
-    });
-    unknownMark(960, y, off);
-    dashed(990, y, X1 - 14, y, { color: P.line, alpha: off, width: 2.5 });
-    ring(X1, y, 14, { color: P.ink, alpha: off, width: 2.5 });
-    // Each near name stands on its pair's line, the request's qualifier under it.
-    termRow(
-      t,
-      [nearNames[i]],
-      [nearAts[i]],
-      nearQuals[i],
-      [c.sentName],
-      X0 - 10 - NAME_GAP,
-      y - labelSize(LABEL) / 2,
-      { align: "right", alpha: a * listLevel(t, nearAts, i), set: "near" },
-    );
-    nameText(farNames[i], X1 + 14 + NAME_GAP, y, {
-      align: "left",
-      alpha: a * listIn(t, far, i),
-      set: "far",
-    });
+  tagIcon(TX, Y, 140, 56, { alpha: a, color: P.ink });
+  nameText(retryName, TX + 70, NY, { valign: "bottom", alpha: a * named(t, c.retry) });
+  // The second push draws on as every stroke's tip does (drawShare) and stops at the question it cannot settle.
+  link(TX + 140, Y, QX - UNKNOWN_R, Y, {
+    alpha: a,
+    upto: drawShare(t, c.retry + 0.05, QX - UNKNOWN_R - TX - 140, 0.6),
+    dash: [8, 8],
+    end: false,
   });
+  unknownMark(QX, Y, a * ramp(t, c.retry + 0.45, 0.4));
+  nameText(whichName, QX + UNKNOWN_R + 16, Y, { align: "left", alpha: a * named(t, c.which) });
+  // The platform, and a lens over it: the one way to tell.
+  const look = a * ramp(t, c.look - 0.15, 0.4);
+  box(PX - W / 2, Y - H / 2, W, H, { stroke: P.ink, alpha: look, radius: 14, width: 2.5 });
+  ring(PX - 8, Y - 6, 20, { color: P.ink, alpha: look, width: 3.5 });
+  line(PX + 7, Y + 9, PX + 26, Y + 28, { color: P.ink, alpha: look, width: 4 });
+  nameText(lookName, PX, NY, { valign: "bottom", alpha: a * named(t, c.look) });
   ctx.restore();
 }

@@ -2,7 +2,7 @@
 
 import { stageClaims, stageTests } from "./beyond.js";
 import { stagePerson, stageRail, stageSummaries, stageWrongGoal } from "./drift.js";
-import { stageBranch, stagePlatforms, stageSent } from "./facts.js";
+import { stageBranch, stageCheck, stageFork, stagePlatforms } from "./facts.js";
 import { stageLedgers } from "./process.js";
 import { ctx } from "../../canvas.js";
 import { fill, measure, ring, stroke, text } from "../../drawing/strokes.js";
@@ -180,16 +180,18 @@ scenes["02"] = function (s, t) {
     gitlab: ["GitLab", "GitLab"],
     github: ["GitHub", "GitHub"],
     ok: ["一边成功", "succeeds on one"],
-    fail: ["一边失败", "fails on the other"],
+    fail: ["一边报错", "reports an error on the other"],
     unclear: ["谁也说不清", "nobody can say"],
+    // The error's two meanings are told from the clause that names the error; its name stands on the same words.
+    xCut: ["报错的那一边", "The error may mean"],
+    xName: ["报错的那一边", "The error"],
+    failed: ["失败了", "the push failed"],
+    through: ["已经成功", "went through"],
+    lost: ["回复没有传回来", "only the reply was lost"],
+    aCut: ["直接再试一遍", "Simply trying again"],
     retry: ["再试一遍", "trying again"],
-    s2Cut: ["因为请求", "A request that was sent"],
-    sent: ["请求发出去了", "was sent"],
-    sentName: ["发出去了", "that was sent"],
-    received: ["对方收下了", "received"],
-    error: ["看到报错", "an error message"],
-    errorName: ["报错", "an error message"],
-    nothing: ["什么都没发生", "nothing happened"],
+    which: ["分不清是哪一种", "cannot tell which"],
+    look: ["去那个平台查看", "looking at that platform"],
     lCut: ["常见的办法", "The usual answer"],
     process: ["加流程", "more process"],
     register: ["登记表", "register"],
@@ -252,7 +254,8 @@ scenes["02"] = function (s, t) {
   stageClaims(t, stage("eCut", "tCut"), c);
   stageTests(t, stage("tCut", "third"), c);
   stageBranch(t, stage("bCut", "vCut"), c);
-  stagePlatforms(t, stage("vCut", "s2Cut"), c);
-  stageSent(t, stage("s2Cut", "process"), c);
+  stagePlatforms(t, stage("vCut", "xCut"), c);
+  stageFork(t, stage("xCut", "aCut"), c);
+  stageCheck(t, stage("aCut", "process"), c);
   stageLedgers(t, stage("process", null), c);
 };

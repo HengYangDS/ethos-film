@@ -99,8 +99,8 @@ scenes["03"] = function (s, t) {
     sys4: ["问题跟踪系统", "your issue tracker"],
     machine: ["自己的机器", "your own machine"],
     vendor: ["不依赖哪一家平台", "without depending on any one vendor"],
-    connect: ["接进来的系统", "connecting a system"],
-    truth: ["真相的来源", "a source of truth"],
+    connect: ["接入的系统", "connecting a system"],
+    truth: ["纳入", "part of ETHOS's own record"],
     // The layer's stage cuts in on the words that open its sentence in Chinese, which name the layer, and on the words
     // of the layer's name in English, which follow the words that open the sentence, so the layer arrives named.
     layerCut: ["所有仓库共有的部分", "ETHOS owns in one place"],

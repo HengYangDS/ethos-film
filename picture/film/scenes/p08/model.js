@@ -1,6 +1,6 @@
 /* 08.8-08.9 the feedback reaches the model: a failed implementation is told apart from a wrong model; the concept
  * "the same record" lacks a dimension, and a new Change revises the model at the smallest boundary, recompiling what
- * depends on it, with no exception, side path or second source of truth; dependent work waits while unrelated work
+ * depends on it, with no exception, side path or second definition; dependent work waits while unrelated work
  * goes on; and the goal stays as it was, changed only by an authorized realignment of intent, never loosened. */
 
 import { ctx } from "../../canvas.js";
@@ -20,7 +20,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { drawShare, glideShare } from "../../timing/pauses.js";
+import { drawShare, drawTime, glideShare, glideTime } from "../../timing/pauses.js";
 
 /* 08.9, first: the failed implementation and the model stand apart, a line between them as they are told apart, solid
  * since the film keeps dashes for what is unknown, missing or refused; this time the fault is in the model, which
@@ -226,25 +226,28 @@ export function modelRevision(s, t, a) {
 }
 
 /* 08.8, third: the one model, and beside it the ways around it, each refused on its words. The refusals are one
- * left-aligned list, each name carrying its cross one fixed gap after it, as every refused name of the film does, and
- * the picture is centred on the frame. */
+ * left-aligned list, each name carrying its cross one fixed gap after it, as every refused name of the film does. The
+ * picture stands centred on the model and the first two refusals, which hold most of the thought, and glides as one to
+ * centre on all three as the third, the widest, is said. */
 export function noWayAround(s, t, a) {
   if (a <= 0) return;
   const ats = cues(s, [
     ["不加例外", "No exception"],
     ["旁路", "side path"],
-    ["第二个真相来源", "second source of truth"],
+    ["第二套定义", "second definition"],
   ]);
   const refused = [
     L("例外", "Exception"),
     L("旁路", "Side path"),
-    L("第二个真相来源", "Second source of truth"),
+    L("第二套定义", "Second definition"),
   ];
   // Each refusal is linked straight across from the model's edge to its name.
   const NX = 1130,
-    widest = Math.max(...refused.map((v) => measure(v))),
-    S = 960 - (540 + NX + widest + 16 + 26) / 2,
     MX = 540,
+    reach = (n) => NX + Math.max(...refused.slice(0, n).map((v) => measure(v))) + 16 + 26,
+    S2 = 960 - (MX + reach(2)) / 2,
+    S3 = 960 - (MX + reach(3)) / 2,
+    S = mix(S2, S3, glideShare(t, ats[2] + 0.05, Math.abs(S3 - S2), 0.7)),
     MY = 375,
     MW = 420,
     MH = 250,
@@ -253,11 +256,15 @@ export function noWayAround(s, t, a) {
   ctx.save();
   ctx.translate(S, 0);
   modelGrid(MX, MY, MW, MH, { alpha: a, cell: [3, 1], lit: 1, grow: 1 });
+  // The third, said as the column glides, is struck once its way is whole and the column has settled, so its name
+  // stands at full ink while its way draws on.
+  const settled =
+    ats[2] + 0.05 + Math.max(glideTime(Math.abs(S3 - S2), 0.7), drawTime(NX - 16 - edge[2], 0.5));
   refused.forEach((v, i) =>
     rejectedName(v, NX, rows[i], {
       align: "left",
       alpha: a * named(t, ats[i]),
-      mark: ramp(t, ats[i] + 0.3, 0.4),
+      mark: ramp(t, i === 2 ? Math.max(ats[2] + 0.3, settled) : ats[i] + 0.3, 0.4),
       set: "08.8:refused",
     }),
   );

@@ -97,7 +97,7 @@ function cuesOf(s) {
     sameInput: cue(s, "同样的输入", "the same input"),
     sameChecks: cue(s, "同样的检查", "the same checks"),
     cannot: cue(s, "证明不了", "cannot prove"),
-    first6c: cue(s, "所以对话", "That is why conversations"),
+    first6c: cue(s, "对话、记忆和总结", "Conversations, memories and summaries"),
     talk: cue(s, "对话", "conversations"),
     memory: cue(s, "记忆", "memories"),
     leads: cue(s, "只是线索", "only leads"),

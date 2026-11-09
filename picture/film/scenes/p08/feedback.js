@@ -208,7 +208,7 @@ export function judgement(s, t, a) {
     ["可能错", "can be wrong"],
     ["照样成立", "still stands"],
     ["被否掉", "rejecting"],
-    ["问题不存在", "the problem go away"],
+    ["依然存在", "the problem go away"],
   ]);
   // The Chinese "要分开" first occurs in the rule's "三件事要分开判断", so it is taken after the remedy's words.
   const apartAt = cueFrom(s, "要分开", "They stay apart", remSays);

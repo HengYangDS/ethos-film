@@ -5,14 +5,14 @@
 import { ctx } from "../../canvas.js";
 import { flowClock, link } from "../../drawing/links.js";
 import { ethosMark } from "../../drawing/mark.js";
-import { box, fill, labelSize, line, measure, stroke } from "../../drawing/strokes.js";
+import { box, fill, line, measure, stroke } from "../../drawing/strokes.js";
 import { check } from "../../drawing/symbols.js";
 import { kernelIcon, ledger, repoIcon } from "../../drawing/workspace.js";
 import { KICK_Y, RULE_Y, ruleHeadingLayout } from "../../framing/rules.js";
 import { listIn, named } from "../../naming/lists.js";
-import { LEADING, NAME_GAP, NOTE, nameText, rejectedName, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, rejectedName, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
-import { LABEL, P } from "../../palette.js";
+import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, mix, ramp } from "../../timing/easing.js";
@@ -79,9 +79,7 @@ function ruleHeading(t, { kick, kickAt, rule, ruleAt, settleAt, alpha }) {
     way = Math.hypot(open.mx - rest.mx, open.my - rest.my),
     q = drift + (1 - drift) * glideShare(t, settleAt + 0.05, way, 0.9),
     dy = mix(lift, 0, q),
-    TX = mix(open.tx, rest.tx, q),
-    // The centre line of a line under the statement, at its pitch, as a second line of the heading.
-    below = labelSize(LABEL) * (LEADING * rest.lines.length + 0.5);
+    TX = mix(open.tx, rest.tx, q);
   ethosMark(mix(open.mx, rest.mx, q), mix(open.my, rest.my, q), mix(OPENING, GLYPH, q), { alpha });
   nameText(kick, TX, KICK_Y + dy, {
     align: "left",
@@ -94,14 +92,12 @@ function ruleHeading(t, { kick, kickAt, rule, ruleAt, settleAt, alpha }) {
     valign: "top",
     alpha: alpha * named(t, ruleAt),
   });
-  // Where a line under the statement stands as the heading drifts, before it settles.
-  return { under: [mix(open.tx, rest.tx, drift), RULE_Y + mix(lift, 0, drift) + below] };
 }
 
 /* 07.3. Rule four's heading stands in the middle of the band while the rule is spoken, its glyph the complete mark
  * with nothing added, and the rule's restatement joins under its statement on its words, at the name size: every
- * obligation linked to exactly one owner. Once that is said the heading settles at the top and the restatement glides
- * to the foot of the band as the key of the table that builds above it on its words: the obligation that is the same
+ * obligation linked to exactly one owner, standing at the foot of the band from its words as the key of the table
+ * that builds above it. Once it is said the heading settles at the top, and the table builds on its words: the obligation that is the same
  * for every repository in the first column, owned by ETHOS (the kernel, so the mark keeps its single place in the
  * heading), and each repository's own checks in the second, owned by the repositories. Heading and key frame the
  * columns from the start, centred on the frame. The table of the two columns builds as one unit: while its first
@@ -121,15 +117,14 @@ export function ruleFour(s, t, a) {
   ]);
   // The statement stands on one line in both editions, authored so, past the width at which headings wrap. The heading
   // settles once the restatement's second part stands whole, so it is settled before the table's first words.
-  const settleAt = oneAt + 0.25,
-    h = ruleHeading(t, {
-      kick: L("第四条准则", "Rule four"),
-      kickAt,
-      rule: L("义务没了，机制就退场", ["Retire a mechanism when its obligation disappears"]),
-      ruleAt,
-      settleAt,
-      alpha: a,
-    });
+  ruleHeading(t, {
+    kick: L("第四条准则", "Rule four"),
+    kickAt,
+    rule: L("义务没了，机制就退场", ["Retire a mechanism when its obligation disappears"]),
+    ruleAt,
+    settleAt: oneAt + 0.25,
+    alpha: a,
+  });
   const heads = [everyAt, oneAt],
     duties = [sharedAt, ownAt],
     owners = [ethosAt, eachAt],
@@ -151,19 +146,16 @@ export function ruleFour(s, t, a) {
     r = a * named(t, eachAt),
     o = a * named(t, ownAt);
   // The restatement, an obligation linked to one owner, named by the two concepts rather than the sentence that states
-  // the rule, at the name size and both at full ink: under the heading's statement, on its left edge, while it is
-  // said, then, as the heading settles, gliding to the foot, where it stands centred on the frame as the table's key and
-  // holds the picture on the centre while the columns above it build.
+  // the rule, at the name size and both at full ink. It stands at the foot from its first words, centred on the frame
+  // as the table's key, so it is never read as a line of the heading's statement and never carried away from it, and
+  // it holds the picture on the centre while the columns above it build.
   const every = L("义务", "Obligation"),
     one = L("一个归属", "One owner"),
     KEY_GAP = 12,
     KEY_RUN = 96,
     keyWidth = measure(every) + 2 * KEY_GAP + KEY_RUN + measure(one),
-    footX = 960 - keyWidth / 2,
-    [nx, ny] = h.under,
-    keyGo = glideShare(t, settleAt + 0.05, Math.hypot(footX - nx, LEG - ny), 0.9),
-    kx = mix(nx, footX, keyGo),
-    ky = mix(ny, LEG, keyGo);
+    kx = 960 - keyWidth / 2,
+    ky = LEG;
   nameText(every, kx, ky, {
     align: "left",
     alpha: a * named(t, heads[0]),
@@ -310,7 +302,7 @@ export function replacement(s, t, a) {
   ]);
   const n = a * named(t, newAt),
     w = a * named(t, weakAt),
-    o = a * named(t, oldAt),
+    o = a * named(t, oldAt - L(0, 0.1)),
     S = mix(L(0, 960 - 1220), 0, glideShare(t, oldAt + 0.05, L(0, 1220 - 960), 0.8));
   wayBox(700 + S, 430, 3, { alpha: o });
   nameText(L("旧做法", "What it replaces"), 700 + S, 505 + NAME_GAP, { valign: "top", alpha: o });

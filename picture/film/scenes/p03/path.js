@@ -16,7 +16,7 @@ import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { drawShare, glideShare, voiceTime } from "../../timing/pauses.js";
+import { drawShare, drawTime, glideShare, glideTime, voiceTime } from "../../timing/pauses.js";
 
 /* A path from x0 to x1 at y, in pieces that leave the rings of the stations at `gaps` clear, so no line runs under a
  * station's glyph; `dash` draws it dashed from `split` on. */
@@ -202,9 +202,9 @@ export function stagePath(t, a, c) {
     { alpha: on },
   );
   dot(reach, PY, 7, { color: P.ink, alpha: on });
-  // Points run along the path as far as it is drawn, so they arrive with the path rather than when it is whole: each
-  // stands at its distance from the start, so the path drawing on never moves them. A point leaves by its size before
-  // a station that stands on the path and enters again past it.
+  // Points run along the path from its start once the picture has settled: each stands at its distance from the start,
+  // so the path drawing on never moves them. A point leaves by its size before a station that stands on the path and
+  // enters again past it.
   flowAlong(
     [
       [X0, PY],
@@ -213,6 +213,14 @@ export function stagePath(t, a, c) {
     flowClock(t),
     6,
     {
+      // The dots set off once the picture has stopped gliding: a dot running right on a stage gliding left at more than
+      // its own pace would slow to a stand on the screen and run back (the English gate's halt at 162.27 s).
+      since: flowClock(
+        Math.max(
+          from + drawTime(PATH_LEN, L(1.8, 2.0)),
+          nameAt - 0.1 + glideTime((NAME_GAP + measure(endName)) / 2, 0.6),
+        ),
+      ),
       // The path grows, so its dots keep one period whatever its length: 1.6 s, 288 px apart, out of step with the
       // stations' pitch of about 390 px, so the dots never all shrink at the stations at once.
       every: 1.6,
