@@ -10,13 +10,13 @@ import { modelGrid } from "../../drawing/models.js";
 import { box, dot, measure, stroke } from "../../drawing/strokes.js";
 import { agent, documentIcon, person } from "../../drawing/symbols.js";
 import { ruleHeading } from "../../framing/rules.js";
-import { beats, listIn, named, reachAt } from "../../naming/lists.js";
+import { beats, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { glideShare, glideTime } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
@@ -168,24 +168,24 @@ export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1
 /* The Change's name in 04.4, its term and qualifier. */
 const changeName = () => [L(["正式变更"], ["One official Change"]), L(["只写在那里"], ["only there"])];
 /* Where the Change's left edge stands in 04.4 at t, the place 04.5 carries it from. The group spans the Change's name
- * where it is wider than the document, at either side, and the field names that stand: it reaches `over` left of the
- * Change and right to the end of its name or, once they stand, of the widest field name. */
+ * where it is wider than the document, at either side, and the field names: it reaches `over` left of the Change and
+ * right to the end of its name or of the widest field name. The Change stands centred alone, then glides once to where
+ * the finished group stands centred, the glide ending as the first field name begins to show, so each field name
+ * stands in its place from its words. */
 function changeX(t, c) {
   const [term, qual] = changeName(),
-    ats = [c.f1, c.f2, c.f3],
     over = Math.max(0, rowHalf(term, qual) - CHANGE_W / 2),
-    reach = reachAt(
-      t,
-      CHANGE_W + over,
-      fieldNames().map((v, i) => [ats[i], CHANGE_W + 90 + measure(v)]),
-    );
+    alone = CHANGE_W + over,
+    whole = Math.max(alone, ...fieldNames().map((v) => CHANGE_W + 90 + measure(v))),
+    way = (whole - alone) / 2,
+    reach = mix(alone, whole, glideShare(t, c.f1 - 0.15 - glideTime(way, 0.7), way, 0.7));
   return 960 - (reach - over) / 2;
 }
 
 /* 04.4 One Change: the intent, named, moves into a Change, which is named with "only there"; then its three fields
  * arrive on their words, each a row of the document linked to its name at the right. The Change stands centred while
- * it is alone, the intent named at its left and moving into it; as each field name that reaches further than those
- * before it is named, the Change glides with its name to stand centred together with the field names that stand. */
+ * it is alone, the intent named at its left and moving into it; just before the first field is named, the Change
+ * glides once with its name to stand centred together with all three field names, which then arrive in place. */
 export function changeStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = fieldNames(),

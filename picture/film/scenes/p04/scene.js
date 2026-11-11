@@ -74,7 +74,7 @@ function cuesOf(s) {
     same: cue(s, "同一份", "the same thing"),
     first5b: cue(s, "还要拿正例和反例", "Then positive and negative"),
     examples: cue(s, "正例和反例", "positive and negative examples"),
-    understood: cue(s, "来考一考对它的理解", "test how it has been understood"),
+    understood: cue(s, "来检验对它的理解", "test how it has been understood"),
     exact: cue(s, "一模一样的重复", "An exact repeat"),
     correction: cue(s, "同一天", "A correction to the same stock"),
     fails: cue(s, "过不了第二个例子", "fails that second example"),

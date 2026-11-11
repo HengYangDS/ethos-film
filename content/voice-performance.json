@@ -210,12 +210,6 @@
             "dictionary_disagreement": "了 is the aspect particle after 写明 in 写明了这些; the dictionary's segmenter takes 明了 and reads liǎo."
           },
           {
-            "term": "冲着",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "chòng zhe",
-            "dictionary_disagreement": "冲 is chòng, aimed at, in 冲着; the dictionary reads chōng."
-          },
-          {
             "term": "冲突",
             "kind": "contextual-mandarin-word",
             "target_reading": "chōng tū"
@@ -430,17 +424,6 @@
             "term": "少",
             "kind": "contextual-mandarin-word",
             "target_reading": "shǎo"
-          },
-          {
-            "term": "少得多",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "shǎo de duō",
-            "dictionary_disagreement": "少 is shǎo, less, and 得 the complement particle de in 少得多; the dictionary reads shào and dé."
-          },
-          {
-            "term": "干活",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "gàn huó"
           },
           {
             "term": "应用",
@@ -664,11 +647,6 @@
             "target_reading": "luò dào"
           },
           {
-            "term": "落地",
-            "kind": "contextual-mandarin-word",
-            "target_reading": "luò dì"
-          },
-          {
             "term": "行动",
             "kind": "contextual-mandarin-word",
             "target_reading": "xíngdòng"
@@ -863,6 +841,17 @@
             "kind": "contextual-mandarin-word",
             "target_reading": "xìn de guò",
             "dictionary_disagreement": "得 is the potential-complement particle de in 信得过; the dictionary reads 得 alone as dé."
+          },
+          {
+            "term": "正是为",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "zhèng shì wèi"
+          },
+          {
+            "term": "明确地",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "míng què de",
+            "dictionary_disagreement": "地 is the adverbial particle de after 明确; the dictionary reads 地 alone as dì."
           }
         ],
         "sandhi": "Natural Mandarin connected-speech tone sandhi and weak grammatical syllables; never force isolated citation tones.",

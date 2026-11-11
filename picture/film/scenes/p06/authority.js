@@ -110,7 +110,7 @@ const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
  * conditions. */
 const ROLE = () => L(["帮人看清楚"], ["help people see"]),
   JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]),
-  CONDITIONS = () => L(["不明确", "，或者条件已经过时"], ["ambiguous", " or stale"]);
+  CONDITIONS = () => L(["不明确", "，或者预想的状态已经过时"], ["ambiguous", " or stale"]);
 /* The opening's place for a mark at `size`, from its origin. */
 const openingOf = (size) => 0.82 * 164 * (size / 512);
 /* The parts beyond the opening, each with how far right of the mark's origin it reaches: the list of the four views,
@@ -173,7 +173,7 @@ const SOURCES = () =>
       "仓库里的真实内容",
       "已经采纳的正式变更",
       "刚观察到的事实",
-      "适用的规则",
+      "适用的规定",
       "仍然有效的存证",
     ],
     [

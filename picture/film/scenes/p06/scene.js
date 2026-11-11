@@ -28,7 +28,7 @@ function cuesOf(s) {
     yesterday: cue(s, "昨天那次提交", "yesterday's commit"),
     dashboard: cue(s, "看板", "its dashboard"),
     green: cue(s, "一片绿灯", "all green"),
-    plan: cue(s, "编好计划", "compiling a plan"),
+    plan: cue(s, "编译计划", "compiling a plan"),
     write: cue(s, "真正写入", "and writing"),
     changed: cue(s, "别人可能已经改过了", "may have changed things"),
     first1b: cue(s, "就在它要写入的那一刻", "At the very moment"),
@@ -70,12 +70,12 @@ function cuesOf(s) {
     change: cue(s, "情况可能又变了", "things can change"),
     notShown: cue(s, "视图上却看不出来", "without the view showing it"),
     turnedGreen: cue(s, "那片绿灯亮起来的时候", "that dashboard turned green"),
-    first5b: cue(s, "视图帮人看清楚", "A view helps people see"),
+    first5b: cue(s, "视图能帮人看清楚", "A view helps people see"),
     never: cue(s, "可它不是权威依据", "but it never counts as authority"),
-    act: cue(s, "照着视图去改东西", "Acting on what a view shows"),
+    act: cue(s, "照着视图去改动", "Acting on what a view shows"),
     overwrite: cue(s, "覆盖掉别人的工作", "overwrite someone else's work"),
     ambiguous: cue(s, "权威依据不明确", "When authority is ambiguous"),
-    stale: cue(s, "或者条件已经过时", "or a condition has gone stale"),
+    stale: cue(s, "或者预想的状态已经过时", "or an expected state has gone stale"),
     cannotPass: cue(s, "判断就不能通过", "the judgment cannot pass"),
   };
   // The branch moves on the word of the change, after the clause that names it has begun.
@@ -91,7 +91,7 @@ function cuesOf(s) {
     ["仓库里的真实内容", "what the repository actually contains"],
     ["已经采纳的正式变更", "the accepted Change"],
     ["刚观察到的事实", "fresh facts"],
-    ["适用的规则", "the applicable policy"],
+    ["适用的规定", "the applicable policy"],
     ["仍然有效的存证", "the attestations"],
   ]);
   c.sources[3] = cueFrom(s, "刚观察到的事实", "fresh facts", c.sources[2]);

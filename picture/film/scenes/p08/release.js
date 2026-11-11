@@ -17,7 +17,7 @@ import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { DRAW_LEAD, drawShare, glideShare, glideSteps, glideTime } from "../../timing/pauses.js";
+import { DRAW_LEAD, drawShare, glideShare, glideSteps } from "../../timing/pauses.js";
 import { RAIL_Y, docMark, journeyRail, platforms, railFlow, work } from "./rail.js";
 
 /* The proof: a check in its ring, the executed check of one commit. */
@@ -77,9 +77,10 @@ export function release(s, t, a) {
     br = a * named(t, branchAt),
     each = a * named(t, eachAt);
   // The rail runs on across the band until the platforms are named, then draws back by the film's structural glide to
-  // end where it branches to them, 0.3 s before their name's word.
+  // end where it branches to them. It sets off 0.6 s before their name's word, so it still reaches past the platforms'
+  // place as they arrive and keeps the picture balanced, and it has passed their name's place as the name is read.
   const back = 1760 + S - BX - 90,
-    end = mix(1760 + S, BX + 90, glideShare(t, eachAt - 0.3 - glideTime(back, 0.5), back, 0.5));
+    end = mix(1760 + S, BX + 90, glideShare(t, eachAt - 0.6, back, 0.5));
   journeyRail(220 + S, end, { alpha: a });
   railFlow(t, 220 + S, end, { alpha: a, longest: 1540 });
   // The finished work under the Agent that finished it, then the commit it became, proved and attested; the Agent
@@ -124,8 +125,9 @@ export function release(s, t, a) {
     width: 480,
     alpha: br,
   });
-  // Published to each platform along its own link: the platforms and their name come on the words that name them, the
-  // links drawing out to them, and each result is ticked on its own.
+  // Published to each platform along its own link: the platforms come on the words that name them, the links drawing
+  // out to them, and their name, which stands on the rail's line, 0.2 s later, once the rail has drawn back past its
+  // place; each result is ticked on its own.
   PY.forEach((y, i) =>
     link(BX + 102, RAIL_Y, PX - 82, y, {
       route: "hvh",
@@ -137,7 +139,7 @@ export function release(s, t, a) {
     }),
   );
   platforms(PX, PY, { alpha: each, w: 140, h: 76 });
-  nameText(EACH, PX, RAIL_Y, { alpha: each });
+  nameText(EACH, PX, RAIL_Y, { alpha: a * named(t, eachAt + 0.2) });
   PY.forEach((y, i) =>
     check(PX + 34, y + 12, 26, { alpha: a * named(t, ownAt + 0.7 * i), width: 3.5 }),
   );

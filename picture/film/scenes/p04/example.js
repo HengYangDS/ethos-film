@@ -22,7 +22,7 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { ease, mix, ramp, soon } from "../../timing/easing.js";
-import { drawShare, drawStart, drawTime, glideShare } from "../../timing/pauses.js";
+import { drawShare, drawStart, drawTime, glideShare, glideTime } from "../../timing/pauses.js";
 import { agents, card, recordRows, valueCell } from "./marks.js";
 
 /* The request in the researcher's words and the line two handoffs leave of it. The Chinese lines drop a particle of the
@@ -156,20 +156,31 @@ function quoteCard(x, y, { alpha = 1, words = alpha } = {}) {
 }
 
 /* 04.3 Two handoffs: the request steps down through two Agents and leaves the second as one line, the summary. The
- * chain descends so the stage stands as a block, not a strip; the summary shows its words when they are said. While it
- * shows only the card and the two Agents the chain stands centred on them; as the summary is named it glides as one
- * unit to its place, centred on the whole, before its last line arrives. */
+ * chain descends so the stage stands as a block, not a strip; the summary shows its words when they are said. The
+ * chain stands centred on what it shows: the card and the two Agents, then the summary's name, then the line's card.
+ * Each that reaches further glides the chain as one unit so that the glide is halfway as that part arrives on its
+ * words, so the stage stays balanced while it widens instead of standing aside for a part before it comes. */
 export function handoffStage(s, t, c, g) {
   const cw = requestWidth(),
     qw = quoteWidth(),
+    SUMMARY = L("总结", "An Agent's summary"),
     // The chain's reach from its card's left edge while it shows the card and the two Agents (to the second Agent's
-    // outline), and when it is whole (to the summary's outline).
+    // outline), with the summary's name, and when it is whole (to the summary's outline).
     first = cw + 323.25,
+    named2 = cw + 322 + NAME_GAP + measure(SUMMARY),
     whole = cw + 421.25 + qw,
-    x0 =
-      960 -
-      (cw + 120 + 180 + 120 + qw) / 2 +
-      ((whole - first) / 2) * (1 - glideShare(t, c.summary + 0.05, (whole - first) / 2, 0.9)),
+    halfway = (at, from, to) =>
+      Math.max(c.handoffs + 0.05, at - 0.05 - glideTime(Math.abs(to - from) / 2, 0.9) / 2),
+    reach = reachAt(
+      t,
+      first,
+      [
+        [halfway(c.summaryName, first, named2), named2],
+        [halfway(c.single, Math.max(first, named2), whole), whole],
+      ],
+      0.9,
+    ),
+    x0 = 960 - (cw + 120 + 180 + 120 + qw) / 2 + (whole - reach) / 2,
     a1 = x0 + cw + 120,
     a2 = a1 + 180,
     qx = a2 + 120,
@@ -194,7 +205,7 @@ export function handoffStage(s, t, c, g) {
     { alpha: h },
   );
   nameText(L("两次交接", "Two handoffs"), a1, Y1 + 22 + NAME_GAP, { valign: "top", alpha: h });
-  nameText(L("总结", "An Agent's summary"), a2 + 22 + NAME_GAP, Y2, {
+  nameText(SUMMARY, a2 + 22 + NAME_GAP, Y2, {
     align: "left",
     alpha: g * named(t, c.summaryName),
   });

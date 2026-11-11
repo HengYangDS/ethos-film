@@ -167,7 +167,7 @@ export function stageRail(t, a, c) {
   const ats = [...stations, c.delivery],
     order = [...ats].sort((p, q) => p - q);
   railNames(
-    L(["理解", "转述", "交接", "落地"], ["Interpretation", "Retelling", "Handoffs", "Delivery"]),
+    L(["理解", "转述", "交接", "交付"], ["Interpretation", "Retelling", "Handoffs", "Delivery"]),
     [...xs, x1],
     y,
     { gap: NAME_GAP, alpha: (i) => a * listIn(t, order, order.indexOf(ats[i])), set: "stations" },
@@ -285,7 +285,7 @@ export function stageWrongGoal(t, a, c) {
     t,
     [L("需求", "A specification")],
     [c.gCut],
-    [L("格式齐全、挑不出毛病", "complete and well formed")],
+    [L("格式齐全、结构无误", "complete and well formed")],
     [c.wellFormed],
     DX,
     namesTop,
@@ -305,7 +305,7 @@ export function stageWrongGoal(t, a, c) {
     t,
     [L("目标", "The wrong goal")],
     [c.goal],
-    L(["从一开始就定错了"], []),
+    L(["是错的"], []),
     [c.wrong],
     TX,
     namesTop,

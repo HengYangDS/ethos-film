@@ -87,6 +87,11 @@ function standing(t, parts) {
   }
   return glideSteps(t, first, steps);
 }
+/* Where a stage built part by part stands once finished: centred on all its parts. A stage seated there from its cut
+ * lets each part arrive in its own place, so nothing travels while the next part is named. Each part is [the word that
+ * brings it, its left, its right]. */
+const finished = (parts) =>
+  centring(Math.min(...parts.map((v) => v[1])), Math.max(...parts.map((v) => v[2])));
 
 /* 02.5 Two Agents work on the same branch. One keeps a memory of the branch as it was, three commits; it writes from
  * that memory, its link drawn to the place after them, and its commit lands there; the other's commit, the newest on
@@ -238,8 +243,8 @@ const FORK_Y = 720;
 
 /* 02.5 The error may mean either: from the error a link runs to a question, and the question forks to the two things
  * the error may mean, the push failed, and the push went through with only its reply lost, each named on its words, the
- * lost reply joining after its name. The error and its question stand from the cut; the fork stands centred on what
- * stands, gliding as one as each part widens it. */
+ * lost reply joining after its name. The error and its question stand from the cut where the finished fork places them,
+ * so each part arrives in its place and nothing travels; the docked index above keeps the picture balanced meanwhile. */
 export function stageFork(t, a, c) {
   if (a <= 0) return;
   const EX = 640,
@@ -260,7 +265,7 @@ export function stageFork(t, a, c) {
       (outcomeQuals[i].length ? TERM_GAP + measure(outcomeQuals[i].join(""), NOTE) : 0);
   ctx.save();
   ctx.translate(
-    standing(t, [
+    finished([
       [-Infinity, left, QX + UNKNOWN_R],
       [ats[0], left, after + measure(outcomeNames[0])],
       [ats[1], left, after + Math.max(measure(outcomeNames[0]), measure(outcomeNames[1]))],
@@ -304,7 +309,8 @@ export function stageFork(t, a, c) {
 
 /* 02.5 Trying again cannot tell which; only checking that platform can. A second push, dashed, runs from the version to
  * a question and stops there; then the platform stands beside it with a lens over it, named on the words that send the
- * viewer there. The two names over their marks share one line, and the stage glides as one as each part widens it. */
+ * viewer there. The two names over their marks share one line, and the stage stands where it is finished from its cut,
+ * so each part arrives in its place. */
 export function stageCheck(t, a, c) {
   if (a <= 0) return;
   const TX = 470,
@@ -321,7 +327,7 @@ export function stageCheck(t, a, c) {
     whichRight = QX + UNKNOWN_R + 16 + measure(whichName);
   ctx.save();
   ctx.translate(
-    standing(t, [
+    finished([
       [-Infinity, left, QX + UNKNOWN_R],
       [c.which, left, whichRight],
       [c.look, left, Math.max(whichRight, PX + W / 2, PX + measure(lookName) / 2)],

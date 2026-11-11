@@ -26,7 +26,7 @@ import { glideShare, voiceTime } from "../../timing/pauses.js";
  * Chinese, and on the word "tools" in English, two tools, larger outlines of one size below the kernel, mirrored about
  * its axis, each holding its content (Git's branch
  * in one, a tool's features in the other), are linked from the kernel and named as everything else between them; Git is named on its
- * word and the pair as mature tools under them; so there is much less to understand and verify, the qualifier under the kernel's
+ * word and the pair as mature tools under them; so there is less to understand and verify, the qualifier under the kernel's
  * one job, and the kernel lights once. The
  * panel's names ride its top and bottom edges as it draws in, so each stays one gap from what it names. */
 export function stageTools(t, a, c) {
@@ -73,7 +73,7 @@ export function stageTools(t, a, c) {
     alpha: a * named(t, c.oneJob),
   });
   // What it leaves to verify is said of the kernel's one job, so it stands under that name as its qualifier.
-  nameText(L("要理解、要验证的少得多", "much less to understand and verify"), KX, job.bottom + TERM_STACK, {
+  nameText(L("要理解、要验证的减少了", "less to understand and verify"), KX, job.bottom + TERM_STACK, {
     valign: "top",
     size: NOTE,
     color: P.muted,

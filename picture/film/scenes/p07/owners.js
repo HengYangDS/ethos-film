@@ -120,7 +120,7 @@ export function ruleFour(s, t, a) {
   ruleHeading(t, {
     kick: L("第四条准则", "Rule four"),
     kickAt,
-    rule: L("义务没了，机制就退场", ["Retire a mechanism when its obligation disappears"]),
+    rule: L("义务没了，让机制退场", ["Retire a mechanism when its obligation disappears"]),
     ruleAt,
     settleAt: oneAt + 0.25,
     alpha: a,
@@ -340,12 +340,12 @@ export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
     ["一项正式变更", "And an official Change"],
-    ["做到哪儿", "actually delivered"],
+    ["交付了什么", "actually delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
   ]);
   // The delivered rows and the record are named by what they hold, not by the sentence that states the rule.
-  const DELIVERED = L("做到哪儿", "Delivered"),
+  const DELIVERED = L("交付了什么", "Delivered"),
     RECORD = L("没做完的", "Unfinished work"),
     DY = 440,
     W = 250,

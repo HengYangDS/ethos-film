@@ -115,9 +115,9 @@ function exampleContext(alpha, flow) {
 /* 07.1. In the example, whose pipeline stands named at the top from the scene's first words until the owners arrive,
  * the first Agent stands centred on the frame, and each of its makings arrives on its own words at the end of a link that draws out from the
  * Agent with it, so no link stands without its making; the picture steps left as the owners arrive. Each obligation
- * passes from its making to its owner along a link on its words, a point flowing along it under the obligation's name. The makings and the Agent retire together on their word, each link drawing
- * back to a short lead into its owner, the owners settle to the centre, and keeping the makings just in case is
- * refused where they stood. Each of the three pictures, the Agent with its makings, the same with the owners, and the
+ * passes from its making to its owner along a link on its words, a point flowing along it under the obligation's name. The makings and the Agent step back together on their word and leave
+ * as keeping them just in case is refused where they stood; with the refusal each link draws back to a short lead into
+ * its owner and the owners settle to the centre. Each of the three pictures, the Agent with its makings, the same with the owners, and the
  * owners with the refusal, is centred on the frame by its outer names; the Agent's picture glides left, as one unit,
  * from its centre alone on the words that bring the script. */
 export function makings(s, t, a) {
@@ -148,8 +148,10 @@ export function makings(s, t, a) {
     ["以防万一", "just in case"],
   ]);
   // The makings step left as the words that bring the owners begin, so the declared check arrives clear of the script's
-  // name, which stands on one line.
-  const gone = a * (1 - ramp(t, retireAt + 0.05, 0.4));
+  // name, which stands on one line. On the words that retire them the makings and their Agent step back to the second
+  // level, and they leave as keeping them just in case is refused where they stood, while the owners settle: the picture
+  // changes once, from the makings to the refusal, and stays balanced through it.
+  const gone = a * mix(1, 0.58, ramp(t, retireAt + 0.05, 0.4)) * (1 - ramp(t, caseAt + 0.05, 0.7));
   // How far each column's marks and names reach either side of its axis.
   const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2),
     makingHalf = Math.max(
@@ -170,7 +172,7 @@ export function makings(s, t, a) {
     // The makings step left by the film's structural glide over the making's way, the longer of the two; the owners
     // settle and the obligations' links draw back to their leads over the owners' way.
     lift = glideShare(t, moveAt + 0.05, 1040 + first - 760 - owned, 0.9),
-    settle = glideShare(t, retireAt + 0.05, 1330 + owned - 1150, 0.9);
+    settle = glideShare(t, caseAt + 0.05, 1330 + owned - 1150, 0.9);
   const AX = mix(640 + start, 400 + owned, lift),
     MX = mix(1040 + start, 760 + owned, lift),
     OX = mix(1330 + owned, 1150, settle),

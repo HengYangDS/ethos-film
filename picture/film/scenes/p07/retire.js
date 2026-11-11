@@ -45,15 +45,17 @@ function gearPath(x, y, r, turn = 0) {
 const personBottom = (y, size) => y + 22.7 * size;
 
 /* 07.5, first: a mechanism turns between the people who keep it, one maintaining and one explaining, each linked to
- * it on their words; as it goes stale it stops and turns to a dashed outline under that word. The three stand on one
- * centre line, and their names hang from one baseline under the row's tallest mark, the mechanism. */
+ * it as the clause that names both is said; as it goes stale it stops and turns to a dashed outline under that word.
+ * The three stand on one centre line, and their names hang from one baseline under the row's tallest mark, the
+ * mechanism. The two people flank the mechanism, so the second joins at most 0.4 s after the first, within their
+ * clause, and the row is lopsided only while it forms. */
 function upkeep(s, t, a) {
   if (a <= 0) return;
   const [mechAt, maintainAt, explainAt, staleAt] = cues(s, [
     ["每个机制", "Every mechanism"],
     ["有人维护", "someone to maintain"],
     ["有人解释", "explain it"],
-    ["过期", "stale"],
+    ["过时", "stale"],
   ]);
   const GX = 960,
     GY = 455,
@@ -64,7 +66,8 @@ function upkeep(s, t, a) {
     turn = 0.3 * voiceTime(Math.min(t, staleAt + 0.2)),
     flow = flowClock(t),
     m = a * named(t, maintainAt),
-    e = a * named(t, explainAt);
+    joinAt = Math.min(explainAt, maintainAt + 0.4),
+    e = a * named(t, joinAt);
   stroke(() => gearPath(GX, GY, R, turn), { color: P.ink, alpha: a * (1 - stale), width: 3 });
   ring(GX, GY, R * 0.3, { color: P.ink, alpha: a * (1 - 0.4 * stale), width: 3 });
   stroke(() => gearPath(GX, GY, R, turn), {
@@ -77,7 +80,7 @@ function upkeep(s, t, a) {
     valign: "top",
     alpha: a * named(t, mechAt),
   });
-  nameText(L("过期", "Stale"), GX, GY - R - NAME_GAP, {
+  nameText(L("过时", "Stale"), GX, GY - R - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, staleAt),
   });
@@ -88,7 +91,7 @@ function upkeep(s, t, a) {
   person(1280, PY, { size: 1.3, alpha: e });
   link(1242, GY, GX + R + 12, GY, {
     alpha: e,
-    draw: { t, at: explainAt + 0.05 },
+    draw: { t, at: joinAt + 0.05 },
     flow: flowClock(t, 0.5),
   });
   nameText(L("有人解释", "Someone to explain it"), 1280, top, { valign: "top", alpha: e });

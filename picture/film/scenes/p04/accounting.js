@@ -54,7 +54,7 @@ export function examplesStage(s, t, c, g) {
       t,
       L(["正例和反例"], ["Positive and negative examples"]),
       [c.examples],
-      L(["考对它的理解"], ["test how it has been understood"]),
+      L(["检验对它的理解"], ["test how it has been understood"]),
       [c.understood],
       960,
       bottom + 50,
@@ -314,17 +314,15 @@ export function compileStage(s, t, c, g) {
   });
 }
 
-/* 04.6 Only leads: a conversation, a memory and a summary build as a list, then step back as leads. The row builds
- * from its left and stays centred on what it shows: the conversation stands alone on the axis, a pitch to the right of
- * its place, and as the memory and the summary are named, half a second apart, the row makes room for both in one
- * eased glide, from just after the memory's words to 0.7 s after the summary's, so it never pauses between them. */
-const LEADS_PITCH = 300;
+/* 04.6 Only leads: a conversation, a memory and a summary build as a list, then step back as leads. Each stands in its
+ * place in the finished row from its words, so nothing slides as the row builds; the rule's heading, centred over the
+ * row, keeps the picture balanced while the row fills from its left. */
+const LEADS_PITCH = 260;
 export function leadsStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const names = L(["对话", "记忆", "总结"], ["Conversations", "Memories", "Summaries"]),
     ats = [c.talk, c.memory, c.summaries],
-    room = glideShare(t, c.memory + 0.05, LEADS_PITCH, c.summaries - c.memory + 0.7),
-    xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * (k + 1 - room)),
+    xs = [-1, 0, 1].map((k) => 960 + LEADS_PITCH * k),
     Y = 620,
     back = mix(1, 0.58, soon(t, c.leads + 0.05, 0.5));
   ats.forEach((at, i) => {

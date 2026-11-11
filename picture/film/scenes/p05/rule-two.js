@@ -1,8 +1,8 @@
 /* Part 05, rule two (05.3, 05.5 and 05.7): distinguish only what changes action. Its heading brings the mark's two
  * passages, drawn out from the origin on its words, one per kind of next step. The planes are separate planes of
  * evidence, each permitting its own next step; one passing never means another has; a "done" names what was verified.
- * A judgment has three outcomes and only pass lets the work go ahead; the checks with no result are unknown, which is
- * not "no problem". A sixth distinction that changes no action is never added. The stack of planes moves aside once
+ * A judgment has three outcomes and only pass lets the work go ahead; the checks with no result are unknown, so whether
+ * there is a problem stays open. A sixth distinction that changes no action is never added. The stack of planes moves aside once
  * and then only shifts as each stage builds beside it, so what stands is balanced on the content centre and the
  * argument reads as one picture changing on its words. */
 
@@ -117,7 +117,7 @@ export function ruleTwoHeading(t, c, g) {
   ruleHeading(t, {
     number: L("第二条准则", "Rule two"),
     numberAt: c.first3,
-    statement: L("只在影响行动的地方做区分", "Distinguish only what changes action"),
+    statement: L("只在会改变行动的地方做区分", "Distinguish only what changes action"),
     statementAt: c.statement,
     size: 560,
     glyph: { datum: 1, passages: 1, boundary: 0 },
@@ -206,7 +206,7 @@ export function verifiedStage(s, t, c, g) {
     draw: { t, at: c.tell + 0.05 },
     flow: flowClock(t),
   });
-  nameText(L("实际确认过的", "Verified this time"), PX, edge.bottom + NAME_GAP, {
+  nameText(L("这一次确认过的", "Verified this time"), PX, edge.bottom + NAME_GAP, {
     valign: "top",
     alpha: verified,
   });
@@ -217,8 +217,8 @@ export function verifiedStage(s, t, c, g) {
  * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
  * next three. "it waits" is said of unknown, so it stands as a second line of unknown's condition, in the
  * condition's note style, column and lowercase, rather than as a fourth row of the list. The checks with no result are linked
- * to unknown, and "no problem" is refused. Each part of the list stands in its place from its words, so nothing moves
- * as the list builds; the stack stands still beside it (outcomesAt). */
+ * to unknown, and whether there is a problem stands open with unknown's mark. Each part of the list stands in its place
+ * from its words, so nothing moves as the list builds; the stack stands still beside it (outcomesAt). */
 export function outcomesStage(s, t, c, g) {
   const top = 340,
     x = outcomesAt(c),
@@ -276,10 +276,14 @@ export function outcomesStage(s, t, c, g) {
     draw: { t, at: c.isUnknown + 0.05 },
     flow: flowClock(t),
   });
-  rejectedName(L("没有问题", "No problem"), x + PLANE_W / 2, top + 5 * PLANE_STEP + 18, {
-    alpha: g * named(t, c.noProblem),
-    mark: ramp(t, c.noProblem + 0.35, 0.35),
-  });
+  // Without a result nobody can say whether there is a problem: the question stands open under the stack in the
+  // voice's words, after the unknown mark that 未知 carries, the two centred together on the stack.
+  const open = L("有没有问题", "Whether there is a problem"),
+    openY = top + 5 * PLANE_STEP + 18,
+    openLeft = x + PLANE_W / 2 - (36 + NAME_GAP + measure(open)) / 2,
+    asked = g * named(t, c.anyProblem);
+  verdictMark("unknown", openLeft + 18, openY, 18, { alpha: asked });
+  nameText(open, openLeft + 36 + NAME_GAP, openY, { align: "left", alpha: asked });
 }
 
 /* 05.7 A distinction that changes no action is never added: a sixth plane is offered under the five, refused and left

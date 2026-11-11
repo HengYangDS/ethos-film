@@ -39,13 +39,14 @@ const names = () => ({
   // The English breaks between two-word phrases, never leaving one word alone on a line (M5-23).
   identity: L("独立控制的账户", ["An independently", "controlled identity"]),
   whether: L("要不要做", "Whether one is needed"),
-  decides: L("看风险和规定", "depends on risk and policy"),
+  // The English qualifier takes two lines, broken at its phrase, so its ink keeps clear of the boundary's edge.
+  decides: L(["看风险、规定和结论的范围"], ["depends on risk, policy", "and the scope of the claim"]),
 });
 /* How far the column under the identity reaches either side of its axis. */
 function columnHalf() {
   const n = names(),
     identity = [n.identity].flat().map((v) => measure(v));
-  return Math.max(...identity, measure(n.whether), measure(n.decides, NOTE)) / 2;
+  return Math.max(...identity, measure(n.whether), ...n.decides.map((v) => measure(v, NOTE))) / 2;
 }
 /* The plane's left edge: alone on the centre until the identity arrives, then where the boundary and the column stand
  * centred together. */
@@ -159,7 +160,8 @@ export function boundaryStage(s, t, c, g) {
     alpha: g * named(t, c.whether),
     draw: { t, at: c.whether + 0.05 },
   });
-  termRow(t, [n.whether], [c.whether], [n.decides], [c.risk], OX, nameTop, {
+  termRow(t, [n.whether], [c.whether], n.decides, n.decides.map(() => c.risk), OX, nameTop, {
+    width: 2 * columnHalf(),
     alpha: g,
     align: "center",
     inline: false,

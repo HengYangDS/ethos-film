@@ -23,7 +23,7 @@ import { agent, check, documentIcon, person } from "../../drawing/symbols.js";
 import { commitDot, recoverIcon, repoIcon } from "../../drawing/workspace.js";
 import { illustrative } from "../../framing/chapters.js";
 import { titleSignature } from "../../framing/titles.js";
-import { beats, building, listIn, listLevel, named, speaking } from "../../naming/lists.js";
+import { beats, listIn, listLevel, named, speaking } from "../../naming/lists.js";
 import {
   NAME_GAP,
   NOTE,
@@ -149,7 +149,7 @@ scenes["01"] = function (s, t) {
       ["哪一次提交", "Which commit"],
       ["哪些测试", "Which tests ran"],
       ["是不是提需求的人真正要的", "really asked for"],
-      ["能不能退回去", "can you get back"],
+      ["能不能恢复原样", "can you get back"],
     ]);
   // Chinese says the Agents before the code they change and what makes them interchangeable last. The stage cuts in on
   // 越来越多, the clause that brings the Agents, and its 改代码 names the row and its code from the cut, within its
@@ -237,22 +237,23 @@ scenes["01"] = function (s, t) {
       alpha: stageA * named(t, much),
     });
     beats(t, DX, DY, 30, [much], { alpha: stageA });
-    // The four questions, each a station on the rail with its mark in a ring; the rail keeps its spoken order and
-    // stays centred while it builds.
+    // The four questions, each a station on the rail with its mark in a ring; the rail keeps its spoken order and each
+    // question stands in its place in the finished row from its words, the finished row centred on its ink.
     const names = L(
-      ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能退回去？"],
+      ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能恢复原样？"],
       ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"],
     );
     // Every question stands on one line within its share of the rail, as a row of questions reads. The stations keep
     // each pair of neighbours half of each name's width plus a gap apart (railStations), so the widest question,
-    // 是不是提需求的人真正要的？, stands whole between its neighbours at the 360 px pitch.
+    // 是不是提需求的人真正要的？, stands whole between its neighbours at the 360 px pitch. The row's ink reaches from
+    // the first question's ring or name to the last one's.
     const RY = 620,
       RR = 34,
       WRAP = 400,
       base = railStations(names, 420, 1500, { wrap: WRAP }),
-      step = (base[1] - base[0]) / 2,
-      shift = building(t, qs, step),
-      xs = base.map((x) => x + shift),
+      inkLeft = base[0] - Math.max(RR, measure(names[0]) / 2),
+      inkRight = base.at(-1) + Math.max(RR, measure(names.at(-1)) / 2),
+      xs = base.map((x) => x + 960 - (inkLeft + inkRight) / 2),
       mid = (PY + CLAIM_H / 2 + RY - RR) / 2,
       wayTo = (x) =>
         route([
@@ -264,10 +265,35 @@ scenes["01"] = function (s, t) {
       ways = xs.map(wayTo);
     // Every question's link leaves the panel by the same run down to its turn, and one that turns the way of the link
     // before it runs on along that link: over the ink the earlier links have drawn it stands at once, unseen, and from
-    // where it leaves them it draws on at the tip pace by the length of its own way, as that way first stands, before
-    // the rail re-centres for it (drawShare). The fourth question opens with 要是做错了 / "And if it got something
-    // wrong" a second before its name, so its link may set off up to 0.4 s before that name.
+    // where it leaves them it draws on at the tip pace by the length of its own way (drawShare). The fourth question
+    // opens with 要是做错了 / "And if it got something wrong" a second before its name, so its link may set off up to
+    // 0.4 s before that name.
     const newWay = (i, at) => lengthOf(at[i]) - sharedRun(at[i], at.slice(0, i));
+    // The rail stands with the first question, as the index of 02 does: it runs between the stations, never under a
+    // ring, and a question still to come stands as a plain point in its place, which shrinks away as its ring inks in,
+    // so the row reaches its finished extent and stays balanced while it builds.
+    const POINT = 9,
+      rail = stageA * ramp(t, qs[0] - 0.15, 0.4),
+      shown = qs.map((at) => ramp(t, at - 0.15, 0.4)),
+      gapAt = (i) => Math.max(POINT * (1 - shown[i]), RR * shown[i]);
+    stroke(
+      () =>
+        [0, 1, 2].forEach((i) => {
+          ctx.moveTo(xs[i] + gapAt(i), RY);
+          ctx.lineTo(xs[i + 1] - gapAt(i + 1), RY);
+        }),
+      { color: P.line, width: 2.5, alpha: rail },
+    );
+    fill(
+      () =>
+        xs.forEach((x, i) => {
+          const r = POINT * (1 - ease(shown[i] / 0.45));
+          if (r < 0.3) return;
+          ctx.moveTo(x + r, RY);
+          ctx.arc(x, RY, r, 0, Math.PI * 2);
+        }),
+      { color: P.ink, alpha: rail },
+    );
     xs.forEach((x, i) => {
       const on = stageA * ramp(t, qs[i] - 0.15, 0.4),
         lit = speaking(t, qs, i);
@@ -275,8 +301,7 @@ scenes["01"] = function (s, t) {
       const way = ways[i],
         whole = lengthOf(way),
         inked = sharedRun(way, ways.slice(0, i)),
-        first = base.map((v) => wayTo(v + step * Math.min(qs.length - 1, qs.length - i))),
-        own = drawnShare({ t, at: qs[i] + 0.05, lead: 0.45 }, newWay(i, first)),
+        own = drawnShare({ t, at: qs[i] + 0.05, lead: 0.45 }, newWay(i, ways)),
         drawn = (inked + (whole - inked) * own) / whole;
       link(PX, PY + CLAIM_H / 2, x, RY - RR, {
         route: "vhv",
@@ -284,13 +309,7 @@ scenes["01"] = function (s, t) {
         alpha: on,
         upto: drawn,
       });
-      flowAlong(
-        way,
-        q,
-        5,
-        // The rail's stations glide while it builds, so the flow keeps one period.
-        { upto: drawn, every: FLOW_EVERY, color: P.ink, alpha: on * lit },
-      );
+      flowAlong(way, q, 5, { upto: drawn, every: FLOW_EVERY, color: P.ink, alpha: on * lit });
       dot(x, RY, RR, { color: P.ground, alpha: on });
       ring(x, RY, RR, { color: P.ink, alpha: on, width: 2.5 + lit });
       if (i === 0) {

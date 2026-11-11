@@ -26,8 +26,10 @@ import { drawShare, drawTime, glideShare, glideTime } from "../../timing/pauses.
  * since the film keeps dashes for what is unknown, missing or refused; this time the fault is in the model, which
  * takes the full ink while the code steps back. The two stand at one distance either side of the line on the frame's
  * axis; until the model is named the code stands alone on that axis, and it steps left into its place as the model
- * arrives on its words. English says them just past two seconds into the thought, the reviewers' first instant, so its
- * model leads them by a third of a second and already stands there, within a label's lead of its words. */
+ * arrives on its words. The model leads its words by a third of a second, within a label's lead of them: English says
+ * them just past two seconds into the thought, the reviewers' first instant, and the Chinese 模型 comes about 1.7 s
+ * after 代码出错, so without the lead the code would stand alone over a sparse frame for longer than the picture
+ * check allows. */
 export function faultApart(s, t, a) {
   if (a <= 0) return;
   const [codeAt, modelAt, apartAt, faultAt] = cues(s, [
@@ -42,7 +44,7 @@ export function faultApart(s, t, a) {
     GAP = 170,
     CX = 960 - GAP - W / 2,
     MX = 960 + GAP + W / 2,
-    shown = modelAt - L(0, 0.35),
+    shown = modelAt - 0.35,
     alone = (960 - CX) * (1 - glideShare(t, shown - 0.4, 960 - CX, 0.8)),
     m = a * named(t, shown),
     d = a * named(t, apartAt),
@@ -103,7 +105,7 @@ export function modelRevision(s, t, a) {
     ["新的正式变更", "a new official Change"],
     ["受影响的最小范围", "the smallest boundary"],
     ["修订模型", "revises the model"],
-    ["依赖它的检查", "every check that depends on it"],
+    ["依赖它的计划和视图", "every plan and view that depends on it"],
     ["重新编译", "compiled again"],
   ]);
   // The row in the stage's own coordinates, the model's left edge at 0.
@@ -123,7 +125,7 @@ export function modelRevision(s, t, a) {
     CHANGE = L("新的正式变更", "A new official Change"),
     // The link is named by the contract's rendering of what it does; the checks by what they are.
     REVISES = L("修订模型", "Revising the model"),
-    DEP = L("依赖它的检查", "Dependent checks"),
+    DEP = L("依赖它的计划和视图", "Plans and views"),
     COMPILE = L("重新编译", "Compiled again");
   const left = -22 - nameWidth(DIM, 280),
     right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2),

@@ -46,7 +46,7 @@ function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
 }
 /* The path's three stations: a problem, a repository, real use, each a ring with its glyph. */
 const STATION_NAMES = () =>
-  L(["一个问题", "代码仓库", "用起来怎么样"], ["A problem", "A repository", "In use"]);
+  L(["一个问题", "一个仓库", "用起来怎么样"], ["A problem", "A repository", "In use"]);
 /* The height of 03.1's path: it stands low enough that its name keeps clear of the last initial's word. */
 const NAME_PATH_Y = () => 600;
 function station(x, y, i, alpha) {
@@ -282,7 +282,7 @@ export function stagePath(t, a, c) {
   });
 }
 
-/* 03.8 These are design aims: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
+/* 03.8 The design aim: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
  * kernel holds up only the path's start, and ETHOS's own documents say the kernel alone does not prove the whole path
  * has been delivered: that claim, with its subject, stands refused beside them, named on its words and carrying its
  * cross from its first frame, since the voice refuses it before it names it. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
@@ -311,7 +311,7 @@ export function stageAims(t, a, c) {
   dot(X1, PY, 7, { color: P.ink, alpha: a });
   xs.forEach((x, i) => station(x, PY, i, a));
   railNames(names, xs, PY + 28, { gap: NAME_GAP, alpha: () => a, set: "aims stations" });
-  nameText(L("设计目标", "Design aims"), xs[1], PY - 28 - NAME_GAP, {
+  nameText(L("设计目标", "Design aim"), xs[1], PY - 28 - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.aimsCut + 0.15),
   });

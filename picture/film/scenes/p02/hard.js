@@ -27,7 +27,8 @@ import { stageIn, stageOut } from "../../timing/stages.js";
  * index's heading rather than as a second name stepped beside the first station's. `kicker` is the kicker's presence,
  * which the scene times so that it fades only while the rail moves slowly and overlaps the heading at the centre in
  * both directions, so the heading never goes unread. `levels` gives each name's ink: the difficulty being told at full
- * ink, the others at the second level. */
+ * ink, the others at the second level. `yielded` is how far the centred heading has given way to the name of the
+ * first difficulty told under it. */
 const INDEX_XS = [420, 960, 1500],
   CENTRE_POINT = 12,
   CENTRE_R = 54,
@@ -47,7 +48,7 @@ function dockReach(heading, names, shown) {
  * station's point; its heading stands over the middle station, inside the rail. */
 const centreReach = (names, shown) =>
   [0, 2].map((i) => mix(CENTRE_POINT, Math.max(CENTRE_R, halfName(names[i])), shown[i]));
-function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
+function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker, yielded = 0 }) {
   const Y = mix(540, DOCK_Y, k),
     R = mix(CENTRE_R, DOCK_R, k),
     pointR = mix(CENTRE_POINT, DOCK_POINT, k),
@@ -106,7 +107,7 @@ function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker }) {
   });
   nameText(heading, xs[1], Y - 98, {
     valign: "bottom",
-    alpha: named(t, headAt) * clamp(1.5 - 2 * k),
+    alpha: named(t, headAt) * clamp(1.5 - 2 * k) * (1 - yielded),
   });
   // The kicker stands one gap over the first station's ring, centred on it as the name beneath is, and moves with it.
   nameText(heading, xs[0], Y - R - gap, {
@@ -131,7 +132,7 @@ scenes["02"] = function (s, t) {
     span: ["从头做到尾", "start to finish"],
     story: ["来龙去脉", "the whole story"],
     rCut: ["一项需求", "a request"],
-    delivery: ["落地", "delivery"],
+    delivery: ["交付", "delivery"],
     st1: ["理解", "interpretation"],
     st2: ["转述", "retelling"],
     st3: ["交接", "handoffs"],
@@ -142,13 +143,13 @@ scenes["02"] = function (s, t) {
     summary: ["一份总结顶替一次", "a summary takes the place"],
     unwritten: ["没写下来的约束", "never written down"],
     anyConstraint: ["没写下来的约束", "any constraint"],
-    gone: ["跟着没了", "ends with it"],
+    gone: ["随之消失", "ends with it"],
     mustNot: ["不能做什么", "what must not be done"],
     benefit: ["本来要带来的效益", "the benefit"],
     gCut: ["需求哪怕", "A specification"],
     wellFormed: ["格式齐全", "complete and well formed"],
     goal: ["目标", "the wrong goal"],
-    wrong: ["从一开始就定错了", "aimed at the wrong goal"],
+    wrong: ["是错的", "aimed at the wrong goal"],
     second: ["第二个", "The second"],
     n2: ["结论超出了证据", "claims go beyond their evidence"],
     eCut: ["本地跑通了", "A run that passed"],
@@ -198,8 +199,8 @@ scenes["02"] = function (s, t) {
     ledger: ["台账", "ledger"],
     copyRule: ["重复的规定", "copy of the same rule"],
     keepUp: ["有人维护", "someone to maintain it"],
-    stale: ["过期", "go stale"],
-    fight: ["互相打架", "contradict each other"],
+    stale: ["就过时", "go stale"],
+    fight: ["互相矛盾", "contradict each other"],
     burden: ["新的负担", "a burden of their own"],
   });
   // The index stands at the centre while each difficulty is introduced and at the top while it is shown; it rises and
@@ -233,6 +234,11 @@ scenes["02"] = function (s, t) {
   const levels = told.map(
     ([from, to]) => ramp(t, from - 0.15, 0.4) * (1 - ramp(t, to - 0.15, 0.4)),
   );
+  // 02.1's picture is the index under its heading. The next thought names the first station in its first clause, so
+  // the heading gives way to that name as it is said, and the picture moves on with the words instead of waiting for
+  // the index to rise; the docked index takes the heading back as its kicker. The index stays docked until the second
+  // difficulty, so the heading is restored there unseen and the later descents bring it back to the centre as before.
+  const yielded = t < c.second ? ramp(t, c.n1 - 0.15, 0.4) : 0;
   hardIndex(t, clamp(k), {
     heading: L("难处", "Three parts"),
     headAt: c.head,
@@ -243,6 +249,7 @@ scenes["02"] = function (s, t) {
     ats: [c.n1, c.n2 - 0.15, c.n3name - 0.1],
     levels,
     kicker,
+    yielded,
   });
   // Each stage cuts in on the words of its first mark. The ledgers cut in on the words that name their shelf, more
   // process, so the shelf arrives with its name.

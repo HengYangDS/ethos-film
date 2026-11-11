@@ -207,7 +207,7 @@ export function judgement(s, t, a) {
   const [wrongAt, standsAt, rejectAt, problemAt] = cues(s, [
     ["可能错", "can be wrong"],
     ["照样成立", "still stands"],
-    ["被否掉", "rejecting"],
+    ["被否决", "rejecting"],
     ["依然存在", "the problem go away"],
   ]);
   // The Chinese "要分开" first occurs in the rule's "三件事要分开判断", so it is taken after the remedy's words.
@@ -299,7 +299,7 @@ export function judgement(s, t, a) {
   const verdictNames = [
     [L("照样成立", "Still stands")],
     [L("可能错", "Can be wrong")],
-    L(["被否掉"], ["If rejected", ", the problem stays"]),
+    L(["被否决"], ["If rejected", ", the problem stays"]),
   ];
   verdictNames.forEach((parts, i) =>
     growName(

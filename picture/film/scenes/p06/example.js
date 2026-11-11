@@ -162,7 +162,7 @@ export function staleStage(s, t, c, g) {
     real = g * named(t, c.branch),
     changed = g * named(t, c.changed);
   plan(planned);
-  nameText(L("编好计划", "A plan"), PLAN_X, ROW_NAMES, { valign: "top", alpha: planned });
+  nameText(L("编译计划", "A plan"), PLAN_X, ROW_NAMES, { valign: "top", alpha: planned });
   writeGate(GATE_X, Y, 150, { alpha: write, color: P.ink, single: true });
   nameText(L("写入", "Writing"), GATE_X, ROW_NAMES, { valign: "top", alpha: write });
   link(PLAN_X + 48, Y, GATE_X - 30, Y, { alpha: write });
@@ -193,7 +193,7 @@ export function checkStage(s, t, c, g) {
   plan(g);
   beats(t, PLAN_X, Y, 70, [c.expected, c.again], { alpha: g });
   // The plan's name gives way to "compiled again" on those words, the one leaving before the other arrives.
-  nameText(L("编好计划", "A plan"), PLAN_X, ROW_NAMES, {
+  nameText(L("编译计划", "A plan"), PLAN_X, ROW_NAMES, {
     valign: "top",
     alpha: g * (1 - ramp(t, c.again - 0.4, 0.25)),
   });

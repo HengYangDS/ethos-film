@@ -16,7 +16,7 @@ concepts = "content/concepts.toml"
 # Each edition's folder of script and cast, its 16:9 cover, and the summary its player shows.
 [editions.zh]
 sources = "content"
-summary = "这部 15 分钟的影片介绍 ETHOS。一个 Agent 交回一句“做完了，测试全过”，这句话到底说明了多少？影片先说人和可以互相替换的 Agent 一起改代码时难在哪里，再说 ETHOS 是什么、为什么这样设计，用一项行情数据需求讲它的四条准则：留住原意，只区分影响行动的，把权威依据和视图分开，义务没了就让机制退场；最后回到开头那句话和 ETHOS 的标志。片中的行情数据管线是假设的例子；规划中的能力按设计说明。"
+summary = "这部 15 分钟的影片介绍 ETHOS。一个 Agent 交回一句“做完了，测试全过”，这句话到底说明了多少？影片先说人和可以互相替换的 Agent 一起改代码时难在哪里，再说 ETHOS 是什么、为什么这样设计，用一项行情数据需求讲它的四条准则：留住原意，只区分会改变行动的，把权威依据和视图分开，义务没了就让机制退场；最后回到开头那句话和 ETHOS 的标志。片中的行情数据管线是假设的例子；规划中的能力按设计说明。"
 cover = "assets/cover/ethos-cover.png"
 
 [editions.en]

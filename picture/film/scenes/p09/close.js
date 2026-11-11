@@ -205,7 +205,7 @@ const REFUSED = () => [L("谁说的", "Who said it"), L("走了多少流程", "H
   CONDITIONS = () => [
     L("原意有一处可查", "Meaning found in one place"),
     L("结论不超出证据", "Claim within its evidence"),
-    L("出了错能退回去", "A way back after a mistake"),
+    L("出了错能恢复", "A way back after a mistake"),
   ];
 function judged(s, t, a, cutAt) {
   if (a <= 0) return;
@@ -216,7 +216,7 @@ function judged(s, t, a, cutAt) {
     ["也不看走了多少流程", "how much process"],
     ["原意是不是有一处可查", "the meaning can be found in one place"],
     ["结论有没有超出证据", "stays within its evidence"],
-    ["能不能退回去", "you can get back after a mistake"],
+    ["能不能恢复", "you can get back after a mistake"],
   ]);
   const refused = REFUSED(),
     conditions = CONDITIONS(),
@@ -310,7 +310,7 @@ function close(s, t, a) {
       ["一个起点", "One origin"],
       ["先划清边界", "bounded before it becomes a change"],
       ["两条路径", "Two passages"],
-      ["只在影响行动的地方分开", "only where they decide action"],
+      ["只在决定行动的地方分开", "only where they decide action"],
       ["一道边界", "One boundary"],
       ["守在自己的范围里", "each keeping to their scope"],
       ["那一点朱红", "cinnabarred point"],
@@ -402,7 +402,7 @@ function close(s, t, a) {
   // moment; Chinese begins that clause on the note's own words. The name and its note stand as one block centred on
   // the mouth's middle line.
   const passagesName = L("两条路径", "Two passages"),
-    passagesSaid = L("影响行动的地方", "only where they decide action");
+    passagesSaid = L("决定行动的地方", "only where they decide action");
   pair(
     passagesName,
     twoAt,
@@ -440,10 +440,10 @@ function close(s, t, a) {
 }
 
 scenes["09"] = function (s, t) {
-  // The judgement takes the picture on its first refusal: the question is put over the sentence and its
-  // attestations, in a clause of its own in Chinese and in the first half of the refusals' clause in English.
+  // The judgement takes the picture on the question: it is put over the sentence and its attestations from the start of
+  // its clause, and on its words 能不能信 / "can be trusted" the attestations give way and the sentence rises with it.
   const [judgeAt, markAt] = cues(s, [
-    ["不看是谁说的", "does not depend on"],
+    ["能不能信", "can be trusted"],
     ["ETHOS 的标志", "The ETHOS mark"],
   ]);
   const a1 = stageOut(t, judgeAt),

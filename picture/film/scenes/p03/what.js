@@ -29,7 +29,7 @@ scenes["03"] = function (s, t) {
     agents: ["可以互相替换的 Agent", "people and interchangeable Agents"],
     reliable: ["靠得住的路", "one reliable path"],
     st1: ["弄清一个问题", "a problem"],
-    st2: ["改动代码仓库", "a repository"],
+    st2: ["改动一个仓库", "a repository"],
     st3: ["用起来到底怎么样", "in use"],
     three: ["它承诺三件事", "It promises three things"],
     p1: ["原意不丢", "meaning is kept"],
@@ -89,7 +89,7 @@ scenes["03"] = function (s, t) {
     mature: ["现成、成熟的工具", "mature tools that already exist"],
     exist: ["现成、成熟的工具", "that already exist"],
     git: ["Git", "Git"],
-    less: ["就少得多", "much less"],
+    less: ["就减少了", "less of its own"],
     // 03.7 the systems it leaves as they are, and what it owns in one place.
     sCut: ["ETHOS 也不接管", "ETHOS does not take over"],
     systems: ["原有的系统", "the systems you already have"],
@@ -107,13 +107,14 @@ scenes["03"] = function (s, t) {
     owns: ["共有的部分", "ETHOS owns in one place"],
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "only what is its own"],
-    // 03.8 design aims.
+    // 03.8 the design aim.
     // The aims' stage cuts in on the words that name it, so its heading stands on them.
-    aimsCut: ["设计目标", "design aims"],
-    aims: ["设计目标", "design aims"],
+    aimsCut: ["设计目标", "design aim"],
+    aims: ["设计目标", "design aim"],
     docs: ["它自己的文档", "its own documents"],
     alone: ["光有这个内核", "the kernel alone"],
-    wholePath: ["整条路", "the whole path"],
+    // 03.8 opens on the whole path too, so the refused claim is cued on its own words.
+    wholePath: ["整条路已经走通", "the whole path has been delivered"],
   });
   // The English "the attestation" of 03.5 first occurs inside 03.3's "the attestations", so it is taken after its cut.
   c.att = cueFrom(s, "只有存证", "the attestation", c.aCut);
