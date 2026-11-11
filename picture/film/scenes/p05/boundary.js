@@ -40,7 +40,7 @@ const names = () => ({
   identity: L("独立控制的账户", ["An independently", "controlled identity"]),
   whether: L("要不要做", "Whether one is needed"),
   // The English qualifier takes two lines, broken at its phrase, so its ink keeps clear of the boundary's edge.
-  decides: L(["看风险、规定和结论的范围"], ["depends on risk, policy", "and the scope of the claim"]),
+  decides: L(["看风险、规定，还有结论的范围"], ["depends on risk, policy", "and the scope of the claim"]),
 });
 /* How far the column under the identity reaches either side of its axis. */
 function columnHalf() {

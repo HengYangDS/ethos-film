@@ -4680,7 +4680,7 @@ var names = () => ({
   identity: L("独立控制的账户", ["An independently", "controlled identity"]),
   whether: L("要不要做", "Whether one is needed"),
   // The English qualifier takes two lines, broken at its phrase, so its ink keeps clear of the boundary's edge.
-  decides: L(["看风险、规定和结论的范围"], ["depends on risk, policy", "and the scope of the claim"])
+  decides: L(["看风险、规定，还有结论的范围"], ["depends on risk, policy", "and the scope of the claim"])
 });
 function columnHalf() {
   const n = names(), identity2 = [n.identity].flat().map((v) => measure(v));
@@ -5159,7 +5159,7 @@ function cuesOf2(s) {
     first3b: cue(s, "其中一样通过了", "One of them passing"),
     another: cue(s, "推不出另一样也通过", "never means another has passed"),
     verified: cue(s, "这一次确认过的", "were verified this time"),
-    saysDone: cue(s, "所以报告做完了", "says done"),
+    saysDone: cue(s, "谁报告做完了", "says done"),
     tell: cue(s, "要讲明", "they need to say"),
     edgeFirst: cue(s, "本地核验还有一条边界", "Local proof has one more boundary"),
     edge: cue(s, "还有一条边界", "one more boundary"),
@@ -5172,7 +5172,7 @@ function cuesOf2(s) {
     independent: cue(s, "另一个独立控制的账户", "an independently controlled identity"),
     rerun: cue(s, "重跑一遍", "a re-run"),
     whether: cue(s, "要不要做", "whether one is needed"),
-    risk: cue(s, "看风险、规定和结论的范围", "depends on the risk, the policy and the scope of the claim"),
+    risk: cue(s, "看风险、规定，还有结论的范围", "depends on the risk, the policy and the scope of the claim"),
     first4: cue(s, "一次判断的结果", "A judgment too"),
     three: cue(s, "只分三种", "only three outcomes"),
     block: cue(s, "拦下", "block and unknown"),
@@ -6366,7 +6366,7 @@ function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
     ["一项正式变更", "And an official Change"],
-    ["交付了什么", "actually delivered"],
+    ["交付了什么", "what it actually delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"]
   ]);
@@ -6563,7 +6563,7 @@ function droppedPush(s, t, a) {
     ["也许已经成了", "may already have landed"],
     ["耗时的写入", "a long write"],
     ["先记下要做什么", "first notes"],
-    ["事后说清楚", "afterwards reports"],
+    ["之后说清楚", "afterwards reports"],
     ["写进去没有", "whether anything was written"],
     ["下一步做什么才安全", "the one safe next action"]
   ]);
@@ -6635,7 +6635,7 @@ function droppedPush(s, t, a) {
   docMark(REPORT_X - DOC[0] / 2, ROW_Y2 - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
   termRow(
     t,
-    [L("事后说清楚", "Afterwards reports")],
+    [L("之后说清楚", "Afterwards reports")],
     [afterAt],
     [L("写进去没有", "whether anything was written")],
     [writtenAt],

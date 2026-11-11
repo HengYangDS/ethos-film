@@ -330,7 +330,8 @@ export function replacement(s, t, a) {
  * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. The Change and the
  * record hang their names from one baseline. The Change stands from its words where it and its delivered rows,
  * arriving a moment later, stand balanced on the frame (English, whose delivered rows come more than a second later,
- * stands the Change alone centred until their words and glides there with them); on the words that bring the record
+ * stands the Change alone centred until 'what it actually delivered' and glides there with its rows); on the words
+ * that bring the record
  * the picture glides, as one unit, to where the whole is centred by its outer edges, the Change on the left and the
  * record on the right. The record's ledger stands a fixed run right of the Change, or further where the delivered
  * rows' name would come within two gaps of its edge, so that name, one gap from its own bracket, reads with the
@@ -340,7 +341,7 @@ export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
     ["一项正式变更", "And an official Change"],
-    ["交付了什么", "actually delivered"],
+    ["交付了什么", "what it actually delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
   ]);

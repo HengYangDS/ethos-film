@@ -54,7 +54,7 @@ export function droppedPush(s, t, a) {
     ["也许已经成了", "may already have landed"],
     ["耗时的写入", "a long write"],
     ["先记下要做什么", "first notes"],
-    ["事后说清楚", "afterwards reports"],
+    ["之后说清楚", "afterwards reports"],
     ["写进去没有", "whether anything was written"],
     ["下一步做什么才安全", "the one safe next action"],
   ]);
@@ -139,7 +139,7 @@ export function droppedPush(s, t, a) {
   docMark(REPORT_X - DOC[0] / 2, ROW_Y - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
   termRow(
     t,
-    [L("事后说清楚", "Afterwards reports")],
+    [L("之后说清楚", "Afterwards reports")],
     [afterAt],
     [L("写进去没有", "whether anything was written")],
     [writtenAt],

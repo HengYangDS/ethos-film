@@ -104,13 +104,9 @@
           "spoken_sha256": "bd1327cd3c92627d741c35af9c4e65ce850c17b37237b6c6ed74a820461eb4a9"
         },
         "7": {
-          "seed": 1746860,
+          "seed": 2554598,
           "text_sha256": "80b5e6a1617c6e4215f203b59ddead5be7537c6c20575d533add6b8ed7df411b",
-          "spoken_sha256": "a3a59200b496b47ad6c072555f98409703bebb892be88879ec92fa4dae3da5e5",
-          "run_on": {
-            "spoken_text": "这些都是它的设计目标。它自己的文档也写得明白：光有这个内核，并不能证明整条路已经走通。",
-            "cut_sample": 615120
-          }
+          "spoken_sha256": "a3a59200b496b47ad6c072555f98409703bebb892be88879ec92fa4dae3da5e5"
         },
         "2": {
           "seed": 2126972,
@@ -161,14 +157,14 @@
           }
         },
         "3": {
-          "seed": 2119055,
-          "text_sha256": "ec311c4246dbf55a67bba77badaa7c037732527663a8e69464bca3c257080e8d",
-          "spoken_sha256": "ec311c4246dbf55a67bba77badaa7c037732527663a8e69464bca3c257080e8d"
+          "seed": 2317030,
+          "text_sha256": "f15f0ca37370bec65d9060283d1aa6e269da0dfd337ed188e03efa30ccde8ffa",
+          "spoken_sha256": "f15f0ca37370bec65d9060283d1aa6e269da0dfd337ed188e03efa30ccde8ffa"
         },
         "4": {
-          "seed": 2119055,
-          "text_sha256": "d2f37c7ddbdd1878e5c5dbc7cb975dee7cf2aa7f5cb1a0a96337b7df7f3d7a4b",
-          "spoken_sha256": "d2f37c7ddbdd1878e5c5dbc7cb975dee7cf2aa7f5cb1a0a96337b7df7f3d7a4b"
+          "seed": 2340787,
+          "text_sha256": "c2f4fdf9a92895140fa29494c49270a3f16609575867673642f65c3d9cff2cd9",
+          "spoken_sha256": "c2f4fdf9a92895140fa29494c49270a3f16609575867673642f65c3d9cff2cd9"
         }
       }
     },
@@ -257,13 +253,8 @@
           "text_sha256": "fd99d1ed59947a178a3583606110b87b23682c870dc69fef4c278b41ef62e9d9",
           "spoken_sha256": "fd99d1ed59947a178a3583606110b87b23682c870dc69fef4c278b41ef62e9d9"
         },
-        "5": {
-          "seed": 2095301,
-          "text_sha256": "4a1c8bce6f22476b635c41053e9630fc6352ba7a891abdb94bbf84577ed66ffe",
-          "spoken_sha256": "6fcc786ab4a37a5c0521500d46047b7b81d7917ecfbc38cacd5921b0e27b726b"
-        },
         "8": {
-          "seed": 2103220,
+          "seed": 2364547,
           "text_sha256": "bfa7f06f181371c81efd2954ba50019bc8da445f2ea97d6bc3aaa86f476bd307",
           "spoken_sha256": "286c85ee6d02c8067fdcf5bf3588e2362d865689ebcfd7e1e26fbe37a3da2e1d"
         },
@@ -276,6 +267,11 @@
           "seed": 2134896,
           "text_sha256": "57d354786b612ed1b147256891e7abbb3881bdd442531b2ee6c72e1b4f11d0d8",
           "spoken_sha256": "57d354786b612ed1b147256891e7abbb3881bdd442531b2ee6c72e1b4f11d0d8"
+        },
+        "5": {
+          "seed": 2427899,
+          "text_sha256": "829a8746d380423a26dd0976087fb70b4e98a39f8e1385e5995db370c669b61b",
+          "spoken_sha256": "0577b6d4ce40ddbac50b2f8c1542de8bf5428dddeef17493dbc5e301c6097993"
         }
       }
     },

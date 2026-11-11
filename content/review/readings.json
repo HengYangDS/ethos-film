@@ -17,13 +17,20 @@
       "adjective": {
         "phones": "D UW1 P L AH0 K AH0 T",
         "primary": 1,
-        "weak": [2, 3]
+        "weak": [
+          2,
+          3
+        ]
       },
       "verb": {
         "phones": "D UW1 P L AH0 K EY2 T",
         "primary": 1,
-        "secondary": [3],
-        "weak": [2]
+        "secondary": [
+          3
+        ],
+        "weak": [
+          2
+        ]
       }
     },
     "lived": {
@@ -50,72 +57,98 @@
       "noun": {
         "phones": "K AA1 N T R AE2 K T",
         "primary": 1,
-        "secondary": [2]
+        "secondary": [
+          2
+        ]
       },
       "verb": {
         "phones": "K AH0 N T R AE1 K T",
         "primary": 2,
-        "weak": [1]
+        "weak": [
+          1
+        ]
       }
     },
     "permits": {
       "noun": {
         "phones": "P ER1 M IH0 T S",
         "primary": 1,
-        "weak": [2]
+        "weak": [
+          2
+        ]
       },
       "verb": {
         "phones": "P ER0 M IH1 T S",
         "primary": 2,
-        "weak": [1]
+        "weak": [
+          1
+        ]
       }
     },
     "produces": {
       "verb": {
         "phones": "P R AH0 D UW1 S IH0 Z",
         "primary": 2,
-        "weak": [1, 3]
+        "weak": [
+          1,
+          3
+        ]
       },
       "noun": {
         "phones": "P R OW1 D UW0 S IH0 Z",
         "primary": 1,
-        "weak": [2, 3]
+        "weak": [
+          2,
+          3
+        ]
       }
     },
     "closes": {
       "verb": {
         "phones": "K L OW1 Z IH0 Z",
         "primary": 1,
-        "weak": [2]
+        "weak": [
+          2
+        ]
       },
       "noun": {
         "phones": "K L OW1 S IH0 Z",
         "primary": 1,
-        "weak": [2]
+        "weak": [
+          2
+        ]
       }
     },
     "conflict": {
       "noun": {
         "phones": "K AA1 N F L IH0 K T",
         "primary": 1,
-        "weak": [2]
+        "weak": [
+          2
+        ]
       },
       "verb": {
         "phones": "K AH0 N F L IH1 K T",
         "primary": 2,
-        "weak": [1]
+        "weak": [
+          1
+        ]
       }
     },
     "re-run": {
       "noun": {
         "phones": "R IY1 R AH2 N",
         "primary": 1,
-        "secondary": [2]
+        "secondary": [
+          2
+        ]
       },
       "verb": {
         "phones": "R IY2 R AH1 N",
         "primary": 2,
-        "secondary": [1]
+        "secondary": [
+          1
+        ]
       }
     },
     "leads": {
@@ -131,51 +164,28 @@
   },
   "variants": {},
   "grammar": {
-    "record": {
-      "03:672": "noun",
-      "03:959": "noun",
-      "03:2002": "noun",
-      "07:946": "noun",
-      "08:158": "noun",
-      "08:639": "noun",
-      "08:2676": "noun"
+    "closes": {
+      "07:879": "verb"
     },
-    "records": {
-      "03:786": "verb",
-      "04:364": "noun",
-      "08:2297": "noun",
-      "08:3082": "noun"
-    },
-    "use": {
-      "03:288": "noun",
-      "07:368": "verb",
-      "08:1427": "noun"
-    },
-    "read": {
-      "06:512": "past",
-      "06:1161": "present"
-    },
-    "separate": {
-      "05:448": "adjective",
-      "06:786": "adjective"
-    },
-    "progress": {
-      "07:82": "noun",
-      "07:237": "noun"
-    },
-    "duplicate": {
-      "04:354": "adjective",
-      "08:3072": "adjective"
-    },
-    "lived": {
-      "02:160": "verb"
-    },
-    "live": {
-      "08:1343": "adjective",
-      "08:1502": "adjective"
+    "conflict": {
+      "05:1122": "noun"
     },
     "contract": {
       "04:54": "noun"
+    },
+    "duplicate": {
+      "04:354": "adjective",
+      "08:3075": "adjective"
+    },
+    "leads": {
+      "04:1943": "noun"
+    },
+    "live": {
+      "08:1346": "adjective",
+      "08:1505": "adjective"
+    },
+    "lived": {
+      "02:160": "verb"
     },
     "permits": {
       "05:503": "verb"
@@ -183,17 +193,40 @@
     "produces": {
       "05:748": "verb"
     },
-    "closes": {
-      "07:879": "verb"
-    },
-    "conflict": {
-      "05:1122": "noun"
+    "progress": {
+      "07:82": "noun",
+      "07:237": "noun"
     },
     "re-run": {
       "05:860": "noun"
     },
-    "leads": {
-      "04:1943": "noun"
+    "read": {
+      "06:512": "past",
+      "06:1161": "present"
+    },
+    "record": {
+      "03:672": "noun",
+      "03:959": "noun",
+      "03:2002": "noun",
+      "07:946": "noun",
+      "08:158": "noun",
+      "08:639": "noun",
+      "08:2679": "noun"
+    },
+    "records": {
+      "03:786": "verb",
+      "04:364": "noun",
+      "08:2300": "noun",
+      "08:3085": "noun"
+    },
+    "separate": {
+      "05:448": "adjective",
+      "06:786": "adjective"
+    },
+    "use": {
+      "03:288": "noun",
+      "07:368": "verb",
+      "08:1430": "noun"
     }
   }
 }
