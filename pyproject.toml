@@ -22,7 +22,7 @@ prerelease = "disallow"
 # later, which renders each edition's player from the declaration, gates the picture's motion as a
 # viewer sees it and judges the review by the owner's 信、达、雅.
 [tool.uv.sources]
-filmkit = { git = "https://github.com/HengYangDS/filmkit", tag = "v0.18.0" }
+filmkit = { git = "https://github.com/HengYangDS/filmkit", tag = "v0.19.0" }
 
 # VERSION is the only version source, as ETHOS requires of a repository that tags releases.
 [tool.hatch.version]

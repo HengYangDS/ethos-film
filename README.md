@@ -14,7 +14,7 @@ The films of `v1.0.1` are the published editions. A later release that changes o
 
 ## Rebuilding the films
 
-The films are built by filmkit, the film engine, at the release that `pyproject.toml` pins by its tag `v0.18.0` and `uv.lock` by its commit; this repository holds the film's sources and none of the engine's. A rebuild needs an Apple-silicon Mac with [mise](https://mise.jdx.dev), which installs the locked Node, Python, uv and ETHOS, and three Homebrew tools: FFmpeg with VideoToolbox, ExifTool and rsync 3.
+The films are built by filmkit, the film engine, at the release that `pyproject.toml` pins by its tag `v0.19.0` and `uv.lock` by its commit; this repository holds the film's sources and none of the engine's. A rebuild needs an Apple-silicon Mac with [mise](https://mise.jdx.dev), which installs the locked Node, Python, uv and ETHOS, and three Homebrew tools: FFmpeg with VideoToolbox, ExifTool and rsync 3.
 
 ```bash
 brew install mise ffmpeg exiftool rsync
