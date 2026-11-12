@@ -163,7 +163,7 @@ scenes["01"] = function (s, t) {
     ["换一个接着做", "another picks up"],
   ]);
   const [writing, easier, flatAt, rely, hard] = cues(s, [
-    ["写一个改动", "Writing code"],
+    ["写代码", "Writing code"],
     ["越来越容易", "keeps getting easier"],
     ["能不能信得过它", "Knowing whether"],
     ["能不能信得过它", "whether you can rely on it"],
@@ -422,7 +422,7 @@ scenes["01"] = function (s, t) {
     });
     ctx.restore();
   }
-  // 4. Writing a change keeps getting easier: a line from one origin, named at its end, that steepens on the words
+  // 4. Writing code keeps getting easier: a line from one origin, named at its end, that steepens on the words
   // that say so and keeps rising while the voice speaks. Whether you can rely on it stays where it was: a flat line
   // from the same origin, lit once on the words that say it does not change. The two lines stand centred with the names
   // at their ends: the first with its own name, then, gliding on the words that name the second, with both.
@@ -430,7 +430,7 @@ scenes["01"] = function (s, t) {
     const X0 = 340,
       X1 = 1300,
       Y0 = 610,
-      writingName = L("写一个改动", "Writing code"),
+      writingName = L("写代码", "Writing code"),
       relyName = L("能不能信得过它", "Whether you can rely on it"),
       relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))),
       ends = X1 + 7 + NAME_GAP,

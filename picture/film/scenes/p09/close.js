@@ -342,15 +342,16 @@ function close(s, t, a) {
   ethosMark(X, Y, S, { datum: 0, boundary: 0, passages, alpha: a * ramp(t, twoAt + 0.05, 0.25) });
   ring(X, Y, point, { color: P.ink, alpha: o * (1 - datum), width: 3 });
   ethosMark(X, Y, S, { datum, hole: 1, passages: 0, boundary: 0, alpha: a });
-  // A point travels the boundary while the voice speaks, and once drawn, the passages. Its clock runs 1.65 s behind,
-  // so the moment it leaves the boundary's end and enters again at its start falls after the origin is named, when the
-  // origin's ring stands with the boundary and the name, never in the clause where they alone stand.
+  // A point travels the boundary while the voice speaks, and once drawn, the passages. Its clock starts at the mark's
+  // first word, the point 1.8 s along the boundary, so the moment it leaves the boundary's end and enters again at its
+  // start falls six seconds of voice later in both editions, after the origin is named, when the origin's ring stands
+  // with the boundary and the name, never in the clause where they alone stand.
   flowAlong(
     Array.from({ length: 65 }, (_, i) => {
       const ang = -0.7 - (i / 64) * (2 * Math.PI - 1.4);
       return [X + r * Math.cos(ang), Y + r * Math.sin(ang)];
     }),
-    flowClock(t, -0.75),
+    flowClock(t) - flowClock(cutAt) + 1.8,
     7,
     { single: true, color: P.line, alpha: a * (1 - lit) },
   );

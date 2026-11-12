@@ -46,7 +46,9 @@ scenes["03"] = function (s, t) {
     in1: ["已经采纳的意图", "the intent"],
     in1q: ["已经采纳的意图", "that has been accepted"],
     in2: ["刚观察到的事实", "fresh facts"],
-    in3: ["以前留下的存证", "attestations already on record"],
+    in3: ["以前的记录", "attestations already on record"],
+    // Chinese calls the record by its term after it: 叫“存证”.
+    in3t: ["存证", "attestations already on record"],
     rules: ["按固定的规则", "by fixed rules"],
     plan: ["一份计划", "a plan"],
     writeAt: ["真要写入的那一刻", "At the moment it writes"],
@@ -61,9 +63,9 @@ scenes["03"] = function (s, t) {
     // English cuts in on the words that bring the lifetimes, two words before their name, so the heading stands on it.
     lCut: ["这几样东西", "last for different"],
     lifetimes: ["寿命不一样", "different lengths of time"],
-    intent: ["意图写在", "Intent is written"],
-    change: ["一份正式变更", "one official Change"],
-    afresh: ["重新编译一份", "compiles it afresh"],
+    intent: ["意图写进", "Intent is written"],
+    change: ["正式变更", "one official Change"],
+    afresh: ["重新编译", "compiles it afresh"],
     facts: ["事实每次", "Facts are observed"],
     again: ["每次都重新去看", "observed again every time"],
     never: ["从不存下来", "never stored"],
@@ -83,7 +85,7 @@ scenes["03"] = function (s, t) {
     later: ["回头去查", "check it later"],
     outside: ["出了这个范围", "outside that scope"],
     notCount: ["就不算数", "does not count"],
-    // 03.6 the tools it relies on.
+    // 03.6 the tools it relies on, what they reduce, and the gap for which it writes its own.
     tCut: ["ETHOS 自己的代码", "its own code"],
     ownCode: ["ETHOS 自己的代码", "its own code"],
     oneJob: ["内核这一件事", "the kernel's one job"],
@@ -91,7 +93,11 @@ scenes["03"] = function (s, t) {
     mature: ["现成、成熟的工具", "mature tools that already exist"],
     exist: ["现成、成熟的工具", "that already exist"],
     git: ["Git", "Git"],
-    less: ["就减少了", "less of its own"],
+    reduce: ["减少总体的维护量", "to reduce total maintenance"],
+    // Chinese names the gap before the tools of its own; English names its own tools first, then the gap.
+    gap: ["证实有缺口", "a demonstrated gap"],
+    ownTools: ["才自己写", "It writes its own tools"],
+    only: ["证实有缺口", "only to fill"],
     // 03.7 the systems it leaves as they are, and what it owns in one place.
     sCut: ["ETHOS 也不接管", "ETHOS does not take over"],
     systems: ["原有的系统", "the systems you already have"],
@@ -110,8 +116,9 @@ scenes["03"] = function (s, t) {
     each: ["每个仓库", "each repository"],
     own: ["自己特有的事", "only what is its own"],
     // 03.8 the design aim.
-    // The aims' stage cuts in on the words that name it, so its heading stands on them.
-    aimsCut: ["设计目标", "design aim"],
+    // The aims' stage cuts in on the thought's first words, the whole path, so the path stands on them and the
+    // repositories of 03.7 never hold into 03.8; its heading stands on its own words.
+    aimsCut: ["整条路", "The whole path"],
     aims: ["设计目标", "design aim"],
     docs: ["它自己的文档", "its own documents"],
     alone: ["光有这个内核", "the kernel alone"],

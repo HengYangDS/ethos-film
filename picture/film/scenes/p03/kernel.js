@@ -49,37 +49,39 @@ import {
  * By fixed rules it compiles a plan; at the moment it writes, the write passes a gate that checks again; and what it
  * observed, decided and did becomes a new attestation, which returns to the inputs.
  *
- * Layout. The diagram is balanced on what is on screen and moves as one unit. While the path and the kernel stand with
- * the inputs' places, it stands centred by its finished extent, from the inputs' names to the loop that returns the
- * new attestation; as the first input is said it glides right, centring the inputs' names with the path, which ends
- * past the gate; as the record is announced it glides back to its finished place, so the record arrives there. The
- * inputs' names end on one edge, the English intent's qualifier under its term. The names under the kernel, the plan,
- * the gate and the new attestation hang from one baseline, one gap under the tallest of them, the kernel; the gate is
- * named by the moment it stands for, 写入 / "The moment it writes", and what it does then, checks again, joins under
- * that name on its words. What the kernel records stands over the new attestation, one clause to a line, each line
- * centred on it, the last one gap over it: each line stands in its place from its words, as a list written on a board grows, and the new attestation's ring draws on a third on each, its stamp
- * landing on the words that name it; the loop turns down clear of the new attestation's name and runs back under the
- * gate's. */
+ * Layout. The diagram stands at its finished place from the cut and never moves (zh-R16-08): the path runs over all of
+ * it, from above the inputs' names to the end of the loop that returns the new attestation, so every state of the
+ * diagram, the path and the kernel alone, the inputs joining, and the record and its loop, spans that extent and stands
+ * centred on the frame. The diagram hangs under the path far enough that the record's first line stands more than a gap
+ * clear of the path that runs over it. The inputs' names end on one edge, the English intent's qualifier under its
+ * term. The names under the kernel, the plan, the gate and the new attestation hang from one baseline, one gap under
+ * the tallest of them, the kernel; the gate is named by the moment it stands for, 写入 / "The moment it writes", and
+ * what it does then, checks again, joins under that name on its words. What the kernel records stands over the new
+ * attestation, one clause to a line, each line centred on it, the last one gap over it: each line stands in its place
+ * from its words, as a list written on a board grows, and the new attestation's ring draws on a third on each, its
+ * stamp landing on the words that name it; the loop turns down clear of the new attestation's name and runs back under
+ * the gate's. */
 const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
 /* The shift that centres the extent from x0 to x1 on the frame. */
 export const centring = (x0, x1) => 960 - (x0 + x1) / 2;
 export function stageKernel(t, a, c) {
   if (a <= 0) return;
   const PY = 380,
-    KY = 560,
+    KY = 576,
     KR = 54,
-    ys = [440, 560, 680],
-    LOOP = 780,
+    ys = [456, 576, 696],
+    LOOP = 796,
     q = flowClock(t);
   const inputNames = L(
-      ["已经采纳的意图", "刚观察到的事实", "以前留下的存证"],
+      ["已经采纳的意图", "刚观察到的事实", "存证"],
       ["Intent", "Fresh facts", "Attestations"],
     ),
     intentQual = ["that has been accepted"],
-    // The attestation is first shown here, before 03.5 explains it. Each edition names it in the voice's words: the
-    // Chinese name holds them whole, 以前留下的存证, as the other two inputs' names do; the English qualifies its term
-    // with them, already on record.
-    attQual = en ? ["already on record"] : [],
+    // The attestation is first shown here, before 03.5 explains it. Each edition names it in the voice's words, its
+    // term qualified by the record it is: the Chinese 存证 by 以前的记录, the English Attestations by already on record.
+    // Chinese says the record before the term it is called by, so the qualifier stands from its words under the term's
+    // place and the term joins over it on its own.
+    attQual = L(["以前的记录"], ["already on record"]),
     inputsWide = Math.max(
       ...inputNames.map((v) => measure(v)),
       en ? measure(intentQual.join(""), NOTE) : 0,
@@ -101,15 +103,10 @@ export function stageKernel(t, a, c) {
     loopX = KERNEL.SX + Math.max(120, measure(newName) / 2 + 24),
     left = KERNEL.IX - 34 - NAME_GAP - inputsWide,
     right = Math.max(loopX + 1.25, KERNEL.SX + recordWide / 2),
-    // The path runs over the diagram from above the inputs to past the gate, so until the record arrives the diagram
-    // ends at the path's end.
-    pathFrom = KERNEL.KX - 260,
-    pathTo = KERNEL.GX + 90,
-    whole = centring(left, right),
-    dx = glideSteps(t, whole, [
-      [c.in1, centring(left, pathTo + 7)],
-      [c.recCut, whole],
-    ]);
+    // The path spans the finished diagram, its end point's outer edge on the diagram's right edge.
+    pathFrom = left,
+    pathTo = right - 7,
+    dx = centring(left, right);
   const IX = KERNEL.IX + dx,
     KX = KERNEL.KX + dx,
     PX = KERNEL.PX + dx,
@@ -118,8 +115,8 @@ export function stageKernel(t, a, c) {
     RX = loopX + dx,
     NX = IX - 34 - NAME_GAP,
     namesTop = rowNameTop([KY + KR, KY + 45, KY + 50, KY + 34]);
-  // The path as 03.2 left it, and the kernel under it from the cut; its clause names it soon after. The kernel beats
-  // while it is said to take its inputs, and again while it compiles its plan.
+  // The path that 03.2 drew, over the whole diagram, and the kernel under it from the cut; its clause names it soon
+  // after. The kernel beats while it is said to take its inputs, and again while it compiles its plan.
   line(pathFrom + dx, PY, pathTo + dx, PY, { color: P.ink, alpha: a, width: 3 });
   dot(pathTo + dx, PY, 7, { color: P.ink, alpha: a });
   kernelIcon(KX, KY, KR, {
@@ -186,13 +183,7 @@ export function stageKernel(t, a, c) {
     alpha: a * listIn(t, ats, 1),
     set: "inputs",
   });
-  if (en) qualified(2, inputNames[2], c.in3, attQual, c.in3);
-  else
-    nameText(inputNames[2], NX, ys[2], {
-      align: "right",
-      alpha: a * listIn(t, ats, 2),
-      set: "inputs",
-    });
+  qualified(2, inputNames[2], c.in3t, attQual, c.in3);
   // By fixed rules, a plan; the gate that checks again at the moment of writing; the new attestation, which returns to
   // the inputs round the names under the diagram. Every link draws on at the tip pace by its own length (drawnShare).
   const rules = a * ramp(t, c.rules - 0.15, 0.4),
@@ -306,7 +297,7 @@ export function stageLifetimes(t, a, c) {
   );
   // Each row's term over the left of its line, its qualifier joining it on its words.
   const rows = [
-      [[L("意图", "Intent")], [c.intent], [L("一份正式变更", "one official Change")], [c.change]],
+      [[L("意图", "Intent")], [c.intent], [L("正式变更", "one official Change")], [c.change]],
       [
         [L("刚观察到的事实", "Fresh facts")],
         [c.facts],

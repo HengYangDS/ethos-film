@@ -214,11 +214,15 @@ export function verifiedStage(s, t, c, g) {
  * three under it, so the checks with no result and unknown share a row. "it waits" is said of unknown, so it stands as
  * a second line of unknown's condition, in the condition's note style, column and lowercase, rather than as a fourth
  * row of the list. The checks with no result are linked to unknown, and whether there is a problem stands open with
- * unknown's mark. Each part of the list stands in its place from its words, so nothing moves as the list builds; the
- * stack stands still beside it (outcomesAt). */
+ * unknown's mark. From the cut the stack stands centred with the heading's term, all that stands until the heading's
+ * qualifier; on the qualifier's words, before the outcomes are named, it glides once to where it stands still beside
+ * the list (outcomesAt). Each part of the list then stands in its place from its words, so nothing moves as the list
+ * builds (zh-R16-08). */
 export function outcomesStage(s, t, c, g) {
   const top = 340,
-    x = outcomesAt(c),
+    still = outcomesAt(c),
+    first = 960 - outcomesParts(c)[0][1] / 2,
+    x = mix(first, still, glideShare(t, c.three + 0.05, first - still, 0.6)),
     col = outcomesColumns(),
     LX = x + col.mark,
     em = labelSize(LABEL),

@@ -22,7 +22,7 @@ import { changeStage, modelStage, readersStage } from "./rule-one.js";
 /* The spoken cues of each stage, in the order they are said. */
 function cuesOf(s) {
   const c = {
-    ethos: cue(s, "ETHOS", "So why is ETHOS"),
+    ethos: cue(s, "ETHOS", "Why is ETHOS"),
     contract: cue(s, "产品设计契约", "Product Design Contract"),
     rules: cue(s, "四条判断的准则", "four rules of judgment"),
     first1b: cue(s, "下面用一个例子", "and one example"),

@@ -31,6 +31,7 @@ const R1 = 370,
   SHEET = [120, 160],
   OWNER = [170, 120],
   LIST = [140, 170];
+export { SCRIPT };
 
 /* A Change's task list: a document whose rows are tick boxes and lines, drawn as one stroke; its first `done` rows
  * are ticked at the ink `tick`, the last of them at `last`, so a list ticked one row at a time fades each tick in. Its

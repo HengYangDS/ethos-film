@@ -1,10 +1,10 @@
 /* 05.4 The trust boundary of local proof. The local proof's plane stands alone, and on its words a boundary closes
- * around it: inside, one account reaches both the program that produces the evidence and the one that checks it, and
- * each program feeds the plane, so local proof alone cannot rule out forgery, a claim refused under the boundary. A
- * second, independently controlled identity stands outside it and re-runs the proof along a dashed link through the
- * boundary, dashed because this layer is taken only when it is needed; under that identity, on their words, stand
- * whether it is needed and what decides that. The boundary stands centred until the identity arrives, then the two
- * glide together to where they stand centred as one group. */
+ * around it: inside, one account (in English, one identity) reaches both the program that produces the evidence and
+ * the one that checks it, and each program feeds the plane, so local proof alone cannot rule out forgery, a claim
+ * refused under the boundary. A second, independently controlled identity stands outside it and re-runs the proof along
+ * a dashed link through the boundary, dashed because this layer is taken only when it is needed; under that identity,
+ * on their words, stand whether it is needed and what decides that. The boundary stands centred until the identity
+ * arrives, then the two glide together to where they stand centred as one group. */
 
 import { ctx } from "../../canvas.js";
 import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
@@ -72,7 +72,7 @@ function program(x, y, alpha) {
     { color: P.muted, alpha: alpha * 0.8, width: 2.5 },
   );
 }
-/* An identity: a person in a ring, the account something acts as. */
+/* An identity: a person in a ring, the account (in English, the identity) something acts as. */
 function identity(x, y, alpha) {
   if (alpha < 0.01) return;
   ring(x, y, IDENTITY_R, { color: P.ink, alpha, width: 2.5 });
@@ -103,13 +103,13 @@ export function boundaryStage(s, t, c, g) {
     valign: "bottom",
     alpha: g * named(t, c.edge),
   });
-  // One account reaches both programs, and each program feeds the plane.
+  // One account (in English, one identity) reaches both programs, and each program feeds the plane.
   const account = g * named(t, c.account),
     produces = g * named(t, c.produces),
     checks = g * named(t, c.checks),
     rise = PROGRAM[1] / 2 + 8;
   identity(CX, ROW_Y, account);
-  nameText(L("同一个账户", "The same account"), CX, nameTop, { valign: "top", alpha: account });
+  nameText(L("同一个账户", "The same identity"), CX, nameTop, { valign: "top", alpha: account });
   [
     [LX, produces, c.produces, n.produces, -1],
     [RX, checks, c.checks, n.checks, 1],

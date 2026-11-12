@@ -22,6 +22,14 @@
           3
         ]
       },
+      "noun": {
+        "phones": "D UW1 P L AH0 K AH0 T",
+        "primary": 1,
+        "weak": [
+          2,
+          3
+        ]
+      },
       "verb": {
         "phones": "D UW1 P L AH0 K EY2 T",
         "primary": 1,
@@ -165,68 +173,69 @@
   "variants": {},
   "grammar": {
     "closes": {
-      "07:879": "verb"
+      "07:918": "verb"
     },
     "conflict": {
-      "05:1122": "noun"
+      "05:1111": "noun"
     },
     "contract": {
-      "04:54": "noun"
+      "04:51": "noun"
     },
     "duplicate": {
-      "04:354": "adjective",
-      "08:3075": "adjective"
+      "04:351": "adjective",
+      "07:870": "noun",
+      "08:3054": "adjective"
     },
     "leads": {
-      "04:1943": "noun"
+      "04:1935": "noun"
     },
     "live": {
-      "08:1346": "adjective",
-      "08:1505": "adjective"
+      "08:1339": "adjective",
+      "08:1494": "adjective"
     },
     "lived": {
       "02:160": "verb"
     },
     "permits": {
-      "05:503": "verb"
+      "05:499": "verb"
     },
     "produces": {
-      "05:748": "verb"
+      "05:745": "verb"
     },
     "progress": {
       "07:82": "noun",
       "07:237": "noun"
     },
     "re-run": {
-      "05:860": "noun"
+      "05:857": "noun"
     },
     "read": {
-      "06:512": "past",
-      "06:1161": "present"
+      "06:500": "past",
+      "06:1149": "present"
     },
     "record": {
-      "03:672": "noun",
-      "03:959": "noun",
-      "03:2002": "noun",
-      "07:946": "noun",
+      "03:662": "noun",
+      "03:949": "noun",
+      "03:2041": "noun",
+      "07:976": "noun",
       "08:158": "noun",
       "08:639": "noun",
-      "08:2679": "noun"
+      "08:2658": "noun"
     },
     "records": {
-      "03:786": "verb",
-      "04:364": "noun",
-      "08:2300": "noun",
-      "08:3085": "noun"
+      "03:776": "verb",
+      "04:361": "noun",
+      "08:2279": "noun",
+      "08:3064": "noun"
     },
     "separate": {
-      "05:448": "adjective",
-      "06:786": "adjective"
+      "05:444": "adjective",
+      "06:774": "adjective"
     },
     "use": {
       "03:288": "noun",
       "07:368": "verb",
-      "08:1430": "noun"
+      "08:1419": "noun"
     }
   }
 }

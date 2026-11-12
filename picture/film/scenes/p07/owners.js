@@ -1,23 +1,31 @@
 /* 07.3-07.4 rule four itself: its heading with the complete mark as its glyph, nothing added; every obligation finds
- * its one owner; ETHOS holds its own repository to the same obligations, a replacement is never weaker, and a Change
- * closes on what it delivered. */
+ * its one owner; ETHOS holds its own repository to the same obligations, a replacement is never weaker, the declared
+ * check catching every duplicate the script caught, and a Change closes on what it delivered. */
 
 import { ctx } from "../../canvas.js";
 import { flowClock, link } from "../../drawing/links.js";
 import { ethosMark } from "../../drawing/mark.js";
-import { box, fill, line, measure, stroke } from "../../drawing/strokes.js";
+import { fill, labelSize, line, measure, stroke } from "../../drawing/strokes.js";
 import { check } from "../../drawing/symbols.js";
-import { kernelIcon, ledger, repoIcon } from "../../drawing/workspace.js";
+import { kernelIcon, ledger, repoIcon, terminalIcon } from "../../drawing/workspace.js";
 import { KICK_Y, RULE_Y, ruleHeadingLayout } from "../../framing/rules.js";
 import { listIn, named } from "../../naming/lists.js";
-import { NAME_GAP, NOTE, nameText, rejectedName, termRow } from "../../naming/names.js";
-import { rowNameTop } from "../../naming/placement.js";
-import { P } from "../../palette.js";
-import { L, en } from "../../timeline.js";
+import {
+  NAME_GAP,
+  NOTE,
+  nameText,
+  rejectedName,
+  termRow,
+  termRowLayout,
+} from "../../naming/names.js";
+import { CONTENT_CY, rowNameTop } from "../../naming/placement.js";
+import { LABEL, P } from "../../palette.js";
+import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, mix, ramp } from "../../timing/easing.js";
 import { glideShare, voiceTime } from "../../timing/pauses.js";
-import { listRows, nameWidth, taskList } from "./example.js";
+import { card, recordRows } from "../p04/marks.js";
+import { SCRIPT, listRows, nameWidth, taskList } from "./example.js";
 
 /* Repositories of one group drawn as one mark: their stores one fill, their outlines and branch glyphs one stroke, so
  * one name names the group. `checks` ticks each with a check of its own, again in one stroke. */
@@ -273,75 +281,109 @@ export function ownRepository(s, t, a) {
   });
 }
 
-/* A way of working: an outline holding its checks, each a tick and a rule; the `extra` rows arrive on `more`. */
-function wayBox(x, y, rows, { alpha = 1, more = 1, extra = 0 } = {}) {
+/* 07.4, second: a replacement may never be weaker, said in the example's terms: the declared check, which replaced the
+ * script, must catch every duplicate the script caught. The replacement, the example's declared check, stands large on
+ * the frame's axis from the cut, the rule over it as its name, its term on the cut and never weaker under it on its
+ * words; the check's own name joins under it on its words. It is the stage's largest mark, a repository with its check
+ * written in it as code and the tick it passes, so it alone covers the picture while only the rule is said: English
+ * names the example's parts after the rule, two seconds and more into the stage. The script and the duplicates it
+ * caught stand in a row below, the script left of the axis and the duplicates as far right of it, each named on its
+ * words: what the script caught runs from it to the duplicates, and the duplicates run straight up into the declared
+ * check, which must catch every one. Each mark stands in its place from its first frame, and the picture stays centred
+ * while it builds: the check and its rule on the axis, then the row, whose two ends are said within a second of each
+ * other. */
+const DUPLICATES = [200, 104],
+  ROW_GAP = 50,
+  CHECK = [440, 240];
+/* The replacement: the declared check (example.js) drawn large, its check as four lines of code under the repository's
+ * branch and its tick right of them, at the declared check's place for its tick. */
+function replacementCheck(x, y, alpha) {
   if (alpha < 0.01) return;
-  const w = 230,
-    h = 150,
-    ys = Array.from({ length: rows }, (_, i) => y - h / 2 + (h * (i + 1)) / (rows + 1));
-  box(x - w / 2, y - h / 2, w, h, { fill: P.row, stroke: P.ink, alpha, radius: 12, width: 2.5 });
-  ys.forEach((ry, i) => {
-    const k = i < rows - extra ? alpha : alpha * more;
-    check(x - w * 0.3, ry, 20, { alpha: k, width: 3 });
-    line(x - w * 0.16, ry, x + w * 0.34, ry, { color: P.muted, alpha: k });
-  });
+  const [w, h] = CHECK,
+    x0 = x - w / 2 + 34;
+  repoIcon(x, y, w, h, { alpha });
+  stroke(
+    () =>
+      [0.42, 0.3, 0.38, 0.24].forEach((k, i) => {
+        ctx.moveTo(x0, y - 28 + 32 * i);
+        ctx.lineTo(x0 + w * k, y - 28 + 32 * i);
+      }),
+    { color: P.muted, alpha: alpha * 0.8, width: 2.5 },
+  );
+  check(x + w * 0.2, y + 8, h * 0.38, { alpha, width: 4 });
 }
-
-/* 07.4, second: a replacement takes the old way's place on its words; it holds every check the old one held, and the
- * rule that it may never be weaker is named as its extra check arrives: Chinese states it beneath both ways, comparing
- * them, and English, whose words continue the replacement's own name, sets it as that name's qualifier. English
- * names what it replaces last, after the rule, so its new way stands alone for more than a second: it stands centred
- * until the old way's words, and the two ways then glide, as one unit, to their places either side of the axis.
- * Chinese names both ways in one clause, half a second apart, so they stand in their places from the first. */
 export function replacement(s, t, a) {
   if (a <= 0) return;
-  const [newAt, weakAt, oldAt] = cues(s, [
-    ["拿新做法", "A replacement"],
-    ["新的不能比旧的弱", "may never be weaker"],
-    ["换掉旧做法", "what it replaces"],
+  const [newAt, weakAt, scriptAt, dupAt, checkAt, catchAt] = cues(s, [
+    ["新做法", "A replacement"],
+    ["不能比旧的弱", "may never be weaker"],
+    ["脚本查出的重复", "the script caught"],
+    ["查出的重复", "every duplicate"],
+    ["声明的检查都要查出来", "the declared check"],
+    ["都要查出来", "must catch every duplicate"],
   ]);
-  const n = a * named(t, newAt),
-    w = a * named(t, weakAt),
-    o = a * named(t, oldAt - L(0, 0.1)),
-    S = mix(L(0, 960 - 1220), 0, glideShare(t, oldAt + 0.05, L(0, 1220 - 960), 0.8));
-  wayBox(700 + S, 430, 3, { alpha: o });
-  nameText(L("旧做法", "What it replaces"), 700 + S, 505 + NAME_GAP, { valign: "top", alpha: o });
-  wayBox(1220 + S, 430, 4, { alpha: n, more: w, extra: 1 });
-  // The relation draws on from the old way to the new; in English it waits until the glide has passed its fastest
-  // part, so the line never grows while its ends slide fast.
-  link(827 + S, 430, 1093 + S, 430, {
-    alpha: Math.min(n, o),
-    draw: { t, at: Math.max(newAt, oldAt) + L(0.05, 0.35) },
+  const term = [L("新做法", "A replacement")],
+    qual = [L("不能比旧的弱", "never weaker")],
+    em = labelSize(LABEL),
+    ruleHeight = termRowLayout(term, qual, Infinity, false).height,
+    // The figure, from the rule's top to the row's names, stands centred on the content's centre line.
+    height =
+      ruleHeight + NAME_GAP + CHECK[1] + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em,
+    top = CONTENT_CY - height / 2,
+    CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2,
+    RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2,
+    SX = 960 - 260,
+    DX = 960 + 260,
+    rowTop = rowNameTop([RY + SCRIPT[1] / 2, RY + DUPLICATES[1] / 2]),
+    n = a * named(t, newAt),
+    sIn = a * named(t, scriptAt),
+    dIn = a * named(t, dupAt);
+  termRow(t, term, [newAt], qual, [weakAt], 960, top, { alpha: a, align: "center" });
+  replacementCheck(960, CY, n);
+  nameText(L("声明的检查", "The declared check"), 960, CY + CHECK[1] / 2 + NAME_GAP, {
+    valign: "top",
+    alpha: a * named(t, checkAt),
+  });
+  terminalIcon(SX - SCRIPT[0] / 2, RY - SCRIPT[1] / 2, SCRIPT[0], SCRIPT[1], { alpha: sIn });
+  nameText(L("脚本", "The script"), SX, rowTop, { valign: "top", alpha: sIn });
+  // The duplicates: a card of two records that are one and the same, as 04.5's exact repeat.
+  const [w, h] = DUPLICATES;
+  card(DX - w / 2, RY - h / 2, w, h, { alpha: dIn });
+  recordRows(DX - w / 2 + 30, RY - 18, w - 60, [0, 1], { alpha: dIn });
+  nameText(L("查出的重复", "Every duplicate"), DX, rowTop, { valign: "top", alpha: dIn });
+  // What the script caught runs from it to the duplicates, on the later of their words; the duplicates run straight up
+  // into the declared check, 30 px inside its right edge, on the words that say it must catch them, once they stand.
+  link(SX + SCRIPT[0] / 2 + 10, RY, DX - w / 2 - 10, RY, {
+    alpha: Math.min(sIn, dIn),
+    draw: { t, at: Math.max(scriptAt, dupAt) + 0.05 },
     flow: flowClock(t),
   });
-  if (en)
-    termRow(t, ["A replacement"], [newAt], ["never weaker"], [weakAt], 1220 + S, 505 + NAME_GAP, {
-      alpha: a,
-      align: "center",
-      inline: false,
-    });
-  else {
-    nameText("新做法", 1220 + S, 505 + NAME_GAP, { valign: "top", alpha: n });
-    nameText("不能比旧的弱", 960, 650, { alpha: w });
-  }
+  const UP = 960 + CHECK[0] / 2 - 30;
+  link(UP, RY - h / 2 - 10, UP, CY + CHECK[1] / 2 + 10, {
+    alpha: Math.min(n, dIn),
+    draw: { t, at: Math.max(catchAt, dupAt) + 0.1 },
+    flow: flowClock(t, 0.5),
+  });
 }
 
 /* 07.4, third: an official Change closes on what it delivered: its delivered rows are ticked and bracketed under their name,
  * its unfinished rows go on record in a ledger beside it, and passing them for done is refused. The Change and the
  * record hang their names from one baseline. The Change stands from its words where it and its delivered rows,
  * arriving a moment later, stand balanced on the frame (English, whose delivered rows come more than a second later,
- * stands the Change alone centred until 'what it actually delivered' and glides there with its rows); on the words
+ * stands the Change alone centred until 'what it delivered' and glides there with its rows); on the words
  * that bring the record
  * the picture glides, as one unit, to where the whole is centred by its outer edges, the Change on the left and the
  * record on the right. The record's ledger stands a fixed run right of the Change, or further where the delivered
  * rows' name would come within two gaps of its edge, so that name, one gap from its own bracket, reads with the
  * bracket alone. The Change is the stage's largest mark: with the short names of its parts it alone keeps the picture
- * from thinning out before the record arrives. */
+ * from thinning out before the record arrives, and it stands wide, its list 400 px across with its rows reaching
+ * further, so with its name it covers a tenth of the band while it stands alone, where the thought's late instant
+ * falls in both editions. */
 export function closing(s, t, a) {
   if (a <= 0) return;
   const [changeAt, deliveredAt, recordAt, passAt] = cues(s, [
-    ["一项正式变更", "And an official Change"],
-    ["交付了什么", "what it actually delivered"],
+    ["一项正式变更", "An official Change"],
+    ["交付了什么", "what it delivered"],
     ["没做完的留下记录", "unfinished work stays on the record"],
     ["冒充做完了", "passing for done"],
   ]);
@@ -349,11 +391,11 @@ export function closing(s, t, a) {
   const DELIVERED = L("交付了什么", "Delivered"),
     RECORD = L("没做完的", "Unfinished work"),
     DY = 440,
-    W = 250,
+    W = 400,
     H = 340,
     // The list's four rows, spread to fill a list this large, the bracket round the first two, their name at its
     // middle, and the unfinished rows' link between the last two.
-    ROWS = { first: 0.24, span: 0.62, reach: 0.36 },
+    ROWS = { first: 0.24, span: 0.62, reach: 0.4 },
     rowsY = listRows(DY, H, 4, ROWS.first, ROWS.span),
     BX = W / 2 + 18,
     left = Math.min(700 - W / 2, 700 - nameWidth(L("一项正式变更", "An official Change")) / 2),

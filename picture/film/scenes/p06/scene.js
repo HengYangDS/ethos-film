@@ -41,7 +41,6 @@ function cuesOf(s) {
     fresh: cue(s, "刚观察到的事实", "from fresh facts"),
     again: cue(s, "重新编译计划", "compiled again"),
     first2: cue(s, "核对和写入", "Checking and writing"),
-    oneStep: cue(s, "一步完成", "as one step"),
     afterwards: cue(s, "写完以后", "afterwards"),
     readBack: cue(s, "把结果读回来", "the result is read back"),
     confirm: cue(s, "确认", "to confirm"),

@@ -269,10 +269,12 @@ export function checkStage(s, t, c, g) {
 const GX = 700,
   BX = 860,
   BSTEP = 110;
-/* 06.2 One step, then read back: the check and the write stand in one outline; the gate lifts, a commit is written at
- * the branch's head and its result runs back to a check. The outline's name centres on it from its first word, and
- * the branch's name shares its line under the outline, the row's tallest mark. The step and the branch stand centred
- * together, and glide left by half the written commit's reach as the gate lifts for it, so they stay centred. */
+/* 06.2 One step, then read back: the check and the write stand in one outline, so the outline is the one step; the gate
+ * lifts, a commit is written at the branch's head and its result runs back to a check. The outline is named by what it
+ * holds, checking and writing, centred on it from its first word, so no label repeats the whole caption cue
+ * "核对和写入，一步完成；"; the branch's name shares its line under the outline, the row's tallest mark. The step and the
+ * branch stand centred together, and glide left by half the written commit's reach as the gate lifts for it, so they
+ * stay centred. */
 export function oneStepStage(s, t, c, g) {
   const names = rowNameTop([Y + 100, Y + 22]),
     step = L(["核对和写入"], ["Checking and writing"]),
@@ -290,10 +292,7 @@ export function oneStepStage(s, t, c, g) {
     single: true,
     open: glideShare(t, c.afterwards + 0.05, 110, 0.6),
   });
-  termRow(t, step, [c.first2], L(["一步完成"], ["as one step"]), [c.oneStep], GX, names, {
-    alpha: g,
-    align: "center",
-  });
+  termRow(t, step, [c.first2], [], [], GX, names, { alpha: g, align: "center" });
   commitRow(BX, BSTEP, Y, 5, { alpha: g, single: true });
   link(GX + 70, Y, BX - 9, Y, { alpha: g });
   nameText(L("分支", "The branch"), BX + 2 * BSTEP, names, { valign: "top", alpha: g });

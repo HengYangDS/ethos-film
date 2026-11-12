@@ -95,8 +95,10 @@ function checkGroup(t, x, ys, { alpha = 1, at = Infinity } = {}) {
  * around that cell, and the checks that depend
  * on the model are compiled again, re-lighting one after another. The Change and the checks are drawn as tall as the
  * model, so the names over the row end on one line and the names under it hang from one line, one gap under each of
- * their marks whichever has arrived, and neighbouring names keep a word's space between them. The stage steps left
- * twice, as the Change and then the checks arrive, so each state stands centred on the frame by its outer names. */
+ * their marks whichever has arrived, and neighbouring names keep a word's space between them. The model stands from the
+ * cut where both its states before the Change stand near the centre, and the stage steps left twice, as the Change and
+ * then the checks arrive, so each later state stands centred on the frame by its outer names. */
+const SEAT = 40;
 export function modelRevision(s, t, a) {
   if (a <= 0) return;
   const [recordAt, dimAt, changeAt, boundAt, revisesAt, checksAt, compileAt] = cues(s, [
@@ -138,12 +140,18 @@ export function modelRevision(s, t, a) {
     ),
     right3 = Math.max(right2, CHK + 46 + nameWidth(DEP, 280), CHK + nameWidth(COMPILE) / 2),
     at = (right) => 960 - (left + right) / 2,
+    // The model is seated from the cut, before its missing dimension is named: midway between where the model with
+    // its concept's name and the model with the dimension's name and its grown cell are centred, and at most SEAT px
+    // off the second, so neither state of the forming model stands far off centre (zh-R16-08).
+    grownAt = at(right1),
+    formingAt = 960 - Math.max(GW, CELL0 + nameWidth(RECORD) / 2) / 2,
+    seat = grownAt + Math.max(-SEAT, Math.min(SEAT, (formingAt - grownAt) / 2)),
     // Each step left by the film's structural glide over its own way, setting off 0.65 s before the words of the part
     // it makes room for, so it has gone most of its way when that part's name appears.
     GX =
       at(right3) +
       (at(right2) - at(right3)) * (1 - glideShare(t, checksAt - 0.65, at(right2) - at(right3), 0.8)) +
-      (at(right1) - at(right2)) * (1 - glideShare(t, changeAt - 0.65, at(right1) - at(right2), 0.8));
+      (seat - at(right2)) * (1 - glideShare(t, changeAt - 0.65, seat - at(right2), 0.8));
   ctx.save();
   ctx.translate(GX, 0);
   const grow = soon(t, dimAt + 0.05, 0.8),

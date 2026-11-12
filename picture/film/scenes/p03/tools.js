@@ -1,12 +1,14 @@
-/* 03.6-03.7 ETHOS keeps its own code to the kernel and turns to mature tools for the rest; it leaves the systems already
- * in use as they are, works on the user's own machine and owns in one place what every repository shares. */
+/* 03.6-03.7 ETHOS keeps its own code to the kernel, turns to mature tools for the rest and writes its own only for a
+ * demonstrated gap; it leaves the systems already in use as they are, works on the user's own machine and owns in one
+ * place what every repository shares. */
 
 import { ctx } from "../../canvas.js";
 import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
-import { box, ring, stroke } from "../../drawing/strokes.js";
+import { box, drawnShare, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
-import { beats, named } from "../../naming/lists.js";
+import { named } from "../../naming/lists.js";
 import {
+  LEADING,
   NAME_GAP,
   NOTE,
   TERM_STACK,
@@ -24,11 +26,11 @@ import { glideShare, voiceTime } from "../../timing/pauses.js";
  * ETHOS's code; on the words that give the kernel its one job the panel draws in to the kernel and its lines go, so
  * the kernel alone is what ETHOS's code does, named under it. For everything else it turns to tools: on those words in
  * Chinese, and on the word "tools" in English, two tools, larger outlines of one size below the kernel, mirrored about
- * its axis, each holding its content (Git's branch
- * in one, a tool's features in the other), are linked from the kernel and named as everything else between them; Git is named on its
- * word and the pair as mature tools under them; so there is less to understand and verify, the qualifier under the kernel's
- * one job, and the kernel lights once. The
- * panel's names ride its top and bottom edges as it draws in, so each stays one gap from what it names. */
+ * its axis, each holding its content (Git's branch in one, a tool's features in the other), are linked from the kernel
+ * and named as everything else between them; Git is named on its word and the pair as mature tools under them, and
+ * what they are turned to for, the three reductions in the voice's words, joins under that name as its qualifier on
+ * its words. Then the condition for ETHOS's own tools (gapTool). The panel's names ride its top and bottom edges as it
+ * draws in, so each stays one gap from what it names. */
 export function stageTools(t, a, c) {
   if (a <= 0) return;
   const KX = 960,
@@ -62,22 +64,14 @@ export function stageTools(t, a, c) {
     { color: P.muted, alpha: code * 0.8, width: 2.5 },
   );
   kernelIcon(KX, KY, KR, { alpha: a, color: P.ink, turn: 0.1 * voiceTime(t) });
-  beats(t, KX, KY, KR + 16, [c.less], { alpha: a });
   nameText(L("ETHOS 的代码", "Its own code"), KX, KY - Math.max(PH / 2, KR) - NAME_GAP, {
     valign: "bottom",
     alpha: a * named(t, c.tCut + 0.15),
   });
   const under = KY + Math.max(PH / 2, KR) + NAME_GAP;
-  const job = nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
+  nameText(L("内核这一件事", "The kernel's one job"), KX, under, {
     valign: "top",
     alpha: a * named(t, c.oneJob),
-  });
-  // What it leaves to verify is said of the kernel's one job, so it stands under that name as its qualifier.
-  nameText(L("要理解、要验证的减少了", "less to understand and verify"), KX, job.bottom + TERM_STACK, {
-    valign: "top",
-    size: NOTE,
-    color: P.muted,
-    alpha: a * named(t, c.less),
   });
   // Everything else: the kernel's links reach out on the words that turn to it, and the tools arrive together at their
   // ends, on those words in Chinese and on "tools" in English.
@@ -113,12 +107,12 @@ export function stageTools(t, a, c) {
     { color: P.muted, alpha: tooled * 0.8, width: 2.5 },
   );
   // Two tools of one size each need a name of their own: the name between them names one, and Git names the other.
-  // English says Git at the end of its clause, so its name leads its word by a second and a half less a frame, within
-  // its clause, and stands a fifth of a second after the tools arrive on "tools".
+  // English says Git late in its clause, so its name leads its word by a second and a half less a frame, within its
+  // clause, and stands a fifth of a second after the tools arrive on "tools".
   nameText("Git", gx + 20, gy, { alpha: a * named(t, L(c.git, c.git - 1.45)) });
   // The tools' name hangs one gap under the pair, centred between them and clear of both corners: in English its
   // relative clause, which on one line would run under Git's corner, joins under it as its smaller gloss on its words.
-  termRow(
+  const toolsName = termRow(
     t,
     [L("现成、成熟的工具", "Mature tools")],
     [c.mature],
@@ -128,6 +122,60 @@ export function stageTools(t, a, c) {
     760,
     { alpha: a, align: "center" },
   );
+  // What the tools are turned to for, the three reductions in the voice's words, qualifies them too: on one line under
+  // their name, as a qualifier stands under its term in Chinese, and at the qualifiers' pitch under "that already
+  // exist" in English.
+  nameText(
+    L(
+      "减少总体的维护量、运行风险和采用者的负担",
+      "to reduce total maintenance, operational risk and adopter burden",
+    ),
+    KX,
+    toolsName.bottom + L(TERM_STACK, labelSize(NOTE) * (LEADING - 1)),
+    { valign: "top", size: NOTE, color: P.muted, alpha: a * named(t, c.reduce) },
+  );
+  gapTool(t, a, c);
+}
+
+/* 03.6, last: ETHOS writes tools of its own only to fill a demonstrated gap. Over the kernel and the name of its code,
+ * in the band the panel's name left, the dashed outline of a tool, since the film keeps dashes for what is missing,
+ * and three lines of ETHOS's own code, drawn as the panel's were, written into it one after another on the words that
+ * say it writes its own. The outline arrives with its name, so the lines are always written into it: Chinese names the
+ * gap first, on one line, and the outline arrives on those words; English names its own tools first, with the
+ * condition under them, and the outline arrives with the tools. The name stands one gap right of the outline in the
+ * voice's words, and the outline and its name stand centred together. The Chinese name holds the gap alone, so no
+ * label repeats the whole caption "证实有缺口，才自己写。". */
+const GAP_W = 150,
+  GAP_H = 84,
+  GAP_Y = 215;
+function gapTool(t, a, c) {
+  const term = L(["证实有缺口"], ["Its own tools"]),
+    qual = L([], ["only to fill a demonstrated gap"]),
+    wide = Math.max(measure(term.join("")), ...qual.map((v) => measure(v, NOTE))),
+    left = 960 - (GAP_W + NAME_GAP + wide) / 2;
+  box(left, GAP_Y - GAP_H / 2, GAP_W, GAP_H, {
+    stroke: P.muted,
+    alpha: a * named(t, L(c.gap, c.ownTools)),
+    radius: 14,
+    width: 2.5,
+    dash: [10, 8],
+  });
+  // Each line is its own stroke, drawn on at the tip pace from its own start.
+  [92, 60, 78].forEach((w, i) => {
+    const at = c.ownTools + 0.05 + 0.12 * i,
+      x = left + 26,
+      y = GAP_Y - 18 + 18 * i;
+    line(x, y, x + w * drawnShare({ t, at }, w), y, {
+      color: P.muted,
+      alpha: a * 0.8 * ramp(t, at - 0.05, 0.2),
+      width: 2.5,
+    });
+  });
+  const height = termRowLayout(term, qual, Infinity, false).height;
+  termRow(t, term, [L(c.gap, c.ownTools)], qual, [c.only], left + GAP_W + NAME_GAP, GAP_Y - height / 2, {
+    alpha: a,
+    inline: false,
+  });
 }
 
 /* 03.7 ETHOS does not take over the systems already in use: ETHOS at the centre with its name from the cut, and the

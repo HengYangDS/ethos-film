@@ -176,8 +176,8 @@ scenes["07"] = function (s, t) {
     ["这个脚本要是留着", "If the script stays"],
     ["这就是第四条准则", "That is rule four"],
     ["ETHOS 判断", "ETHOS judges"],
-    ["拿新做法", "A replacement"],
-    ["一项正式变更", "And an official Change"],
+    ["新做法", "A replacement"],
+    ["一项正式变更", "An official Change"],
     ["每个机制", "Every mechanism"],
     ["已经没有义务的机制", "Keep the ones"],
   ]);
@@ -191,8 +191,9 @@ scenes["07"] = function (s, t) {
     c3 = stageIn(t, changeAt) * stageOut(t, mechAt),
     d1 = stageIn(t, mechAt) * stageOut(t, goneAt),
     d2 = stageIn(t, goneAt);
-  // The example's script and sheet are illustrative; the rule and its consequences are ETHOS's own.
-  illustrative(a1 + a2);
+  // The example's script, sheet and declared check are illustrative, also where the second consequence of the rule
+  // shows them; the rule and its consequences are ETHOS's own.
+  illustrative(a1 + a2 + c2);
   makings(s, t, a1);
   ghost(s, t, a2);
   ruleFour(s, t, b);

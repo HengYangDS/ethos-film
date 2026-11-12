@@ -282,15 +282,16 @@ export function stagePath(t, a, c) {
   });
 }
 
-/* 03.8 The design aim: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
- * kernel holds up only the path's start, and ETHOS's own documents say the kernel alone does not prove the whole path
- * has been delivered: that claim, with its subject, stands refused beside them, named on its words and carrying its
- * cross from its first frame, since the voice refuses it before it names it. The stations stand centred on the dashed
- * stretch, 50 px inside its ends, and the aim is named over the middle one, the stretch's centre; the solid start is
- * centred on the kernel. The kernel's and the documents' names stand on one baseline, under the taller
- * of the two. The path, the kernel and the documents stand from the thought's first words, and the refused claim joins
- * them at its end, so the picture stands midway between where those two states are centred: neither stands more than
- * half their difference off the centre, about 31 px in English (EN-R16-06). */
+/* 03.8 The design aim: the path with its stations, named the whole path at its end as 03.2 names it, its stretch beyond
+ * the kernel dashed and named as an aim; the kernel holds up only the path's start, and ETHOS's own documents say the
+ * kernel alone does not prove the whole path has been delivered: that claim, with its subject, stands refused beside
+ * them, named on its words and carrying its cross from its first frame, since the voice refuses it before it names it.
+ * The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named over the middle one,
+ * the stretch's centre; the solid start is centred on the kernel. The kernel's and the documents' names stand on one
+ * baseline, under the taller of the two. The path, its stations and its name stand from the thought's first words, the
+ * whole path, so the repositories of 03.7 never hold into the thought (EN-R16-06); the aim, the documents and the
+ * kernel join on their words, and the refused claim at its end. The picture stands midway between where the path with
+ * its name and the finished picture are centred: neither stands more than half their difference off the centre. */
 export function stageAims(t, a, c) {
   if (a <= 0) return;
   const names = STATION_NAMES(),
@@ -301,8 +302,13 @@ export function stageAims(t, a, c) {
     base = railStations(names, 850, 1390),
     // The rejected name's cross stands 16 px after its words and is 26 px wide.
     docsName = L("它自己的文档", "Its own documents"),
+    pathName = L("整条路", "The whole path"),
     left = Math.min(600, 700 - measure(kernelName) / 2),
-    open = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1186 + measure(docsName) / 2),
+    open = Math.max(
+      1440 + 7 + NAME_GAP + measure(pathName),
+      base[2] + measure(names[2]) / 2,
+      1186 + measure(docsName) / 2,
+    ),
     right = Math.max(open, 1282 + claimWide + 42),
     dx = 960 - (2 * left + open + right) / 4;
   const PY = 430,
@@ -315,9 +321,10 @@ export function stageAims(t, a, c) {
   dot(X1, PY, 7, { color: P.ink, alpha: a });
   xs.forEach((x, i) => station(x, PY, i, a));
   railNames(names, xs, PY + 28, { gap: NAME_GAP, alpha: () => a, set: "aims stations" });
+  nameText(pathName, X1 + 7 + NAME_GAP, PY, { align: "left", alpha: a * named(t, c.aimsCut) });
   nameText(L("设计目标", "Design aim"), xs[1], PY - 28 - NAME_GAP, {
     valign: "bottom",
-    alpha: a * named(t, c.aimsCut + 0.15),
+    alpha: a * named(t, c.aims),
   });
   const namesTop = rowNameTop([640 + 46, 590 + 92]);
   // The kernel alone, under the path's start, holding up only that part of it.
