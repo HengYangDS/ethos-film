@@ -229,8 +229,9 @@ export function changeStage(s, t, c, g) {
 
 /* 04.5 One copy: the Change and, at its left, a person and an Agent who pick the work up later; each reads it along
  * a link, and what they read is the same. The readers' name and the Change's hang from one line under the lower of
- * their marks, the Agent. The readers and the Change stand centred together, and the group glides as one unit to centre
- * on what they read as well when it is named. The Change is carried there from its place in 04.4. */
+ * their marks, the Agent. The readers and what they read join the Change where they stand: the group stands still midway
+ * between where the readers and the Change, and the whole with what they read, would be centred, so no name moves as
+ * they join (EN-R16-05). */
 export function readersStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   // The English readers' name is their noun, and its relative clause joins under it as a smaller gloss on its own
@@ -245,13 +246,13 @@ export function readersStage(s, t, c, g) {
     left = 250 + rowHalf(readers, readersQual),
     right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)),
     read = CHANGE_W + NAME_GAP + 10 + measure(same),
-    seat = 960 + mix(left - right, left - read, glideShare(t, c.same + 0.05, (read - right) / 2, 0.7)) / 2,
-    // The Change comes from where 04.4 left it: from the cut it glides with its name to its seat by the structural
-    // glide, so the figure the voice names is carried there rather than moved in one frame. The readers, who join it
-    // later, arrive at rest in their places beside that seat.
+    seat = 960 + (2 * left - right - read) / 4,
+    // Chinese carries the Change from where 04.4 left it to its seat by the structural glide from the cut, since its
+    // 04.4 place is 289 px away and a jump at the cut would move the named figure in one frame; English, whose 04.4
+    // place is near its seat, stands it there from the cut (EN-R16-05).
     cut = c.first5 + STAGE_CUT,
-    from = changeX(cut, c),
-    arrive = glideShare(t, cut, 960 + (left - right) / 2 - from),
+    from = L(changeX(cut, c), seat),
+    arrive = glideShare(t, cut, seat - from),
     DX = mix(from, seat, arrive),
     DY = 440,
     RX = seat - 250,
