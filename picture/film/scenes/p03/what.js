@@ -74,7 +74,9 @@ scenes["03"] = function (s, t) {
     again2: ["重新编译出来", "compiled again"],
     // 03.5 the attestation's scope.
     aCut: ["内核长期留下的", "The kernel keeps"],
-    longTerm: ["长期留下的", "for the long term"],
+    // English says "for the long term" at the end of its clause, 1.4 s after the kernel is named, so its heading line
+    // stands from "only one thing" in that clause, and the kernel does not stand alone far left of centre.
+    longTerm: ["长期留下的", "only one thing"],
     who: ["是谁出具的", "who verified it"],
     scope: ["在什么范围内成立", "where it holds"],
     scopeName: ["范围", "where it holds"],

@@ -285,10 +285,12 @@ export function stagePath(t, a, c) {
 /* 03.8 The design aim: the path with its stations, its stretch beyond the kernel dashed and named as an aim; the
  * kernel holds up only the path's start, and ETHOS's own documents say the kernel alone does not prove the whole path
  * has been delivered: that claim, with its subject, stands refused beside them, named on its words and carrying its
- * cross from its first frame, since the voice refuses it before it names it. The stations stand centred on the dashed stretch, 50 px inside its ends, and the aim is named
- * over the middle one, the stretch's centre; the solid start is centred on the kernel. The kernel's and the
- * documents' names stand on one baseline, under the taller of the two, and the whole picture stands centred on the
- * frame by its extent. */
+ * cross from its first frame, since the voice refuses it before it names it. The stations stand centred on the dashed
+ * stretch, 50 px inside its ends, and the aim is named over the middle one, the stretch's centre; the solid start is
+ * centred on the kernel. The kernel's and the documents' names stand on one baseline, under the taller
+ * of the two. The path, the kernel and the documents stand from the thought's first words, and the refused claim joins
+ * them at its end, so the picture stands midway between where those two states are centred: neither stands more than
+ * half their difference off the centre, about 31 px in English (EN-R16-06). */
 export function stageAims(t, a, c) {
   if (a <= 0) return;
   const names = STATION_NAMES(),
@@ -298,9 +300,11 @@ export function stageAims(t, a, c) {
     claimWide = Math.max(...claim.map((v) => measure(v))),
     base = railStations(names, 850, 1390),
     // The rejected name's cross stands 16 px after its words and is 26 px wide.
+    docsName = L("它自己的文档", "Its own documents"),
     left = Math.min(600, 700 - measure(kernelName) / 2),
-    right = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1282 + claimWide + 42),
-    dx = 960 - (left + right) / 2;
+    open = Math.max(1440 + 7, base[2] + measure(names[2]) / 2, 1186 + measure(docsName) / 2),
+    right = Math.max(open, 1282 + claimWide + 42),
+    dx = 960 - (2 * left + open + right) / 4;
   const PY = 430,
     X0 = 600 + dx,
     X1 = 1440 + dx,
@@ -327,7 +331,7 @@ export function stageAims(t, a, c) {
   // Its own documents, and what they will not claim.
   const docs = a * ramp(t, c.docs - 0.15, 0.4);
   paper(1150 + dx, 590, 72, 92, { alpha: docs, rows: 4 });
-  nameText(L("它自己的文档", "Its own documents"), 1186 + dx, namesTop, {
+  nameText(docsName, 1186 + dx, namesTop, {
     valign: "top",
     alpha: a * named(t, c.docs),
   });

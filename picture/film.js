@@ -240,6 +240,18 @@ function drawStart(at, length, least = 0.4, lead = DRAW_LEAD) {
   }
   return fitting;
 }
+function glideStart(at, distance, least = 0.6, lead = DRAW_LEAD) {
+  const need = glideTime(distance, least), whole = voiceTime(thoughtEnd(at) + HOLD) - 1e-3, fits = (start) => voiceTime(start) + need <= whole;
+  if (fits(at)) return at;
+  let fitting = at - lead, late = at;
+  if (!fits(fitting)) return fitting;
+  for (let i = 0; i < 20; i++) {
+    const middle = (fitting + late) / 2;
+    if (fits(middle)) fitting = middle;
+    else late = middle;
+  }
+  return fitting;
+}
 var glideSteps = (t, first, steps, least = 0.7) => {
   let x = first, aim = first;
   for (const [at, to] of steps) {
@@ -420,7 +432,7 @@ function ring(x, y, r, {
   if (draw) upto = drawnShare(draw, 2 * Math.PI * r, clamp(upto));
   if (upto <= 0) return;
   const turn = 2 * Math.PI, from = (start % turn + turn) % turn;
-  stroke(() => ctx.arc(x, y, r, from, from + turn * clamp(upto)), {
+  stroke(() => ctx.ellipse(x, y, r, r, from, 0, turn * clamp(upto)), {
     color,
     alpha,
     width,
@@ -1519,6 +1531,15 @@ function reachAt(t, base, parts2, duration = 0.7) {
   }
   return now;
 }
+function lastingReach(parts2, lasting = 2) {
+  const sorted = [...parts2].sort((a, b) => a[0] - b[0]), held = [];
+  let reach = -Infinity;
+  sorted.forEach(([at, far], k) => {
+    reach = Math.max(reach, far);
+    if ((sorted[k + 1]?.[0] ?? Infinity) - at >= lasting) held.push(reach);
+  });
+  return [Math.min(...held), Math.max(...held)];
+}
 
 // picture/film/naming/placement.js
 var rowNameTop = (bottoms, gap = NAME_GAP) => Math.max(...bottoms) + gap;
@@ -1709,14 +1730,14 @@ scenes["01"] = function(s, t) {
       ["哪一次提交？", "哪些测试，在哪儿？", "是不是提需求的人真正要的？", "能不能恢复原样？"],
       ["Which commit?", "Which tests, and where?", "Really asked for?", "Can you get back?"]
     );
-    const RY = 620, RR = 34, WRAP2 = 400, base = railStations(names2, 420, 1500, { wrap: WRAP2 }), inkLeft = base[0] - Math.max(RR, measure(names2[0]) / 2), inkRight = base.at(-1) + Math.max(RR, measure(names2.at(-1)) / 2), xs = base.map((x) => x + 960 - (inkLeft + inkRight) / 2), mid = (PY + CLAIM_H / 2 + RY - RR) / 2, wayTo2 = (x) => route([
+    const RY = 620, RR = 34, WRAP2 = 400, POINT = 9, base = railStations(names2, 420, 1500, { wrap: WRAP2 }), inkLeft = base[0] - Math.max(RR, measure(names2[0]) / 2), inkRight = base.at(-1) + Math.max(RR, measure(names2.at(-1)) / 2), buildRight = Math.max(base.at(-1) + POINT, base.at(-2) + Math.max(RR, measure(names2.at(-2)) / 2)), xs = base.map((x) => x + 960 - (2 * inkLeft + inkRight + buildRight) / 4), mid = (PY + CLAIM_H / 2 + RY - RR) / 2, wayTo2 = (x) => route([
       [PX2, PY + CLAIM_H / 2],
       [PX2, mid],
       [x, mid],
       [x, RY - RR]
     ]), ways = xs.map(wayTo2);
     const newWay = (i, at) => lengthOf(at[i]) - sharedRun(at[i], at.slice(0, i));
-    const POINT = 9, rail = stageA * ramp(t, qs[0] - 0.15, 0.4), shown = qs.map((at) => ramp(t, at - 0.15, 0.4)), gapAt = (i) => Math.max(POINT * (1 - shown[i]), RR * shown[i]);
+    const rail = stageA * ramp(t, qs[0] - 0.15, 0.4), shown = qs.map((at) => ramp(t, at - 0.15, 0.4)), gapAt = (i) => Math.max(POINT * (1 - shown[i]), RR * shown[i]);
     stroke(
       () => [0, 1, 2].forEach((i) => {
         ctx.moveTo(xs[i] + gapAt(i), RY);
@@ -3297,7 +3318,7 @@ function stagePath(t, a, c) {
 }
 function stageAims(t, a, c) {
   if (a <= 0) return;
-  const names2 = STATION_NAMES(), kernelName = L("光有这个内核", "The kernel alone"), claim = L(["整条路已经走通"], ["The whole path", "has been delivered"]), claimWide = Math.max(...claim.map((v) => measure(v))), base = railStations(names2, 850, 1390), left = Math.min(600, 700 - measure(kernelName) / 2), right = Math.max(1440 + 7, base[2] + measure(names2[2]) / 2, 1282 + claimWide + 42), dx = 960 - (left + right) / 2;
+  const names2 = STATION_NAMES(), kernelName = L("光有这个内核", "The kernel alone"), claim = L(["整条路已经走通"], ["The whole path", "has been delivered"]), claimWide = Math.max(...claim.map((v) => measure(v))), base = railStations(names2, 850, 1390), docsName = L("它自己的文档", "Its own documents"), left = Math.min(600, 700 - measure(kernelName) / 2), open = Math.max(1440 + 7, base[2] + measure(names2[2]) / 2, 1186 + measure(docsName) / 2), right = Math.max(open, 1282 + claimWide + 42), dx = 960 - (2 * left + open + right) / 4;
   const PY = 430, X02 = 600 + dx, X1 = 1440 + dx, KX = 700 + dx, split = 800 + dx, xs = base.map((x) => x + dx);
   pathLine(X02, X1, PY, xs, { alpha: a, split });
   dot(X1, PY, 7, { color: P.ink, alpha: a });
@@ -3317,7 +3338,7 @@ function stageAims(t, a, c) {
   });
   const docs = a * ramp(t, c.docs - 0.15, 0.4);
   paper(1150 + dx, 590, 72, 92, { alpha: docs, rows: 4 });
-  nameText(L("它自己的文档", "Its own documents"), 1186 + dx, namesTop, {
+  nameText(docsName, 1186 + dx, namesTop, {
     valign: "top",
     alpha: a * named(t, c.docs)
   });
@@ -3581,7 +3602,9 @@ scenes["03"] = function(s, t) {
     again2: ["重新编译出来", "compiled again"],
     // 03.5 the attestation's scope.
     aCut: ["内核长期留下的", "The kernel keeps"],
-    longTerm: ["长期留下的", "for the long term"],
+    // English says "for the long term" at the end of its clause, 1.4 s after the kernel is named, so its heading line
+    // stands from "only one thing" in that clause, and the kernel does not stand alone far left of centre.
+    longTerm: ["长期留下的", "only one thing"],
     who: ["是谁出具的", "who verified it"],
     scope: ["在什么范围内成立", "where it holds"],
     scopeName: ["范围", "where it holds"],
@@ -4852,12 +4875,11 @@ function outcomesColumns() {
   const mark = PLANE_W + 80, names2 = mark + 18 + NAME_GAP, quals = names2 + Math.max(...outcomeNames().map((v) => measure(v, LABEL))) + TERM_GAP, natural = mark - 18 + measure(L("一次判断的结果", "A judgment")) + TERM_GAP;
   return { mark, names: names2, quals, natural, heading: Math.max(quals, natural) };
 }
-var columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
 function outcomesParts(c) {
   const col = outcomesColumns(), names2 = outcomeNames(), quals = outcomeQuals(), qualifier = measure(L("只分三种", "only three outcomes"), NOTE);
   return [
-    [c.first4, col.natural + qualifier],
-    [columnAt(c), col.heading + qualifier],
+    [c.first4, col.mark - 18 + measure(L("一次判断的结果", "A judgment"))],
+    [c.three, col.heading + qualifier],
     ...[c.pass, c.block, c.unknown].map((at, i) => [at, col.names + measure(names2[i])]),
     ...[c.ahead, c.conflict, c.missing].map((at, i) => [
       at,
@@ -4871,8 +4893,8 @@ function buildingReach(t, parts2) {
   return reachAt(t, first[1], rest);
 }
 var outcomesAt = (c) => {
-  const parts2 = outcomesParts(c), final = Math.max(...parts2.map(([, reach]) => reach)), first = Math.max(parts2[0][1], parts2[1][1]);
-  return 960 - final / 2 + Math.min(30, (final - first) / 4);
+  const [near, far] = lastingReach(outcomesParts(c));
+  return 960 - (near + far) / 4;
 };
 function ruleTwoHeading(t, c, g) {
   ruleHeading(t, {
@@ -5981,16 +6003,13 @@ function makings(s, t, a) {
     ["撤掉", "are retired"],
     ["以防万一", "just in case"]
   ]);
-  const gone = a * mix(1, 0.58, ramp(t, retireAt + 0.05, 0.4)) * (1 - ramp(t, caseAt + 0.05, 0.7));
+  const owners = ownersShift(), settleWay = 1330 + owners - 1150, settleFrom = glideStart(caseAt + 0.05, settleWay, 0.6);
+  const gone = a * mix(1, 0.58, ramp(t, retireAt + 0.05, 0.4)) * (1 - ramp(t, settleFrom, 0.4));
   const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2), makingHalf = Math.max(
     SCRIPT[0] / 2,
     nameWidth(L("临时的去重脚本", "Temporary deduplication script"), NAME_WRAP) / 2,
     measure(L("进度表", "Progress sheet")) / 2
-  ), ownerHalf = Math.max(
-    OWNER[0] / 2,
-    nameWidth(CHECK_NAME(), 300) / 2,
-    nameWidth(L("正式变更里的任务清单", "The official Change's task list"), NAME_WRAP) / 2
-  ), first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2, owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2, alone = 960 - 640, start = mix(alone, first, glideShare(t, scriptAt + 0.05, first - alone, 0.9)), lift = glideShare(t, moveAt + 0.05, 1040 + first - 760 - owned, 0.9), settle = glideShare(t, caseAt + 0.05, 1330 + owned - 1150, 0.9);
+  ), first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2, owned = owners, alone = 960 - 640, start = mix(alone, first, glideShare(t, scriptAt + 0.05, first - alone, 0.9)), lift = glideShare(t, moveAt + 0.05, 1040 + first - 760 - owned, 0.9), settle = glideShare(t, settleFrom, settleWay, 0.6);
   const AX2 = mix(640 + start, 400 + owned, lift), MX = mix(1040 + start, 760 + owned, lift), OX = mix(1330 + owned, 1150, settle), AY = 495, flow = flowClock(t);
   exampleContext2(a * named(t, exampleAt) * (1 - ramp(t, checkAt + 0.05, 0.4)), flow);
   agent(AX2, AY, { size: 1.5, alpha: gone });
@@ -6097,6 +6116,14 @@ function makings(s, t, a) {
     alpha: a * named(t, caseAt),
     mark: ramp(t, caseAt + 0.3, 0.4)
   });
+}
+function ownersShift() {
+  const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2), ownerHalf = Math.max(
+    OWNER[0] / 2,
+    nameWidth(CHECK_NAME(), 300) / 2,
+    nameWidth(L("正式变更里的任务清单", "The official Change's task list"), NAME_WRAP) / 2
+  );
+  return 960 - (400 - agentHalf + 1330 + ownerHalf) / 2;
 }
 function ghostScript(x, y, alpha) {
   const [w, h] = SCRIPT;
@@ -6558,7 +6585,7 @@ var NEXT_X = 1510;
 var STEP_R2 = 17;
 function droppedPush(s, t, a) {
   if (a <= 0) return;
-  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, writtenAt, nextAt] = cues(s, [
+  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, stillAt, writtenAt, nextAt] = cues(s, [
     ["要是推到一半断了线", "the connection drops"],
     ["断了线", "drops"],
     ["顺手再推一遍", "Just push again"],
@@ -6566,6 +6593,7 @@ function droppedPush(s, t, a) {
     ["耗时的写入", "a long write"],
     ["先记下要做什么", "first notes"],
     ["之后说清楚", "afterwards reports"],
+    ["还在不在写", "whether it is still running"],
     ["写进去没有", "whether anything was written"],
     ["下一步做什么才安全", "the one safe next action"]
   ]);
@@ -6629,22 +6657,22 @@ function droppedPush(s, t, a) {
     rowTop,
     { alpha: a, align: "center", inline: false }
   );
-  const report = a * named(t, afterAt);
+  const report = a * named(t, afterAt), reports = [
+    L("还在不在写", "whether it is still running"),
+    L("写进去没有", "whether anything was written")
+  ];
   link(REPORT_X, ROW_Y2 - DOC[1] / 2 - 10, REPORT_X, RAIL_Y + 6, {
     alpha: report,
     draw: { t, at: afterAt + 0.05 }
   });
   docMark(REPORT_X - DOC[0] / 2, ROW_Y2 - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
-  termRow(
-    t,
-    [L("之后说清楚", "Afterwards reports")],
-    [afterAt],
-    [L("写进去没有", "whether anything was written")],
-    [writtenAt],
-    REPORT_X,
-    rowTop,
-    { alpha: a, align: "center", inline: false }
-  );
+  termRow(t, [L("之后说清楚", "Afterwards reports")], [afterAt], reports, [stillAt, writtenAt], REPORT_X, rowTop, {
+    alpha: a,
+    align: "center",
+    inline: false,
+    build: true,
+    width: Math.max(...reports.map((v) => measure(v, NOTE)))
+  });
   const next = a * named(t, nextAt);
   link(REPORT_X + DOC[0] / 2 + 10, ROW_Y2, NEXT_X - STEP_R2 - 10, ROW_Y2, {
     alpha: next,
@@ -6787,8 +6815,13 @@ function handoff(s, t, a) {
     ["已有的存证", "attestations already"],
     ["哪些核验已经通过", "which proofs have passed"]
   ]);
-  const sources2 = SOURCES2(), terms = [factsAt, changeAt, attestAt], tells = [nowAt, doneAt, passedAt], reach = Math.max(...sources2.flatMap(([term, tell]) => [measure(term), measure(tell, NOTE)]));
-  const S = 960 - (560 - 320 - 2 + TEXT_X + reach) / 2, alone = 960 - (560 + 820) / 2, reading = glideShare(t, factsAt - 0.4, alone - S, 0.8), off = mix(alone, S, reading), AX2 = 560 + off, BX2 = 820 + off, AY = 410, railEnd2 = BX2 + 60 + 280 * (1 - glideShare(t, factsAt - 0.4, 280, 1.2)), ended = ramp(t, endsAt - 0.15, 1.2), passed = glideShare(t, overAt + 0.05, 820 - 560, 0.9), b = a * named(t, overAt), m = a * named(t, memoryAt), WX = mix(AX2, BX2, passed), flow = flowClock(t);
+  const sources2 = SOURCES2(), terms = [factsAt, changeAt, attestAt], tells = [nowAt, doneAt, passedAt], [near, far] = lastingReach(
+    sources2.flatMap(([term, tell], i) => [
+      [terms[i], measure(term)],
+      [tells[i], measure(tell, NOTE)]
+    ])
+  );
+  const S = 960 - (560 - 320 - 2 + TEXT_X) / 2 - (near + far) / 4, alone = 960 - (560 + 820) / 2, reading = glideShare(t, factsAt - 0.4, alone - S, 0.8), off = mix(alone, S, reading), AX2 = 560 + off, BX2 = 820 + off, AY = 410, railEnd2 = BX2 + 60 + 280 * (1 - glideShare(t, factsAt - 0.4, 280, 1.2)), ended = ramp(t, endsAt - 0.15, 1.2), passed = glideShare(t, overAt + 0.05, 820 - 560, 0.9), b = a * named(t, overAt), m = a * named(t, memoryAt), WX = mix(AX2, BX2, passed), flow = flowClock(t);
   journeyRail(AX2 - 320, BX2 + 60, { alpha: a });
   journeyRail(BX2 + 60, railEnd2, { alpha: a });
   railFlow(t, AX2 - 320, railEnd2, { alpha: a, longest: BX2 + 340 - (AX2 - 320) });
@@ -6973,7 +7006,7 @@ function liveUse(s, t, a) {
     ["原来的做法", "how things were done before"],
     ["约定的一段时间", "a set period"]
   ]);
-  const needs = NEEDS(), NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v2) => nameWidth(v2, NEED_WRAP))), S = 960 - (220 - 2 + NEEDS_END) / 2;
+  const needs = NEEDS(), widths = needs.map((v2) => nameWidth(v2, NEED_WRAP)), NEEDS_END = NEED_X + 50 + Math.max(...widths), [near, far] = lastingReach([versionAt, envAt, baseAt, periodAt].map((at, i) => [at, widths[i]])), S = 960 - (220 - 2 + NEED_X + 50) / 2 - (near + far) / 4;
   const QX = 1100, QY = RAIL_Y - 11, TX = 380, UX = 740, NAMES = NEED_Y[2], ats = [versionAt, envAt, baseAt, periodAt], back = drawShare(t, versionAt - 0.2, NEEDS_END - 20 - (QX + 40)), v = a * named(t, liveAt), q = a * named(t, worksAt), u = a * named(t, useAt);
   ctx.save();
   ctx.translate(S, 0);
@@ -7647,7 +7680,7 @@ function bound(s, t, a) {
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"]
   ]);
-  const W = claimWidth(), alone = 960 - BOUND_X - (boundLeft() + W / 2 + CLAIM_DATUM) / 2, chain = 960 - BOUND_X - (boundLeft() + BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2)) / 2, off = mix(
+  const W = claimWidth(), alone = 960 - BOUND_X - (boundLeft() + W / 2 + CLAIM_DATUM) / 2, wayRight = (W / 2 + CLAIM_DATUM + BOUND_RUN) / 2 + measure(L("ETHOS 的做法", "In ETHOS"), NOTE) / 2, sealRight = BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2), chain = 960 - BOUND_X - (2 * boundLeft() + wayRight + sealRight) / 4, off = mix(
     mix(alone, chain, glideShare(t, wayAt + 0.05, chain - alone, 0.9)),
     boundShift(),
     glideShare(t, commitAt + 0.05, boundShift() - chain, 0.9)

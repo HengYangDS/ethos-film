@@ -3,8 +3,8 @@
  * leaves the work, dashed, and stops at a question; it is in doubt because the first may already have landed, and the
  * platform, where it would have landed, arrives at the rail's end with the first push's name and shows that unknown.
  * ETHOS is designed so that the rail, a long write, is bracketed from below: before it, a note of what it is about to
- * do, linked up to the rail's start; after it, a report on the uncertain stretch of whether anything was written,
- * leading to the one safe next action. The rail stands whole on the frame's axis from the stage's first frame, from
+ * do, linked up to the rail's start; after it, a report on the uncertain stretch, whether the write is still running
+ * and whether anything was written, leading to the one safe next action. The rail stands whole on the frame's axis from the stage's first frame, from
  * 240 to 1680; until the platform is named, the stretch beyond the cut runs to the rail's end, and it draws back to the
  * platform's near edge as the platform arrives at that end, the platform's outer edge mirroring the rail's start. The
  * cut stands near the middle, 50 px left of the axis, so the stretches either side of it differ by 14% in length and
@@ -12,11 +12,11 @@
  * to the uncertain stretch. The names under the rail hang from one line, and so do those of the row below. */
 
 import { flowClock, link } from "../../drawing/links.js";
-import { dot, ring } from "../../drawing/strokes.js";
+import { dot, measure, ring } from "../../drawing/strokes.js";
 import { cross } from "../../drawing/symbols.js";
 import { askIcon } from "../../drawing/workspace.js";
 import { named } from "../../naming/lists.js";
-import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
+import { NAME_GAP, NOTE, nameText, termRow } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -47,7 +47,7 @@ const X0 = 240,
 
 export function droppedPush(s, t, a) {
   if (a <= 0) return;
-  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, writtenAt, nextAt] = cues(s, [
+  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, stillAt, writtenAt, nextAt] = cues(s, [
     ["要是推到一半断了线", "the connection drops"],
     ["断了线", "drops"],
     ["顺手再推一遍", "Just push again"],
@@ -55,6 +55,7 @@ export function droppedPush(s, t, a) {
     ["耗时的写入", "a long write"],
     ["先记下要做什么", "first notes"],
     ["之后说清楚", "afterwards reports"],
+    ["还在不在写", "whether it is still running"],
     ["写进去没有", "whether anything was written"],
     ["下一步做什么才安全", "the one safe next action"],
   ]);
@@ -130,23 +131,25 @@ export function droppedPush(s, t, a) {
     rowTop,
     { alpha: a, align: "center", inline: false },
   );
-  // After it, a report on the uncertain stretch of whether anything was written.
-  const report = a * named(t, afterAt);
+  // After it, a report on the uncertain stretch: the two things it reports stand under it as a list, one to a line,
+  // each joining on its own words.
+  const report = a * named(t, afterAt),
+    reports = [
+      L("还在不在写", "whether it is still running"),
+      L("写进去没有", "whether anything was written"),
+    ];
   link(REPORT_X, ROW_Y - DOC[1] / 2 - 10, REPORT_X, RAIL_Y + 6, {
     alpha: report,
     draw: { t, at: afterAt + 0.05 },
   });
   docMark(REPORT_X - DOC[0] / 2, ROW_Y - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
-  termRow(
-    t,
-    [L("之后说清楚", "Afterwards reports")],
-    [afterAt],
-    [L("写进去没有", "whether anything was written")],
-    [writtenAt],
-    REPORT_X,
-    rowTop,
-    { alpha: a, align: "center", inline: false },
-  );
+  termRow(t, [L("之后说清楚", "Afterwards reports")], [afterAt], reports, [stillAt, writtenAt], REPORT_X, rowTop, {
+    alpha: a,
+    align: "center",
+    inline: false,
+    build: true,
+    width: Math.max(...reports.map((v) => measure(v, NOTE))),
+  });
   // And the one safe next action: the open step, led to from the report.
   const next = a * named(t, nextAt);
   link(REPORT_X + DOC[0] / 2 + 10, ROW_Y, NEXT_X - STEP_R - 10, ROW_Y, {

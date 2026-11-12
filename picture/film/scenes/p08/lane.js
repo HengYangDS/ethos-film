@@ -10,7 +10,7 @@ import { agent, clock, seal } from "../../drawing/symbols.js";
 import { bubble, folderIcon } from "../../drawing/workspace.js";
 import { writeGate } from "../../drawing/lanes.js";
 import { clearOfTitle } from "../../framing/chapters.js";
-import { listIn, named } from "../../naming/lists.js";
+import { lastingReach, listIn, named } from "../../naming/lists.js";
 import { NOTE, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
@@ -183,8 +183,9 @@ function sourceMark(i, x, y, alpha) {
  * refused between them. Until the reading begins the handover is centred on the frame, the rail reaching about as far
  * either side of it; then it steps left and the rail draws back to the new Agent as the three sources arrive on the
  * right in ETHOS's order, each linked from the new Agent with what it tells. From the first source on, the picture
- * stands where it is centred on the frame by its finished extent, from the rail's start to the longest of what the
- * sources tell, and each source stands in its place from its words, so nothing moves as the next one joins. Each
+ * stands still midway between where it is centred with the first source alone and with all three, from the rail's
+ * start to the longest of what the sources tell, and each source stands in its place from its words, so nothing moves
+ * as the next one joins. Each
  * source's term stands on its marker's line from its first word, and what it tells hangs beneath. */
 export function handoff(s, t, a) {
   if (a <= 0) return;
@@ -204,9 +205,15 @@ export function handoff(s, t, a) {
   const sources = SOURCES(),
     terms = [factsAt, changeAt, attestAt],
     tells = [nowAt, doneAt, passedAt],
-    // How far right of the sources' text column the longest of their words reaches.
-    reach = Math.max(...sources.flatMap(([term, tell]) => [measure(term), measure(tell, NOTE)]));
-  const S = 960 - (560 - 320 - 2 + TEXT_X + reach) / 2,
+    // How far right of the sources' text column each source's words reach, from its term's words on; the picture
+    // stands midway between where the narrowest and the widest of these states that last are centred (lastingReach).
+    [near, far] = lastingReach(
+      sources.flatMap(([term, tell], i) => [
+        [terms[i], measure(term)],
+        [tells[i], measure(tell, NOTE)],
+      ]),
+    );
+  const S = 960 - (560 - 320 - 2 + TEXT_X) / 2 - (near + far) / 4,
     alone = 960 - (560 + 820) / 2,
     // The stage steps to its place as the reading begins, by the structural glide over that step.
     reading = glideShare(t, factsAt - 0.4, alone - S, 0.8),

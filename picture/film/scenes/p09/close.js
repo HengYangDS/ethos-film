@@ -77,11 +77,14 @@ function bound(s, t, a) {
     ["都找得到", "can all be looked up"],
     ["这句话能不能信", "can be trusted"],
   ]);
-  // The sentence with its Agent centred; then the chain to the seal, its name included; then the finished picture.
+  // The sentence with its Agent centred; then the chain to the seal; then the finished picture. While the chain draws
+  // out, the picture reaches to the name of ETHOS's way over its middle, and from the seal's words to the seal's name,
+  // a second later; the chain stands midway between where those two are centred, so neither leans past 50 px.
   const W = claimWidth(),
     alone = 960 - BOUND_X - (boundLeft() + W / 2 + CLAIM_DATUM) / 2,
-    chain =
-      960 - BOUND_X - (boundLeft() + BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2)) / 2,
+    wayRight = (W / 2 + CLAIM_DATUM + BOUND_RUN) / 2 + measure(L("ETHOS 的做法", "In ETHOS"), NOTE) / 2,
+    sealRight = BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2),
+    chain = 960 - BOUND_X - (2 * boundLeft() + wayRight + sealRight) / 4,
     off = mix(
       mix(alone, chain, glideShare(t, wayAt + 0.05, chain - alone, 0.9)),
       boundShift(),

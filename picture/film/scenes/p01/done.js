@@ -246,14 +246,19 @@ scenes["01"] = function (s, t) {
     // Every question stands on one line within its share of the rail, as a row of questions reads. The stations keep
     // each pair of neighbours half of each name's width plus a gap apart (railStations), so the widest question,
     // 是不是提需求的人真正要的？, stands whole between its neighbours at the 360 px pitch. The row's ink reaches from
-    // the first question's ring or name to the last one's.
+    // the first question's ring or name to the last one's. While the last question is still to come its station is a
+    // plain point, so the row reaches only that point and its neighbour's name for most of the build; the row stands
+    // midway between where that building row and the finished one are centred, so neither stands more than half their
+    // difference off the centre, about 28 px in English, where they differ most.
     const RY = 620,
       RR = 34,
       WRAP = 400,
+      POINT = 9,
       base = railStations(names, 420, 1500, { wrap: WRAP }),
       inkLeft = base[0] - Math.max(RR, measure(names[0]) / 2),
       inkRight = base.at(-1) + Math.max(RR, measure(names.at(-1)) / 2),
-      xs = base.map((x) => x + 960 - (inkLeft + inkRight) / 2),
+      buildRight = Math.max(base.at(-1) + POINT, base.at(-2) + Math.max(RR, measure(names.at(-2)) / 2)),
+      xs = base.map((x) => x + 960 - (2 * inkLeft + inkRight + buildRight) / 4),
       mid = (PY + CLAIM_H / 2 + RY - RR) / 2,
       wayTo = (x) =>
         route([
@@ -271,9 +276,8 @@ scenes["01"] = function (s, t) {
     const newWay = (i, at) => lengthOf(at[i]) - sharedRun(at[i], at.slice(0, i));
     // The rail stands with the first question, as the index of 02 does: it runs between the stations, never under a
     // ring, and a question still to come stands as a plain point in its place, which shrinks away as its ring inks in,
-    // so the row reaches its finished extent and stays balanced while it builds.
-    const POINT = 9,
-      rail = stageA * ramp(t, qs[0] - 0.15, 0.4),
+    // so the row's stations stand in their finished places while it builds.
+    const rail = stageA * ramp(t, qs[0] - 0.15, 0.4),
       shown = qs.map((at) => ramp(t, at - 0.15, 0.4)),
       gapAt = (i) => Math.max(POINT * (1 - shown[i]), RR * shown[i]);
     stroke(

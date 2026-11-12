@@ -9,7 +9,7 @@ import { box, line, ring, stroke } from "../../drawing/strokes.js";
 import { agent, check, clock, lock, person, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot, tagIcon } from "../../drawing/workspace.js";
 import { commitRow } from "../../drawing/history.js";
-import { listIn, named } from "../../naming/lists.js";
+import { lastingReach, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow, termRowLayout } from "../../naming/names.js";
 import { rowNameTop } from "../../naming/placement.js";
 import { nameWidth } from "../p07/example.js";
@@ -190,7 +190,8 @@ const NEED_Y = [350, 450, 550, 650],
  * and real use is where it shows. A claim of actual benefit then needs four things: the rail draws back to the
  * question and each need arrives on its words in a column, linked from it. The stations' names under the rail share
  * one line, the line of the third need beside them, and the question's bubble stands high enough on the rail that its
- * tail keeps clear of its name. The picture, from the rail's start to the needs, is centred on the frame. */
+ * tail keeps clear of its name. The picture, from the rail's start to the needs, stands still midway between where it
+ * is centred with the narrowest and the widest column of needs that lasts. */
 export function liveUse(s, t, a) {
   if (a <= 0) return;
   const [liveAt, worksAt, benefitAt, useAt, versionAt, envAt, baseAt, periodAt] = cues(s, [
@@ -204,8 +205,12 @@ export function liveUse(s, t, a) {
     ["约定的一段时间", "a set period"],
   ]);
   const needs = NEEDS(),
-    NEEDS_END = NEED_X + 50 + Math.max(...needs.map((v) => nameWidth(v, NEED_WRAP))),
-    S = 960 - (220 - 2 + NEEDS_END) / 2;
+    widths = needs.map((v) => nameWidth(v, NEED_WRAP)),
+    NEEDS_END = NEED_X + 50 + Math.max(...widths),
+    // The picture stands midway between where the narrowest and the widest column of needs that lasts is centred with
+    // the rail (lastingReach); the rail's stretch beyond holds about the finished extent until the needs begin.
+    [near, far] = lastingReach([versionAt, envAt, baseAt, periodAt].map((at, i) => [at, widths[i]])),
+    S = 960 - (220 - 2 + NEED_X + 50) / 2 - (near + far) / 4;
   const QX = 1100,
     QY = RAIL_Y - 11,
     TX = 380,

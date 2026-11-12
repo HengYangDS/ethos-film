@@ -12,7 +12,7 @@ import { cross } from "../../drawing/symbols.js";
 import { markLengths } from "../../drawing/mark.js";
 import { dot, drawnShare, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { ruleHeading } from "../../framing/rules.js";
-import { beats, listLevel, named, reachAt } from "../../naming/lists.js";
+import { beats, lastingReach, listLevel, named, reachAt } from "../../naming/lists.js";
 import {
   LEADING,
   NAME_GAP,
@@ -73,19 +73,17 @@ export function outcomesColumns() {
     natural = mark - 18 + measure(L("一次判断的结果", "A judgment")) + TERM_GAP;
   return { mark, names, quals, natural, heading: Math.max(quals, natural) };
 }
-/* When the conditions' column forms: with the first condition's words. */
-const columnAt = (c) => Math.min(c.ahead, c.conflict, c.missing);
-/* The parts of the outcomes list, each with how far right it reaches from the stack's left edge: the heading, its term
- * and qualifier taken as one, its qualifier again once it joins the conditions' column, then each name, each condition
- * and "it waits", a second line of unknown's condition. `c` gives when each arrives. */
+/* The parts of the outcomes list, each with how far right it reaches from the stack's left edge: the heading's term,
+ * its qualifier, which stands in its column from its words (outcomesColumns), then each name, each condition and "it
+ * waits", a second line of unknown's condition. `c` gives when each arrives. */
 export function outcomesParts(c) {
   const col = outcomesColumns(),
     names = outcomeNames(),
     quals = outcomeQuals(),
     qualifier = measure(L("只分三种", "only three outcomes"), NOTE);
   return [
-    [c.first4, col.natural + qualifier],
-    [columnAt(c), col.heading + qualifier],
+    [c.first4, col.mark - 18 + measure(L("一次判断的结果", "A judgment"))],
+    [c.three, col.heading + qualifier],
     ...[c.pass, c.block, c.unknown].map((at, i) => [at, col.names + measure(names[i])]),
     ...[c.ahead, c.conflict, c.missing].map((at, i) => [
       at,
@@ -101,17 +99,11 @@ export function buildingReach(t, parts) {
   return reachAt(t, first[1], rest);
 }
 /* Where the stack stands while the outcomes are listed beside it: still, so nothing moves as a part of the list joins.
- * It stands where the stack and the finished list are centred on the content centre, moved toward where the list's
- * first part would centre them by a quarter of what the later parts add, at most 30 px, so neither the opening list
- * nor the finished one stands far off the centre: with at most 50 px the finished English list's ink stood 50.6 px
- * off, past the reviewers' 50 px for a settled picture, which filmkit 0.16.0 refuses; at 30 px the opening list stands
- * about 39 px left and the finished one about 39 px right. */
+ * The stack and the list reach from the stack's left edge as far as the parts shown so far; the stack stands midway
+ * between where the narrowest and the widest states that last 2 s or more would be centred (lastingReach). */
 const outcomesAt = (c) => {
-  const parts = outcomesParts(c),
-    final = Math.max(...parts.map(([, reach]) => reach)),
-    // The heading, its qualifier in the conditions' column: the first two parts.
-    first = Math.max(parts[0][1], parts[1][1]);
-  return 960 - final / 2 + Math.min(30, (final - first) / 4);
+  const [near, far] = lastingReach(outcomesParts(c));
+  return 960 - (near + far) / 4;
 };
 
 /* Rule two's heading, in the rules' shared place: its glyph adds the two passages, which draw out from the origin as the

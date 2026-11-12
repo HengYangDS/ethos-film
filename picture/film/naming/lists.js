@@ -98,3 +98,18 @@ export function reachAt(t, base, parts, duration = 0.7) {
   }
   return now;
 }
+/* The narrowest and widest reach that a group building part by part holds still for `lasting` seconds or more, the
+ * finished group always counted: `parts` are [when it arrives, how far it reaches] from one fixed edge. A group that
+ * stands still midway between where these two states would be centred keeps every state that lasts within half their
+ * difference of the centre, as the reviewers measure a still picture: 50 px for 2 s. Counting shorter states as well
+ * would set the finished group itself past 50 px wherever a brief first part is much narrower than the whole. */
+export function lastingReach(parts, lasting = 2) {
+  const sorted = [...parts].sort((a, b) => a[0] - b[0]),
+    held = [];
+  let reach = -Infinity;
+  sorted.forEach(([at, far], k) => {
+    reach = Math.max(reach, far);
+    if ((sorted[k + 1]?.[0] ?? Infinity) - at >= lasting) held.push(reach);
+  });
+  return [Math.min(...held), Math.max(...held)];
+}

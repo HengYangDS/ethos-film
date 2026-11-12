@@ -204,11 +204,12 @@ export function ring(
 ) {
   if (draw) upto = drawnShare(draw, 2 * Math.PI * r, clamp(upto));
   if (upto <= 0) return;
-  // The start is brought into one turn first: from a large start angle (a ring turning with voice time) the canvas
-  // reads a whole turn as almost none and draws nothing for that frame.
+  // An ellipse turned to the start angle and swept from zero: the renderer's browser computes an arc's end angle in
+  // single precision, and through a whole turn from a start away from zero it can paint no ink at all. The start is
+  // brought into one turn first, so a ring turning with voice time keeps a small rotation.
   const turn = 2 * Math.PI,
     from = ((start % turn) + turn) % turn;
-  stroke(() => ctx.arc(x, y, r, from, from + turn * clamp(upto)), {
+  stroke(() => ctx.ellipse(x, y, r, r, from, 0, turn * clamp(upto)), {
     color,
     alpha,
     width,

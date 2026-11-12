@@ -22,7 +22,7 @@ import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { glideShare, voiceTime } from "../../timing/pauses.js";
+import { glideShare, glideStart, voiceTime } from "../../timing/pauses.js";
 
 /* The rows of the example's two makings and two owners, and the sizes of their marks. */
 const R1 = 370,
@@ -151,7 +151,14 @@ export function makings(s, t, a) {
   // name, which stands on one line. On the words that retire them the makings and their Agent step back to the second
   // level, and they leave as keeping them just in case is refused where they stood, while the owners settle: the picture
   // changes once, from the makings to the refusal, and stays balanced through it.
-  const gone = a * mix(1, 0.58, ramp(t, retireAt + 0.05, 0.4)) * (1 - ramp(t, caseAt + 0.05, 0.7));
+  // The owners settle with the refusal and are settled by the thought's quiet (glideStart): the refusal comes on the
+  // thought's last words, and a settle begun then would rest part-way through the quiet until 07.2 cuts in, the finished
+  // picture standing over 50 px off centre (zh-R16-08). The makings leave over the settle's first 0.4 s, so the
+  // obligations' names, which follow their owners, never pass over a making still shown.
+  const owners = ownersShift(),
+    settleWay = 1330 + owners - 1150,
+    settleFrom = glideStart(caseAt + 0.05, settleWay, 0.6);
+  const gone = a * mix(1, 0.58, ramp(t, retireAt + 0.05, 0.4)) * (1 - ramp(t, settleFrom, 0.4));
   // How far each column's marks and names reach either side of its axis.
   const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2),
     makingHalf = Math.max(
@@ -159,20 +166,15 @@ export function makings(s, t, a) {
       nameWidth(L("临时的去重脚本", "Temporary deduplication script"), NAME_WRAP) / 2,
       measure(L("进度表", "Progress sheet")) / 2,
     ),
-    ownerHalf = Math.max(
-      OWNER[0] / 2,
-      nameWidth(CHECK_NAME(), 300) / 2,
-      nameWidth(L("正式变更里的任务清单", "The official Change's task list"), NAME_WRAP) / 2,
-    ),
     first = 960 - (640 - agentHalf + 1040 + makingHalf) / 2,
-    owned = 960 - (400 - agentHalf + 1330 + ownerHalf) / 2,
+    owned = owners,
     // Before its makings arrive, the Agent stands alone at the frame's centre.
     alone = 960 - 640,
     start = mix(alone, first, glideShare(t, scriptAt + 0.05, first - alone, 0.9)),
     // The makings step left by the film's structural glide over the making's way, the longer of the two; the owners
     // settle and the obligations' links draw back to their leads over the owners' way.
     lift = glideShare(t, moveAt + 0.05, 1040 + first - 760 - owned, 0.9),
-    settle = glideShare(t, caseAt + 0.05, 1330 + owned - 1150, 0.9);
+    settle = glideShare(t, settleFrom, settleWay, 0.6);
   const AX = mix(640 + start, 400 + owned, lift),
     MX = mix(1040 + start, 760 + owned, lift),
     OX = mix(1330 + owned, 1150, settle),
@@ -305,6 +307,18 @@ export function makings(s, t, a) {
     alpha: a * named(t, caseAt),
     mark: ramp(t, caseAt + 0.3, 0.4),
   });
+}
+
+/* How far the Agent with its owners stands shifted so that, from the Agent's name to the owners' widest name, it is
+ * centred on the frame. */
+function ownersShift() {
+  const agentHalf = Math.max(53, measure(L("最早那个 Agent", "The first Agent")) / 2),
+    ownerHalf = Math.max(
+      OWNER[0] / 2,
+      nameWidth(CHECK_NAME(), 300) / 2,
+      nameWidth(L("正式变更里的任务清单", "The official Change's task list"), NAME_WRAP) / 2,
+    );
+  return 960 - (400 - agentHalf + 1330 + ownerHalf) / 2;
 }
 
 /* A kept script: its window as a dashed outline, an obsolete mark that no owner carries. */
