@@ -4593,6 +4593,7 @@ var PLANE_H = 58;
 var PLANE_STEP = 70;
 var PLANES_TOP = 420;
 var PLANE_STATES = ["pass", "unknown", "none", "none", "none"];
+var planeTop = (top, i) => top + (4 - i) * PLANE_STEP;
 var planeNames = () => L(
   [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["使用"], ["实际效益"]],
   [
@@ -4622,7 +4623,7 @@ function plane(t, i, x, y, { alpha = 1, at, qualAt = at, stateAt = at, level = 1
   planeState(PLANE_STATES[i], x + PLANE_W - 36, cy, alpha * ramp(t, stateAt - 0.15, 0.4));
 }
 function planeStack(t, x, top, { alpha = 1 } = {}) {
-  for (let i = 0; i < 5; i++) plane(t, i, x, top + i * PLANE_STEP, { alpha, at: -Infinity });
+  for (let i = 0; i < 5; i++) plane(t, i, x, planeTop(top, i), { alpha, at: -Infinity });
 }
 function claimRow(t, ax, ay, px, py, { alpha = 1, flow = null, nameTop = ay + 22 + NAME_GAP } = {}) {
   const edge = claimPanel(t, px, py, { alpha });
@@ -4647,13 +4648,13 @@ function apartStage(s, t, c, g) {
     // on the baseline of the rule's name beside it.
     nameTop: Math.max(ay + 22, mix(ay + 22, py + CLAIM_H / 2, rise)) + NAME_GAP + rise * latinDrop("Agent", rule)
   });
-  const ats = [c.local + 0.35, c.ci, c.release, c.use, c.benefit], stateAts = [c.passed, c.noResult, c.release, c.use, c.noObs], x = 960 - PLANE_W / 2, top = PLANES_TOP + building(t, ats, PLANE_STEP, 0.15);
+  const ats = [c.local + 0.35, c.ci, c.release, c.use, c.benefit], stateAts = [c.passed, c.noResult, c.release, c.use, c.noObs], x = 960 - PLANE_W / 2;
   termRow(t, [rule], [c.first2], L(["拆开来看"], ["taken apart"]), [c.apart], px, under, {
     alpha: g,
     align: "center"
   });
   ats.forEach(
-    (at, i) => plane(t, i, x, top + i * PLANE_STEP, {
+    (at, i) => plane(t, i, x, planeTop(PLANES_TOP, i), {
       alpha: g,
       at,
       qualAt: c.forward,
@@ -4831,7 +4832,8 @@ function docMark(x, y, w, h, { alpha = 1, rows = 4 } = {}) {
 // picture/film/scenes/p05/rule-two.js
 var TOP = PLANES_TOP;
 var ASIDE = 400;
-var rowOf = (top, i) => top + i * PLANE_STEP + PLANE_H / 2;
+var rowOf = (top, i) => planeTop(top, i) + PLANE_H / 2;
+var lineOf = (top, k) => top + k * PLANE_STEP + PLANE_H / 2;
 var STEPS = [80, 130, 180, 230, 280];
 var STEP_R = 12;
 var stepsName = () => L("下一步都不一样", "A different next step");
@@ -4952,7 +4954,7 @@ function verifiedStage(s, t, c, g) {
   });
 }
 function outcomesStage(s, t, c, g) {
-  const top = 340, x = outcomesAt(c), col = outcomesColumns(), LX = x + col.mark, em = labelSize(LABEL), names2 = outcomeNames(), quals = outcomeQuals(), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((i) => rowOf(top, i)), qualLeft = x + col.quals;
+  const top = 340, x = outcomesAt(c), col = outcomesColumns(), LX = x + col.mark, em = labelSize(LABEL), names2 = outcomeNames(), quals = outcomeQuals(), kinds = ["pass", "block", "unknown"], ats = [c.pass, c.block, c.unknown], qualAts = [c.ahead, c.conflict, c.missing], ys = [1, 2, 3].map((k) => lineOf(top, k)), qualLeft = x + col.quals;
   planeStack(t, x, top, { alpha: g });
   termRow(
     t,
@@ -4961,7 +4963,7 @@ function outcomesStage(s, t, c, g) {
     L(["只分三种"], ["only three outcomes"]),
     [c.three],
     LX - 18,
-    rowOf(top, 0) - em / 2,
+    lineOf(top, 0) - em / 2,
     {
       alpha: g,
       width: 1824 - LX,

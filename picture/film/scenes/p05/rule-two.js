@@ -29,15 +29,19 @@ import { glideShare } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
 import { card, linkSet, verdictMark } from "../p04/marks.js";
 import { claimPanel, claimWidth } from "../claim.js";
-import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack } from "./planes.js";
+import { PLANE_H, PLANE_STEP, PLANE_W, PLANES_TOP, planeStack, planeTop } from "./planes.js";
 
 const TOP = PLANES_TOP,
   ASIDE = 400;
-const rowOf = (top, i) => top + i * PLANE_STEP + PLANE_H / 2;
+/* The middle of plane `i`'s row, the local proof at the base (planeTop), and the middle of the stack's `k`-th row from
+ * its top, for a list that reads down beside it. */
+const rowOf = (top, i) => planeTop(top, i) + PLANE_H / 2,
+  lineOf = (top, k) => top + k * PLANE_STEP + PLANE_H / 2;
 
 /* The planes' next steps: each plane's step stands `STEPS[i]` px beyond the stack's right edge on its row, a ring of
- * STEP_R, so the steps descend as a staircase. Their heading hangs over the first step, left-aligned on its left edge
- * as the stack's heading is on the stack's, on the same line. */
+ * STEP_R, so the steps rise as a staircase from the local proof's, the nearest, at the base. Their heading hangs over
+ * the staircase, left-aligned on the first step's left edge as the stack's heading is on the stack's, on the same
+ * line. */
 const STEPS = [80, 130, 180, 230, 280],
   STEP_R = 12;
 const stepsName = () => L("下一步都不一样", "A different next step");
@@ -214,11 +218,12 @@ export function verifiedStage(s, t, c, g) {
 
 /* 05.5 Three outcomes: beside the stack a judgment's three outcomes build as a list, each a shape with its name, pass
  * with what it alone permits and block and unknown with their conditions; while unknown, the work waits. The list keeps
- * the stack's rows, so the two columns read on one grid: its heading on the first plane's row and the outcomes on the
- * next three. "it waits" is said of unknown, so it stands as a second line of unknown's condition, in the
- * condition's note style, column and lowercase, rather than as a fourth row of the list. The checks with no result are linked
- * to unknown, and whether there is a problem stands open with unknown's mark. Each part of the list stands in its place
- * from its words, so nothing moves as the list builds; the stack stands still beside it (outcomesAt). */
+ * the stack's rows, so the two columns read on one grid: its heading on the stack's top row and the outcomes on the
+ * three under it, so the checks with no result and unknown share a row. "it waits" is said of unknown, so it stands as
+ * a second line of unknown's condition, in the condition's note style, column and lowercase, rather than as a fourth
+ * row of the list. The checks with no result are linked to unknown, and whether there is a problem stands open with
+ * unknown's mark. Each part of the list stands in its place from its words, so nothing moves as the list builds; the
+ * stack stands still beside it (outcomesAt). */
 export function outcomesStage(s, t, c, g) {
   const top = 340,
     x = outcomesAt(c),
@@ -230,7 +235,7 @@ export function outcomesStage(s, t, c, g) {
     kinds = ["pass", "block", "unknown"],
     ats = [c.pass, c.block, c.unknown],
     qualAts = [c.ahead, c.conflict, c.missing],
-    ys = [1, 2, 3].map((i) => rowOf(top, i)),
+    ys = [1, 2, 3].map((k) => lineOf(top, k)),
     // The conditions stand in one column after the widest outcome's name.
     qualLeft = x + col.quals;
   planeStack(t, x, top, { alpha: g });
@@ -241,7 +246,7 @@ export function outcomesStage(s, t, c, g) {
     L(["只分三种"], ["only three outcomes"]),
     [c.three],
     LX - 18,
-    rowOf(top, 0) - em / 2,
+    lineOf(top, 0) - em / 2,
     {
       alpha: g,
       width: 1824 - LX,

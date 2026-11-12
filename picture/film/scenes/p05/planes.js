@@ -1,11 +1,13 @@
 /* Part 05 opening (05.1-05.2): the Agent's sentence returns and, by ETHOS's rules, is taken apart into its planes of
  * evidence, stacked: the local proof has passed, so the work may move forward locally; the checks on GitLab and GitHub
  * have no result yet; nothing is released, no one uses it, and there is no observation of actual benefit. Each plane
- * arrives on its words with its state, and the stack builds from below so it stays balanced as it grows. */
+ * arrives on its words with its state at the place it keeps: the stack builds upward in place, the local proof at its
+ * base and each later plane one step above the one before, so no plane moves once shown, and from the first plane the
+ * claim at the top and the base bound the picture as the whole stack will (zh-R16-05, EN-R16-05). */
 
 import { FLOW_EVERY, flowClock, link } from "../../drawing/links.js";
 import { labelSize, ring } from "../../drawing/strokes.js";
-import { building, listLevel } from "../../naming/lists.js";
+import { listLevel } from "../../naming/lists.js";
 import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
@@ -15,13 +17,16 @@ import { agents, card, verdictMark } from "../p04/marks.js";
 import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 
 /* A plane of evidence: an outline whose name stands at its left and whose state stands at its right. The stack's top
- * stands at PLANES_TOP from the moment it is whole until it rises beside the outcomes, so the heading set over it in
- * 05.3 keeps a line height clear of rule two's glyph, which reaches y 318. */
+ * stands at PLANES_TOP from its first plane until it rises beside the outcomes, so the heading set over it in 05.3
+ * keeps a line height clear of rule two's glyph, which reaches y 318. */
 export const PLANE_W = 700,
   PLANE_H = 58,
   PLANE_STEP = 70,
   PLANES_TOP = 420;
 export const PLANE_STATES = ["pass", "unknown", "none", "none", "none"];
+/* The top of plane `i` in a stack whose top is `top`: the local proof, plane 0, at the base, and each later plane one
+ * step above the one before, so the evidence reads upward from what was verified here to the benefit observed. */
+export const planeTop = (top, i) => top + (4 - i) * PLANE_STEP;
 export const planeNames = () =>
   L(
     [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["使用"], ["实际效益"]],
@@ -57,7 +62,7 @@ export function plane(t, i, x, y, { alpha = 1, at, qualAt = at, stateAt = at, le
 }
 /* The whole stack with its top-left at (x, top), every plane named and in its state. */
 export function planeStack(t, x, top, { alpha = 1 } = {}) {
-  for (let i = 0; i < 5; i++) plane(t, i, x, top + i * PLANE_STEP, { alpha, at: -Infinity });
+  for (let i = 0; i < 5; i++) plane(t, i, x, planeTop(top, i), { alpha, at: -Infinity });
 }
 
 /* The Agent and its sentence, the claim: the Agent at the left of its speech panel, linked to it. The Agent's name
@@ -100,8 +105,8 @@ function claimAt(t, c) {
 /* 05.1-05.2 The sentence returns, the Agent lower left and its panel upper right so the claim stands as a block, and
  * is taken apart: under the sentence, the rule that takes it apart is named, centred on the panel from its first word
  * with "taken apart" under it; with the first plane the claim rises to the top, where the Agent's name and the rule's
- * hang from one line under the panel, the deeper mark of the two, and the planes build from below on their words, each
- * with its state, the stack rising one step as each plane joins. */
+ * hang from one line under the panel, the deeper mark of the two, and the planes build upward in place on their words,
+ * each with its state, the local proof at the base. */
 export function apartStage(s, t, c, g) {
   const { ax, ay, px, py, rise } = claimAt(t, c),
     under = py + CLAIM_H / 2 + NAME_GAP,
@@ -119,14 +124,13 @@ export function apartStage(s, t, c, g) {
   // The first plane waits a moment on its words so the rising Agent has cleared its place.
   const ats = [c.local + 0.35, c.ci, c.release, c.use, c.benefit],
     stateAts = [c.passed, c.noResult, c.release, c.use, c.noObs],
-    x = 960 - PLANE_W / 2,
-    top = PLANES_TOP + building(t, ats, PLANE_STEP, 0.15);
+    x = 960 - PLANE_W / 2;
   termRow(t, [rule], [c.first2], L(["拆开来看"], ["taken apart"]), [c.apart], px, under, {
     alpha: g,
     align: "center",
   });
   ats.forEach((at, i) =>
-    plane(t, i, x, top + i * PLANE_STEP, {
+    plane(t, i, x, planeTop(PLANES_TOP, i), {
       alpha: g,
       at,
       qualAt: c.forward,
