@@ -11,13 +11,16 @@ import { bubble, kernelIcon, layersIcon } from "../../drawing/workspace.js";
 import { beats, listIn, named } from "../../naming/lists.js";
 import { NAME_GAP, NOTE, TERM_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
-import { L } from "../../timeline.js";
+import { L, en } from "../../timeline.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
 import { drawShare, glideShare } from "../../timing/pauses.js";
 import { QUOTE } from "./example.js";
 import { card, linkSet, recordRows, valueCell, verdictMark } from "./marks.js";
 import { ruleOneHeading, rowHalf } from "./rule-one.js";
 
+/* The ink of 04.5's summary card before its words: lit for the balance measures, which count a 2.5 px paper stroke
+ * from about 0.31 of its ink, and under the 0.35 from which the seat check counts a mark as firm. */
+const SUMMARY_FAINT = 0.33;
 /* An example card: two records; in the second example the second record carries a corrected value. */
 const EX_W = 260,
   EX_H = 104;
@@ -42,12 +45,15 @@ function exampleCard(x, y, corrected, a) {
 /* 04.5 The examples: an exact repeat goes and a correction to the same stock on the same day stays, each card named
  * on its words with its verdict, a cross or a check before it; the summary is tried against both and fails the second
  * at a stop on its way there, and the corrected value flashes as it is saved. The heading centres on the frame from its
- * first word, its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. The
- * first card stands alone on the frame's axis; the second joins at its right and the pair glides as one unit to centre
- * what stands, the repeat's verdict at its left included, and on the correction's verdict it settles centred on the
- * axis, over the summary, before the summary is tried against the two. Each verdict stands one gap outside its card,
- * the repeat's at its left and the correction's at its right, so the pair and its verdicts stay balanced about the
- * axis. */
+ * first word, its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. Each
+ * verdict stands one gap outside its card, the repeat's at its left and the correction's at its right, so the pair and
+ * its verdicts stay balanced about the axis once both stand. In English the pair stands at that centred seat from the
+ * first card's words, so no shown name moves (EN-R17-09): the rule's heading over it spans 830 px of the frame, so the
+ * first card and its verdict, at the left of the seat, stand at most 62 px off the centre, for 0.8 s. The Chinese
+ * heading spans 456 px, and at that seat the repeat and its verdict would stand 93 to 166 px left of the centre for
+ * 2.5 s, so there the first card stands alone on the frame's axis, the second joins at its right and the pair glides
+ * as one unit to centre what stands, the repeat's verdict at its left included, and on the correction's verdict it
+ * settles centred on the axis, before the summary is tried against the two. */
 export function examplesStage(s, t, c, g) {
   const bottom = ruleOneHeading(t, c, g),
     heading = termRow(
@@ -78,11 +84,12 @@ export function examplesStage(s, t, c, g) {
           (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0),
       ) /
         2,
-    joined = glideShare(t, c.correction + 0.05, 280, 0.9),
-    lean =
-      ((reachLeft - reachRight) / 2) *
-      joined *
-      (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)),
+    joined = en ? 1 : glideShare(t, c.correction + 0.05, 280, 0.9),
+    lean = en
+      ? 0
+      : ((reachLeft - reachRight) / 2) *
+        joined *
+        (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)),
     X1 = 960 + lean - 280 * joined,
     X2 = X1 + 560,
     vy = Y + 72,
@@ -125,14 +132,21 @@ export function examplesStage(s, t, c, g) {
   beats(t, (v0 + v1) / 2, vy, 22, [c.saved], { alpha: g });
   // The summary, the understanding under test, stands below; tried against both examples, it fails the second at a
   // stop on its way there, on the leg that rises from the summary toward the second card. The links turn 40 px under
-  // the cards, so the stop and its name stand clear of the turn and of the summary.
+  // the cards, so the stop and its name stand clear of the turn and of the summary. Its words are said again in this
+  // thought, about eight seconds into the stage: shown from the cut, its line stood 7.7 s before its clause (filmkit
+  // 0.21.0). It is written as that clause opens, a fifth of a second before its first word, so the voice reads out a
+  // line already shown, and it is not a label drawn during the caption cue that quotes it, of which it and the stop's
+  // name would repeat every word. Its card stands faint until then, as the place the understanding under test will
+  // take: at a third of its ink it is lit, so the picture keeps its height under the cards, and it is no firm mark
+  // waiting for its name.
   const qy = Y + 280,
     qw = measure(QUOTE()) + 56,
     turn = Y + EX_H + 40,
+    written = g * named(t, c.quoteClause - 0.2),
     tried = g * named(t, c.quote2),
     draw = { t, at: c.quote2 + 0.05 };
-  card(960 - qw / 2, qy - 32, qw, 64, { alpha: g, color: P.ink });
-  nameText(QUOTE(), 960, qy, { alpha: g });
+  card(960 - qw / 2, qy - 32, qw, 64, { alpha: g * mix(SUMMARY_FAINT, 1, written), color: P.ink });
+  nameText(QUOTE(), 960, qy, { alpha: written });
   linkSet(
     [
       [960 - qw / 2 + 40, qy - 32, X1, Y + EX_H, "vhv", turn],

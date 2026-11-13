@@ -18,7 +18,7 @@ import {
   termRow,
   termRowLayout,
 } from "../../naming/names.js";
-import { CONTENT_CY, rowNameTop } from "../../naming/placement.js";
+import { rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
@@ -283,18 +283,26 @@ export function ownRepository(s, t, a) {
 
 /* 07.4, second: a replacement may never be weaker, said in the example's terms: the declared check, which replaced the
  * script, must catch every duplicate the script caught. The replacement, the example's declared check, stands large on
- * the frame's axis from the cut, the rule over it as its name, its term on the cut and never weaker under it on its
- * words; the check's own name joins under it on its words. It is the stage's largest mark, a repository with its check
- * written in it as code and the tick it passes, so it alone covers the picture while only the rule is said: English
- * names the example's parts after the rule, two seconds and more into the stage. The script and the duplicates it
- * caught stand in a row below, the script left of the axis and the duplicates as far right of it, each named on its
- * words: what the script caught runs from it to the duplicates, and the duplicates run straight up into the declared
- * check, which must catch every one. Each mark stands in its place from its first frame, and the picture stays centred
- * while it builds: the check and its rule on the axis, then the row, whose two ends are said within a second of each
- * other. */
+ * the frame's axis from the cut, the rule over it as its name, its term from the cut and never weaker under it on its
+ * words: the stage cuts in on the words that open the rule, which are its term in English, and 换上的 before the term
+ * 新做法 in Chinese, so there the term stands within its clause about a third of a second before its word, and the
+ * check never waits for its name. The check's own name joins under it on its words. It is the stage's largest mark, a
+ * repository with its check written in it as code and the tick it passes, so it alone covers the picture while only
+ * the rule is said: English names the example's parts after the rule, two seconds and more into the stage. The script
+ * and the duplicates it caught stand in a row below, the script left of the axis and the duplicates as far right of
+ * it, each named on its words: what the script caught runs from it to the duplicates, and the duplicates run straight
+ * up into the declared check, which must catch every one. Each mark stands in its place from its first frame, and the
+ * picture stays centred across the frame while it builds: the check and its rule on the axis, then the row, whose two
+ * ends are said within a second of each other. */
+/* The check is 460 px wide, so with the rule over it the first state covers a tenth of the band, as it must for the
+ * two seconds and more that Chinese says the rule before the script joins it. */
 const DUPLICATES = [200, 104],
   ROW_GAP = 50,
-  CHECK = [440, 240];
+  CHECK = [460, 240];
+/* The frame's centre line, about which the reviewers measure a still state's balance, and the lower edge of the area
+ * in which every name must stand. */
+const FRAME_CY = 540,
+  SAFE_BOTTOM = 920;
 /* The replacement: the declared check (example.js) drawn large, its check as four lines of code under the repository's
  * branch and its tick right of them, at the declared check's place for its tick. */
 function replacementCheck(x, y, alpha) {
@@ -314,8 +322,8 @@ function replacementCheck(x, y, alpha) {
 }
 export function replacement(s, t, a) {
   if (a <= 0) return;
-  const [newAt, weakAt, scriptAt, dupAt, checkAt, catchAt] = cues(s, [
-    ["新做法", "A replacement"],
+  const [cutAt, weakAt, scriptAt, dupAt, checkAt, catchAt] = cues(s, [
+    ["换上的新做法", "A replacement"],
     ["不能比旧的弱", "may never be weaker"],
     ["脚本查出的重复", "the script caught"],
     ["查出的重复", "every duplicate"],
@@ -326,19 +334,24 @@ export function replacement(s, t, a) {
     qual = [L("不能比旧的弱", "never weaker")],
     em = labelSize(LABEL),
     ruleHeight = termRowLayout(term, qual, Infinity, false).height,
-    // The figure, from the rule's top to the row's names, stands centred on the content's centre line.
-    height =
-      ruleHeight + NAME_GAP + CHECK[1] + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em,
-    top = CONTENT_CY - height / 2,
+    // The figure stands still from the cut, so its first lasting state, the rule over the check, and its last, which
+    // reaches from the rule's top to the row's names, stand with their centres 136 px apart. Centred whole on the
+    // content's centre line, the first stood 178 px above the frame's centre for 1.7 s in English (EN-R17-04). The
+    // figure is seated so that the two states stand about the frame's centre line, midway between their centres, and no
+    // lower than keeps the row's names one gap above the lower edge of the safe area: about 80 px above the centre and
+    // 60 px below it.
+    first = ruleHeight + NAME_GAP + CHECK[1],
+    height = first + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em,
+    top = Math.min(FRAME_CY - (first + height) / 4, SAFE_BOTTOM - NAME_GAP - height),
     CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2,
     RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2,
     SX = 960 - 260,
     DX = 960 + 260,
     rowTop = rowNameTop([RY + SCRIPT[1] / 2, RY + DUPLICATES[1] / 2]),
-    n = a * named(t, newAt),
+    n = a * named(t, cutAt),
     sIn = a * named(t, scriptAt),
     dIn = a * named(t, dupAt);
-  termRow(t, term, [newAt], qual, [weakAt], 960, top, { alpha: a, align: "center" });
+  termRow(t, term, [cutAt], qual, [weakAt], 960, top, { alpha: a, align: "center" });
   replacementCheck(960, CY, n);
   nameText(L("声明的检查", "The declared check"), 960, CY + CHECK[1] / 2 + NAME_GAP, {
     valign: "top",

@@ -1,12 +1,13 @@
-/* 03.6-03.7 ETHOS keeps its own code to the kernel, turns to mature tools for the rest and writes its own only for a
- * demonstrated gap; it leaves the systems already in use as they are, works on the user's own machine and owns in one
- * place what every repository shares. */
+/* 03.6-03.7 ETHOS keeps its own code to the kernel, turns to mature tools for the rest where they are shown to reduce
+ * maintenance, risk and the burden on adopters, and writes its own only for a demonstrated gap and a net benefit; it
+ * leaves the systems already in use as they are, works on the user's own machine and owns in one place what every
+ * repository shares. */
 
 import { ctx } from "../../canvas.js";
 import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
 import { box, drawnShare, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
-import { named } from "../../naming/lists.js";
+import { listIn, named } from "../../naming/lists.js";
 import {
   LEADING,
   NAME_GAP,
@@ -17,8 +18,8 @@ import {
   termRow,
   termRowLayout,
 } from "../../naming/names.js";
-import { P } from "../../palette.js";
-import { L } from "../../timeline.js";
+import { LABEL, P } from "../../palette.js";
+import { L, en } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
 import { glideShare, voiceTime } from "../../timing/pauses.js";
 
@@ -28,9 +29,9 @@ import { glideShare, voiceTime } from "../../timing/pauses.js";
  * Chinese, and on the word "tools" in English, two tools, larger outlines of one size below the kernel, mirrored about
  * its axis, each holding its content (Git's branch in one, a tool's features in the other), are linked from the kernel
  * and named as everything else between them; Git is named on its word and the pair as mature tools under them, and
- * what they are turned to for, the three reductions in the voice's words, joins under that name as its qualifier on
- * its words. Then the condition for ETHOS's own tools (gapTool). The panel's names ride its top and bottom edges as it
- * draws in, so each stays one gap from what it names. */
+ * what they are shown to reduce, in the voice's words, joins under that name on its words. Then the conditions for
+ * ETHOS's own tools (gapTool). The panel's names ride its top and bottom edges as it draws in, so each stays one gap
+ * from what it names. */
 export function stageTools(t, a, c) {
   if (a <= 0) return;
   const KX = 960,
@@ -43,9 +44,14 @@ export function stageTools(t, a, c) {
     code = a * (1 - gather),
     turnTo = a * ramp(t, c.elseAt - 0.15, 0.4),
     tooled = a * ramp(t, c.toolsAt - 0.15, 0.4),
+    // The tools stand 160 px tall about y 610, so the four lines of names and reductions under them end at y 850:
+    // while they stand without the gap's tool over the kernel, the English picture stands 80 px under the content's
+    // centre, inside the 8% the balance check allows 70% through a thought, where under 178 px tools about y 640 it
+    // stood 101 px under it. The links from the kernel end on the tools' tops, 65 px above the name between them, so
+    // that name stays out of the links' reach and names the tool Git does not.
     tools = [
-      [620, 640, 280, 178],
-      [1300, 640, 280, 178],
+      [620, 610, 280, 160],
+      [1300, 610, 280, 160],
     ];
   // ETHOS's own code: a panel whose rows of code stand either side of the kernel, drawing in with the panel.
   box(KX - PW / 2, KY - PH / 2, PW, PH, { stroke: P.ink, alpha: code, radius: 16, width: 2.5 });
@@ -119,43 +125,77 @@ export function stageTools(t, a, c) {
     L([], ["that already exist"]),
     [c.exist],
     KX,
-    760,
+    tools[0][1] + tools[0][3] / 2 + 31,
     { alpha: a, align: "center" },
   );
-  // What the tools are turned to for, the three reductions in the voice's words, qualifies them too: on one line under
-  // their name, as a qualifier stands under its term in Chinese, and at the qualifiers' pitch under "that already
-  // exist" in English.
-  nameText(
-    L(
-      "减少总体的维护量、运行风险和采用者的负担",
-      "to reduce total maintenance, operational risk and adopter burden",
-    ),
-    KX,
-    toolsName.bottom + L(TERM_STACK, labelSize(NOTE) * (LEADING - 1)),
-    { valign: "top", size: NOTE, color: P.muted, alpha: a * named(t, c.reduce) },
-  );
+  // What the tools are shown to reduce qualifies them too, under their name at the qualifiers' pitch. Chinese says the
+  // three reductions in one phrase, set on one line as a qualifier stands under its term. English says the words that
+  // make them a condition, set as one more line, then names each reduction: as one gloss they ran 4.4 times as wide as
+  // the name over them (EN-R17-08), so they stand as a list of three on one line under it, each on its own words, the
+  // middle one on the axis under the lines above and the others 48 px clear of it either side, at even gaps.
+  const pitch = labelSize(NOTE) * (LEADING - 1);
+  if (!en)
+    nameText("减少总体的维护量、运行风险和使用方的负担", KX, toolsName.bottom + TERM_STACK, {
+      valign: "top",
+      size: NOTE,
+      color: P.muted,
+      alpha: a * named(t, c.reduce),
+    });
+  else {
+    const lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
+        valign: "top",
+        size: NOTE,
+        color: P.muted,
+        alpha: a * named(t, c.reduce),
+      }),
+      items = ["total maintenance", "operational risk", "burden on adopters"],
+      ats = [c.upkeep, c.risk, c.burden],
+      half = measure(items[1], NOTE) / 2 + 48;
+    items.forEach((v, i) =>
+      nameText(v, KX + (i - 1) * half, lead.bottom + pitch, {
+        valign: "top",
+        align: ["right", "center", "left"][i],
+        size: NOTE,
+        alpha: a * listIn(t, ats, i),
+        set: "reductions",
+      }),
+    );
+  }
   gapTool(t, a, c);
 }
 
-/* 03.6, last: ETHOS writes tools of its own only to fill a demonstrated gap. Over the kernel and the name of its code,
- * in the band the panel's name left, the dashed outline of a tool, since the film keeps dashes for what is missing,
- * and three lines of ETHOS's own code, drawn as the panel's were, written into it one after another on the words that
- * say it writes its own. The outline arrives with its name, so the lines are always written into it: Chinese names the
- * gap first, on one line, and the outline arrives on those words; English names its own tools first, with the
- * condition under them, and the outline arrives with the tools. The name stands one gap right of the outline in the
- * voice's words, and the outline and its name stand centred together. The Chinese name holds the gap alone, so no
- * label repeats the whole caption "证实有缺口，才自己写。". */
+/* 03.6, last: ETHOS writes tools of its own only for a demonstrated gap, and only for a net benefit. Over the kernel
+ * and the name of its code, in the band the panel's name left, the dashed outline of a tool, since the film keeps
+ * dashes for what is missing, and three lines of ETHOS's own code, drawn as the panel's were, written into it one after
+ * another on the words that say it writes its own. The outline arrives with its name, so the lines are always written
+ * into it: Chinese names the gap first and the outline arrives on those words; English names its own tools first and
+ * the outline arrives with them. The conditions join under that name as its qualifiers, each on its own words: the net
+ * benefit under the gap in Chinese, the gap and then the net benefit under the tools in English. Each stands as a name
+ * of its own, so each is judged by its own words and no caption cue is mostly repeated: as one name, "Its own tools
+ * only to fill a demonstrated gap" repeated 82% of its cue. The outline and its names stand one gap apart, centred
+ * together. */
 const GAP_W = 150,
   GAP_H = 84,
   GAP_Y = 215;
 function gapTool(t, a, c) {
-  const term = L(["证实有缺口"], ["Its own tools"]),
-    qual = L([], ["only to fill a demonstrated gap"]),
-    wide = Math.max(measure(term.join("")), ...qual.map((v) => measure(v, NOTE))),
-    left = 960 - (GAP_W + NAME_GAP + wide) / 2;
+  const [[term, termAt], ...quals] = L(
+      [
+        ["证实有缺口", c.gap],
+        ["确实划算", c.benefit],
+      ],
+      [
+        ["Its own tools", c.ownTools],
+        ["a demonstrated gap", c.gap],
+        ["a net benefit", c.benefit],
+      ],
+    ),
+    wide = Math.max(measure(term), ...quals.map(([v]) => measure(v, NOTE))),
+    left = 960 - (GAP_W + NAME_GAP + wide) / 2,
+    step = labelSize(NOTE) * LEADING,
+    height = labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + step * (quals.length - 1);
   box(left, GAP_Y - GAP_H / 2, GAP_W, GAP_H, {
     stroke: P.muted,
-    alpha: a * named(t, L(c.gap, c.ownTools)),
+    alpha: a * named(t, termAt),
     radius: 14,
     width: 2.5,
     dash: [10, 8],
@@ -171,11 +211,21 @@ function gapTool(t, a, c) {
       width: 2.5,
     });
   });
-  const height = termRowLayout(term, qual, Infinity, false).height;
-  termRow(t, term, [L(c.gap, c.ownTools)], qual, [c.only], left + GAP_W + NAME_GAP, GAP_Y - height / 2, {
-    alpha: a,
-    inline: false,
-  });
+  const x = left + GAP_W + NAME_GAP,
+    head = nameText(term, x, GAP_Y - height / 2, {
+      align: "left",
+      valign: "top",
+      alpha: a * named(t, termAt),
+    });
+  quals.forEach(([v, at], i) =>
+    nameText(v, x, head.bottom + TERM_STACK + i * step, {
+      align: "left",
+      valign: "top",
+      size: NOTE,
+      color: P.muted,
+      alpha: a * named(t, at),
+    }),
+  );
 }
 
 /* 03.7 ETHOS does not take over the systems already in use: ETHOS at the centre with its name from the cut, and the

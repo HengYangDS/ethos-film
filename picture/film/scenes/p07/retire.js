@@ -176,7 +176,7 @@ scenes["07"] = function (s, t) {
     ["这个脚本要是留着", "If the script stays"],
     ["这就是第四条准则", "That is rule four"],
     ["ETHOS 判断", "ETHOS judges"],
-    ["新做法", "A replacement"],
+    ["换上的新做法", "A replacement"],
     ["一项正式变更", "An official Change"],
     ["每个机制", "Every mechanism"],
     ["已经没有义务的机制", "Keep the ones"],

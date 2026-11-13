@@ -1542,7 +1542,6 @@ function lastingReach(parts2, lasting = 2) {
 }
 
 // picture/film/naming/placement.js
-var CONTENT_CY = 500;
 var rowNameTop = (bottoms, gap = NAME_GAP) => Math.max(...bottoms) + gap;
 function railNames(names2, xs, y, {
   side = 1,
@@ -1622,7 +1621,7 @@ function checksGrid(x, y, n, { alpha = 1, step = 46 } = {}) {
   if (alpha < 0.01) return;
   const cols = Array.from({ length: Math.ceil(n - 1e-6) }, (_, i) => [
     x + (i - (n - 1) / 2) * step,
-    clamp(n - i)
+    ease(clamp(n - i))
   ]), r = 22 * 0.55, c = 4.5 * 0.55;
   stroke(
     () => cols.forEach(([cx, k]) => {
@@ -1845,11 +1844,7 @@ scenes["01"] = function(s, t) {
     ctx.restore();
   }
   if (stageC > 0) {
-    const X02 = 340, X1 = 1300, Y0 = 610, writingName = L("写代码", "Writing code"), relyName = L("能不能信得过它", "Whether you can rely on it"), relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))), ends2 = X1 + 7 + NAME_GAP, centre = (w) => 960 - (X02 + ends2 + w) / 2, shift = mix(
-      centre(measure(writingName)),
-      centre(Math.max(measure(writingName), relyWide)),
-      glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7)
-    ), climb = 120 + 160 * soon(t, easier + 0.05, 1.6) + 6 * Math.max(0, voiceTime(t) - voiceTime(easier + 1.65));
+    const X02 = 340, X1 = 1300, Y0 = 610, writingName = L("写代码", "Writing code"), relyName = L("能不能信得过它", "Whether you can rely on it"), relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))), ends2 = X1 + 7 + NAME_GAP, centre = (w) => 960 - (X02 + ends2 + w) / 2, alone = centre(measure(writingName)), both = centre(Math.max(measure(writingName), relyWide)), shift = en ? mix(alone, both, glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7)) : (alone + both) / 2, climb = 120 + 160 * soon(t, easier + 0.05, 1.6) + 6 * Math.max(0, voiceTime(t) - voiceTime(easier + 1.65));
     const rise = (x) => Y0 - climb * ((x - X02) / (X1 - X02)) ** 1.7, points = [];
     for (let x = X02; x < X1; x += 12) points.push([x, rise(x)]);
     points.push([X1, rise(X1)]);
@@ -1903,22 +1898,25 @@ scenes["01"] = function(s, t) {
           upto: forked
         });
         flowAlong(way, q, 5, { upto: forked, color: P.ink, alpha: fork * speaking(t, ways, i) });
-        termRow(
-          t,
-          [L(["照单全收", "从头再查一遍"], ["Take it on trust", "Check everything again"])[i]],
-          [ways[i]],
-          [L(["运气", "查不过来"], ["a gamble", "stops working"])[i]],
-          [costs[i]],
+        const wayName = nameText(
+          L(["照单全收", "从头再查一遍"], ["Take it on trust", "Check everything again"])[i],
           x,
           NY,
-          { alpha: stageD * listLevel(t, ways, i), align: "center", set: "ways" }
+          { valign: "top", alpha: stageD * listLevel(t, ways, i) * named(t, ways[i]), set: "ways" }
         );
+        nameText(L(["运气", "查不过来"], ["a gamble", "stops working"])[i], x, wayName.bottom + TERM_STACK, {
+          valign: "top",
+          size: NOTE,
+          color: P.muted,
+          alpha: stageD * listLevel(t, ways, i) * named(t, costs[i]),
+          set: "costs"
+        });
         const on = stageD * ramp(t, marks[i] - 0.15, 0.4);
         link(x, LINK, x, GY - 42, { alpha: on, draw: { t, at: marks[i] - 0.1 } });
       });
       die(XS2[0], GY, 46, { alpha: stageD * ramp(t, luck - 0.15, 0.4) });
       const grid = stageD * ramp(t, cant - 0.15, 0.4);
-      checksGrid(XS2[1], GY - 16, mix(2, 7, glideShare(t, many + 0.05, 5 * 46 / 2, 0.65)), {
+      checksGrid(XS2[1], GY - 16, mix(2, 7, glideShare(t, many + 0.05, 5 * 46 / 2, 1)), {
         alpha: grid
       });
     }
@@ -3350,8 +3348,8 @@ function stageAims(t, a, c) {
 function stageTools(t, a, c) {
   if (a <= 0) return;
   const KX = 960, KY = 420, KR = 36, gather = glideShare(t, c.oneJob + 0.05, (560 - 2 * KR) / 2, Math.max(0.9, c.elseAt - c.oneJob - 0.2)), PW = mix(560, 2 * KR, gather), PH = mix(240, 2 * KR, gather), code = a * (1 - gather), turnTo = a * ramp(t, c.elseAt - 0.15, 0.4), tooled = a * ramp(t, c.toolsAt - 0.15, 0.4), tools = [
-    [620, 640, 280, 178],
-    [1300, 640, 280, 178]
+    [620, 610, 280, 160],
+    [1300, 610, 280, 160]
   ];
   box(KX - PW / 2, KY - PH / 2, PW, PH, { stroke: P.ink, alpha: code, radius: 16, width: 2.5 });
   stroke(
@@ -3412,45 +3410,80 @@ function stageTools(t, a, c) {
     L([], ["that already exist"]),
     [c.exist],
     KX,
-    760,
+    tools[0][1] + tools[0][3] / 2 + 31,
     { alpha: a, align: "center" }
   );
-  nameText(
-    L(
-      "减少总体的维护量、运行风险和采用者的负担",
-      "to reduce total maintenance, operational risk and adopter burden"
-    ),
-    KX,
-    toolsName.bottom + L(TERM_STACK, labelSize(NOTE) * (LEADING - 1)),
-    { valign: "top", size: NOTE, color: P.muted, alpha: a * named(t, c.reduce) }
-  );
+  const pitch = labelSize(NOTE) * (LEADING - 1);
+  if (!en)
+    nameText("减少总体的维护量、运行风险和使用方的负担", KX, toolsName.bottom + TERM_STACK, {
+      valign: "top",
+      size: NOTE,
+      color: P.muted,
+      alpha: a * named(t, c.reduce)
+    });
+  else {
+    const lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
+      valign: "top",
+      size: NOTE,
+      color: P.muted,
+      alpha: a * named(t, c.reduce)
+    }), items = ["total maintenance", "operational risk", "burden on adopters"], ats = [c.upkeep, c.risk, c.burden], half = measure(items[1], NOTE) / 2 + 48;
+    items.forEach(
+      (v, i) => nameText(v, KX + (i - 1) * half, lead.bottom + pitch, {
+        valign: "top",
+        align: ["right", "center", "left"][i],
+        size: NOTE,
+        alpha: a * listIn(t, ats, i),
+        set: "reductions"
+      })
+    );
+  }
   gapTool(t, a, c);
 }
 var GAP_W = 150;
 var GAP_H = 84;
 var GAP_Y = 215;
 function gapTool(t, a, c) {
-  const term = L(["证实有缺口"], ["Its own tools"]), qual = L([], ["only to fill a demonstrated gap"]), wide = Math.max(measure(term.join("")), ...qual.map((v) => measure(v, NOTE))), left = 960 - (GAP_W + NAME_GAP + wide) / 2;
+  const [[term, termAt], ...quals] = L(
+    [
+      ["证实有缺口", c.gap],
+      ["确实划算", c.benefit]
+    ],
+    [
+      ["Its own tools", c.ownTools],
+      ["a demonstrated gap", c.gap],
+      ["a net benefit", c.benefit]
+    ]
+  ), wide = Math.max(measure(term), ...quals.map(([v]) => measure(v, NOTE))), left = 960 - (GAP_W + NAME_GAP + wide) / 2, step = labelSize(NOTE) * LEADING, height = labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + step * (quals.length - 1);
   box(left, GAP_Y - GAP_H / 2, GAP_W, GAP_H, {
     stroke: P.muted,
-    alpha: a * named(t, L(c.gap, c.ownTools)),
+    alpha: a * named(t, termAt),
     radius: 14,
     width: 2.5,
     dash: [10, 8]
   });
   [92, 60, 78].forEach((w, i) => {
-    const at = c.ownTools + 0.05 + 0.12 * i, x = left + 26, y = GAP_Y - 18 + 18 * i;
-    line(x, y, x + w * drawnShare({ t, at }, w), y, {
+    const at = c.ownTools + 0.05 + 0.12 * i, x2 = left + 26, y = GAP_Y - 18 + 18 * i;
+    line(x2, y, x2 + w * drawnShare({ t, at }, w), y, {
       color: P.muted,
       alpha: a * 0.8 * ramp(t, at - 0.05, 0.2),
       width: 2.5
     });
   });
-  const height = termRowLayout(term, qual, Infinity, false).height;
-  termRow(t, term, [L(c.gap, c.ownTools)], qual, [c.only], left + GAP_W + NAME_GAP, GAP_Y - height / 2, {
-    alpha: a,
-    inline: false
+  const x = left + GAP_W + NAME_GAP, head = nameText(term, x, GAP_Y - height / 2, {
+    align: "left",
+    valign: "top",
+    alpha: a * named(t, termAt)
   });
+  quals.forEach(
+    ([v, at], i) => nameText(v, x, head.bottom + TERM_STACK + i * step, {
+      align: "left",
+      valign: "top",
+      size: NOTE,
+      color: P.muted,
+      alpha: a * named(t, at)
+    })
+  );
 }
 function stageSystems(t, a, c) {
   if (a <= 0) return;
@@ -3639,7 +3672,8 @@ scenes["03"] = function(s, t) {
     later: ["回头去查", "check it later"],
     outside: ["出了这个范围", "outside that scope"],
     notCount: ["就不算数", "does not count"],
-    // 03.6 the tools it relies on, what they reduce, and the gap for which it writes its own.
+    // 03.6 the tools it relies on, what they are shown to reduce, and the gap and the net benefit for which it writes
+    // its own.
     tCut: ["ETHOS 自己的代码", "its own code"],
     ownCode: ["ETHOS 自己的代码", "its own code"],
     oneJob: ["内核这一件事", "the kernel's one job"],
@@ -3647,11 +3681,17 @@ scenes["03"] = function(s, t) {
     mature: ["现成、成熟的工具", "mature tools that already exist"],
     exist: ["现成、成熟的工具", "that already exist"],
     git: ["Git", "Git"],
-    reduce: ["减少总体的维护量", "to reduce total maintenance"],
-    // Chinese names the gap before the tools of its own; English names its own tools first, then the gap.
+    // Chinese says the three reductions in one phrase, its gloss; English says the words that make them a condition,
+    // then each reduction, each its own name.
+    reduce: ["减少总体的维护量", "shown to reduce"],
+    upkeep: ["减少总体的维护量", "total maintenance"],
+    risk: ["运行风险", "operational risk"],
+    burden: ["使用方的负担", "burden on adopters"],
+    // Chinese names the gap and the net benefit before the tools of its own; English names its own tools first, then
+    // the gap and the net benefit.
     gap: ["证实有缺口", "a demonstrated gap"],
+    benefit: ["确实划算", "a net benefit"],
     ownTools: ["才自己写", "It writes its own tools"],
-    only: ["证实有缺口", "only to fill"],
     // 03.7 the systems it leaves as they are, and what it owns in one place.
     sCut: ["ETHOS 也不接管", "ETHOS does not take over"],
     systems: ["原有的系统", "the systems you already have"],
@@ -4313,6 +4353,7 @@ function readersStage(s, t, c, g) {
 }
 
 // picture/film/scenes/p04/accounting.js
+var SUMMARY_FAINT = 0.33;
 var EX_W = 260;
 var EX_H = 104;
 function exampleCard(x, y, corrected, a) {
@@ -4343,7 +4384,7 @@ function examplesStage(s, t, c, g) {
   ), em = labelSize(LABEL), Y3 = heading.bottom + 40 + em + NAME_GAP, goesName = L("要去掉", "Goes"), corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]), corrQual = L([], ["same stock, same day"]), reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10, reachRight = 280 + Math.max(
     EX_W,
     measure(corrTerm.join("")) + (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0)
-  ) / 2, joined = glideShare(t, c.correction + 0.05, 280, 0.9), lean = (reachLeft - reachRight) / 2 * joined * (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)), X1 = 960 + lean - 280 * joined, X2 = X1 + 560, vy = Y3 + 72, q = flowClock(t);
+  ) / 2, joined = en ? 1 : glideShare(t, c.correction + 0.05, 280, 0.9), lean = en ? 0 : (reachLeft - reachRight) / 2 * joined * (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)), X1 = 960 + lean - 280 * joined, X2 = X1 + 560, vy = Y3 + 72, q = flowClock(t);
   const one = g * named(t, c.exact), goes = drawnShare({ t, at: c.goes + 0.05 }, EX_W - 52), gone = g * named(t, c.goes);
   exampleCard(X1, Y3, false, one);
   stroke(
@@ -4371,9 +4412,9 @@ function examplesStage(s, t, c, g) {
   });
   const [v0, v1] = valueCell(X2 - EX_W / 2 + 34, EX_W - 68);
   beats(t, (v0 + v1) / 2, vy, 22, [c.saved], { alpha: g });
-  const qy = Y3 + 280, qw = measure(QUOTE()) + 56, turn = Y3 + EX_H + 40, tried = g * named(t, c.quote2), draw = { t, at: c.quote2 + 0.05 };
-  card(960 - qw / 2, qy - 32, qw, 64, { alpha: g, color: P.ink });
-  nameText(QUOTE(), 960, qy, { alpha: g });
+  const qy = Y3 + 280, qw = measure(QUOTE()) + 56, turn = Y3 + EX_H + 40, written = g * named(t, c.quoteClause - 0.2), tried = g * named(t, c.quote2), draw = { t, at: c.quote2 + 0.05 };
+  card(960 - qw / 2, qy - 32, qw, 64, { alpha: g * mix(SUMMARY_FAINT, 1, written), color: P.ink });
+  nameText(QUOTE(), 960, qy, { alpha: written });
   linkSet(
     [
       [960 - qw / 2 + 40, qy - 32, X1, Y3 + EX_H, "vhv", turn],
@@ -4617,6 +4658,7 @@ function cuesOf(s) {
   c.goes = cueFrom(s, "要去掉", "goes", c.exact);
   c.stays = cueFrom(s, "要留下", "stays", c.correction);
   c.quote2 = cueFrom(s, "按股票代码和日期去重", "Deduplicate by stock code and date", c.correction);
+  c.quoteClause = cueFrom(s, "那句", "Deduplicate by stock code and date", c.correction);
   c.summaries = cueFrom(s, "总结", "summaries", c.memory);
   c.originalAgain = cueFrom(s, "原话", "the original words", c.first6);
   c.f2 = cueFrom(s, "为什么要解决", "why", c.f1);
@@ -4651,7 +4693,7 @@ var PLANES_TOP = 420;
 var PLANE_STATES = ["pass", "unknown", "none", "none", "none"];
 var planeTop = (top, i) => top + (4 - i) * PLANE_STEP;
 var planeNames = () => L(
-  [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["使用"], ["实际效益"]],
+  [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["在用"], ["实际效益"]],
   [
     ["The local proof"],
     ["Automated checks on GitLab and GitHub"],
@@ -5324,7 +5366,8 @@ var VIEWS = () => L(
 );
 var GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
 var VIEWS_NAME = () => L("给人看的视图", "Views");
-var ROLE = () => L(["帮人看清楚"], ["help people see"]);
+var KEPT = () => L("看板", "View");
+var ROLE = () => L(["帮人看清楚"], ["helps people see"]);
 var JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]);
 var CONDITIONS = () => L(["不明确", "，或者预想的状态已经过时"], ["ambiguous", " or stale"]);
 var openingOf = (size) => 0.82 * 164 * (size / 512);
@@ -5338,15 +5381,15 @@ function viewsParts(c = {}) {
   ];
 }
 function viewsReach(t, c) {
-  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]);
-  return reachAt(t, first[1], rest, 0.8);
+  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]), names2 = VIEWS(), opening = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT + Math.max(...names2.slice(0, 2).map((v) => measure(v))), seat = L((opening + first[1]) / 2, first[1]);
+  return reachAt(t, seat, rest.filter(([, right]) => right > first[1]), 0.8);
 }
 function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right))) {
   const e = markExtent(VIEWS_SIZE, FULL);
   return { x: 960 - (e.left + reach) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
 }
 function refusalReach(t, c) {
-  const text2 = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, [first, second] = CONDITIONS(), before = Math.max(...viewsParts().map(([, right]) => right)), base = text2 + Math.max(measure(VIEWS()[1]), measure(ROLE()[0], NOTE)), settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
+  const text2 = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, [first, second] = CONDITIONS(), before = Math.max(...viewsParts().map(([, right]) => right)), base = text2 + Math.max(measure(KEPT()), measure(ROLE()[0], NOTE)), settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
   const parts2 = [
     [c.ambiguous, text2 + measure(first, NOTE)],
     [c.stale, text2 + measure(first + second, NOTE)],
@@ -5426,7 +5469,7 @@ function viewIcon(i, x, y, a) {
   else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
 function views(t, c, g, place, { only = null, flow = null, since = null, linked = true, back = null, role = null } = {}) {
-  const ats = back === null ? c.views : c.views.map(() => back.at), names2 = VIEWS(), v = viewsOf(place), set = only === null ? "views" : role ? "dashboard" : "view";
+  const ats = back === null ? c.views : c.views.map(() => back.at), names2 = VIEWS().map((v2, i) => role && i === 1 ? role.name : v2), v = viewsOf(place), set = only === null ? "views" : role ? "dashboard" : "view";
   names2.forEach((name, i) => {
     if (only !== null && only !== i) return;
     const on = g * ramp(t, ats[i] - 0.15, 0.4);
@@ -5527,7 +5570,7 @@ function notAuthorityStage(s, t, c, g) {
   views(t, c, g, place, {
     only: 1,
     linked: false,
-    role: { text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) }
+    role: { name: KEPT(), text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) }
   });
   innerBranch(g, place, 1);
   const refused = g * named(t, c.never), way = lengthOf(linkPoints(v.vx - 36, v.ys[1], b.end, b.by + 22, { route: "hv" })), reach = drawnShare({ t, at: c.never + 0.05 }, way, 0.45) + drawnShare({ t, at: c.act + 0.05 }, way, 0.55), counts = L("不是权威依据", "Never counts as authority"), room = v.vx - 30 - 20 - (v.open - 16), mouth = v.open - 16 + room / 2;
@@ -6385,7 +6428,9 @@ function ownRepository(s, t, a) {
 }
 var DUPLICATES = [200, 104];
 var ROW_GAP = 50;
-var CHECK = [440, 240];
+var CHECK = [460, 240];
+var FRAME_CY = 540;
+var SAFE_BOTTOM = 920;
 function replacementCheck(x, y, alpha) {
   if (alpha < 0.01) return;
   const [w, h] = CHECK, x0 = x - w / 2 + 34;
@@ -6401,16 +6446,16 @@ function replacementCheck(x, y, alpha) {
 }
 function replacement(s, t, a) {
   if (a <= 0) return;
-  const [newAt, weakAt, scriptAt, dupAt, checkAt, catchAt] = cues(s, [
-    ["新做法", "A replacement"],
+  const [cutAt2, weakAt, scriptAt, dupAt, checkAt, catchAt] = cues(s, [
+    ["换上的新做法", "A replacement"],
     ["不能比旧的弱", "may never be weaker"],
     ["脚本查出的重复", "the script caught"],
     ["查出的重复", "every duplicate"],
     ["声明的检查都要查出来", "the declared check"],
     ["都要查出来", "must catch every duplicate"]
   ]);
-  const term = [L("新做法", "A replacement")], qual = [L("不能比旧的弱", "never weaker")], em = labelSize(LABEL), ruleHeight = termRowLayout(term, qual, Infinity, false).height, height = ruleHeight + NAME_GAP + CHECK[1] + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em, top = CONTENT_CY - height / 2, CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2, RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2, SX = 960 - 260, DX = 960 + 260, rowTop = rowNameTop([RY + SCRIPT[1] / 2, RY + DUPLICATES[1] / 2]), n = a * named(t, newAt), sIn = a * named(t, scriptAt), dIn = a * named(t, dupAt);
-  termRow(t, term, [newAt], qual, [weakAt], 960, top, { alpha: a, align: "center" });
+  const term = [L("新做法", "A replacement")], qual = [L("不能比旧的弱", "never weaker")], em = labelSize(LABEL), ruleHeight = termRowLayout(term, qual, Infinity, false).height, first = ruleHeight + NAME_GAP + CHECK[1], height = first + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em, top = Math.min(FRAME_CY - (first + height) / 4, SAFE_BOTTOM - NAME_GAP - height), CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2, RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2, SX = 960 - 260, DX = 960 + 260, rowTop = rowNameTop([RY + SCRIPT[1] / 2, RY + DUPLICATES[1] / 2]), n = a * named(t, cutAt2), sIn = a * named(t, scriptAt), dIn = a * named(t, dupAt);
+  termRow(t, term, [cutAt2], qual, [weakAt], 960, top, { alpha: a, align: "center" });
   replacementCheck(960, CY, n);
   nameText(L("声明的检查", "The declared check"), 960, CY + CHECK[1] / 2 + NAME_GAP, {
     valign: "top",
@@ -6593,7 +6638,7 @@ scenes["07"] = function(s, t) {
     ["这个脚本要是留着", "If the script stays"],
     ["这就是第四条准则", "That is rule four"],
     ["ETHOS 判断", "ETHOS judges"],
-    ["新做法", "A replacement"],
+    ["换上的新做法", "A replacement"],
     ["一项正式变更", "An official Change"],
     ["每个机制", "Every mechanism"],
     ["已经没有义务的机制", "Keep the ones"]

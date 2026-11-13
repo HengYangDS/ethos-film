@@ -106,9 +106,14 @@ const VIEWS = () =>
   );
 const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
   VIEWS_NAME = () => L("给人看的视图", "Views");
-/* What 06.5's refusal says of the dashboards, agreeing with their plural name above it, and the judgment with its
- * conditions. */
-const ROLE = () => L(["帮人看清楚"], ["help people see"]),
+/* What 06.5's refusal says of the view kept on alone, under the name it takes there, and the judgment with its
+ * conditions. English names it in the voice's word, "View", whose rule it states, with the dashboard's icon as its
+ * example (EN-R17-05): set over its role, "A view" would repeat 9 of the 11 words of the caption cue that says it,
+ * with the refusal's name under the cross, and "View" repeats 8, under four fifths. Chinese keeps 看板: the voice says
+ * 视图能帮人看清楚, and 视图 over 帮人看清楚 is no more a phrase it says than 看板 is, so the sync audit could judge
+ * neither. */
+const KEPT = () => L("看板", "View"),
+  ROLE = () => L(["帮人看清楚"], ["helps people see"]),
   JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]),
   CONDITIONS = () => L(["不明确", "，或者预想的状态已经过时"], ["ambiguous", " or stale"]);
 /* The opening's place for a mark at `size`, from its origin. */
@@ -127,10 +132,20 @@ function viewsParts(c = {}) {
   ];
 }
 /* How far right the views reach at t as they build: a part that reaches further than those before it widens the
- * whole, gliding from just after its words (reachAt). */
+ * whole, gliding from just after its words (reachAt). The list stands laid out whole from its first word, but its first
+ * two names stand for over a second before the wider ones join them: in Chinese, seated for the whole list, the mark
+ * and those names stood 57 px left of the centre for 1.3 s (zh-R17-09). There the mark stands from the cut midway
+ * between where those first names and the whole list are centred, so each state stands within 30 px of the centre,
+ * and a part that reaches beyond the list glides the whole from that seat. In English the first names stand at most
+ * 40 px off, and from that midway seat the green dashboard's qualifier would leave the picture 110 px right of the
+ * centre before its glide, against 91 px from the list's own seat, so English keeps the list's seat. */
 function viewsReach(t, c) {
-  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]);
-  return reachAt(t, first[1], rest, 0.8);
+  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]),
+    names = VIEWS(),
+    opening =
+      openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT + Math.max(...names.slice(0, 2).map((v) => measure(v))),
+    seat = L((opening + first[1]) / 2, first[1]);
+  return reachAt(t, seat, rest.filter(([, right]) => right > first[1]), 0.8);
 }
 /* The mark's place from 06.4: the mark and what beyond its opening reaches `reach` px right of its origin, centred
  * together; by default, once every part stands. */
@@ -146,7 +161,7 @@ function refusalReach(t, c) {
   const text = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT,
     [first, second] = CONDITIONS(),
     before = Math.max(...viewsParts().map(([, right]) => right)),
-    base = text + Math.max(measure(VIEWS()[1]), measure(ROLE()[0], NOTE)),
+    base = text + Math.max(measure(KEPT()), measure(ROLE()[0], NOTE)),
     settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
   const parts = [
     [c.ambiguous, text + measure(first, NOTE)],
@@ -253,11 +268,12 @@ function views(t, c, g, place, { only = null, flow = null, since = null, linked 
   // The four views build and leave as one list; one view kept on alone after them is no longer that list's member. A
   // view that returns alone (`back`, the time its words bring it back) is computed again: its link draws out from the
   // opening from the cut, and the view arrives at its end. `flow` runs the links' flows from `since`, the time they
-  // begin, their dots entering from the opening then, each link's flow setting off in turn. A `role` ({text, at}) is
-  // said of the dashboard kept on alone: it stands as the name's gloss under it, in place of the inline qualifier, so
-  // that stage's dashboard is a set of its own rather than the green one of the stage before it.
+  // begin, their dots entering from the opening then, each link's flow setting off in turn. A `role` ({name, text,
+  // at}) is said of the dashboard kept on alone: it stands as the name's gloss under it, in place of the inline
+  // qualifier, so that stage's dashboard is a set of its own rather than the green one of the stage before it, under
+  // the name the role gives it.
   const ats = back === null ? c.views : c.views.map(() => back.at),
-    names = VIEWS(),
+    names = VIEWS().map((v, i) => (role && i === 1 ? role.name : v)),
     v = viewsOf(place),
     set = only === null ? "views" : role ? "dashboard" : "view";
   names.forEach((name, i) => {
@@ -391,11 +407,11 @@ export function notAuthorityStage(s, t, c, g) {
     v = viewsOf(place),
     b = branchOf(place);
   boundaryMark(t, c, g, place);
-  // The view's role joins under the dashboard on its own words, which follow the stage's first words.
+  // The view is named from the cut, on the stage's first words, and its role joins under it on its own words.
   views(t, c, g, place, {
     only: 1,
     linked: false,
-    role: { text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) },
+    role: { name: KEPT(), text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) },
   });
   innerBranch(g, place, 1);
   // Taken as authority: a dashed relation from the view back into the boundary, struck at the opening; acting on the

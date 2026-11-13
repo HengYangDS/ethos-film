@@ -105,6 +105,8 @@ function cuesOf(s) {
   c.goes = cueFrom(s, "要去掉", "goes", c.exact);
   c.stays = cueFrom(s, "要留下", "stays", c.correction);
   c.quote2 = cueFrom(s, "按股票代码和日期去重", "Deduplicate by stock code and date", c.correction);
+  // The clause that quotes the summary in 04.5 opens on 那句 in Chinese and on the quotation itself in English.
+  c.quoteClause = cueFrom(s, "那句", "Deduplicate by stock code and date", c.correction);
   c.summaries = cueFrom(s, "总结", "summaries", c.memory);
   // 04.6 names the original words again; their first occurrence is 04.3's.
   c.originalAgain = cueFrom(s, "原话", "the original words", c.first6);

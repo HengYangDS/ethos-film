@@ -857,6 +857,11 @@
             "kind": "contextual-mandarin-word",
             "target_reading": "míng què de",
             "dictionary_disagreement": "地 is the adverbial particle de after 明确; the dictionary reads 地 alone as dì."
+          },
+          {
+            "term": "划算",
+            "kind": "contextual-mandarin-word",
+            "target_reading": "huá suàn"
           }
         ],
         "sandhi": "Natural Mandarin connected-speech tone sandhi and weak grammatical syllables; never force isolated citation tones.",

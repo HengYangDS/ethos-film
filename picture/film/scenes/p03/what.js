@@ -85,7 +85,8 @@ scenes["03"] = function (s, t) {
     later: ["回头去查", "check it later"],
     outside: ["出了这个范围", "outside that scope"],
     notCount: ["就不算数", "does not count"],
-    // 03.6 the tools it relies on, what they reduce, and the gap for which it writes its own.
+    // 03.6 the tools it relies on, what they are shown to reduce, and the gap and the net benefit for which it writes
+    // its own.
     tCut: ["ETHOS 自己的代码", "its own code"],
     ownCode: ["ETHOS 自己的代码", "its own code"],
     oneJob: ["内核这一件事", "the kernel's one job"],
@@ -93,11 +94,17 @@ scenes["03"] = function (s, t) {
     mature: ["现成、成熟的工具", "mature tools that already exist"],
     exist: ["现成、成熟的工具", "that already exist"],
     git: ["Git", "Git"],
-    reduce: ["减少总体的维护量", "to reduce total maintenance"],
-    // Chinese names the gap before the tools of its own; English names its own tools first, then the gap.
+    // Chinese says the three reductions in one phrase, its gloss; English says the words that make them a condition,
+    // then each reduction, each its own name.
+    reduce: ["减少总体的维护量", "shown to reduce"],
+    upkeep: ["减少总体的维护量", "total maintenance"],
+    risk: ["运行风险", "operational risk"],
+    burden: ["使用方的负担", "burden on adopters"],
+    // Chinese names the gap and the net benefit before the tools of its own; English names its own tools first, then
+    // the gap and the net benefit.
     gap: ["证实有缺口", "a demonstrated gap"],
+    benefit: ["确实划算", "a net benefit"],
     ownTools: ["才自己写", "It writes its own tools"],
-    only: ["证实有缺口", "only to fill"],
     // 03.7 the systems it leaves as they are, and what it owns in one place.
     sCut: ["ETHOS 也不接管", "ETHOS does not take over"],
     systems: ["原有的系统", "the systems you already have"],

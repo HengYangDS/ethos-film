@@ -27,9 +27,10 @@ export const PLANE_STATES = ["pass", "unknown", "none", "none", "none"];
 /* The top of plane `i` in a stack whose top is `top`: the local proof, plane 0, at the base, and each later plane one
  * step above the one before, so the evidence reads upward from what was verified here to the benefit observed. */
 export const planeTop = (top, i) => top + (4 - i) * PLANE_STEP;
+/* Each plane is named in the voice's words: the fourth in Chinese is 在用, as 还没有人在用 says it (zh-R17-04). */
 export const planeNames = () =>
   L(
-    [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["使用"], ["实际效益"]],
+    [["在本地做的完整核验"], ["GitLab 和 GitHub 上的自动检查"], ["发布"], ["在用"], ["实际效益"]],
     [
       ["The local proof"],
       ["Automated checks on GitLab and GitHub"],

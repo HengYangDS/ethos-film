@@ -30,7 +30,6 @@ import {
   TERM_STACK,
   growName,
   nameText,
-  termRow,
   wrapName,
 } from "../../naming/names.js";
 import { railStations, rowNameTop } from "../../naming/placement.js";
@@ -91,12 +90,15 @@ function die(x, y, s, { alpha = 1 } = {}) {
 }
 /* Checks that multiply with the Agents: `n` columns of a small Agent over the check it must redo, drawn as one mark of
  * outlines, one of cores and one of checks, so the grid reads as one growing mark. The row stands centred on x for its
- * `n` columns as n grows, so it re-centres continuously, and the column arriving at its open end grows in by its size. */
+ * `n` columns as n grows, so it re-centres continuously, and the column arriving at its open end grows in by its size,
+ * easing in and out over the step of n that brings it. Grown in step with n, a column could be caught a third grown in
+ * the first frame that draws it: in Chinese the sixth Agent's 9 px outline appeared whole within one frame, a pop at
+ * full ink (filmkit 0.21). */
 function checksGrid(x, y, n, { alpha = 1, step = 46 } = {}) {
   if (alpha < 0.01) return;
   const cols = Array.from({ length: Math.ceil(n - 1e-6) }, (_, i) => [
       x + (i - (n - 1) / 2) * step,
-      clamp(n - i),
+      ease(clamp(n - i)),
     ]),
     r = 22 * 0.55,
     c = 4.5 * 0.55;
@@ -425,7 +427,10 @@ scenes["01"] = function (s, t) {
   // 4. Writing code keeps getting easier: a line from one origin, named at its end, that steepens on the words
   // that say so and keeps rising while the voice speaks. Whether you can rely on it stays where it was: a flat line
   // from the same origin, lit once on the words that say it does not change. The two lines stand centred with the names
-  // at their ends: the first with its own name, then, gliding on the words that name the second, with both.
+  // at their ends: in English the first with its own name, then, gliding on the words that name the second, with both.
+  // The Chinese 写代码 is 116 px narrower than 能不能信得过它, so that glide moved the finished pair about 60 px as its
+  // second curve was named (zh-R17-05); there the pair stands still from the cut, midway between where the first line
+  // with its name and the finished pair are centred, so each of the two states stands about 30 px off the centre.
   if (stageC > 0) {
     const X0 = 340,
       X1 = 1300,
@@ -435,11 +440,11 @@ scenes["01"] = function (s, t) {
       relyWide = Math.max(...wrapName(relyName, 300).map((v) => measure(v))),
       ends = X1 + 7 + NAME_GAP,
       centre = (w) => 960 - (X0 + ends + w) / 2,
-      shift = mix(
-        centre(measure(writingName)),
-        centre(Math.max(measure(writingName), relyWide)),
-        glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7),
-      ),
+      alone = centre(measure(writingName)),
+      both = centre(Math.max(measure(writingName), relyWide)),
+      shift = en
+        ? mix(alone, both, glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7))
+        : (alone + both) / 2,
       climb =
         120 +
         160 * soon(t, easier + 0.05, 1.6) +
@@ -532,16 +537,23 @@ scenes["01"] = function (s, t) {
         });
         flowAlong(way, q, 5, { upto: forked, color: P.ink, alpha: fork * speaking(t, ways, i) });
         // The costs stay short: the die is luck, and the growing row of Agents and checks says how many there are.
-        termRow(
-          t,
-          [L(["照单全收", "从头再查一遍"], ["Take it on trust", "Check everything again"])[i]],
-          [ways[i]],
-          [L(["运气", "查不过来"], ["a gamble", "stops working"])[i]],
-          [costs[i]],
+        // Each way and its cost are two names, the cost set under the way as a qualifier stands under its term, so
+        // each is judged by its own words: as one name, "Check everything again stops working" stood from the way's
+        // words, 3.8 s before the clause that says the cost (filmkit 0.21.0). The costs are a set of their own, as
+        // qualifiers in the lower case are, beside the ways' names.
+        const wayName = nameText(
+          L(["照单全收", "从头再查一遍"], ["Take it on trust", "Check everything again"])[i],
           x,
           NY,
-          { alpha: stageD * listLevel(t, ways, i), align: "center", set: "ways" },
+          { valign: "top", alpha: stageD * listLevel(t, ways, i) * named(t, ways[i]), set: "ways" },
         );
+        nameText(L(["运气", "查不过来"], ["a gamble", "stops working"])[i], x, wayName.bottom + TERM_STACK, {
+          valign: "top",
+          size: NOTE,
+          color: P.muted,
+          alpha: stageD * listLevel(t, ways, i) * named(t, costs[i]),
+          set: "costs",
+        });
         const on = stageD * ramp(t, marks[i] - 0.15, 0.4);
         // Each way's short link ends with its point clear above its cost's mark, so the checks' link does not land on
         // the middle Agent of the row.
@@ -549,7 +561,9 @@ scenes["01"] = function (s, t) {
       });
       die(XS[0], GY, 46, { alpha: stageD * ramp(t, luck - 0.15, 0.4) });
       const grid = stageD * ramp(t, cant - 0.15, 0.4);
-      checksGrid(XS[1], GY - 16, mix(2, 7, glideShare(t, many + 0.05, (5 * 46) / 2, 0.65)), {
+      // The row grows from two columns to seven over a second, so each column takes at least four frames to grow in
+      // and is at most a sixth grown in the first frame that draws it.
+      checksGrid(XS[1], GY - 16, mix(2, 7, glideShare(t, many + 0.05, (5 * 46) / 2, 1)), {
         alpha: grid,
       });
     }
