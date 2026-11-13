@@ -20,11 +20,11 @@ import { ruleOneHeading, rowHalf } from "./rule-one.js";
 
 /* 04.5's examples stand this far under the stage's heading, and the summary SUMMARY_DROP under the cards' tops. The
  * rule's heading over them is fixed, so the picture reaches from it to the cards while the examples are told, 4.6 s
- * in English and 5.8 s in Chinese, and to the summary once it is quoted: at these drops the first stands about 74 px
+ * in English and 5.8 s in Chinese, and to the summary once it is quoted: at these drops the first stands about 77 px
  * above the content's centre line, within the 8% the thought's late instant allows, which falls just before the
- * summary's clause in both editions, and the second about 16 px below it, its card 64 px clear of the caption
- * (EN-R18-04). */
-const EXAMPLES_DROP = 176,
+ * summary's clause in both editions, and the second about 13 px below it, its card 84 px above the caption's ink
+ * (EN-R18-04, zh-R18-05). */
+const EXAMPLES_DROP = 170,
   SUMMARY_DROP = 252;
 /* An example card: two records; in the second example the second record carries a corrected value. */
 const EX_W = 260,

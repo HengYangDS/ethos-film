@@ -4354,7 +4354,7 @@ function readersStage(s, t, c, g) {
 }
 
 // picture/film/scenes/p04/accounting.js
-var EXAMPLES_DROP = 176;
+var EXAMPLES_DROP = 170;
 var SUMMARY_DROP = 252;
 var EX_W = 260;
 var EX_H = 104;
