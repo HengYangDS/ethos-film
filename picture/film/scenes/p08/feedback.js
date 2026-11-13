@@ -73,7 +73,9 @@ const INTO_RUN = [
  * one leg before it has reached its end. */
 const WAY = [...INTO_RUN, ...INTO_SLOT.slice(1)],
   wayTo = (points) =>
-    points.slice(1).reduce((v, p, i) => v + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]), 0),
+    points
+      .slice(1)
+      .reduce((v, p, i) => v + Math.hypot(p[0] - points[i][0], p[1] - points[i][1]), 0),
   RUN_WAY = wayTo(INTO_RUN),
   SLOT_WAY = wayTo(INTO_SLOT);
 const travel = (toRun, toSlot) =>
@@ -141,7 +143,8 @@ export function corrections(s, t, a) {
     // Each leg by the film's structural glide over its way, the slot's leg arriving as its words end: the first
     // correction reaches the slot of a single correction by the end of that name's clause, and the second reaches it
     // as it is said to overwrite the first, so each stands in the slot while it is named.
-    const into = (at, until, way) => glideShare(t, Math.min(at + 0.2, until - glideTime(way, 0.8)), way, 0.8);
+    const into = (at, until, way) =>
+      glideShare(t, Math.min(at + 0.2, until - glideTime(way, 0.8)), way, 0.8);
     const [x1, y1] = travel(
         glideShare(t, twoAt + 0.1, RUN_WAY, 1.0),
         into(singleAt, secondAt, SLOT_WAY),

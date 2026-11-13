@@ -301,18 +301,9 @@ export function stageWrongGoal(t, a, c) {
   [58, 36].forEach((r) => ring(TX, DY, r, { color: P.ink, alpha: a, width: 2.5 }));
   dot(TX, DY, 10, { color: P.ink, alpha: a });
   cross(TX + 62, DY - 62, 26, { color: P.ink, alpha: aim, width: 3.5 });
-  termRow(
-    t,
-    [L("目标", "The wrong goal")],
-    [c.goal],
-    L(["是错的"], []),
-    [c.wrong],
-    TX,
-    namesTop,
-    {
-      width: 400,
-      alpha: a,
-      align: "center",
-    },
-  );
+  termRow(t, [L("目标", "The wrong goal")], [c.goal], L(["是错的"], []), [c.wrong], TX, namesTop, {
+    width: 400,
+    alpha: a,
+    align: "center",
+  });
 }

@@ -180,12 +180,18 @@ export function stagePath(t, a, c) {
     alone = Math.max(60, measure(party[0])),
     heading = en
       ? measure(travellers)
-      : mix(alone, measure(travellers), glideShare(t, c.agents + 0.05, (measure(travellers) - alone) / 2, 0.7)),
+      : mix(
+          alone,
+          measure(travellers),
+          glideShare(t, c.agents + 0.05, (measure(travellers) - alone) / 2, 0.7),
+        ),
     // Where the path starts: the picture spans from it to the end of the travellers' heading, which starts 10 px
     // right of it, or to the path's end and, once it is said, the name there, whichever reaches further, and stands
     // centred. The two reaches meet by a soft maximum, so the picture sets off gently as the path passes the heading.
     named2 = glideShare(t, nameAt - 0.1, (NAME_GAP + measure(endName)) / 2, 0.6),
-    X0 = 960 - softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2,
+    X0 =
+      960 -
+      softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2,
     PY = mix(560, 380, glideShare(t, c.three + 0.05, 180, 0.7)),
     X1 = X0 + PATH_LEN,
     reach = mix(X0, X1, drawn),

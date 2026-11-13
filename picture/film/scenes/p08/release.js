@@ -209,7 +209,9 @@ export function liveUse(s, t, a) {
     NEEDS_END = NEED_X + 50 + Math.max(...widths),
     // The picture stands midway between where the narrowest and the widest column of needs that lasts is centred with
     // the rail (lastingReach); the rail's stretch beyond holds about the finished extent until the needs begin.
-    [near, far] = lastingReach([versionAt, envAt, baseAt, periodAt].map((at, i) => [at, widths[i]])),
+    [near, far] = lastingReach(
+      [versionAt, envAt, baseAt, periodAt].map((at, i) => [at, widths[i]]),
+    ),
     S = 960 - (220 - 2 + NEED_X + 50) / 2 - (near + far) / 4;
   const QX = 1100,
     QY = RAIL_Y - 11,

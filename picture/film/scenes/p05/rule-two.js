@@ -132,7 +132,11 @@ export function ruleTwoHeading(t, c, g) {
  * step, the one that passed, is open. */
 export function separateStage(s, t, c, g) {
   ruleTwoHeading(t, c, g);
-  const x = mix(960 - PLANE_W / 2, separateX(), glideShare(t, c.nextStep + 0.05, stepsReach() / 2, 0.7)),
+  const x = mix(
+      960 - PLANE_W / 2,
+      separateX(),
+      glideShare(t, c.nextStep + 0.05, stepsReach() / 2, 0.7),
+    ),
     nx = x + PLANE_W,
     reach = STEPS,
     steps = g * named(t, c.nextStep),

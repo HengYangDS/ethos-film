@@ -125,7 +125,10 @@ export function flowAlong(
       ease((travel - time) / edge) *
       clear.reduce(
         (k, [cx, cy, cr, presence = 1]) =>
-          k * (1 - ease(presence / 0.3) * (1 - ease((Math.hypot(x - cx, y - cy) - cr) / (FLOW_PACE * edge)))),
+          k *
+          (1 -
+            ease(presence / 0.3) *
+              (1 - ease((Math.hypot(x - cx, y - cy) - cr) / (FLOW_PACE * edge)))),
         1,
       );
     if (r * size < 0.5) continue;

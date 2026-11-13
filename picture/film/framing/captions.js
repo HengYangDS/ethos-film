@@ -12,7 +12,8 @@ const CAPTION_JOIN = 0.3;
  * an em short of its advance, and one that opens with a full-width opening mark sets it in the right half, so its ink
  * starts half an em late. Such a line is centred with that half hung past its edge, so its ink stands on the frame's
  * centre: the size is 26 px, and half of a 13 px hang moves the line 6.5 px, each way. */
-const HANGING = /[\u4e00-\u9fff].*[\u3001\uff0c\u3002\uff1b\uff1a\uff01\uff1f\uff09\u300d\u300f\u201d\u300b\u3011]$/u;
+const HANGING =
+  /[\u4e00-\u9fff].*[\u3001\uff0c\u3002\uff1b\uff1a\uff01\uff1f\uff09\u300d\u300f\u201d\u300b\u3011]$/u;
 const OPENING = /^[\uff08\u300c\u300e\u201c\u300a\u3010].*[\u4e00-\u9fff]/u;
 const HUNG_SHIFT = 6.5;
 export function caption(t) {

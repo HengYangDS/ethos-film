@@ -39,7 +39,8 @@ export const planeNames = () =>
       ["Actual benefit"],
     ],
   );
-export const planeQualifier = () => L(["可以在本地接着往下走"], ["the work may move forward locally"]);
+export const planeQualifier = () =>
+  L(["可以在本地接着往下走"], ["the work may move forward locally"]);
 /* A state at the right of a plane: pass a check, unknown a question mark, and nothing yet an empty dashed ring. */
 export function planeState(kind, x, y, alpha) {
   if (kind === "none") ring(x, y, 15, { color: P.line, alpha, width: 2, dash: [5, 6] });
@@ -83,7 +84,12 @@ export function claimRow(
   // level with the panel its start moves round from the Agent's top to its right point and the upward run shrinks
   // away, so the relation stays one line throughout.
   const up = clamp((ay - py) / 60);
-  link(ax + 22 * (1 - up), ay - 22 * up, edge.left, py, { route: "vh", alpha, flow, flowEvery: FLOW_EVERY });
+  link(ax + 22 * (1 - up), ay - 22 * up, edge.left, py, {
+    route: "vh",
+    alpha,
+    flow,
+    flowEvery: FLOW_EVERY,
+  });
   return edge;
 }
 /* On a middle anchor the Latin face's alphabetic baseline stands 0.1 em above the CJK face's (their typo boxes are

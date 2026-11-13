@@ -195,7 +195,11 @@ export function constraintsStage(s, t, c, g) {
     W = CW + 150 + 26 + NAME_GAP + nw,
     // The whole spans the constraint's name where it is wider than the card, and the dispositions' names.
     over = Math.max(0, rowHalf(term, qual) - CW / 2),
-    CX = mix(960 - CW / 2, 960 - (W - over) / 2, glideShare(t, c.kept + 0.05, Math.abs(W - over - CW) / 2, 0.9)),
+    CX = mix(
+      960 - CW / 2,
+      960 - (W - over) / 2,
+      glideShare(t, c.kept + 0.05, Math.abs(W - over - CW) / 2, 0.9),
+    ),
     CY = 470,
     rows = [0, 1, 2].map((i) => CY + 50 + i * 45);
   card(CX, CY, CW, CH, { alpha: g });

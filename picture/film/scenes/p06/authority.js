@@ -143,9 +143,17 @@ function viewsReach(t, c) {
   const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]),
     names = VIEWS(),
     opening =
-      openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT + Math.max(...names.slice(0, 2).map((v) => measure(v))),
+      openingOf(VIEWS_SIZE) +
+      VIEW_RUN +
+      VIEW_TEXT +
+      Math.max(...names.slice(0, 2).map((v) => measure(v))),
     seat = L((opening + first[1]) / 2, first[1]);
-  return reachAt(t, seat, rest.filter(([, right]) => right > first[1]), 0.8);
+  return reachAt(
+    t,
+    seat,
+    rest.filter(([, right]) => right > first[1]),
+    0.8,
+  );
 }
 /* The mark's place from 06.4: the mark and what beyond its opening reaches `reach` px right of its origin, centred
  * together; by default, once every part stands. */
@@ -264,7 +272,13 @@ function viewIcon(i, x, y, a) {
   } else if (i === 2) terminalIcon(x - 32, y - 26, 64, 52, { alpha: a });
   else bubble(x, y, 22, { alpha: a, color: P.ink });
 }
-function views(t, c, g, place, { only = null, flow = null, since = null, linked = true, back = null, role = null } = {}) {
+function views(
+  t,
+  c,
+  g,
+  place,
+  { only = null, flow = null, since = null, linked = true, back = null, role = null } = {},
+) {
   // The four views build and leave as one list; one view kept on alone after them is no longer that list's member. A
   // view that returns alone (`back`, the time its words bring it back) is computed again: its link draws out from the
   // opening from the cut, and the view arrives at its end. `flow` runs the links' flows from `since`, the time they
@@ -411,7 +425,11 @@ export function notAuthorityStage(s, t, c, g) {
   views(t, c, g, place, {
     only: 1,
     linked: false,
-    role: { name: KEPT(), text: ROLE(), at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b) },
+    role: {
+      name: KEPT(),
+      text: ROLE(),
+      at: cueFrom(s, "帮人看清楚", "helps people see", c.first5b),
+    },
   });
   innerBranch(g, place, 1);
   // Taken as authority: a dashed relation from the view back into the boundary, struck at the opening; acting on the

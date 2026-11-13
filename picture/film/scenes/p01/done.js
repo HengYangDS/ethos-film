@@ -24,14 +24,7 @@ import { commitDot, recoverIcon, repoIcon } from "../../drawing/workspace.js";
 import { illustrative } from "../../framing/chapters.js";
 import { titleSignature } from "../../framing/titles.js";
 import { beats, listIn, listLevel, named, speaking } from "../../naming/lists.js";
-import {
-  NAME_GAP,
-  NOTE,
-  TERM_STACK,
-  growName,
-  nameText,
-  wrapName,
-} from "../../naming/names.js";
+import { NAME_GAP, NOTE, TERM_STACK, growName, nameText, wrapName } from "../../naming/names.js";
 import { railStations, rowNameTop } from "../../naming/placement.js";
 import { LABEL, P } from "../../palette.js";
 import { scenes } from "../registry.js";
@@ -259,7 +252,10 @@ scenes["01"] = function (s, t) {
       base = railStations(names, 420, 1500, { wrap: WRAP }),
       inkLeft = base[0] - Math.max(RR, measure(names[0]) / 2),
       inkRight = base.at(-1) + Math.max(RR, measure(names.at(-1)) / 2),
-      buildRight = Math.max(base.at(-1) + POINT, base.at(-2) + Math.max(RR, measure(names.at(-2)) / 2)),
+      buildRight = Math.max(
+        base.at(-1) + POINT,
+        base.at(-2) + Math.max(RR, measure(names.at(-2)) / 2),
+      ),
       xs = base.map((x) => x + 960 - (2 * inkLeft + inkRight + buildRight) / 4),
       mid = (PY + CLAIM_H / 2 + RY - RR) / 2,
       wayTo = (x) =>
@@ -443,7 +439,11 @@ scenes["01"] = function (s, t) {
       alone = centre(measure(writingName)),
       both = centre(Math.max(measure(writingName), relyWide)),
       shift = en
-        ? mix(alone, both, glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7))
+        ? mix(
+            alone,
+            both,
+            glideShare(t, rely + 0.05, Math.abs(relyWide - measure(writingName)) / 2, 0.7),
+          )
         : (alone + both) / 2,
       climb =
         120 +
@@ -547,13 +547,18 @@ scenes["01"] = function (s, t) {
           NY,
           { valign: "top", alpha: stageD * listLevel(t, ways, i) * named(t, ways[i]), set: "ways" },
         );
-        nameText(L(["运气", "查不过来"], ["a gamble", "stops working"])[i], x, wayName.bottom + TERM_STACK, {
-          valign: "top",
-          size: NOTE,
-          color: P.muted,
-          alpha: stageD * listLevel(t, ways, i) * named(t, costs[i]),
-          set: "costs",
-        });
+        nameText(
+          L(["运气", "查不过来"], ["a gamble", "stops working"])[i],
+          x,
+          wayName.bottom + TERM_STACK,
+          {
+            valign: "top",
+            size: NOTE,
+            color: P.muted,
+            alpha: stageD * listLevel(t, ways, i) * named(t, costs[i]),
+            set: "costs",
+          },
+        );
         const on = stageD * ramp(t, marks[i] - 0.15, 0.4);
         // Each way's short link ends with its point clear above its cost's mark, so the checks' link does not land on
         // the middle Agent of the row.

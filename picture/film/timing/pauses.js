@@ -102,7 +102,11 @@ export const glideShare = (t, at, distance, least = 0.6) =>
  * a stroke `length` px long that sets off at `at`, over at least `least` seconds. */
 export const DRAW_PACE = 820;
 export const drawTime = (length, least = 0.4) =>
-  Math.max(least, (1.5 * Math.abs(length)) / DRAW_PACE, Math.sqrt((6 * Math.abs(length)) / GLIDE_PICKUP));
+  Math.max(
+    least,
+    (1.5 * Math.abs(length)) / DRAW_PACE,
+    Math.sqrt((6 * Math.abs(length)) / GLIDE_PICKUP),
+  );
 export const drawShare = (t, at, length, least = 0.4) =>
   ease((voiceTime(t) - voiceTime(at)) / drawTime(length, least));
 /* When such a stroke sets off so that it is whole by its thought's quiet, HOLD after the thought's last word, and never

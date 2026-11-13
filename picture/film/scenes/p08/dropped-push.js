@@ -47,18 +47,19 @@ const X0 = 240,
 
 export function droppedPush(s, t, a) {
   if (a <= 0) return;
-  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, stillAt, writtenAt, nextAt] = cues(s, [
-    ["要是推到一半断了线", "the connection drops"],
-    ["断了线", "drops"],
-    ["顺手再推一遍", "Just push again"],
-    ["也许已经成了", "may already have landed"],
-    ["耗时的写入", "a long write"],
-    ["先记下要做什么", "first notes"],
-    ["之后说清楚", "afterwards reports"],
-    ["还在不在写", "whether it is still running"],
-    ["写进去没有", "whether anything was written"],
-    ["下一步做什么才安全", "the one safe next action"],
-  ]);
+  const [nameAt, dropAt, againAt, landedAt, writeAt, noteAt, afterAt, stillAt, writtenAt, nextAt] =
+    cues(s, [
+      ["要是推到一半断了线", "the connection drops"],
+      ["断了线", "drops"],
+      ["顺手再推一遍", "Just push again"],
+      ["也许已经成了", "may already have landed"],
+      ["耗时的写入", "a long write"],
+      ["先记下要做什么", "first notes"],
+      ["之后说清楚", "afterwards reports"],
+      ["还在不在写", "whether it is still running"],
+      ["写进去没有", "whether anything was written"],
+      ["下一步做什么才安全", "the one safe next action"],
+    ]);
   const whatAt = cueFrom(s, "要做什么", "what it is about to do", noteAt),
     firstAt = cueFrom(s, "上一次", "The first push", againAt);
   const dropped = ramp(t, dropAt - 0.1, 0.4),
@@ -143,13 +144,22 @@ export function droppedPush(s, t, a) {
     draw: { t, at: afterAt + 0.05 },
   });
   docMark(REPORT_X - DOC[0] / 2, ROW_Y - DOC[1] / 2, DOC[0], DOC[1], { alpha: report, rows: 3 });
-  termRow(t, [L("之后说清楚", "Afterwards reports")], [afterAt], reports, [stillAt, writtenAt], REPORT_X, rowTop, {
-    alpha: a,
-    align: "center",
-    inline: false,
-    build: true,
-    width: Math.max(...reports.map((v) => measure(v, NOTE))),
-  });
+  termRow(
+    t,
+    [L("之后说清楚", "Afterwards reports")],
+    [afterAt],
+    reports,
+    [stillAt, writtenAt],
+    REPORT_X,
+    rowTop,
+    {
+      alpha: a,
+      align: "center",
+      inline: false,
+      build: true,
+      width: Math.max(...reports.map((v) => measure(v, NOTE))),
+    },
+  );
   // And the one safe next action: the open step, led to from the report.
   const next = a * named(t, nextAt);
   link(REPORT_X + DOC[0] / 2 + 10, ROW_Y, NEXT_X - STEP_R - 10, ROW_Y, {

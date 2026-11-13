@@ -150,7 +150,8 @@ export function modelRevision(s, t, a) {
     // it makes room for, so it has gone most of its way when that part's name appears.
     GX =
       at(right3) +
-      (at(right2) - at(right3)) * (1 - glideShare(t, checksAt - 0.65, at(right2) - at(right3), 0.8)) +
+      (at(right2) - at(right3)) *
+        (1 - glideShare(t, checksAt - 0.65, at(right2) - at(right3), 0.8)) +
       (seat - at(right2)) * (1 - glideShare(t, changeAt - 0.65, seat - at(right2), 0.8));
   ctx.save();
   ctx.translate(GX, 0);
@@ -292,7 +293,12 @@ export function noWayAround(s, t, a) {
 
 /* A lane of work: its folder, its track, and the points of work on it: a point held at `held`, or points flowing on
  * the flow clock `flow` (flowClock), from the flow clock `since`. */
-function workLane(x0, x1, y, { alpha = 1, flow = null, since = -Infinity, held = null, gate = null } = {}) {
+function workLane(
+  x0,
+  x1,
+  y,
+  { alpha = 1, flow = null, since = -Infinity, held = null, gate = null } = {},
+) {
   if (alpha < 0.01) return;
   folderIcon(x0, y - 26, 62, 52, { alpha });
   link(x0 + 70, y, x1, y, { alpha, end: false });
@@ -338,7 +344,11 @@ export function meanwhile(s, t, a) {
     OUT = 20,
     first = Math.max(GATE + 70, END1 + OUT + measure(WAIT), 600 + nameWidth(DEPEND, 420)),
     right = Math.max(first, END2 + OUT + measure(ON), 600 + measure(OTHER)),
-    S = mix(960 - (520 + first) / 2, 960 - (520 + right) / 2, glideShare(t, otherAt + 0.05, (right - first) / 2, 0.7)),
+    S = mix(
+      960 - (520 + first) / 2,
+      960 - (520 + right) / 2,
+      glideShare(t, otherAt + 0.05, (right - first) / 2, 0.7),
+    ),
     d = a * named(t, dependAt),
     o = a * named(t, otherAt);
   ctx.save();

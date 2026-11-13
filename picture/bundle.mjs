@@ -1,7 +1,8 @@
 /** The composition the engine reads, picture/film.js, bundled from the modules under picture/film/. esbuild resolves
  * their imports into one classic script whose scenes still register at the start of their lines, as the engine's
  * headless runtime finds them. Run it after editing a module: npm run compose. The composition test checks that the
- * tracked bundle is exactly what this produces. */
+ * tracked bundle is what this produces: byte for byte, or token for token while the tracked bytes are those of the
+ * reviewed films. */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";

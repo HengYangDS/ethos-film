@@ -323,7 +323,12 @@ export function replaceStage(s, t, c, g) {
     left = 960 - (col + 40 + Math.max(measure(gone), nameW)) / 2,
     start = 960 - (cw + 160 + qw + 40 + measure(summary[0])) / 2;
   const step = glideShare(t, c.replace + 0.05, 270, 0.6),
-    take = glideShare(t, c.replace + 0.35, Math.hypot(start + cw + 160 - left - (col - qw) / 2, 160), 0.7),
+    take = glideShare(
+      t,
+      c.replace + 0.35,
+      Math.hypot(start + cw + 160 - left - (col - qw) / 2, 160),
+      0.7,
+    ),
     fade = soon(t, c.noOne + 0.05, 1);
   // The original steps down at once and back as the summary rises, so neither card passes over the other.
   const ox = mix(start, left + (col - cw) / 2, take),

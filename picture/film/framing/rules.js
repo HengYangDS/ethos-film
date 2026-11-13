@@ -18,7 +18,13 @@ export const KICK_Y = 196,
 /* Where a rule's heading stands for a glyph of `size` built of the parts in `glyph` (a size of 0 sets no glyph): the
  * glyph's origin (mx, my), the text's left edge tx, its lines, and the block's top and bottom. `cx` and `dy` move the
  * whole heading, for a heading that settles into this place. */
-export function ruleHeadingLayout(number, statement, size, glyph, { cx = 960, dy = 0, wrap = RULE_WRAP } = {}) {
+export function ruleHeadingLayout(
+  number,
+  statement,
+  size,
+  glyph,
+  { cx = 960, dy = 0, wrap = RULE_WRAP } = {},
+) {
   const lines = wrapName(statement, wrap),
     tw = Math.max(measure(number, NOTE), ...lines.map((v) => measure(v))),
     top = KICK_Y - labelSize(NOTE) / 2 + dy,
@@ -40,7 +46,17 @@ export function ruleHeadingLayout(number, statement, size, glyph, { cx = 960, dy
  * the statement each stand whole from their words. Returns the layout. */
 export function ruleHeading(
   t,
-  { number, numberAt, statement, statementAt, size = 0, glyph = {}, shares = glyph, alpha = 1, ...o },
+  {
+    number,
+    numberAt,
+    statement,
+    statementAt,
+    size = 0,
+    glyph = {},
+    shares = glyph,
+    alpha = 1,
+    ...o
+  },
 ) {
   const h = ruleHeadingLayout(number, statement, size, glyph, o);
   if (size > 0) ethosMark(h.mx, h.my, size, { ...shares, alpha });

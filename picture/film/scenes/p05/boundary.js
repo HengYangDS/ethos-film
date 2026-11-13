@@ -40,7 +40,10 @@ const names = () => ({
   identity: L("独立控制的账户", ["An independently", "controlled identity"]),
   whether: L("要不要做", "Whether one is needed"),
   // The English qualifier takes two lines, broken at its phrase, so its ink keeps clear of the boundary's edge.
-  decides: L(["看风险、规定，还有结论的范围"], ["depends on risk, policy", "and the scope of the claim"]),
+  decides: L(
+    ["看风险、规定，还有结论的范围"],
+    ["depends on risk, policy", "and the scope of the claim"],
+  ),
 });
 /* How far the column under the identity reaches either side of its axis. */
 function columnHalf() {
@@ -54,7 +57,11 @@ function planeAt(t, c) {
   const alone = 960 - PLANE_W / 2,
     whole = FRAME_W + RUN + IDENTITY_R + Math.max(IDENTITY_R, columnHalf()),
     together = 960 - whole / 2 + PAD;
-  return mix(alone, together, glideShare(t, Math.min(c.independent, c.rerun) + 0.05, alone - together, 0.8));
+  return mix(
+    alone,
+    together,
+    glideShare(t, Math.min(c.independent, c.rerun) + 0.05, alone - together, 0.8),
+  );
 }
 
 /* A program: the film's window for code, with two ruled lines in it, drawn as one mark. */
@@ -160,10 +167,19 @@ export function boundaryStage(s, t, c, g) {
     alpha: g * named(t, c.whether),
     draw: { t, at: c.whether + 0.05 },
   });
-  termRow(t, [n.whether], [c.whether], n.decides, n.decides.map(() => c.risk), OX, nameTop, {
-    width: 2 * columnHalf(),
-    alpha: g,
-    align: "center",
-    inline: false,
-  });
+  termRow(
+    t,
+    [n.whether],
+    [c.whether],
+    n.decides,
+    n.decides.map(() => c.risk),
+    OX,
+    nameTop,
+    {
+      width: 2 * columnHalf(),
+      alpha: g,
+      align: "center",
+      inline: false,
+    },
+  );
 }

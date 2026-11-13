@@ -172,7 +172,11 @@ export function staleStage(s, t, c, g) {
     moved: drawnShare({ t, at: c.changed + 0.05 }, NEW - HEAD - 18),
     // The new commit lands over 0.45 s as the line reaches it.
     landed: ramp(t, c.changed + 0.3, 0.45),
-    nameTop: mix(Y + COMMIT + NAME_GAP, ROW_NAMES, glideShare(t, c.plan + 0.05, ROW_NAMES - Y - COMMIT - NAME_GAP, 0.6)),
+    nameTop: mix(
+      Y + COMMIT + NAME_GAP,
+      ROW_NAMES,
+      glideShare(t, c.plan + 0.05, ROW_NAMES - Y - COMMIT - NAME_GAP, 0.6),
+    ),
   });
   nameText(L("别人可能已经改过了", "May have changed"), NEW + 20, Y - 22 - NAME_GAP, {
     align: "right",
@@ -284,7 +288,10 @@ export function oneStepStage(s, t, c, g) {
     unwritten = 960 - (left + BX + 4 * BSTEP + COMMIT) / 2,
     written = 960 - (left + end + 18 + 1.25) / 2;
   ctx.save();
-  ctx.translate(mix(unwritten, written, glideShare(t, c.afterwards + 0.05, unwritten - written, 0.6)), 0);
+  ctx.translate(
+    mix(unwritten, written, glideShare(t, c.afterwards + 0.05, unwritten - written, 0.6)),
+    0,
+  );
   card(GX - 70, Y - 100, 140, 200, { alpha: g, color: P.ink });
   writeGate(GX, Y, 150, {
     alpha: g,

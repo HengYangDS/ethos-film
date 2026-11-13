@@ -422,7 +422,11 @@ export function closing(s, t, a) {
     centred = 960 - (left + delivered) / 2,
     // English: the Change alone, centred by its list and its name, until its delivered rows' words.
     alone = 960 - (left + Math.max(700 + W / 2, 1400 - left)) / 2,
-    first = mix(L(centred, alone), centred, glideShare(t, deliveredAt + 0.05, L(0, centred - alone), 0.7)),
+    first = mix(
+      L(centred, alone),
+      centred,
+      glideShare(t, deliveredAt + 0.05, L(0, centred - alone), 0.7),
+    ),
     // The picture's offset: that place, then, on the record's words, where the whole is centred.
     whole = 960 - (left + right) / 2,
     S = mix(first, whole, glideShare(t, recordAt + 0.05, whole - centred, 0.9)),

@@ -30,7 +30,10 @@ export function ruleOneHeading(t, c, g) {
     h = ruleHeading(t, {
       number: L("第一条准则", "Rule one"),
       numberAt: c.first4,
-      statement: L("用刚好够用的模型，留住原意", "Preserve meaning with the smallest model that is enough"),
+      statement: L(
+        "用刚好够用的模型，留住原意",
+        "Preserve meaning with the smallest model that is enough",
+      ),
       wrap: L(undefined, RULE_ONE_WRAP),
       statementAt: c.statement,
       size: 560,
@@ -143,7 +146,6 @@ export function modelStage(s, t, c, g) {
 export const rowHalf = (term, qual = []) =>
   Math.max(measure(term.join("")), qual.length ? measure(qual.join(""), NOTE) : 0) / 2;
 
-
 /* The Change: a document that holds the intent at its head and, on their words, its three fields. */
 export const CHANGE_W = 150,
   CHANGE_H = 240;
@@ -166,7 +168,10 @@ export function changeDocument(x, y, { alpha = 1, fields = [1, 1, 1], intent = 1
 }
 
 /* The Change's name in 04.4, its term and qualifier. */
-const changeName = () => [L(["正式变更"], ["One official Change"]), L(["只写在那里"], ["only there"])];
+const changeName = () => [
+  L(["正式变更"], ["One official Change"]),
+  L(["只写在那里"], ["only there"]),
+];
 /* Where the Change's left edge stands in 04.4 at t, the place 04.5 carries it from. The group spans the Change's name
  * where it is wider than the document, at either side, and the field names: it reaches `over` left of the Change and
  * right to the end of its name or of the widest field name. The Change stands centred alone, then glides once to where

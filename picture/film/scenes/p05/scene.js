@@ -49,7 +49,11 @@ function cuesOf(s) {
     independent: cue(s, "另一个独立控制的账户", "an independently controlled identity"),
     rerun: cue(s, "重跑一遍", "a re-run"),
     whether: cue(s, "要不要做", "whether one is needed"),
-    risk: cue(s, "看风险、规定，还有结论的范围", "depends on risk, policy and the scope of the claim"),
+    risk: cue(
+      s,
+      "看风险、规定，还有结论的范围",
+      "depends on risk, policy and the scope of the claim",
+    ),
     first4: cue(s, "一次判断的结果", "A judgment too"),
     three: cue(s, "只分三种", "only three outcomes"),
     block: cue(s, "拦下", "block and unknown"),

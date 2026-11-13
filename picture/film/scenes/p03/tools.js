@@ -38,7 +38,12 @@ export function stageTools(t, a, c) {
     KY = 420,
     KR = 36,
     // The panel draws in over the time until the tools are said, so the kernel stands alone only a moment.
-    gather = glideShare(t, c.oneJob + 0.05, (560 - 2 * KR) / 2, Math.max(0.9, c.elseAt - c.oneJob - 0.2)),
+    gather = glideShare(
+      t,
+      c.oneJob + 0.05,
+      (560 - 2 * KR) / 2,
+      Math.max(0.9, c.elseAt - c.oneJob - 0.2),
+    ),
     PW = mix(560, 2 * KR, gather),
     PH = mix(240, 2 * KR, gather),
     code = a * (1 - gather),

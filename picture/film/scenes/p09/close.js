@@ -82,7 +82,8 @@ function bound(s, t, a) {
   // a second later; the chain stands midway between where those two are centred, so neither leans past 50 px.
   const W = claimWidth(),
     alone = 960 - BOUND_X - (boundLeft() + W / 2 + CLAIM_DATUM) / 2,
-    wayRight = (W / 2 + CLAIM_DATUM + BOUND_RUN) / 2 + measure(L("ETHOS 的做法", "In ETHOS"), NOTE) / 2,
+    wayRight =
+      (W / 2 + CLAIM_DATUM + BOUND_RUN) / 2 + measure(L("ETHOS 的做法", "In ETHOS"), NOTE) / 2,
     sealRight = BOUND_RUN + 36 + Math.max(26, measure(SEAL_NAME()) / 2),
     chain = 960 - BOUND_X - (2 * boundLeft() + wayRight + sealRight) / 4,
     off = mix(
@@ -144,7 +145,10 @@ function bound(s, t, a) {
   });
   // ETHOS's way: the datum's link draws out while its clause is said and reaches the seal as the attestations are
   // named, its quiet point arriving under the seal; its tip moves at most at the film's tip pace (drawnShare).
-  const drawn = drawnShare({ t, at: wayAt + 0.05, least: Math.max(0.9, sealAt - wayAt) }, end - dx - 16);
+  const drawn = drawnShare(
+    { t, at: wayAt + 0.05, least: Math.max(0.9, sealAt - wayAt) },
+    end - dx - 16,
+  );
   link(dx + 16, dy, end, dy, { alpha: way, upto: drawn, flow });
   nameText(L("ETHOS 的做法", "In ETHOS"), (dx + end) / 2, dy - 22, {
     valign: "bottom",
