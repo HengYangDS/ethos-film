@@ -16,7 +16,13 @@ import {
   replaceStage,
   requestStage,
 } from "./example.js";
-import { compileStage, constraintsStage, examplesStage, leadsStage } from "./accounting.js";
+import {
+  compileStage,
+  constraintsStage,
+  examplesHeading,
+  examplesStage,
+  leadsStage,
+} from "./accounting.js";
 import { changeStage, modelStage, readersStage } from "./rule-one.js";
 
 /* The spoken cues of each stage, in the order they are said. */
@@ -126,8 +132,10 @@ scenes["04"] = function (s, t) {
     C3 = stageIn(t, c.first3c) * stageOut(t, c.first4),
     D1 = stageIn(t, c.first4) * stageOut(t, c.first4b),
     D2 = stageIn(t, c.first4b) * stageOut(t, c.first5),
-    E1 = stageIn(t, c.first5) * stageOut(t, c.first5b),
-    E2 = stageIn(t, c.first5b) * stageOut(t, c.first6),
+    // 04.5's first sentence names no mark of its own: its heading arrives over 04.4's picture, and the examples cut in
+    // on the words that name the first of them.
+    E1 = stageIn(t, c.first5) * stageOut(t, c.exact),
+    E2 = stageIn(t, c.exact) * stageOut(t, c.first6),
     F1 = stageIn(t, c.first6) * stageOut(t, c.first6b),
     F2 = stageIn(t, c.first6b) * stageOut(t, c.first6c),
     F3 = stageIn(t, c.first6c);
@@ -139,7 +147,10 @@ scenes["04"] = function (s, t) {
   if (C3 > 0) replaceStage(s, t, c, C3);
   if (D1 > 0) modelStage(s, t, c, D1);
   if (D2 > 0) changeStage(s, t, c, D2);
-  if (E1 > 0) readersStage(s, t, c, E1);
+  if (E1 > 0) {
+    const bottom = readersStage(s, t, c, E1);
+    if (t > c.first5b) examplesHeading(t, c, E1, bottom);
+  }
   if (E2 > 0) examplesStage(s, t, c, E2);
   if (F1 > 0) constraintsStage(s, t, c, F1);
   if (F2 > 0) compileStage(s, t, c, F2);

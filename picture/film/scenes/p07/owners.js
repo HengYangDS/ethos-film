@@ -5,7 +5,7 @@
 import { ctx } from "../../canvas.js";
 import { flowClock, link } from "../../drawing/links.js";
 import { ethosMark } from "../../drawing/mark.js";
-import { fill, labelSize, line, measure, stroke } from "../../drawing/strokes.js";
+import { fill, labelSize, measure, stroke } from "../../drawing/strokes.js";
 import { check } from "../../drawing/symbols.js";
 import { kernelIcon, ledger, repoIcon, terminalIcon } from "../../drawing/workspace.js";
 import { KICK_Y, RULE_Y, ruleHeadingLayout } from "../../framing/rules.js";

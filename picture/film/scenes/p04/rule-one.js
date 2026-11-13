@@ -231,9 +231,10 @@ export function changeStage(s, t, c, g) {
  * a link, and what they read is the same. The readers' name and the Change's hang from one line under the lower of
  * their marks, the Agent. The readers and what they read join the Change where they stand: the group stands still midway
  * between where the readers and the Change, and the whole with what they read, would be centred, so no name moves as
- * they join (EN-R16-05). */
+ * they join (EN-R16-05). The stage stands on under 04.5's heading until its first example is named. Returns the bottom
+ * of the rule's heading, under which that heading stands. */
 export function readersStage(s, t, c, g) {
-  ruleOneHeading(t, c, g);
+  const bottom = ruleOneHeading(t, c, g);
   // The English readers' name is their noun, and its relative clause joins under it as a smaller gloss on its own
   // words, so no line ends on "who".
   const readers = L(["后面接手的人和 Agent"], ["Everyone"]),
@@ -285,4 +286,5 @@ export function readersStage(s, t, c, g) {
       flow: flowClock(t, k),
     });
   nameText(same, DX + CHANGE_W + NAME_GAP + 10, DY + 120, { align: "left", alpha: reading });
+  return bottom;
 }

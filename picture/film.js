@@ -4326,7 +4326,7 @@ function changeStage(s, t, c, g) {
   });
 }
 function readersStage(s, t, c, g) {
-  ruleOneHeading(t, c, g);
+  const bottom = ruleOneHeading(t, c, g);
   const readers = L(["后面接手的人和 Agent"], ["Everyone"]), readersQual = L([], ["who picks up the work"]), same = L("同一份", "The same thing"), term = L(["正式变更"], ["The Change"]), qual = L(["只写在一处"], ["one copy"]), left = 250 + rowHalf(readers, readersQual), right = Math.max(CHANGE_W, CHANGE_W / 2 + rowHalf(term, qual)), read = CHANGE_W + NAME_GAP + 10 + measure(same), seat = 960 + (2 * left - right - read) / 4, cut = c.first5 + STAGE_CUT, from = L(changeX(cut, c), seat), arrive = glideShare(t, cut, seat - from), DX = mix(from, seat, arrive), DY = 440, RX = seat - 250, AY = 666, names2 = mix(rowNameTop([DY + CHANGE_H]), rowNameTop([AY + 22, DY + CHANGE_H]), arrive), who = g * named(t, c.readers), reading = g * named(t, c.same);
   changeDocument(DX, DY, { alpha: g });
   termRow(t, term, [L(c.change, cut + 0.15)], qual, [cut + 0.15], DX + CHANGE_W / 2, names2, {
@@ -4350,10 +4350,12 @@ function readersStage(s, t, c, g) {
       flow: flowClock(t, k)
     });
   nameText(same, DX + CHANGE_W + NAME_GAP + 10, DY + 120, { align: "left", alpha: reading });
+  return bottom;
 }
 
 // picture/film/scenes/p04/accounting.js
-var SUMMARY_FAINT = 0.33;
+var EXAMPLES_DROP = 176;
+var SUMMARY_DROP = 252;
 var EX_W = 260;
 var EX_H = 104;
 function exampleCard(x, y, corrected, a) {
@@ -4371,8 +4373,8 @@ function exampleCard(x, y, corrected, a) {
     { color: P.ink, alpha: a, width: 4 }
   );
 }
-function examplesStage(s, t, c, g) {
-  const bottom = ruleOneHeading(t, c, g), heading = termRow(
+function examplesHeading(t, c, g, bottom) {
+  return termRow(
     t,
     L(["正例和反例"], ["Positive and negative examples"]),
     [c.examples],
@@ -4381,7 +4383,10 @@ function examplesStage(s, t, c, g) {
     960,
     bottom + 50,
     { alpha: g, align: "center" }
-  ), em = labelSize(LABEL), Y3 = heading.bottom + 40 + em + NAME_GAP, goesName = L("要去掉", "Goes"), corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]), corrQual = L([], ["same stock, same day"]), reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10, reachRight = 280 + Math.max(
+  );
+}
+function examplesStage(s, t, c, g) {
+  const heading = examplesHeading(t, c, g, ruleOneHeading(t, c, g)), em = labelSize(LABEL), Y3 = heading.bottom + EXAMPLES_DROP + em + NAME_GAP, goesName = L("要去掉", "Goes"), corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]), corrQual = L([], ["same stock, same day"]), reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10, reachRight = 280 + Math.max(
     EX_W,
     measure(corrTerm.join("")) + (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0)
   ) / 2, joined = en ? 1 : glideShare(t, c.correction + 0.05, 280, 0.9), lean = en ? 0 : (reachLeft - reachRight) / 2 * joined * (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)), X1 = 960 + lean - 280 * joined, X2 = X1 + 560, vy = Y3 + 72, q = flowClock(t);
@@ -4412,8 +4417,8 @@ function examplesStage(s, t, c, g) {
   });
   const [v0, v1] = valueCell(X2 - EX_W / 2 + 34, EX_W - 68);
   beats(t, (v0 + v1) / 2, vy, 22, [c.saved], { alpha: g });
-  const qy = Y3 + 280, qw = measure(QUOTE()) + 56, turn = Y3 + EX_H + 40, written = g * named(t, c.quoteClause - 0.2), tried = g * named(t, c.quote2), draw = { t, at: c.quote2 + 0.05 };
-  card(960 - qw / 2, qy - 32, qw, 64, { alpha: g * mix(SUMMARY_FAINT, 1, written), color: P.ink });
+  const qy = Y3 + SUMMARY_DROP, qw = measure(QUOTE()) + 56, turn = Y3 + EX_H + 40, written = g * named(t, c.quoteClause - 0.2), tried = g * named(t, c.quote2), draw = { t, at: c.quote2 + 0.05 };
+  card(960 - qw / 2, qy - 32, qw, 64, { alpha: written, color: P.ink });
   nameText(QUOTE(), 960, qy, { alpha: written });
   linkSet(
     [
@@ -4667,7 +4672,7 @@ function cuesOf(s) {
 }
 scenes["04"] = function(s, t) {
   const c = cuesOf(s);
-  const A = stageOut(t, c.first1b), A2 = stageIn(t, c.first1b) * stageOut(t, c.first2), B = stageIn(t, c.first2) * stageOut(t, c.first3), C1 = stageIn(t, c.first3) * stageOut(t, c.follow), C2 = stageIn(t, c.follow) * stageOut(t, c.first3c), C3 = stageIn(t, c.first3c) * stageOut(t, c.first4), D1 = stageIn(t, c.first4) * stageOut(t, c.first4b), D2 = stageIn(t, c.first4b) * stageOut(t, c.first5), E1 = stageIn(t, c.first5) * stageOut(t, c.first5b), E2 = stageIn(t, c.first5b) * stageOut(t, c.first6), F1 = stageIn(t, c.first6) * stageOut(t, c.first6b), F2 = stageIn(t, c.first6b) * stageOut(t, c.first6c), F3 = stageIn(t, c.first6c);
+  const A = stageOut(t, c.first1b), A2 = stageIn(t, c.first1b) * stageOut(t, c.first2), B = stageIn(t, c.first2) * stageOut(t, c.first3), C1 = stageIn(t, c.first3) * stageOut(t, c.follow), C2 = stageIn(t, c.follow) * stageOut(t, c.first3c), C3 = stageIn(t, c.first3c) * stageOut(t, c.first4), D1 = stageIn(t, c.first4) * stageOut(t, c.first4b), D2 = stageIn(t, c.first4b) * stageOut(t, c.first5), E1 = stageIn(t, c.first5) * stageOut(t, c.exact), E2 = stageIn(t, c.exact) * stageOut(t, c.first6), F1 = stageIn(t, c.first6) * stageOut(t, c.first6b), F2 = stageIn(t, c.first6b) * stageOut(t, c.first6c), F3 = stageIn(t, c.first6c);
   if (A > 0) contractStage(s, t, c, A);
   if (A2 > 0) exampleStage(s, t, c, A2);
   if (B > 0) requestStage(s, t, c, B);
@@ -4676,7 +4681,10 @@ scenes["04"] = function(s, t) {
   if (C3 > 0) replaceStage(s, t, c, C3);
   if (D1 > 0) modelStage(s, t, c, D1);
   if (D2 > 0) changeStage(s, t, c, D2);
-  if (E1 > 0) readersStage(s, t, c, E1);
+  if (E1 > 0) {
+    const bottom = readersStage(s, t, c, E1);
+    if (t > c.first5b) examplesHeading(t, c, E1, bottom);
+  }
   if (E2 > 0) examplesStage(s, t, c, E2);
   if (F1 > 0) constraintsStage(s, t, c, F1);
   if (F2 > 0) compileStage(s, t, c, F2);
@@ -6909,7 +6917,7 @@ function handoff(s, t, a) {
       [tells[i], measure(tell, NOTE)]
     ])
   );
-  const S = 960 - (560 - 320 - 2 + TEXT_X) / 2 - (near + far) / 4, alone = 960 - (560 + 820) / 2, reading = glideShare(t, factsAt - 0.4, alone - S, 0.8), off = mix(alone, S, reading), AX2 = 560 + off, BX2 = 820 + off, AY = 410, railEnd2 = BX2 + 60 + 280 * (1 - glideShare(t, factsAt - 0.4, 280, 1.2)), ended = ramp(t, endsAt - 0.15, 1.2), passed = glideShare(t, overAt + 0.05, 820 - 560, 0.9), b = a * named(t, overAt), m = a * named(t, memoryAt), WX = mix(AX2, BX2, passed), flow = flowClock(t);
+  const S = 960 - (560 - 320 - 2 + TEXT_X) / 2 - (near + far) / 4, alone = 960 - (560 + 820) / 2, reading = glideShare(t, factsAt - 0.4, alone - S, 0.8), off = mix(alone, S, reading), AX2 = 560 + off, BX2 = 820 + off, AY = 410, railEnd2 = BX2 + 60 + 280 * (1 - glideShare(t, factsAt - 0.4, 280, 1.2)), ended = ramp(t, endsAt - 0.15, 1.2), passed = glideShare(t, overAt + 0.05, 820 - 560, 0.9), b = a * named(t, overAt), m = a * named(t, memoryAt), WX = mix(AX2, BX2, passed);
   journeyRail(AX2 - 320, BX2 + 60, { alpha: a });
   journeyRail(BX2 + 60, railEnd2, { alpha: a });
   railFlow(t, AX2 - 320, railEnd2, { alpha: a, longest: BX2 + 340 - (AX2 - 320) });

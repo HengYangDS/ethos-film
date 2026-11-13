@@ -228,8 +228,7 @@ export function handoff(s, t, a) {
     passed = glideShare(t, overAt + 0.05, 820 - 560, 0.9),
     b = a * named(t, overAt),
     m = a * named(t, memoryAt),
-    WX = mix(AX, BX, passed),
-    flow = flowClock(t);
+    WX = mix(AX, BX, passed);
   journeyRail(AX - 320, BX + 60, { alpha: a });
   journeyRail(BX + 60, railEnd, { alpha: a });
   railFlow(t, AX - 320, railEnd, { alpha: a, longest: BX + 340 - (AX - 320) });

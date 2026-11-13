@@ -18,9 +18,14 @@ import { QUOTE } from "./example.js";
 import { card, linkSet, recordRows, valueCell, verdictMark } from "./marks.js";
 import { ruleOneHeading, rowHalf } from "./rule-one.js";
 
-/* The ink of 04.5's summary card before its words: lit for the balance measures, which count a 2.5 px paper stroke
- * from about 0.31 of its ink, and under the 0.35 from which the seat check counts a mark as firm. */
-const SUMMARY_FAINT = 0.33;
+/* 04.5's examples stand this far under the stage's heading, and the summary SUMMARY_DROP under the cards' tops. The
+ * rule's heading over them is fixed, so the picture reaches from it to the cards while the examples are told, 4.6 s
+ * in English and 5.8 s in Chinese, and to the summary once it is quoted: at these drops the first stands about 74 px
+ * above the content's centre line, within the 8% the thought's late instant allows, which falls just before the
+ * summary's clause in both editions, and the second about 16 px below it, its card 64 px clear of the caption
+ * (EN-R18-04). */
+const EXAMPLES_DROP = 176,
+  SUMMARY_DROP = 252;
 /* An example card: two records; in the second example the second record carries a corrected value. */
 const EX_W = 260,
   EX_H = 104;
@@ -42,10 +47,28 @@ function exampleCard(x, y, corrected, a) {
   );
 }
 
+/* 04.5's heading: positive and negative examples test how the Change has been understood. It centres on the frame
+ * from its first word, its qualifier under it, 50 px under the rule's heading. Its sentence is said before the first
+ * example is named, so it arrives on its words over 04.4's picture, whose Change is what the sentence says is understood,
+ * and it stands on unmoved when the examples take that picture's place. Returns the heading's row. */
+export function examplesHeading(t, c, g, bottom) {
+  return termRow(
+    t,
+    L(["正例和反例"], ["Positive and negative examples"]),
+    [c.examples],
+    L(["检验对它的理解"], ["test how it has been understood"]),
+    [c.understood],
+    960,
+    bottom + 50,
+    { alpha: g, align: "center" },
+  );
+}
+
 /* 04.5 The examples: an exact repeat goes and a correction to the same stock on the same day stays, each card named
  * on its words with its verdict, a cross or a check before it; the summary is tried against both and fails the second
- * at a stop on its way there, and the corrected value flashes as it is saved. The heading centres on the frame from its
- * first word, its qualifier under it, and the cards' names stand 40 px under the heading wherever its lines end. Each
+ * at a stop on its way there, and the corrected value flashes as it is saved. The stage cuts in on the words that name
+ * its first mark, the exact repeat, under the heading that has stood since its own words (examplesHeading), and the
+ * cards' names stand EXAMPLES_DROP under the heading wherever its lines end. Each
  * verdict stands one gap outside its card, the repeat's at its left and the correction's at its right, so the pair and
  * its verdicts stay balanced about the axis once both stand. In English the pair stands at that centred seat from the
  * first card's words, so no shown name moves (EN-R17-09): the rule's heading over it spans 830 px of the frame, so the
@@ -55,20 +78,10 @@ function exampleCard(x, y, corrected, a) {
  * as one unit to centre what stands, the repeat's verdict at its left included, and on the correction's verdict it
  * settles centred on the axis, before the summary is tried against the two. */
 export function examplesStage(s, t, c, g) {
-  const bottom = ruleOneHeading(t, c, g),
-    heading = termRow(
-      t,
-      L(["正例和反例"], ["Positive and negative examples"]),
-      [c.examples],
-      L(["检验对它的理解"], ["test how it has been understood"]),
-      [c.understood],
-      960,
-      bottom + 50,
-      { alpha: g, align: "center" },
-    ),
+  const heading = examplesHeading(t, c, g, ruleOneHeading(t, c, g)),
     em = labelSize(LABEL),
-    // The cards' names stand one gap above them and 40 px under the heading.
-    Y = heading.bottom + 40 + em + NAME_GAP,
+    // The cards' names stand one gap above them and EXAMPLES_DROP under the heading.
+    Y = heading.bottom + EXAMPLES_DROP + em + NAME_GAP,
     goesName = L("要去掉", "Goes"),
     // The Chinese names the correction in the order it is said, as one name; the English keeps its qualifier.
     corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]),
@@ -132,20 +145,19 @@ export function examplesStage(s, t, c, g) {
   beats(t, (v0 + v1) / 2, vy, 22, [c.saved], { alpha: g });
   // The summary, the understanding under test, stands below; tried against both examples, it fails the second at a
   // stop on its way there, on the leg that rises from the summary toward the second card. The links turn 40 px under
-  // the cards, so the stop and its name stand clear of the turn and of the summary. Its words are said again in this
-  // thought, about eight seconds into the stage: shown from the cut, its line stood 7.7 s before its clause (filmkit
-  // 0.21.0). It is written as that clause opens, a fifth of a second before its first word, so the voice reads out a
-  // line already shown, and it is not a label drawn during the caption cue that quotes it, of which it and the stop's
-  // name would repeat every word. Its card stands faint until then, as the place the understanding under test will
-  // take: at a third of its ink it is lit, so the picture keeps its height under the cards, and it is no firm mark
-  // waiting for its name.
-  const qy = Y + 280,
+  // the cards and the summary stands 76 px under the turn, so the stop and its name, midway, stand 20 px clear of the
+  // turn and of the summary. Its words are said again in this
+  // thought, after the examples: shown before them, its line stood 7.7 s before its clause (filmkit 0.21.0), and its
+  // card alone was an empty mark waiting 7.5 s for its words (EN-R18-04). The card and its line are written together as
+  // that clause opens, a fifth of a second before its first word, so the voice reads out a line already shown, and it
+  // is not a label drawn during the caption cue that quotes it, of which it and the stop's name would repeat every word.
+  const qy = Y + SUMMARY_DROP,
     qw = measure(QUOTE()) + 56,
     turn = Y + EX_H + 40,
     written = g * named(t, c.quoteClause - 0.2),
     tried = g * named(t, c.quote2),
     draw = { t, at: c.quote2 + 0.05 };
-  card(960 - qw / 2, qy - 32, qw, 64, { alpha: g * mix(SUMMARY_FAINT, 1, written), color: P.ink });
+  card(960 - qw / 2, qy - 32, qw, 64, { alpha: written, color: P.ink });
   nameText(QUOTE(), 960, qy, { alpha: written });
   linkSet(
     [
