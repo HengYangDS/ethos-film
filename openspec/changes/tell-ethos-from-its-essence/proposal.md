@@ -12,7 +12,7 @@ The user also found renderings that change ETHOS's concepts. The Chinese edition
 - A concept contract binds every ETHOS concept the film names to its definition at the pinned source, its essence in one sentence and one approved rendering in each edition, with the counterexamples found in v1. Both editions are composed from that contract, not translated from each other, and the user approves its renderings with the script.
 - The pronunciation contract declares one reading for every name the narration speaks, ETHOS as /ˈiːθɒs/ in both editions, and the context reading of every Chinese polyphone; every occurrence in the delivered narration is checked against the declared reading.
 - Language review judges concept fidelity against the contract's definitions as its own dimension.
-- The source manifest pins ETHOS at its latest release.
+- The source manifest pins ETHOS at v0.2.0-beta.1 (`ea72a93`), the release the film explains.
 
 ## Capabilities
 

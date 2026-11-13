@@ -8,9 +8,9 @@ Author: Yang HENG.
 
 ## The films
 
-The films are published as release assets, together with their captions, transcripts, covers, independent review records and `SHA256SUMS`. [`content/release.json`](content/release.json) records each asset's name, size and SHA-256, the digests of the soundtrack and staged picture each edition was made from, and those of the film-bound sources: the scripts, narration texts, voice contracts, reference recordings, source manifest, covers, fonts, composition and pages whose exact bytes the build reads. The independent review of the `v1.0.1` films scored the Chinese edition 95.1 and the English edition 95.4 out of 100, with every dimension at 94 or above and no material finding. That review scores the audio from automated evidence; human listening is a separate acceptance.
+All four films of each edition are published as release assets, together with their captions, transcripts, covers, independent review records and `SHA256SUMS`. [`content/release.json`](content/release.json) records each asset's name, size and SHA-256, the digests of the soundtrack and of the two staged pictures, with captions and without them, that each edition was made from, and those of the film-bound sources: the scripts, narration texts, voice contracts, reference recordings, source manifest, covers, fonts, composition and pages whose exact bytes the build reads. The independent review of the `v2.0.0` films scored the Chinese edition 99.4 and the English edition 99.2 out of 100, with every one of its twelve dimensions at 96 or above, each of its three levels, 信, 达 and 雅, passing and no material or minor finding; the published review records list its notes. That review scores the audio from automated evidence; human listening is a separate acceptance.
 
-The films of `v1.0.1` are the published editions. A later release that changes only how they are built publishes no films of its own, and its tag names the source that rebuilds them.
+The films of `v2.0.0` are the current editions. They replace the films of `v1.0.0` and `v1.0.1`, an earlier film that explains ETHOS v0.2.0-alpha.21; those films stay available as the assets of their releases. A release that changes only how the films are built publishes no films of its own, and its tag names the source that rebuilds them.
 
 ## Rebuilding the films
 
@@ -34,7 +34,7 @@ mise run bootstrap
 mise run film:supply
 ```
 
-`film:build` then narrates both editions from the seeds in their casts, assembles the soundtracks and captions, renders and packages the pictures and verifies every film, offline and only under `build/`. On an M5 Max each UHD picture render takes 20 to 30 minutes.
+`film:build` then narrates both editions from the seeds in their casts, assembles the soundtracks and captions, checks each edition's picture, renders it with its captions and again without them, compares the two at every frame, packages the four films of each edition and verifies every film, offline and only under `build/`. Each picture is drawn in Chrome's software rasterizer, as `content/film.toml` declares; on an M5 Max each of the four picture renders takes about 9 to 13 minutes.
 
 ```bash
 mise run film:build
@@ -44,17 +44,17 @@ The stages also run one at a time: `film:narrate`, `film:sound`, `film:picture`,
 
 ## Comparing a rebuild with the published films
 
-Once a release is published, download its assets into `build/artifacts/release/` and compare; for `v1.0.1`:
+Once a release is published, download its assets into `build/artifacts/release/` and compare; for `v2.0.0`:
 
 ```bash
-gh release download v1.0.1 --repo HengYangDS/ethos-film --dir build/artifacts/release
+gh release download v2.0.0 --repo HengYangDS/ethos-film --dir build/artifacts/release
 ```
 
 ```bash
 mise run film:compare
 ```
 
-The comparison refuses a published asset or a film-bound source that differs from the release manifest, and accepts a published review only when it binds the published films and the current script and composition. It then compares the rebuild layer by layer: each soundtrack and staged picture document must hold the recorded bytes, the captions, transcripts and covers the published bytes, and each film must have the published frame count, decoded audio, streams, chapters and tags, with every decoded frame's PSNR at or above the floor the release manifest records. The picture alone is not byte-identical, because GPU capture and encoding vary between renders of the same stage. The report goes to `build/evidence/reproduction/report.json`.
+The comparison refuses a published asset or a film-bound source that differs from the release manifest, and accepts a published review only when it binds the published films and the current script and composition. It then compares the rebuild layer by layer: each soundtrack and each edition's two staged picture documents, with captions and without them, must hold the recorded bytes, the captions, transcripts and covers the published bytes, and each of the eight films must have the published frame count, decoded audio, streams, chapters and tags, with every decoded frame's PSNR at or above the floor the release manifest records. The films are not compared byte for byte: packaging stamps each film with the time it was made, and two renders of one stage need not encode the same bytes. The pictures of `v2.0.0` are drawn in Chrome's software rasterizer, and those of `v1.0.0` and `v1.0.1` were captured on the GPU. The report goes to `build/evidence/reproduction/report.json`.
 
 ## Checks
 
@@ -62,14 +62,14 @@ The comparison refuses a published asset or a film-bound source that differs fro
 
 ## Layout
 
-| Path                            | Contents                                                                                                                                                                                      |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `content/`                      | The film's declaration `film.toml` with each player's summary and colours, both editions' scripts, casts and narration texts, the entry page, the source manifest and the listening readings. |
-| `picture/`                      | The picture composition: its modules under `picture/film/`, the bundle `picture/film.js` that the engine reads, and the page and styles that stage it.                                        |
-| `assets/`                       | The narrator's reference recordings, the covers and the fonts.                                                                                                                                |
-| `tests/`                        | The film's tests: the composition of both editions, the declaration, the narration mirrors and the fonts.                                                                                     |
-| `openspec/`                     | The accepted specification and any open Change.                                                                                                                                               |
-| `system/gates.toml`, `.config/` | The ETHOS gates, the check policies, the CI declaration and the locked toolchain with its tasks.                                                                                              |
+| Path                            | Contents                                                                                                                                                                                                                            |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `content/`                      | The film's declaration `film.toml` with each player's summary and colours, both editions' scripts, casts and narration texts, the entry page, the source manifest, the concept contract `concepts.toml` and the listening readings. |
+| `picture/`                      | The picture composition: its modules under `picture/film/`, the bundle `picture/film.js` that the engine reads, and the page and styles that stage it.                                                                              |
+| `assets/`                       | The narrator's reference recordings, the covers and the fonts.                                                                                                                                                                      |
+| `tests/`                        | The film's tests: the composition of both editions, the declaration, the narration mirrors and the fonts.                                                                                                                           |
+| `openspec/`                     | The accepted specification and any open Change.                                                                                                                                                                                     |
+| `system/gates.toml`, `.config/` | The ETHOS gates, the check policies, the CI declaration and the locked toolchain with its tasks.                                                                                                                                    |
 
 ## License
 

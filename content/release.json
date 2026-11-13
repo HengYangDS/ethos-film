@@ -1,132 +1,156 @@
 {
-  "version": "1.0.1",
+  "version": "2.0.0",
   "editions": {
     "zh": {
-      "soundtrack_sha256": "4c52fa830f4748fdaf5aed41ebd1643d950e1d8a92aec12050c4e912e0acd0ed",
-      "stage_sha256": "513ed9b2a3f553ca48692bff530926418450aeb28133705fc4dfc77ea5227ab6",
+      "soundtrack_sha256": "cc4c211c875247eaca7bcb0b10e8a9dfab77c246cd7309290efd562a4cac3d7c",
+      "stage_sha256": "6f8d02fd01d5bf5d7a65022da72df360b008042c4d72f086c926bb447f287609",
+      "uncaptioned_stage_sha256": "712ec138055526e8d388624b48d493913020d855f28d42817ff10daf3d0a2bbf",
       "picture_floor_db": {
         "ethos-zh-uhd.mp4": 45.0,
-        "ethos-zh-1080p-captioned.mp4": 45.0
+        "ethos-zh-1080p-captioned.mp4": 45.0,
+        "ethos-zh-uhd-uncaptioned.mp4": 45.0,
+        "ethos-zh-1080p-uncaptioned.mp4": 45.0
       }
     },
     "en": {
-      "soundtrack_sha256": "af11afa4bbe5ffc38cde3d9e5d71950cb63ef2e278aa4279e5dc7969361f19ec",
-      "stage_sha256": "55da0e83c8154330b9c8242da299edef8b473aeb869c398b5a1763e3b8c42ce8",
+      "soundtrack_sha256": "5922fef2c47121c36af8ca4e38122b7fd033d8cc6c29404d6c27cff3d4701d42",
+      "stage_sha256": "dffce046250859663bd497226e3ea759e7203cbdfec040e2f4bcbd3a179b21cb",
+      "uncaptioned_stage_sha256": "eead84ee745d5ac28308c7c992784f2dd5d75e19b44b20fd6a517ac981927362",
       "picture_floor_db": {
         "ethos-en-uhd.mp4": 45.0,
-        "ethos-en-1080p-captioned.mp4": 45.0
+        "ethos-en-1080p-captioned.mp4": 45.0,
+        "ethos-en-uhd-uncaptioned.mp4": 45.0,
+        "ethos-en-1080p-uncaptioned.mp4": 45.0
       }
     }
   },
   "sources": {
     "assets/audio/en/narration-reference.wav": "a763e48e15c5dc8abeda9b47da53c47db628b9ea602c79e657ab04653d318786",
-    "assets/audio/narration-reference-clear.wav": "7ff6347ed4231943944ef27bfc708cfcf796619b3988b2b99bc21be71ae338da",
-    "assets/cover/ethos-cover-en.png": "9347328aaa5e23b74f2a959def857cbc4c959dcf331c9a54bee8207250465dd3",
-    "assets/cover/ethos-cover.png": "dda4d3023ee3da6a1b59d1d940f6fe3dd3c77e256b8269f1f83b14ad41e90bb3",
+    "assets/audio/narration-reference-natural.wav": "8b50cf9ad3064fb51c304a27a64f805e679f3cf05099ca7657623965491cdf42",
+    "assets/cover/ethos-cover-en.png": "9f0f5940375cc80f3da97cffb18470be34008e2684c1acbda15988620220843b",
+    "assets/cover/ethos-cover.png": "ead1f9902a85afd42e9aaabd6d98599d2e96283ebd288a4d6dfad13f89346fbb",
     "assets/fonts/ibm-plex-sans-bold.ttf": "9e6c74a889a700d707613d24548fe4ffa6bc59559a0689d2cf9e133bdcdafb2f",
     "assets/fonts/ibm-plex-sans-regular.ttf": "975dcda37d80f038dcd143c22e33ca2d97a0cc5a929aace1c749153b0fe1afa5",
-    "assets/fonts/noto-sans-cjk-sc-subset-bold.otf": "37cf169ba4266cd925f23dac2bade345bda2a2f33e289366459a60a83f25c89c",
-    "assets/fonts/noto-sans-cjk-sc-subset-regular.otf": "c4ab74d74c0dadc76e2a23b213a81d6582d9d3acef81d7b73a586045a957e7cd",
-    "content/en/film-script.json": "788f075274045c2272bfaad416c0b62ce2c69fc2a5c1efc0a948400ac2c03625",
-    "content/en/narration.md": "677bb31ab06bc48d5ede41c411dfa6073e3b5c77121fbfe1866dd5159493c7ee",
-    "content/en/player.html": "75c8ab3c7d00ca757a879be37abf1953b4217b8474a2801f10edb3fbba8be71e",
-    "content/en/voice-reference.json": "289dabfd0ffc8a9aa69f6eaccad21de78f4af14dcc7249db8cce66092b00a16e",
-    "content/film-script.json": "fbf3311fddb42febfd260be921b9ead9d6eea5dd307c2f4c1a41894f5bc5987e",
-    "content/index.html": "3f333409435264037424e60f1d1d98675c492d96104cc93ad01ff3738258eb42",
-    "content/narration.md": "30697a8f6fd43b13d98dbd10ab51d3d1f6f2953a2384f29a80771465c2db190b",
-    "content/player.html": "ec4cdd86fd3fe19c37fb349e9686a5f3c4839506b43aae03ffed60bd99143431",
-    "content/source-manifest.json": "72079d142d397bf74628959edeb5807f302968d82c723a51bde46ed98eea73a1",
-    "content/voice-performance.json": "2d9cb8460a94c31e707a51ddecfe5ce365a08ac88c166fe6f9ef7adb96499906",
-    "content/voice-reference.json": "b73bd82b6abc7d6d0a81507575a1c82cb79a6a07597250650cbcee981f6a828e",
-    "picture/film.css": "314986d83d70854c0e4079cc9a4707a7c077edb6552f1b89444b41f744a04a08",
-    "picture/film.js": "89927452806363c0c561c216e8691329173a2c1df2987af6ee82c6a184820269",
+    "assets/fonts/noto-sans-cjk-sc-subset-bold.otf": "12a579f7eb58aa2cce70152f1cc083cbed70b07937f131a8a4e6686a851f55dc",
+    "assets/fonts/noto-sans-cjk-sc-subset-regular.otf": "bf5d148aaeb3c55605c5677f584248aa3988644e2688d4f1a15ee02341f09866",
+    "content/en/film-script.json": "7743a052c7a46c813921b08e495c42816e7ad4d2d0bcd042b97b8b19f5823da7",
+    "content/en/narration.md": "d025c347488d730afaed5d33b537b02c9eb4c35d98ea8bbc38f2391b7f794bc7",
+    "content/en/voice-reference.json": "4e63e60be1f504ac5c1c59ce4086acd086be819fe6af72fa742a76e8167247e2",
+    "content/film-script.json": "002942c451dc43f46999fa20143d3fcaec7fc448424fbbbdc7ce08a5649128e3",
+    "content/index.html": "13bfbb28ef29dc4515ff68eb1d2b1fb6baf8ac1f584ed8ecf1ae5f2547210db1",
+    "content/narration.md": "801ea2b0226ab13fe22d4b899887e1629272fdc5c5c69330c1fa1fce8d06e2a2",
+    "content/source-manifest.json": "23f1e7c4d0a9afa63bf40f1b4dff76c855ad987352faac31a180224e5094c719",
+    "content/voice-performance.json": "848eb513ff860edd3509d715b78839304270157ba1a55a0b3267ed3111d1728e",
+    "content/voice-reference.json": "60ed8104a8734d43eca57afc064b5907d3660e3fdcf46eb55b443cc2baf80521",
+    "picture/film.css": "69b0566258ef384a65ab8d4cf6f80344690a75942cb53a5c2cec7db6d5f25f64",
+    "picture/film.js": "587c69aa494f04b3e5943a216e6d44f93909be1cb0c5210f61c709770c2ef76a",
     "picture/index.html": "3820d86cad2ebd0f56c776d2bf10b184e6cc5063960f40e51f0ed2555583480e"
   },
   "assets": [
     {
       "name": "ethos-zh-uhd.mp4",
-      "bytes": 715003833,
-      "sha256": "b6a77687c642e772843f9fe3aac2892ca426acbcb6c80264f74ca90416601e1d"
+      "bytes": 600828060,
+      "sha256": "7aeac252dee845953e18fb2afcf0352f6a14b6a28acf1259ae115dc89d853a26"
     },
     {
       "name": "ethos-zh-1080p-captioned.mp4",
-      "bytes": 389456591,
-      "sha256": "77ac2d98fa2a35b8447863f2dbff1da9878aa905a659f9ba7c4c364b34720211"
+      "bytes": 236039436,
+      "sha256": "8ed504aa09fe13e658123aa2293e25622af5b14f9cacf3d54dd46979b0fe78ca"
+    },
+    {
+      "name": "ethos-zh-uhd-uncaptioned.mp4",
+      "bytes": 483748654,
+      "sha256": "146dedb749e2b2d27255fbbed951901e844e5a89fcc153b05af6c7c0fcb8f619"
+    },
+    {
+      "name": "ethos-zh-1080p-uncaptioned.mp4",
+      "bytes": 189821237,
+      "sha256": "969fe59ba99d3ebe9fa25263cbc65877807732e72d552bb61bbaf63a890ec6ad"
     },
     {
       "name": "ethos-zh.srt",
-      "bytes": 24559,
-      "sha256": "149d4607d5950b5b2f6416060472aa68378f7dc9e38b8779ed456e35baad6252"
+      "bytes": 22680,
+      "sha256": "c90c9722ecd97e474bf027be839179af308d5de6f1116cbed35389762583dd70"
     },
     {
       "name": "ethos-zh.vtt",
-      "bytes": 23583,
-      "sha256": "93fae458e77bcdb60013aea454c63785f8ad6fbdcf63c643640111660d230f4c"
+      "bytes": 21792,
+      "sha256": "fc3cbc7121e0b6713a2b7c8e2a6a39995fcd2da4b82d298ed82b0056b2f9fb9d"
     },
     {
       "name": "ethos-zh-transcript.md",
-      "bytes": 15842,
-      "sha256": "b59e20b9730d59e37c738fca1e18df13fe95bd5b0845ef7e6c7e796e62979cf7"
+      "bytes": 14439,
+      "sha256": "816623d708060f9e0071d83729b63bdf42935ff5b7f7665f34e729d64529b790"
     },
     {
       "name": "ethos-zh-cover.png",
-      "bytes": 228870,
-      "sha256": "dda4d3023ee3da6a1b59d1d940f6fe3dd3c77e256b8269f1f83b14ad41e90bb3"
+      "bytes": 228673,
+      "sha256": "ead1f9902a85afd42e9aaabd6d98599d2e96283ebd288a4d6dfad13f89346fbb"
     },
     {
       "name": "ethos-zh-production-review.json",
-      "bytes": 17863,
-      "sha256": "f4aa7c1c1e3a6fa32b79175cb6a1c52697d6cfe2625834a8eab8604b9dfed061"
+      "bytes": 17189,
+      "sha256": "f32ec3b63742a3735b859e7d880529e6e189aa1f26e7201ef45e3de561947894"
     },
     {
       "name": "ethos-zh-production-review.md",
-      "bytes": 22918,
-      "sha256": "2807e52dab19e5d7b6d9a5a5df3e3109332d386d0a6c7347abd99bc08214bd71"
+      "bytes": 19137,
+      "sha256": "2f528a1cce3738cf6d51b8bd9b7d19e34094d2c41a42dad7694ef8df44d30102"
     },
     {
       "name": "ethos-en-uhd.mp4",
-      "bytes": 799057203,
-      "sha256": "b524f65f2016695f09d6367aea92f87fa765b2198d03209333a8d861e2e8eb8e"
+      "bytes": 679796488,
+      "sha256": "2e36a8a67902d72f05655aa503a53bbfbd3837c81e425a71a941ae47d3c69eae"
     },
     {
       "name": "ethos-en-1080p-captioned.mp4",
-      "bytes": 413702414,
-      "sha256": "0c06795d492ce34003c748ba0138915ea384f8c079bafccdeb184b0dea154e72"
+      "bytes": 272924862,
+      "sha256": "8ac6c1ca5ebc7dd3d9a1a78b8f71c4395f256ecbaf9a3fe55d5ee08e4227f83f"
+    },
+    {
+      "name": "ethos-en-uhd-uncaptioned.mp4",
+      "bytes": 562983673,
+      "sha256": "d56379687e0f207ce2e30e3dfecd58320eff99dfe9f3f282b26316f844c79d52"
+    },
+    {
+      "name": "ethos-en-1080p-uncaptioned.mp4",
+      "bytes": 221716123,
+      "sha256": "0a2ce7d63d91daf712e7bd12d63cc33dd786c58454d1cb3492005df6fa055c7f"
     },
     {
       "name": "ethos-en.srt",
-      "bytes": 27218,
-      "sha256": "2252192a970a6af2b7aaa8e7c0a592593d31d5ef9f43d68b6b5ddc1e6e2e195e"
+      "bytes": 27365,
+      "sha256": "e591882ad666955e5d135008a6fa05d505ae5aa7d8e564719f76157ea581cced"
     },
     {
       "name": "ethos-en.vtt",
-      "bytes": 26022,
-      "sha256": "57f700b71b8cad36f7d377d66c6dfa16d9d44419cc1f8647805ce04e43e4b0d0"
+      "bytes": 26109,
+      "sha256": "4cd7d308a8f352c6c3d14104bbc4267412090d1557eed12fd40fa67bea3c4d33"
     },
     {
       "name": "ethos-en-transcript.md",
-      "bytes": 16891,
-      "sha256": "d6bb8d0bfcf0f8a8a96447179b925991dee92d41c3e3a18b81ec1ab654b9e88d"
+      "bytes": 16109,
+      "sha256": "776c3934205b263859b69d72e5850b307763b8bc1b825eb3ac3355d737b57e93"
     },
     {
       "name": "ethos-en-cover.png",
-      "bytes": 230008,
-      "sha256": "9347328aaa5e23b74f2a959def857cbc4c959dcf331c9a54bee8207250465dd3"
+      "bytes": 229675,
+      "sha256": "9f0f5940375cc80f3da97cffb18470be34008e2684c1acbda15988620220843b"
     },
     {
       "name": "ethos-en-production-review.json",
-      "bytes": 21506,
-      "sha256": "0b2bb9fd8295d39fca6bb4c82a50636516821459cd90d83831777d9924e8b824"
+      "bytes": 13113,
+      "sha256": "46fb8e4b487ce701a12d6da248ff39f59646e153dcd79851f9b6cdebde8ff1f1"
     },
     {
       "name": "ethos-en-production-review.md",
-      "bytes": 35529,
-      "sha256": "0a4afc632ad9a7881ff11ba73a894d4d6b87843d1951ccea558e582fbaab5cdf"
+      "bytes": 21384,
+      "sha256": "834dca046fc8610e66877b79798ab6cef4be3a2022de84ec5499bd00c6ba1ca9"
     },
     {
       "name": "SHA256SUMS",
-      "bytes": 1408,
-      "sha256": "9fe56b9177acc3264969973963adeabe81927ff2a28197a08c5e5908966a047e"
+      "bytes": 1792,
+      "sha256": "ff17ceb0c22df6a6f1c0d79761eba4efe92eba7e7a01ff550a41eed648fba46a"
     }
   ]
 }

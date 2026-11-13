@@ -6,7 +6,7 @@
 id = "film-media-bound-sources"
 paths = [
   "assets/audio/en/narration-reference.wav",
-  "assets/audio/narration-reference-clear.wav",
+  "assets/audio/narration-reference-natural.wav",
   "assets/cover/ethos-cover-en.png",
   "assets/cover/ethos-cover.png",
   "assets/fonts/ibm-plex-sans-bold.ttf",
@@ -27,7 +27,7 @@ paths = [
 format_owner = "immutable-carrier"
 format_command = "not-applicable:film-media-bound"
 format_check = "ethos prove --full --execute --json"
-validation_owner = "native-behavior"
+validation_owner = "film-checks"
 validation_command = "ethos prove --full --execute --json"
 mutation_policy = "forbidden"
 
@@ -39,6 +39,6 @@ paths = ["content/en/narration.md", "content/narration.md"]
 format_owner = "immutable-carrier"
 format_command = "not-applicable:film-media-bound"
 format_check = "ethos prove --full --execute --json"
-validation_owner = "native-behavior"
+validation_owner = "film-checks"
 validation_command = "ethos prove --full --execute --json"
 mutation_policy = "forbidden"
