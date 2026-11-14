@@ -108,15 +108,22 @@ export function stageTools(t, a, c) {
     },
     { color: P.ink, alpha: tooled, width: 3 },
   );
+  // The second tool's features stand in its upper part, over the room for their name: on the words that say no
+  // required behavior is lost, they are named under them, inside the tool, in the voice's words (zh-R19-01,
+  // EN-R19-04). The name stands inside the outline, so the pair's extent and the names under it stay as they were.
   const [fx, fy] = tools[1];
   stroke(
     () =>
-      [-32, 0, 32].forEach((dy, k) => {
+      [-46, -18, 10].forEach((dy, k) => {
         ctx.moveTo(fx - 80, fy + dy);
         ctx.lineTo(fx - 80 + [160, 110, 140][k], fy + dy);
       }),
     { color: P.muted, alpha: tooled * 0.8, width: 2.5 },
   );
+  nameText(L("不丢该有的功能", "required behavior"), fx, fy + 46, {
+    size: NOTE,
+    alpha: a * named(t, c.kept),
+  });
   // Two tools of one size each need a name of their own: the name between them names one, and Git names the other.
   // English says Git late in its clause, so its name leads its word by a second and a half less a frame, within its
   // clause, and stands a fifth of a second after the tools arrive on "tools".
@@ -178,7 +185,8 @@ export function stageTools(t, a, c) {
  * benefit under the gap in Chinese, the gap and then the net benefit under the tools in English. Each stands as a name
  * of its own, so each is judged by its own words and no caption cue is mostly repeated: as one name, "Its own tools
  * only to fill a demonstrated gap" repeated 82% of its cue. The outline and its names stand one gap apart, centred
- * together. */
+ * together. The bounded responsibility the contract asks of such a tool is said between the gap and the net benefit and
+ * stands between them, on its own words. */
 const GAP_W = 150,
   GAP_H = 84,
   GAP_Y = 215;
@@ -186,11 +194,13 @@ function gapTool(t, a, c) {
   const [[term, termAt], ...quals] = L(
       [
         ["证实有缺口", c.gap],
+        ["职责有明确边界", c.bounded],
         ["确实划算", c.benefit],
       ],
       [
         ["Its own tools", c.ownTools],
         ["a demonstrated gap", c.gap],
+        ["a bounded responsibility", c.bounded],
         ["a net benefit", c.benefit],
       ],
     ),

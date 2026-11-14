@@ -100,9 +100,12 @@ scenes["03"] = function (s, t) {
     upkeep: ["减少总体的维护量", "total maintenance"],
     risk: ["运行风险", "operational risk"],
     burden: ["使用方的负担", "burden on adopters"],
+    // The condition under which mature tools are adopted at all: nothing the work needs is lost.
+    kept: ["不丢该有的功能", "without losing required behavior"],
     // Chinese names the gap and the net benefit before the tools of its own; English names its own tools first, then
     // the gap and the net benefit.
     gap: ["证实有缺口", "a demonstrated gap"],
+    bounded: ["职责有明确边界", "a bounded responsibility"],
     benefit: ["确实划算", "a net benefit"],
     ownTools: ["才自己写", "It writes its own tools"],
     // 03.7 the systems it leaves as they are, and what it owns in one place.
