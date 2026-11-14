@@ -1838,8 +1838,9 @@ scenes["01"] = function(s, t) {
       { color: P.muted, alpha: stageB * 0.8, width: 2 }
     );
     agentRow(xs, Y3, { alpha: row, size: 1.5 });
+    const changing = en ? row : stageB * named(t, codeAt);
     link(xs[2] + R, Y3, RX - RW / 2, Y3, {
-      alpha: row,
+      alpha: changing,
       flow: q,
       width: 2.5
     });
@@ -1847,7 +1848,7 @@ scenes["01"] = function(s, t) {
     if (!en)
       nameText("改代码", (xs[2] + R + RX - RW / 2) / 2, Y3 - NAME_GAP, {
         valign: "bottom",
-        alpha: stageB
+        alpha: changing
       });
     else
       nameText("Our code", RX, namesTop, {

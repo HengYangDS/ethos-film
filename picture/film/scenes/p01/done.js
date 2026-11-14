@@ -147,9 +147,8 @@ scenes["01"] = function (s, t) {
       ["能不能恢复原样", "can you get back"],
     ]);
   // Chinese says the Agents before the code they change and what makes them interchangeable last. The stage cuts in on
-  // 越来越多, the clause that brings the Agents, and its 改代码 names the row and its code from the cut, within its
-  // clause and under a second and a half ahead of its words; the Agents' name, the concept's rendering, stands on
-  // 可以互相替换.
+  // 越来越多, the clause that brings the Agents, with the Agents and the repository; the link between them and its name
+  // 改代码 arrive on those words; the Agents' name, the concept's rendering, stands on 可以互相替换.
   const [relay, codeAt, inter, ends, pick] = cues(s, [
     ["越来越多", "our code"],
     ["改代码", "our code"],
@@ -364,8 +363,12 @@ scenes["01"] = function (s, t) {
       { color: P.muted, alpha: stageB * 0.8, width: 2 },
     );
     agentRow(xs, Y, { alpha: row, size: 1.5 });
+    // In Chinese the link is what 改代码 names, so the link and its name arrive together on those words: standing from
+    // the cut, the name was read a second before it was heard, with the Agents named in between (zh-R19-06). The
+    // Agents and the repository stand from the cut. In English the link stands from the cut, as nothing names it.
+    const changing = en ? row : stageB * named(t, codeAt);
     link(xs[2] + R, Y, RX - RW / 2, Y, {
-      alpha: row,
+      alpha: changing,
       flow: q,
       width: 2.5,
     });
@@ -376,7 +379,7 @@ scenes["01"] = function (s, t) {
     if (!en)
       nameText("改代码", (xs[2] + R + RX - RW / 2) / 2, Y - NAME_GAP, {
         valign: "bottom",
-        alpha: stageB,
+        alpha: changing,
       });
     else
       nameText("Our code", RX, namesTop, {
