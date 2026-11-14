@@ -182,11 +182,6 @@
           "seed": 2071539,
           "text_sha256": "2fd4ecc709b8503899d130870f4986a676d1ec21938fa5d9fed584425c3b23c1",
           "spoken_sha256": "92c15a44e5a4f1c65399f4de9379a1dd34a1060145a2e8bfd2d702089e867b00"
-        },
-        "6": {
-          "seed": 4827351,
-          "text_sha256": "afa3f0d7b769ff344ee697572b0de87f6180fd5c37dff770728e3d00412d34ab",
-          "spoken_sha256": "ae5aacd75d016a559d4e918f0e4ed0708a7307d86eb4ec506717fe56607f690e"
         }
       }
     },

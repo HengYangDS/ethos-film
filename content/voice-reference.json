@@ -122,11 +122,6 @@
           "seed": 2071539,
           "text_sha256": "89d5b90e21b5a1a7fd02c5dfa875cb048f9535090cd0b5b05caafb17d02526d4",
           "spoken_sha256": "517dab064df198284a9ec2a1caff6024e874f274a86ed368a135403caaaffe9f"
-        },
-        "6": {
-          "seed": 4803594,
-          "text_sha256": "5e48271f3c5ab7c6ecfa8f57e1590d530b9169f5c07f4a043079ead9ea7ba61d",
-          "spoken_sha256": "1387b4d0610b2895cada2cd968e1d49f10d45f32a66b9e7d6260d7ca0fdbcf8d"
         }
       }
     },
