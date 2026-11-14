@@ -16,7 +16,7 @@
 
 ## 4. Text
 
-- [ ] 4.1 Put the exact bilingual wording of 03.6 and the English wording of 08.1 to the owner (zh-R19-01, EN-R19-04, EN-R19-01); done when the owner's decision is recorded here, and, if a text changes, when both languages are adopted and the readings and concept checks pass.
+- [ ] 4.1 Adopt the wording of 03.6 that the owner approved on 14 November 2026 (zh-R19-01, EN-R19-04): 「同时不丢该有的功能」 after 「使用方的负担」 and 「证实有缺口、职责有明确边界，而且确实划算，才自己写」; "without losing required behaviour" after "the burden on adopters" and "within a bounded responsibility" after "a demonstrated gap". The English 08.1 keeps its text by the same decision (EN-R19-01); done when both scripts and narration texts hold the wording and the readings and concept checks pass.
 - [ ] 4.2 Narrate again every segment whose text task 4.1 changes, and qualify the takes; done when the release checks accept both soundtracks at exactly 900 seconds.
 
 ## 5. Picture
