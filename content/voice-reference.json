@@ -122,6 +122,15 @@
           "seed": 2071539,
           "text_sha256": "89d5b90e21b5a1a7fd02c5dfa875cb048f9535090cd0b5b05caafb17d02526d4",
           "spoken_sha256": "517dab064df198284a9ec2a1caff6024e874f274a86ed368a135403caaaffe9f"
+        },
+        "6": {
+          "seed": 7155537,
+          "text_sha256": "a2c50799d9e7c2525799bfec17a75d412398a3c5e03a697ab0572343b7c569f6",
+          "spoken_sha256": "d66530b6fd2ae57f68a43e10b4daabfe7f224981aa8b2a0c4b0d764a33f1b0a4",
+          "run_on": {
+            "spoken_text": "Eethos 也不接管你们原有的系统。你们描述业务用的模型、自动跑检查的持续集成、运行那些 Agent 的应用、问题跟踪系统，原来是什么，现在还是什么。它在你们自己的机器上就能工作，不依赖哪一家平台；接入的系统，也不会因此纳入 Eethos 自己的记录。所有仓库共有的部分，归 Eethos 统一负责；每个仓库，只管自己特有的事。",
+            "cut_sample": 451920
+          }
         }
       }
     },
