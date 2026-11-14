@@ -187,11 +187,13 @@ scenes["01"] = function (s, t) {
   // 1-3. The Agent stands at the centre from the first word; on the words that say it hands its sentence back, it
   // steps aside and a link rises from it and turns to the panel, which arrives at the link's end, and the sentence builds on its words, the datum landing
   // with its last word. The question of the film stands over the panel and one ring lights the datum. Then the Agent
-  // leaves, the panel takes the centre, and the four questions the sentence leaves open build on a rail beneath it,
-  // each linked from the panel, the one being asked carrying a point along its link.
+  // leaves and the four questions build on a rail beneath the panel, each linked from it, the one being asked carrying
+  // a point along its link. The panel stands at PX from the hand-off, the pair at most 41 px left of the centre:
+  // centred with the Agent, the panel glided 100 px with its words as the first question was asked (EN-R19-03).
   if (stageA > 0) {
-    const aside = glideShare(t, hand + 0.05, Math.hypot(220, 80)),
-      AX = mix(960, 740, aside),
+    const PX = 995,
+      aside = glideShare(t, hand + 0.05, Math.hypot(PX - 320 - 960, 80)),
+      AX = mix(960, PX - 320, aside),
       AY = mix(560, 640, aside),
       AR = 33,
       gone = ramp(t, opens - 0.15, 0.4),
@@ -199,9 +201,7 @@ scenes["01"] = function (s, t) {
       // that names it or 0.27 s before its own word.
       lead = Math.max(first - 0.28, s.voice_start - 0.1, cue(s, "Agent", "Agent") - 0.27),
       seen = stageA * ramp(t, lead - 0.15, 0.4) * (1 - gone);
-    const slide = glideShare(t, opens + 0.05, 100, 0.7),
-      PX = mix(1060, 960, slide),
-      PY = 360,
+    const PY = 360,
       left = PX - W / 2;
     agent(AX, AY, { size: 1.5, alpha: seen });
     nameText("Agent", AX, AY + AR + NAME_GAP, {

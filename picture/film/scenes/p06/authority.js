@@ -67,10 +67,10 @@ export function ruleThreeHeading(t, c, g) {
 }
 
 /* The mark's two places, each its origin (x, y) and its size. In 06.3 it stands under the heading, centred on the frame
- * by its ink, its boundary one line height clear of the heading's note, and as large as the band left under the heading
- * holds above the captions. From 06.4 it stands at the original size on the content centre line, placed so that the
- * mark, the views beyond its opening and the report's panel under them stand centred together. */
-const AUTHORITY_SIZE = 840,
+ * by its ink, its boundary one line height clear of the heading's note and its lower arc about 90 px above the
+ * caption's ink at y 956 (at 840 it ended 52 px above it, zh-R19-05, so it is 0.93 of that). From 06.4 it stands at
+ * the original size on the content centre line, so the mark, the views past its opening and the panel stand centred. */
+const AUTHORITY_SIZE = 782,
   VIEWS_SIZE = 980,
   VIEWS_Y = 510;
 function authorityPlace() {
@@ -105,7 +105,9 @@ const VIEWS = () =>
     ["Summaries", "Dashboards", "Status output", "An Agent's report"],
   );
 const GREEN = () => L(["那片绿灯"], ["that green dashboard"]),
-  VIEWS_NAME = () => L("给人看的视图", "Views");
+  VIEWS_NAME = () => L("给人看的视图", "Views"),
+  /* The opening's place for a mark at `size`, from its origin. */
+  openingOf = (size) => 0.82 * 164 * (size / 512);
 /* What 06.5's refusal says of the view kept on alone, under the name it takes there, and the judgment with its
  * conditions. English names it in the voice's word, "View", whose rule it states, with the dashboard's icon as its
  * example (EN-R17-05): set over its role, "A view" would repeat 9 of the 11 words of the caption cue that says it,
@@ -116,8 +118,6 @@ const KEPT = () => L("看板", "View"),
   ROLE = () => L(["帮人看清楚"], ["helps people see"]),
   JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]),
   CONDITIONS = () => L(["不明确", "，或者预想的状态已经过时"], ["ambiguous", " or stale"]);
-/* The opening's place for a mark at `size`, from its origin. */
-const openingOf = (size) => 0.82 * 164 * (size / 512);
 /* The parts beyond the opening, each with how far right of the mark's origin it reaches: the list of the four views,
  * laid out whole from its first word since its members join it within a few seconds; its heading; the dashboard's
  * qualifier after its name; and the report's panel under the list. `c` gives when each arrives. */
@@ -161,22 +161,30 @@ function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right)))
   const e = markExtent(VIEWS_SIZE, FULL);
   return { x: 960 - (e.left + reach) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
 }
-/* How far 06.5's refusal reaches right of the mark's origin at t. From the cut the dashboard stands with its role
- * under it instead of its qualifier beside it, so the group narrows from the stale view's reach to that row's by the
- * structural glide, which sets off from rest at the cut; then it widens, gliding, as the judgment's conditions and the
- * judgment join the names' column on their words (reachAt), so what stands stays centred. */
+/* How far 06.5's refusal reaches right of the mark's origin at t. From the cut the dashboard stands with its role under
+ * it instead of its qualifier beside it, and the judgment's conditions and the judgment join the names' column on
+ * their words. What the stage will hold is known at the cut, so the mark glides from the stale view's seat, from rest
+ * at the cut, to between the view's seat and the whole's, each state at most SEAT_OFF off the centre, and what that
+ * leaves of the widening glides on the words that widen it (reachAt): centred on what stood, the Chinese names glided
+ * 124 px on the second condition's words (zh-R19-04). Midway, the English states stand 39 px off and nothing glides;
+ * the Chinese conditions on one line widen the group by 247 px, so midway each state would stand 62 px off, and the
+ * names glide 40 px instead (wrapped at the clause mark, the lines would span 0.32 of each other, under the wrapping
+ * rule; elsewhere the break falls inside a phrase). */
+const SEAT_OFF = 42;
 function refusalReach(t, c) {
-  const text = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT,
-    [first, second] = CONDITIONS(),
+  const [text, [first, second]] = [openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, CONDITIONS()],
     before = Math.max(...viewsParts().map(([, right]) => right)),
     base = text + Math.max(measure(KEPT()), measure(ROLE()[0], NOTE)),
-    settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
-  const parts = [
-    [c.ambiguous, text + measure(first, NOTE)],
-    [c.stale, text + measure(first + second, NOTE)],
-    [c.cannotPass, text + measure(JUDGMENT()[0])],
-  ];
-  return settled + reachAt(t, base, parts, 0.8) - base;
+    parts = [c.ambiguous, c.stale, c.cannotPass].map((at, i) => [
+      at,
+      text + [measure(first, NOTE), measure(first + second, NOTE), measure(JUDGMENT()[0])][i],
+    ]),
+    whole = Math.max(base, ...parts.map(([, right]) => right)),
+    lean = Math.min((whole - base) / 4, SEAT_OFF),
+    seat = base + 2 * lean,
+    settled = mix(before, seat, glideShare(t, c.first5b + STAGE_CUT, (before - seat) / 2)),
+    widened = parts.map(([at, right]) => [at, Math.min(right, whole - 2 * lean)]);
+  return settled + reachAt(t, seat, widened, 0.8) - seat;
 }
 /* Where the views stand for the mark at `place`. */
 function viewsOf({ x, y, size }) {
@@ -208,9 +216,8 @@ const SOURCES = () =>
       "Valid attestations",
     ],
   );
-/* The rows' offsets from the origin for the mark at AUTHORITY_SIZE: each row clear of the boundary and of the
- * passages, at one pitch within each group. */
-const SOURCE_ROWS = [-169, -135, -101, 101, 135, 169];
+/* The rows' offsets from the origin for the mark at AUTHORITY_SIZE: each clear of the boundary and the passages. */
+const SOURCE_ROWS = [-160, -127, -94, 94, 127, 160];
 function sources(t, c, g, { x, y, size }) {
   const e = markExtent(size, FULL),
     axis = x + (e.left + e.right) / 2,

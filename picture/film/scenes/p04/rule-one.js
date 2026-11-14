@@ -86,18 +86,22 @@ function enoughModel(t, x, y, a, flowing) {
 
 /* 04.4 The model: concepts and structure. The one of the right size stands with the statement; one too big, with
  * concepts no one needs, joins at its right, and one too small, which drops the meaning on the way, at its left. The
- * three stand at one pitch: the first two as a pair about the centre, and the three spread to their places as the
- * third joins. Each model's name centres on it from its first word, its qualifier under it, and the names of the row
- * hang from one line under its tallest model, the grid. */
-const MODEL_PITCH = 450;
+ * three stand at one pitch. The first stands MODEL_LEAD px left of its last place from its first word, and the second
+ * joins it there, so no shown name moves as the pair forms (EN-R19-03): centred alone, the first glided 227 px left on
+ * the second's words and back on the third's. From that seat the first alone stands at most 40 px left of the centre
+ * under the rule's heading, and the pair at most 40 px right of it. The three spread to their places as the third
+ * joins: standing in those places from the first word, the pair would stand 106 px right of the centre in English and
+ * 176 px in Chinese for about 3 s. Each model's name centres on it from its first word, its qualifier under it, and
+ * the names of the row hang from one line under its tallest model, the grid. */
+const MODEL_PITCH = 450,
+  MODEL_LEAD = 196;
 export function modelStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const s2 = glideShare(t, c.big - 0.1, MODEL_PITCH / 2, 0.5),
-    s3 = glideShare(t, c.small + 0.05, MODEL_PITCH / 2, 0.6),
+  const s3 = glideShare(t, c.small + 0.05, MODEL_LEAD, 0.6),
     Y = 620,
-    half = MODEL_PITCH / 2,
     under = rowNameTop([Y + 48, Y + 75, Y + 20]),
-    xs = [960 - MODEL_PITCH, 960 - half * s2 + half * s3, 960 + half + half * s3],
+    first = 960 - MODEL_LEAD * (1 - s3),
+    xs = [960 - MODEL_PITCH, first, first + MODEL_PITCH],
     bigAt = c.big + 0.25,
     row = { alpha: g, align: "center" };
   const enough = g * named(t, c.enough);

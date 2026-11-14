@@ -21,9 +21,9 @@
 
 ## 5. Picture
 
-- [ ] 5.1 Seat the figures of 06.5.4, 03.2.2 and 04.5.2 midway from their cuts in the Chinese edition and correct the design sentence on 04.5.2 (zh-R19-04); done when no named mark glides 100 px or more while the voice speaks, outside chapter changes and thought pauses.
-- [ ] 5.2 Seat 01.3, 04.4 and 05.2 midway in the English edition (EN-R19-03); done when the note's move count falls and no frame of 336 to 348 s loses ink between cuts.
-- [ ] 5.3 Draw 07.4.2's lower row closer to its frame and scale 06.3's mark about its datum (zh-R19-05); done when at least 80 px stand between the lowest picture ink and the caption wherever a caption shows.
+- [x] 5.1 Seat the figures of 06.5.4, 03.2.2 and 04.5.2 midway from their cuts in the Chinese edition and correct the design sentence on 04.5.2 (zh-R19-04); done when no named mark glides 100 px or more while the voice speaks, outside chapter changes and thought pauses. Done on the composition's layout (14 November): 04.5.2's Chinese pair stands from the first card's words with one 50 px settle; 03.2's path rises 92 px instead of 183; 06.5.4's names stand at most 42 px off each state and glide 39 px instead of 123, since a pure seat would stand 62 px off for 7 s and the wrapped condition fails the wrapping rule. The other listed scenes are growing lists where a seat breaks the balance: declared.
+- [x] 5.2 Seat 01.3, 04.4 and 05.2 midway in the English edition (EN-R19-03); done when the note's move count falls and no frame of 336 to 348 s loses ink between cuts. Done on the layout: 01.3's panel seated at 995 (no glide); 04.4's first two models stand from their words and one 198 px spread remains, where two glides of 227 px stood; 05.2 unchanged (its only move is the claim's rise, not a growing row). The ink-loss window 336 to 348 s needs the render.
+- [x] 5.3 Draw 07.4.2's lower row closer to its frame and scale 06.3's mark about its datum (zh-R19-05); done when at least 80 px stand between the lowest picture ink and the caption wherever a caption shows. Done on the layout: 07.4.2's lower row stands 85.5 px above the caption (was 51) and 06.3's mark at 0.93 stands 94 px above it (was 53.5); the film's least gap under a caption is 83 px.
 - [ ] 5.4 Bring the link of 01.4.1 with its label on its own words (zh-R19-06); done when the label is legible within 0.3 s of its word and no judged label leads its word by more than 0.75 s.
 - [ ] 5.5 Run the picture audits on both staged editions; done when `mise run film:picture` reports no gated finding before its first render.
 

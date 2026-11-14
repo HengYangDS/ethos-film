@@ -1733,8 +1733,8 @@ scenes["01"] = function(s, t) {
   illustrative(Math.max(stageA, stageD, stageE));
   const W = claimWidth();
   if (stageA > 0) {
-    const aside = glideShare(t, hand + 0.05, Math.hypot(220, 80)), AX2 = mix(960, 740, aside), AY = mix(560, 640, aside), AR = 33, gone = ramp(t, opens - 0.15, 0.4), lead = Math.max(first - 0.28, s.voice_start - 0.1, cue(s, "Agent", "Agent") - 0.27), seen = stageA * ramp(t, lead - 0.15, 0.4) * (1 - gone);
-    const slide = glideShare(t, opens + 0.05, 100, 0.7), PX2 = mix(1060, 960, slide), PY = 360, left = PX2 - W / 2;
+    const PX2 = 995, aside = glideShare(t, hand + 0.05, Math.hypot(PX2 - 320 - 960, 80)), AX2 = mix(960, PX2 - 320, aside), AY = mix(560, 640, aside), AR = 33, gone = ramp(t, opens - 0.15, 0.4), lead = Math.max(first - 0.28, s.voice_start - 0.1, cue(s, "Agent", "Agent") - 0.27), seen = stageA * ramp(t, lead - 0.15, 0.4) * (1 - gone);
+    const PY = 360, left = PX2 - W / 2;
     agent(AX2, AY, { size: 1.5, alpha: seen });
     nameText("Agent", AX2, AY + AR + NAME_GAP, {
       valign: "top",
@@ -3263,6 +3263,8 @@ function stageName(s, t, a, c) {
 }
 var PATH_LEN = 1080;
 var PROMISE_PITCH = 80;
+var PATH_Y = 380;
+var PATH_RISE = 90;
 var softMax = (a, b, s = 80) => (a + b + Math.hypot(a - b, s)) / 2;
 function stagePath(t, a, c) {
   if (a <= 0) return;
@@ -3270,7 +3272,7 @@ function stagePath(t, a, c) {
     alone,
     measure(travellers),
     glideShare(t, c.agents + 0.05, (measure(travellers) - alone) / 2, 0.7)
-  ), named2 = glideShare(t, nameAt - 0.1, (NAME_GAP + measure(endName)) / 2, 0.6), X02 = 960 - softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2, PY = mix(560, 380, glideShare(t, c.three + 0.05, 180, 0.7)), X1 = X02 + PATH_LEN, reach = mix(X02, X1, drawn), nameX = Math.max(reach + 7 + NAME_GAP, X02 + 10 + measure(travellers) - measure(endName)), names2 = STATION_NAMES(), xs = railStations(names2, X02 + 240, X1 - 60), sts = [c.st1, c.st2, c.st3];
+  ), named2 = glideShare(t, nameAt - 0.1, (NAME_GAP + measure(endName)) / 2, 0.6), X02 = 960 - softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2, PY = mix(PATH_Y + PATH_RISE, PATH_Y, glideShare(t, c.three + 0.05, PATH_RISE, 0.7)), X1 = X02 + PATH_LEN, reach = mix(X02, X1, drawn), nameX = Math.max(reach + 7 + NAME_GAP, X02 + 10 + measure(travellers) - measure(endName)), names2 = STATION_NAMES(), xs = railStations(names2, X02 + 240, X1 - 60), sts = [c.st1, c.st2, c.st3];
   pathLine(
     X02,
     reach,
@@ -4312,9 +4314,10 @@ function enoughModel(t, x, y, a, flowing) {
     });
 }
 var MODEL_PITCH = 450;
+var MODEL_LEAD = 196;
 function modelStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
-  const s2 = glideShare(t, c.big - 0.1, MODEL_PITCH / 2, 0.5), s3 = glideShare(t, c.small + 0.05, MODEL_PITCH / 2, 0.6), Y3 = 620, half = MODEL_PITCH / 2, under = rowNameTop([Y3 + 48, Y3 + 75, Y3 + 20]), xs = [960 - MODEL_PITCH, 960 - half * s2 + half * s3, 960 + half + half * s3], bigAt = c.big + 0.25, row = { alpha: g, align: "center" };
+  const s3 = glideShare(t, c.small + 0.05, MODEL_LEAD, 0.6), Y3 = 620, under = rowNameTop([Y3 + 48, Y3 + 75, Y3 + 20]), first = 960 - MODEL_LEAD * (1 - s3), xs = [960 - MODEL_PITCH, first, first + MODEL_PITCH], bigAt = c.big + 0.25, row = { alpha: g, align: "center" };
   const enough = g * named(t, c.enough);
   enoughModel(t, xs[1], Y3, enough, ramp(t, c.structure, 0.4));
   termRow(
@@ -4466,7 +4469,7 @@ function examplesStage(s, t, c, g) {
   const heading = examplesHeading(t, c, g, ruleOneHeading(t, c, g)), em = labelSize(LABEL), Y3 = heading.bottom + EXAMPLES_DROP + em + NAME_GAP, goesName = L("要去掉", "Goes"), corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]), corrQual = L([], ["same stock, same day"]), reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10, reachRight = 280 + Math.max(
     EX_W,
     measure(corrTerm.join("")) + (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0)
-  ) / 2, joined = en ? 1 : glideShare(t, c.correction + 0.05, 280, 0.9), lean = en ? 0 : (reachLeft - reachRight) / 2 * joined * (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)), X1 = 960 + lean - 280 * joined, X2 = X1 + 560, vy = Y3 + 72, q = flowClock(t);
+  ) / 2, lean = en ? 0 : (reachLeft - reachRight) / 2 * (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)), X1 = 960 + lean - 280, X2 = X1 + 560, vy = Y3 + 72, q = flowClock(t);
   const one = g * named(t, c.exact), goes = drawnShare({ t, at: c.goes + 0.05 }, EX_W - 52), gone = g * named(t, c.goes);
   exampleCard(X1, Y3, false, one);
   stroke(
@@ -5463,7 +5466,7 @@ function ruleThreeHeading(t, c, g) {
     alpha: g * named(t, c.restOn)
   });
 }
-var AUTHORITY_SIZE = 840;
+var AUTHORITY_SIZE = 782;
 var VIEWS_SIZE = 980;
 var VIEWS_Y = 510;
 function authorityPlace() {
@@ -5484,11 +5487,11 @@ var VIEWS = () => L(
 );
 var GREEN = () => L(["那片绿灯"], ["that green dashboard"]);
 var VIEWS_NAME = () => L("给人看的视图", "Views");
+var openingOf = (size) => 0.82 * 164 * (size / 512);
 var KEPT = () => L("看板", "View");
 var ROLE = () => L(["帮人看清楚"], ["helps people see"]);
 var JUDGMENT = () => L(["判断就不能通过"], ["The judgment cannot pass"]);
 var CONDITIONS = () => L(["不明确", "，或者预想的状态已经过时"], ["ambiguous", " or stale"]);
-var openingOf = (size) => 0.82 * 164 * (size / 512);
 function viewsParts(c = {}) {
   const run = openingOf(VIEWS_SIZE) + VIEW_RUN, names2 = VIEWS();
   return [
@@ -5511,14 +5514,13 @@ function viewsPlace(reach = Math.max(...viewsParts().map(([, right]) => right)))
   const e = markExtent(VIEWS_SIZE, FULL);
   return { x: 960 - (e.left + reach) / 2, y: VIEWS_Y, size: VIEWS_SIZE };
 }
+var SEAT_OFF = 42;
 function refusalReach(t, c) {
-  const text2 = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, [first, second] = CONDITIONS(), before = Math.max(...viewsParts().map(([, right]) => right)), base = text2 + Math.max(measure(KEPT()), measure(ROLE()[0], NOTE)), settled = mix(before, base, glideShare(t, c.first5b + STAGE_CUT, (before - base) / 2));
-  const parts2 = [
-    [c.ambiguous, text2 + measure(first, NOTE)],
-    [c.stale, text2 + measure(first + second, NOTE)],
-    [c.cannotPass, text2 + measure(JUDGMENT()[0])]
-  ];
-  return settled + reachAt(t, base, parts2, 0.8) - base;
+  const [text2, [first, second]] = [openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT, CONDITIONS()], before = Math.max(...viewsParts().map(([, right]) => right)), base = text2 + Math.max(measure(KEPT()), measure(ROLE()[0], NOTE)), parts2 = [c.ambiguous, c.stale, c.cannotPass].map((at, i) => [
+    at,
+    text2 + [measure(first, NOTE), measure(first + second, NOTE), measure(JUDGMENT()[0])][i]
+  ]), whole = Math.max(base, ...parts2.map(([, right]) => right)), lean = Math.min((whole - base) / 4, SEAT_OFF), seat = base + 2 * lean, settled = mix(before, seat, glideShare(t, c.first5b + STAGE_CUT, (before - seat) / 2)), widened = parts2.map(([at, right]) => [at, Math.min(right, whole - 2 * lean)]);
+  return settled + reachAt(t, seat, widened, 0.8) - seat;
 }
 function viewsOf({ x, y, size }) {
   const open = x + openingOf(size), vx = open + VIEW_RUN;
@@ -5542,7 +5544,7 @@ var SOURCES = () => L(
     "Valid attestations"
   ]
 );
-var SOURCE_ROWS = [-169, -135, -101, 101, 135, 169];
+var SOURCE_ROWS = [-160, -127, -94, 94, 127, 160];
 function sources(t, c, g, { x, y, size }) {
   const e = markExtent(size, FULL), axis = x + (e.left + e.right) / 2, k = size / AUTHORITY_SIZE;
   SOURCES().forEach(
@@ -6561,10 +6563,10 @@ function ownRepository(s, t, a) {
   });
 }
 var DUPLICATES = [200, 104];
-var ROW_GAP = 50;
+var ROW_GAP = 18;
 var CHECK = [460, 240];
 var FRAME_CY = 540;
-var SAFE_BOTTOM = 920;
+var ROW_NAMES_BOTTOM = 864;
 function replacementCheck(x, y, alpha) {
   if (alpha < 0.01) return;
   const [w, h] = CHECK, x0 = x - w / 2 + 34;
@@ -6588,7 +6590,7 @@ function replacement(s, t, a) {
     ["声明的检查都要查出来", "the declared check"],
     ["都要查出来", "must catch every duplicate"]
   ]);
-  const term = [L("新做法", "A replacement")], qual = [L("不能比旧的弱", "never weaker")], em = labelSize(LABEL), ruleHeight = termRowLayout(term, qual, Infinity, false).height, first = ruleHeight + NAME_GAP + CHECK[1], height = first + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em, top = Math.min(FRAME_CY - (first + height) / 4, SAFE_BOTTOM - NAME_GAP - height), CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2, RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2, SX = 960 - 260, DX = 960 + 260, rowTop = rowNameTop([RY + SCRIPT[1] / 2, RY + DUPLICATES[1] / 2]), n = a * named(t, cutAt2), sIn = a * named(t, scriptAt), dIn = a * named(t, dupAt);
+  const term = [L("新做法", "A replacement")], qual = [L("不能比旧的弱", "never weaker")], em = labelSize(LABEL), ruleHeight = termRowLayout(term, qual, Infinity, false).height, first = ruleHeight + NAME_GAP + CHECK[1], height = first + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em, top = Math.min(FRAME_CY - (first + height) / 4, ROW_NAMES_BOTTOM - height), CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2, RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2, SX = 960 - 260, DX = 960 + 260, rowTop = rowNameTop([RY + SCRIPT[1] / 2, RY + DUPLICATES[1] / 2]), n = a * named(t, cutAt2), sIn = a * named(t, scriptAt), dIn = a * named(t, dupAt);
   termRow(t, term, [cutAt2], qual, [weakAt], 960, top, { alpha: a, align: "center" });
   replacementCheck(960, CY, n);
   nameText(L("声明的检查", "The declared check"), 960, CY + CHECK[1] / 2 + NAME_GAP, {

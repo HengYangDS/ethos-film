@@ -74,9 +74,12 @@ export function examplesHeading(t, c, g, bottom) {
  * first card's words, so no shown name moves (EN-R17-09): the rule's heading over it spans 830 px of the frame, so the
  * first card and its verdict, at the left of the seat, stand at most 62 px off the centre, for 0.8 s. The Chinese
  * heading spans 456 px, and at that seat the repeat and its verdict would stand 93 to 166 px left of the centre for
- * 2.5 s, so there the first card stands alone on the frame's axis, the second joins at its right and the pair glides
- * as one unit to centre what stands, the repeat's verdict at its left included, and on the correction's verdict it
- * settles centred on the axis, before the summary is tried against the two. */
+ * 2.3 s. Standing alone on the frame's axis instead, they glided 234 px while the voice named the correction that
+ * joined them (zh-R19-04). So the Chinese pair stands from the first card's words where the pair is centred until the
+ * correction's verdict, about 50 px right of its last seat, the second card's place empty until its words: the repeat
+ * stands 68 px left of the centre for 1.3 s and, with its verdict, 141 px for 0.9 s, each for less than a state may
+ * stand off; the pair then stands centred for 2.4 s. On the correction's verdict it glides once, those 50 px, to
+ * settle centred on the axis, before the summary is tried against the two. */
 export function examplesStage(s, t, c, g) {
   const heading = examplesHeading(t, c, g, ruleOneHeading(t, c, g)),
     em = labelSize(LABEL),
@@ -86,8 +89,9 @@ export function examplesStage(s, t, c, g) {
     // The Chinese names the correction in the order it is said, as one name; the English keeps its qualifier.
     corrTerm = L(["同一天、同一只股票的更正"], ["A correction"]),
     corrQual = L([], ["same stock, same day"]),
-    // Until the correction's verdict the pair reaches from the repeat's cross at its left to the end of the second
-    // card or of its name at its right, and stands right of the axis by half their difference to centre them.
+    // Until the correction's verdict the Chinese pair reaches from the repeat's cross at its left to the end of the
+    // second card or of its name at its right, and stands right of the axis by half their difference to centre them,
+    // from the first card's words.
     reachLeft = 280 + EX_W / 2 + NAME_GAP + measure(goesName) + 24 + 10,
     reachRight =
       280 +
@@ -97,13 +101,11 @@ export function examplesStage(s, t, c, g) {
           (corrQual.length ? TERM_GAP + measure(corrQual.join(""), NOTE) : 0),
       ) /
         2,
-    joined = en ? 1 : glideShare(t, c.correction + 0.05, 280, 0.9),
     lean = en
       ? 0
       : ((reachLeft - reachRight) / 2) *
-        joined *
         (1 - glideShare(t, c.stays + 0.05, Math.abs(reachLeft - reachRight) / 2, 0.7)),
-    X1 = 960 + lean - 280 * joined,
+    X1 = 960 + lean - 280,
     X2 = X1 + 560,
     vy = Y + 72,
     q = flowClock(t);

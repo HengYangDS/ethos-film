@@ -153,9 +153,17 @@ export function stageName(s, t, a, c) {
  * centred together throughout. The travellers' heading starts on the person's left edge. The promises hang from the
  * first station's name, their markers' left edge on its left edge, one and a half pitches below the stations' names,
  * so that name does not read as the list's heading; the refusal shares that left edge, one and a half pitches after
- * the last promise, so it reads as set apart from the list rather than as a fourth promise. */
+ * the last promise, so it reads as set apart from the list rather than as a fourth promise. The path stands PATH_RISE
+ * px under its last place from the cut and rises that far on the promises' words: its travellers, its name and its
+ * stations are named by then, and from the place where they alone are centred they rose 183 px while the voice spoke
+ * (zh-R19-04). It cannot stand at one height throughout: under the promises the path must stand at 380 for the refusal
+ * to keep 96 px above the caption, and there the path alone would stand 156 px above the content's centre line for
+ * the 11 s before the promises, past the 8% a thought's late instant allows. From PATH_RISE under it the path alone
+ * stands 66 px above that line, within the limit, and the rise is under 100 px. */
 const PATH_LEN = 1080,
-  PROMISE_PITCH = 80;
+  PROMISE_PITCH = 80,
+  PATH_Y = 380,
+  PATH_RISE = 90;
 /* The larger of two reaches, joined over about `s` px so that a picture centred on it never sets off at speed when
  * one reach passes the other. */
 const softMax = (a, b, s = 80) => (a + b + Math.hypot(a - b, s)) / 2;
@@ -192,7 +200,7 @@ export function stagePath(t, a, c) {
     X0 =
       960 -
       softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2,
-    PY = mix(560, 380, glideShare(t, c.three + 0.05, 180, 0.7)),
+    PY = mix(PATH_Y + PATH_RISE, PATH_Y, glideShare(t, c.three + 0.05, PATH_RISE, 0.7)),
     X1 = X0 + PATH_LEN,
     reach = mix(X0, X1, drawn),
     // The name stands at the path's end, and never left of the end of the travellers' heading.

@@ -297,12 +297,14 @@ export function ownRepository(s, t, a) {
 /* The check is 460 px wide, so with the rule over it the first state covers a tenth of the band, as it must for the
  * two seconds and more that Chinese says the rule before the script joins it. */
 const DUPLICATES = [200, 104],
-  ROW_GAP = 50,
+  ROW_GAP = 18,
   CHECK = [460, 240];
-/* The frame's centre line, about which the reviewers measure a still state's balance, and the lower edge of the area
- * in which every name must stand. */
+/* The frame's centre line, about which the reviewers measure a still state's balance, and the line the row's names end
+ * on at the lowest: the caption's ink begins at about y 956, and with the scene's camera the names then end about
+ * 85 px above it. They ended 54 px above it, 32 px further from their own figure than now, so the caption read as the
+ * figure's third row (zh-R19-05). */
 const FRAME_CY = 540,
-  SAFE_BOTTOM = 920;
+  ROW_NAMES_BOTTOM = 864;
 /* The replacement: the declared check (example.js) drawn large, its check as four lines of code under the repository's
  * branch and its tick right of them, at the declared check's place for its tick. */
 function replacementCheck(x, y, alpha) {
@@ -338,11 +340,11 @@ export function replacement(s, t, a) {
     // reaches from the rule's top to the row's names, stand with their centres 136 px apart. Centred whole on the
     // content's centre line, the first stood 178 px above the frame's centre for 1.7 s in English (EN-R17-04). The
     // figure is seated so that the two states stand about the frame's centre line, midway between their centres, and no
-    // lower than keeps the row's names one gap above the lower edge of the safe area: about 80 px above the centre and
-    // 60 px below it.
+    // lower than keeps the row's names clear of the caption (ROW_NAMES_BOTTOM): about 80 px above the centre and
+    // 40 px below it.
     first = ruleHeight + NAME_GAP + CHECK[1],
     height = first + NAME_GAP + em + ROW_GAP + SCRIPT[1] + NAME_GAP + em,
-    top = Math.min(FRAME_CY - (first + height) / 4, SAFE_BOTTOM - NAME_GAP - height),
+    top = Math.min(FRAME_CY - (first + height) / 4, ROW_NAMES_BOTTOM - height),
     CY = top + ruleHeight + NAME_GAP + CHECK[1] / 2,
     RY = CY + CHECK[1] / 2 + NAME_GAP + em + ROW_GAP + SCRIPT[1] / 2,
     SX = 960 - 260,
