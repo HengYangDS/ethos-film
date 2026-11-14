@@ -51,9 +51,11 @@ run = [
   "uv run --python 3.12 --frozen --offline python -m filmkit.produce select --language zh",
   "uv run --python 3.12 --frozen --offline python -m filmkit.produce assemble --language zh",
   "uv run --python 3.12 --frozen --offline python -m filmkit.produce refresh-captions --language zh",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce check-sound --language zh",
   "uv run --python 3.12 --frozen --offline python -m filmkit.produce select --language en",
   "uv run --python 3.12 --frozen --offline python -m filmkit.produce assemble --language en",
   "uv run --python 3.12 --frozen --offline python -m filmkit.produce refresh-captions --language en",
+  "uv run --python 3.12 --frozen --offline python -m filmkit.produce check-sound --language en",
 ]
 
 [tasks."film:picture"]

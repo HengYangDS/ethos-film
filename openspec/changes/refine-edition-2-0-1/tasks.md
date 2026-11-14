@@ -9,8 +9,8 @@
 
 ## 3. Engine
 
-- [ ] 3.1 Adopt the `filmkit` release that levels each thought within a declared tolerance, judges short thoughts' clarity over the grid's phases and holds fast captions (depends on that release); done when `pyproject.toml` and `uv.lock` pin it and `mise run check` passes.
-- [ ] 3.2 Declare the film's thought-level tolerance and assemble both soundtracks again (zh-R19-03, EN-R19-05); done when no step between adjacent thoughts exceeds the notes' reverification lines.
+- [x] 3.1 Adopt the `filmkit` release that levels each thought within a declared tolerance, judges short thoughts' clarity over the grid's phases and holds fast captions (depends on that release); done when `pyproject.toml` and `uv.lock` pin it and `mise run check` passes. Done with `filmkit` 0.22.0 (15 November): the lock holds the tag's commit, `film:sound` passes `check-sound` after each edition's captions, the review prompt states the engine's clarity rules and the measured medium, the English reading that 03.6's wording moved is re-keyed, the Chinese font subsets gain 职, which 03.6 now draws, and the Prettier and Taplo carriers that repeat ETHOS's shipped settings are gone. The row-gap gate and a pace limit stay off: round 19 accepted this film's rows and glides.
+- [ ] 3.2 Declare the film's thought-level tolerance and assemble both soundtracks again (zh-R19-03, EN-R19-05); done when no step between adjacent thoughts exceeds the notes' reverification lines. Declared: 0.4 dB for the Chinese edition and 0.5 dB for the English one (were 0.5 and 0.75); the assembled soundtracks decide.
 - [ ] 3.3 Judge 01.2 and the English 08.1 and 03.1 by the engine's phase measure (zh-R19-02, EN-R19-01); done when every thought meets its edition's floor by that measure or stays declared by name with its figure.
 - [ ] 3.4 Let the engine hold or join the two English cues above the reading rate (EN-R19-02); done when no cue reads above 25 characters per second.
 
