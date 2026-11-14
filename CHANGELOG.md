@@ -4,6 +4,12 @@ All notable changes to the ETHOS introduction films and their build are recorded
 
 ## [Unreleased]
 
+### Changed
+
+- The repository runs ETHOS 0.2.0-beta.10 instead of 0.2.0-alpha.29, its release declaration names
+  the publication peers only by their Git remotes, and the hosted GitHub job installs Mise 2026.11.8
+  instead of 2026.10.25. The films of 2.0.0 are unchanged.
+
 ## [2.0.0] - 2026-11-14
 
 ### Added
