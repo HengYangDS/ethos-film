@@ -2026,7 +2026,7 @@ function railLine(alpha) {
     { color: P.line, alpha, width: 2.5 }
   );
 }
-var RAIL = { y: 690, x0: 376, x1: 1544, xs: [668, 960, 1252], heads: [604, 624, 604] };
+var RAIL = { y: 690, x0: 370, x1: 1550, xs: [665, 960, 1255], heads: [604, 624, 604] };
 function handlers(seen) {
   const { xs } = RAIL;
   person(xs[0], 640, { size: 1.1, alpha: seen[0] });
@@ -2226,7 +2226,7 @@ function writeGate(x, y, h, { alpha = 1, open = 0, color = P.authority, single =
 }
 
 // picture/film/scenes/p03/kernel.js
-var KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
+var KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1387, SX: 1627 };
 var centring = (x0, x1) => 960 - (x0 + x1) / 2;
 function stageKernel(t, a, c) {
   if (a <= 0) return;
@@ -3218,7 +3218,7 @@ function station(x, y, i, alpha) {
 }
 function stageName(s, t, a, c) {
   if (a <= 0) return;
-  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [536, 748, 960, 1172, 1384], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
+  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [530, 745, 960, 1175, 1390], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
   nameText("ETHOS", 960, 350, { alpha: g * named(t, c.first - 0.25) });
   stroke(
     () => xs.forEach((x) => {
@@ -7659,7 +7659,7 @@ function modelRevision(s, t, a) {
     ["依赖它的计划和视图", "every plan and view that depends on it"],
     ["重新编译", "compiled again"]
   ]);
-  const GY = 390, GW = 400, GH = 225, DOC2 = [150, GH], DOC_X = 730, CHK = 1015, CELL0 = 3.5 * (GW / 4), CELL = CELL0 + 0.45 * (GW / 4), MID2 = GY + GH / 2, RECORD = L("同一条记录", "The same record"), DIM = L("少了一个维度", "Missing a dimension"), BOUND = L("最小范围", "The smallest boundary"), CHANGE = L("新的正式变更", "A new official Change"), REVISES = L("修订模型", "Revising the model"), DEP = L("依赖它的计划和视图", "Plans and views"), COMPILE = L("重新编译", "Compiled again");
+  const GY = 390, GW = 400, GH = 225, DOC2 = [150, GH], DOC_X = 734, CHK = 1023, CELL0 = 3.5 * (GW / 4), CELL = CELL0 + 0.45 * (GW / 4), MID2 = GY + GH / 2, RECORD = L("同一条记录", "The same record"), DIM = L("少了一个维度", "Missing a dimension"), BOUND = L("最小范围", "The smallest boundary"), CHANGE = L("新的正式变更", "A new official Change"), REVISES = L("修订模型", "Revising the model"), DEP = L("依赖它的计划和视图", "Plans and views"), COMPILE = L("重新编译", "Compiled again");
   const left = -22 - nameWidth(DIM, 280), right1 = Math.max(GW + 0.9 * (GW / 4) + 6, CELL + nameWidth(RECORD) / 2), right2 = Math.max(
     right1,
     CELL + nameWidth(BOUND) / 2,

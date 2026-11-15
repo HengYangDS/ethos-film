@@ -115,8 +115,8 @@ export function modelRevision(s, t, a) {
     GW = 400,
     GH = 225,
     DOC = [150, GH],
-    DOC_X = 730,
-    CHK = 1015,
+    DOC_X = 734,
+    CHK = 1023,
     // The concept's cell, the last of the middle row, and its axis once it has grown a dimension.
     CELL0 = 3.5 * (GW / 4),
     CELL = CELL0 + 0.45 * (GW / 4),

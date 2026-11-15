@@ -61,7 +61,7 @@ import {
  * from its words, as a list written on a board grows, and the new attestation's ring draws on a third on each, its
  * stamp landing on the words that name it; the loop turns down clear of the new attestation's name and runs back under
  * the gate's. */
-const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1380, SX: 1620 };
+const KERNEL = { IX: 560, KX: 860, PX: 1180, GX: 1387, SX: 1627 };
 /* The shift that centres the extent from x0 to x1 on the frame. */
 export const centring = (x0, x1) => 960 - (x0 + x1) / 2;
 export function stageKernel(t, a, c) {

@@ -78,9 +78,9 @@ export function stageName(s, t, a, c) {
   // The chapter opens on the first word: the name and its five initials, one mark of rings, stand together.
   const g = a * clearOfTitle(s, t, 330),
     open = g * ramp(t, c.first - 0.4, 0.4),
-    // The pitch leaves the English words one and a half times their size between neighbours: at 200 px "Human-Agent"
-    // stood 36 px from "Operational" and "Evidence-grounded" 43 px from "Trust".
-    xs = [536, 748, 960, 1172, 1384],
+    // The pitch leaves the English words 1.7 times their size or more between neighbours: at 200 px "Human-Agent" stood
+    // 36 px from "Operational" and "Evidence-grounded" 43 px from "Trust".
+    xs = [530, 745, 960, 1175, 1390],
     LY = 430,
     LR = 40,
     Y = NAME_PATH_Y(),
