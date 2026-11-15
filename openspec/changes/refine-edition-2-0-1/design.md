@@ -8,12 +8,12 @@ Edition 2.0.0 passed review round 19 without a finding. This Change repairs that
 
 - Repair every note of round 19 that the film owns, each against its own reverification line.
 - Take from the engine the measures that four notes were deferred to, by adopting its release.
-- Calibrate the picture floors with a rebuild that owes nothing to the production build.
 
 **Non-Goals:**
 
 - No change to approved wording without the owner's decision on the exact text.
 - No film-local substitute for a measure the engine owns.
+- No rebuild of release 2.0.0: the clean-checkout rebuild is made on this edition's own tag by the Change that follows it (decision 5).
 
 ## Decisions
 
@@ -21,7 +21,7 @@ Edition 2.0.0 passed review round 19 without a finding. This Change repairs that
 2. **A shown name travels under speech as little as the balance allows.** Where a figure's final extent is known at the cut, it is seated midway from the cut, as 01.4 and 06.4 already are, and a slot may stand empty until its words within the balance limit (04.5.2, 01.3). Where the final extent would stand a state more than 50 px off for seconds, the figure takes the seat the limit allows and glides the remainder on its words (06.5.4: 42 px off, 39 px glide; 03.2: a 92 px rise; 04.4: one spread of 198 px); where the moves are a list's structural re-centring as it grows part by part (02.4, 05.4, 05.7, 06.1, 07.1, 08.9, 09.2, and 05.2's rise), the picture is declared. The design sentence about the Chinese pair of 04.5.2 is corrected to what the picture does.
 3. **Engine measures come from the engine.** The thought-level tolerance, the phase-median clarity of short thoughts and the holding of fast captions are adopted with the `filmkit` release that offers them. The film declares its values in `content/film.toml`; it does not post-process its soundtrack or captions.
 4. **The declared compressions stand until the owner rules.** 03.6 leaves out conditions of the source by the owner's approval of 13 November; the two notes on it ask a wording question, which goes to the owner as exact bilingual text together with 08.1.
-5. **The floors come from a clean checkout.** The rebuild that calibrates them is made from an anonymous clone of the `v2.0.0` tag with no earlier output, following the README.
+5. **The floors wait for a rebuild of this edition's own tag.** A rebuild of release 2.0.0 would calibrate the floors of films this edition replaces, on an engine and renderer this edition no longer uses (filmkit 0.21.2 and HyperFrames 0.9.9). The rebuild from an anonymous clone with no earlier output is therefore made on the `v2.0.1` tag by the Change that follows this one, at the lowest rank in the host queue. This edition's manifest keeps the recorded floors of 45 dB, which no clean rebuild of these films has exercised yet; its comparison covers both staged picture documents of each edition, as the amended requirement says.
 6. **The runtime is refitted from the thought pauses, as the owner's approval of 03.6 foresaw.** The approved 03.6 adds 3.9 s of Chinese and 3.3 s of English speech. In release 2.0.0 the gaps between parts stood within 1.7 s of their lower bounds and 37 of the 48 Chinese thought pauses already stood at the range's lower bound of 1.25 s, so the Chinese statement pause goes from a mean of 1.34 s to 1.28 s with the range's lower bound at 1.19 s, and the English one from 1.68 s to 1.61 s inside its range. Questions and the coda keep their pauses, every gap stays within its declared bounds, and each thought boundary still outlasts the longest pause inside its thought more than twice. Speech is not stretched and no inner pause is shortened further.
 7. **The Chinese 03.6 is retaken as a run-on.** Narrated from the cast's seed on the longer text, its take ended abruptly and the assembly refused it. Of sixteen run-on takes, seed 7155537 ends with a fall of 32.5 ms and reads 18.74 dB on the assembled soundtrack, 0.13 dB under the edition; recognition differs from its text only by the homophone 它/他 and the spelling of the film's name.
 8. **Each thought stands within 0.35 dB of its part's level in Chinese and 0.4 dB in English (zh-R19-03, EN-R19-05).** At 0.4 dB the Chinese soundtrack's largest step between adjacent thoughts was 0.87 LU, over the note's line of 0.8 LU; at 0.35 dB it is 0.77 LU. The English soundtrack's largest step inside a part is 0.8 LU (was 1.0 LU at 0.5 dB) and 0.93 LU across parts, under the note's 1.5 dB.
@@ -34,4 +34,3 @@ Edition 2.0.0 passed review round 19 without a finding. This Change repairs that
 
 - The engine release may change bytes of the soundtrack beyond the notes' thoughts. → The release checks and the continuity measures run on the whole soundtrack, and both editions are reviewed again.
 - Seating figures midway can unbalance a state that holds for seconds. → The picture audits run on both editions before any render, and each repair is checked against the whole reverification list of its note.
-- The clean rebuild could show a film below 45 dB. → The manifest then records the measured floor after the lowest frames are inspected side by side, as the reproduction requirement says.

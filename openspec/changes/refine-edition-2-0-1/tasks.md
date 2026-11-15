@@ -4,8 +4,7 @@
 
 ## 2. Reproduction
 
-- [ ] 2.1 Rebuild release 2.0.0 from an anonymous clone of the `v2.0.0` tag that holds no earlier output, by the README's steps, and compare it with the published assets (release finding REL-2.0.0-1); done when the reproduction report lists a minimum for each of the eight films.
-- [ ] 2.2 Inspect each film's lowest frames side by side and record its floor in `content/release.json` at or below the measured minimum; done when the comparison passes against the recorded floors.
+- [x] 2.1 Leave the rebuild from a clean checkout to the Change that follows this edition, on the edition's own tag; done when the proposal and the design say so and this Change records no floor from a rebuild. Decided on 15 November 2026 (design decision 5): a rebuild of release 2.0.0 would calibrate films this edition replaces, on an engine and renderer it no longer uses. Task 2.2, which recorded the floors of that rebuild, is withdrawn with it; the manifest keeps the recorded floors.
 
 ## 3. Engine
 
