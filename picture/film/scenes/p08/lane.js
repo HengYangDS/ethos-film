@@ -111,10 +111,11 @@ export function lane(s, t, a) {
     wrap: STATION_WRAP(),
   });
   // Who holds the lane and until when, on record above it, each linked from the lane on its words; the English names
-  // wrap within the distance between them, less a gap, and the Chinese ones stand on one line each.
+  // wrap within the distance between them, less a gap, and the Chinese ones stand on one line each, one and a half
+  // times their size apart: a fifth of the way in from each end they stood 39 px apart, 1.32 times.
   const lease = [holdAt, untilAt],
-    hx = mix(x2, x3, 0.2),
-    ux = mix(x2, x3, 0.8),
+    hx = mix(x2, x3, 0.18),
+    ux = mix(x2, x3, 0.82),
     leaseWrap = L(230, Math.min(230, ux - hx - 30)),
     h = a * named(t, holdAt),
     u = a * named(t, untilAt);

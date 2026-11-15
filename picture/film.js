@@ -2026,7 +2026,7 @@ function railLine(alpha) {
     { color: P.line, alpha, width: 2.5 }
   );
 }
-var RAIL = { y: 690, x0: 400, x1: 1520, xs: [680, 960, 1240], heads: [604, 624, 604] };
+var RAIL = { y: 690, x0: 376, x1: 1544, xs: [668, 960, 1252], heads: [604, 624, 604] };
 function handlers(seen) {
   const { xs } = RAIL;
   person(xs[0], 640, { size: 1.1, alpha: seen[0] });
@@ -3218,7 +3218,7 @@ function station(x, y, i, alpha) {
 }
 function stageName(s, t, a, c) {
   if (a <= 0) return;
-  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [560, 760, 960, 1160, 1360], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
+  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [536, 748, 960, 1172, 1384], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
   nameText("ETHOS", 960, 350, { alpha: g * named(t, c.first - 0.25) });
   stroke(
     () => xs.forEach((x) => {
@@ -6994,7 +6994,7 @@ function lane(s, t, a) {
     set: "08.2:stations",
     wrap: STATION_WRAP()
   });
-  const lease = [holdAt, untilAt], hx = mix(x2, x3, 0.2), ux = mix(x2, x3, 0.8), leaseWrap = L(230, Math.min(230, ux - hx - 30)), h = a * named(t, holdAt), u = a * named(t, untilAt);
+  const lease = [holdAt, untilAt], hx = mix(x2, x3, 0.18), ux = mix(x2, x3, 0.82), leaseWrap = L(230, Math.min(230, ux - hx - 30)), h = a * named(t, holdAt), u = a * named(t, untilAt);
   agent(hx, LEASE_Y, { size: 0.9, alpha: h });
   clock(ux, LEASE_Y, 20, { hand: 0.62, alpha: u });
   link(hx, RAIL_Y - 6, hx, LEASE_Y + 30, {

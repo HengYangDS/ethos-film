@@ -73,8 +73,9 @@ function railLine(alpha) {
 /* The rail of a request's handoffs, shared by its two stages: the request at its start, three handlers standing over
  * it (a person, an Agent and a person, `heads` their tops; at this size a figure's head and shoulders read as one) and
  * its end, the five stations at one pitch. The pitch leaves the English "What must not be done", which no line break
- * can split, room on one line between its neighbours' names. */
-const RAIL = { y: 690, x0: 400, x1: 1520, xs: [680, 960, 1240], heads: [604, 624, 604] };
+ * can split, room on one line between its neighbours' names, a gap of at least one and a half times the names' size
+ * on each side: at a pitch of 280 px it stood 36 px from "Any constraint", 1.24 times. */
+const RAIL = { y: 690, x0: 376, x1: 1544, xs: [668, 960, 1252], heads: [604, 624, 604] };
 function handlers(seen) {
   const { xs } = RAIL;
   person(xs[0], 640, { size: 1.1, alpha: seen[0] });
