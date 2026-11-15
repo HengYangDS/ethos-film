@@ -26,9 +26,18 @@ const endPoint = (x, y, drawn, alpha) => {
   if (r > 0.3) dot(x, y, r, { color: P.ink, alpha });
 };
 /* A path from x0 to x1 at y, in pieces that leave the rings of the stations at `gaps` clear, so no line runs under a
- * station's glyph; `dash` draws it dashed from `split` on. */
+ * station's glyph; `dash` draws it dashed from `split` on. A gap is a station's x, clear by the ring's 28 px either
+ * side, or [x, half] while its station arrives: the line gives way from the station's centre as the ring's ink rises,
+ * so no stretch of it leaves within a frame (zh-R20-02). */
 function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
-  const ends = [x0, ...gaps.flatMap((x) => [x - 28, x + 28]), x1],
+  const ends = [
+      x0,
+      ...gaps.flatMap((g) => [
+        [g].flat()[0] - ([g].flat()[1] ?? 28),
+        [g].flat()[0] + ([g].flat()[1] ?? 28),
+      ]),
+      x1,
+    ],
     pieces = [];
   for (let k = 0; k < ends.length; k += 2) pieces.push([ends[k], ends[k + 1]]);
   stroke(
@@ -56,22 +65,24 @@ const STATION_NAMES = () =>
   L(["一个问题", "一个仓库", "用起来怎么样"], ["A problem", "A repository", "In use"]);
 /* The height of 03.1's path: it stands low enough that its name keeps clear of the last initial's word. */
 const NAME_PATH_Y = () => 600;
-function station(x, y, i, alpha) {
+/* `glyph` is the glyph's own ink where it arrives later than its ring. */
+function station(x, y, i, alpha, glyph = alpha) {
   if (alpha < 0.01) return;
   dot(x, y, 28, { color: P.ground, alpha });
   ring(x, y, 28, { color: P.ink, alpha, width: 2.5 });
-  if (i === 0) text("?", x, y + 1, 30, { role: "mark", align: "center", alpha, bold: true });
+  if (glyph < 0.01) return;
+  if (i === 0) text("?", x, y + 1, 30, { role: "mark", align: "center", alpha: glyph, bold: true });
   if (i === 1) {
-    line(x - 6, y - 12, x - 6, y + 12, { color: P.ink, alpha, width: 2.5 });
+    line(x - 6, y - 12, x - 6, y + 12, { color: P.ink, alpha: glyph, width: 2.5 });
     stroke(
       () => {
         ctx.moveTo(x - 6, y + 4);
         ctx.quadraticCurveTo(x - 6, y - 6, x + 8, y - 8);
       },
-      { color: P.ink, alpha, width: 2.5 },
+      { color: P.ink, alpha: glyph, width: 2.5 },
     );
   }
-  if (i === 2) person(x, y + 6, { size: 0.55, alpha });
+  if (i === 2) person(x, y + 6, { size: 0.55, alpha: glyph });
 }
 
 /* 03.1 ETHOS takes a different path: the chapter opens on the first word with the name and its five initials, five
@@ -233,7 +244,9 @@ export function stagePath(t, a, c) {
     X0,
     reach,
     PY,
-    xs.filter((x, i) => t > sts[i] - 0.15 && x + 28 < reach),
+    xs
+      .map((x, i) => [x, 28 * ramp(t, sts[i] - 0.15, 0.4)])
+      .filter(([x, half]) => half > 0 && x + 28 < reach),
     { alpha: on },
   );
   endPoint(END, PY, drawn, on);
@@ -273,7 +286,12 @@ export function stagePath(t, a, c) {
     alpha: a,
     build: true,
   });
-  xs.forEach((x, i) => station(x, PY, i, a * ramp(t, sts[i] - 0.15, 0.4)));
+  // A station's ring rises as the line gives way under it over 0.4 s, and its glyph on a ramp of its own from 0.2 s
+  // later, when the line has left its place: the glyph never stands on the line, and its ink rises as gently as
+  // any mark's.
+  xs.forEach((x, i) =>
+    station(x, PY, i, a * ramp(t, sts[i] - 0.15, 0.4), a * ramp(t, sts[i] + 0.05, 0.35)),
+  );
   railNames(names, xs, PY + 28, {
     gap: NAME_GAP,
     alpha: (i) => a * listIn(t, sts, i),

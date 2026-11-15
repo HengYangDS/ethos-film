@@ -7,12 +7,13 @@ import { ctx } from "../../canvas.js";
 import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
 import { box, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
-import { listIn, named } from "../../naming/lists.js";
+import { named } from "../../naming/lists.js";
 import {
   LEADING,
   NAME_GAP,
   NOTE,
   TERM_STACK,
+  growName,
   nameText,
   rejectedName,
   termRow,
@@ -21,7 +22,7 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { drawShare, drawStart, glideShare, pauseHold, voiceTime } from "../../timing/pauses.js";
+import { drawShare, drawStart, glideShare, voiceTime } from "../../timing/pauses.js";
 
 /* 03.6 ETHOS's own code does the kernel's one job: from the cut its code is a panel of lines round the kernel, named as
  * ETHOS's code; on the words that give the kernel its one job the panel draws in to the kernel and its lines go, so
@@ -145,10 +146,12 @@ export function stageTools(t, a, c) {
   // make them a condition, set as one more line, then names each reduction: as one gloss they ran 4.4 times as wide as
   // the name over them (EN-R17-08), so they stand as a list of three on one line under it, each on its own words, the
   // middle one on the axis under the lines above and the others 48 px clear of it either side, at even gaps.
-  // These four English names stand where Chinese holds one, so with the four that name ETHOS's own tool the stage
-  // would show fourteen names at once, two over the twelve a viewer reads (the engine's name load). They qualify the
-  // mature tools in the sentence that says them: the list stands whole until the voice turns to ETHOS's own tools and
-  // leaves as a whole on those words, with the words that lead it, while every mark keeps its name.
+  // As four names they stood where Chinese holds one, so with the four that name ETHOS's own tool the stage showed
+  // fourteen names at once, two over the twelve a viewer reads (the engine's name load), and the list left whole when
+  // the voice turned to ETHOS's own tools, before its stage did (EN-R20-04). They are one qualifier of the mature
+  // tools, so they are one name: the words that lead them and the three reductions, each joining in its place on its
+  // own words, on two lines that break after the first reduction. The stage then holds eleven names, and the
+  // reductions stay with their tools until the stage leaves.
   const pitch = labelSize(NOTE) * (LEADING - 1);
   if (!en)
     nameText("减少总体的维护量、运行风险和使用方的负担", KX, toolsName.bottom + TERM_STACK, {
@@ -158,25 +161,21 @@ export function stageTools(t, a, c) {
       alpha: a * named(t, c.reduce),
     });
   else {
-    const until = c.ownTools + 0.05,
-      lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
-        valign: "top",
-        size: NOTE,
-        color: P.muted,
-        alpha: a * named(t, c.reduce) * (1 - ramp(t, pauseHold(until, 0.4), 0.4)),
-      }),
-      items = ["total maintenance", "operational risk", "burden on adopters"],
-      ats = [c.upkeep, c.risk, c.burden],
-      half = measure(items[1], NOTE) / 2 + 48;
-    items.forEach((v, i) =>
-      nameText(v, KX + (i - 1) * half, lead.bottom + pitch, {
-        valign: "top",
-        align: ["right", "center", "left"][i],
-        size: NOTE,
-        alpha: a * listIn(t, ats, i, until),
-        set: "reductions",
-      }),
-    );
+    const parts = [
+      "shown to reduce",
+      " total maintenance",
+      ", operational risk",
+      ", burden on adopters",
+    ];
+    growName(t, parts, [c.reduce, c.upkeep, c.risk, c.burden], KX, toolsName.bottom + pitch, {
+      valign: "top",
+      align: "center",
+      size: NOTE,
+      color: P.muted,
+      width: measure(parts.slice(0, 3).join(""), NOTE) - 1,
+      alpha: a,
+      build: true,
+    });
   }
   gapTool(t, a, c);
 }
@@ -191,7 +190,9 @@ export function stageTools(t, a, c) {
  * of its own, so each is judged by its own words and no caption cue is mostly repeated: as one name, "Its own tools
  * only to fill a demonstrated gap" repeated 82% of its cue. The outline and its names stand one gap apart, centred
  * together. The bounded responsibility the contract asks of such a tool is said between the gap and the net benefit and
- * stands between them, on its own words. */
+ * stands between them, on its own words. Chinese names no tool before its conditions and says the three with equal
+ * weight, so they stand as one list in one size and ink (zh-R20-03); English names the tool, and its three conditions
+ * stand under that name as its qualifiers. */
 const GAP_W = 150,
   GAP_H = 84,
   GAP_Y = 215;
@@ -209,10 +210,13 @@ function gapTool(t, a, c) {
         ["a net benefit", c.benefit],
       ],
     ),
-    wide = Math.max(measure(term), ...quals.map(([v]) => measure(v, NOTE))),
+    size = en ? NOTE : LABEL,
+    wide = Math.max(measure(term), ...quals.map(([v]) => measure(v, size))),
     left = 960 - (GAP_W + NAME_GAP + wide) / 2,
-    step = labelSize(NOTE) * LEADING,
-    height = labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + step * (quals.length - 1);
+    step = labelSize(size) * LEADING,
+    height = en
+      ? labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + step * (quals.length - 1)
+      : labelSize(LABEL) + step * quals.length;
   box(left, GAP_Y - GAP_H / 2, GAP_W, GAP_H, {
     stroke: P.muted,
     alpha: a * named(t, termAt),
@@ -245,11 +249,10 @@ function gapTool(t, a, c) {
       alpha: a * named(t, termAt),
     });
   quals.forEach(([v, at], i) =>
-    nameText(v, x, head.bottom + TERM_STACK + i * step, {
+    nameText(v, x, en ? head.bottom + TERM_STACK + i * step : GAP_Y - height / 2 + (i + 1) * step, {
       align: "left",
       valign: "top",
-      size: NOTE,
-      color: P.muted,
+      ...(en ? { size: NOTE, color: P.muted } : {}),
       alpha: a * named(t, at),
     }),
   );

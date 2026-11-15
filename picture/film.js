@@ -3223,7 +3223,14 @@ var endPoint = (x, y, drawn, alpha) => {
   if (r > 0.3) dot(x, y, r, { color: P.ink, alpha });
 };
 function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
-  const ends = [x0, ...gaps.flatMap((x) => [x - 28, x + 28]), x1], pieces = [];
+  const ends = [
+    x0,
+    ...gaps.flatMap((g) => [
+      [g].flat()[0] - ([g].flat()[1] ?? 28),
+      [g].flat()[0] + ([g].flat()[1] ?? 28)
+    ]),
+    x1
+  ], pieces = [];
   for (let k = 0; k < ends.length; k += 2) pieces.push([ends[k], ends[k + 1]]);
   stroke(
     () => pieces.forEach(([a, b]) => {
@@ -3245,22 +3252,23 @@ function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
 }
 var STATION_NAMES = () => L(["一个问题", "一个仓库", "用起来怎么样"], ["A problem", "A repository", "In use"]);
 var NAME_PATH_Y = () => 600;
-function station(x, y, i, alpha) {
+function station(x, y, i, alpha, glyph = alpha) {
   if (alpha < 0.01) return;
   dot(x, y, 28, { color: P.ground, alpha });
   ring(x, y, 28, { color: P.ink, alpha, width: 2.5 });
-  if (i === 0) text("?", x, y + 1, 30, { role: "mark", align: "center", alpha, bold: true });
+  if (glyph < 0.01) return;
+  if (i === 0) text("?", x, y + 1, 30, { role: "mark", align: "center", alpha: glyph, bold: true });
   if (i === 1) {
-    line(x - 6, y - 12, x - 6, y + 12, { color: P.ink, alpha, width: 2.5 });
+    line(x - 6, y - 12, x - 6, y + 12, { color: P.ink, alpha: glyph, width: 2.5 });
     stroke(
       () => {
         ctx.moveTo(x - 6, y + 4);
         ctx.quadraticCurveTo(x - 6, y - 6, x + 8, y - 8);
       },
-      { color: P.ink, alpha, width: 2.5 }
+      { color: P.ink, alpha: glyph, width: 2.5 }
     );
   }
-  if (i === 2) person(x, y + 6, { size: 0.55, alpha });
+  if (i === 2) person(x, y + 6, { size: 0.55, alpha: glyph });
 }
 function stageName(s, t, a, c) {
   if (a <= 0) return;
@@ -3334,7 +3342,7 @@ function stagePath(t, a, c) {
     X02,
     reach,
     PY,
-    xs.filter((x, i) => t > sts[i] - 0.15 && x + 28 < reach),
+    xs.map((x, i) => [x, 28 * ramp(t, sts[i] - 0.15, 0.4)]).filter(([x, half]) => half > 0 && x + 28 < reach),
     { alpha: on }
   );
   endPoint(END, PY, drawn, on);
@@ -3369,7 +3377,9 @@ function stagePath(t, a, c) {
     alpha: a,
     build: true
   });
-  xs.forEach((x, i) => station(x, PY, i, a * ramp(t, sts[i] - 0.15, 0.4)));
+  xs.forEach(
+    (x, i) => station(x, PY, i, a * ramp(t, sts[i] - 0.15, 0.4), a * ramp(t, sts[i] + 0.05, 0.35))
+  );
   railNames(names2, xs, PY + 28, {
     gap: NAME_GAP,
     alpha: (i) => a * listIn(t, sts, i),
@@ -3527,21 +3537,21 @@ function stageTools(t, a, c) {
       alpha: a * named(t, c.reduce)
     });
   else {
-    const until = c.ownTools + 0.05, lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
+    const parts2 = [
+      "shown to reduce",
+      " total maintenance",
+      ", operational risk",
+      ", burden on adopters"
+    ];
+    growName(t, parts2, [c.reduce, c.upkeep, c.risk, c.burden], KX, toolsName.bottom + pitch, {
       valign: "top",
+      align: "center",
       size: NOTE,
       color: P.muted,
-      alpha: a * named(t, c.reduce) * (1 - ramp(t, pauseHold(until, 0.4), 0.4))
-    }), items = ["total maintenance", "operational risk", "burden on adopters"], ats = [c.upkeep, c.risk, c.burden], half = measure(items[1], NOTE) / 2 + 48;
-    items.forEach(
-      (v, i) => nameText(v, KX + (i - 1) * half, lead.bottom + pitch, {
-        valign: "top",
-        align: ["right", "center", "left"][i],
-        size: NOTE,
-        alpha: a * listIn(t, ats, i, until),
-        set: "reductions"
-      })
-    );
+      width: measure(parts2.slice(0, 3).join(""), NOTE) - 1,
+      alpha: a,
+      build: true
+    });
   }
   gapTool(t, a, c);
 }
@@ -3561,7 +3571,7 @@ function gapTool(t, a, c) {
       ["a bounded responsibility", c.bounded],
       ["a net benefit", c.benefit]
     ]
-  ), wide = Math.max(measure(term), ...quals.map(([v]) => measure(v, NOTE))), left = 960 - (GAP_W + NAME_GAP + wide) / 2, step = labelSize(NOTE) * LEADING, height = labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + step * (quals.length - 1);
+  ), size = en ? NOTE : LABEL, wide = Math.max(measure(term), ...quals.map(([v]) => measure(v, size))), left = 960 - (GAP_W + NAME_GAP + wide) / 2, step = labelSize(size) * LEADING, height = en ? labelSize(LABEL) + TERM_STACK + labelSize(NOTE) + step * (quals.length - 1) : labelSize(LABEL) + step * quals.length;
   box(left, GAP_Y - GAP_H / 2, GAP_W, GAP_H, {
     stroke: P.muted,
     alpha: a * named(t, termAt),
@@ -3586,11 +3596,10 @@ function gapTool(t, a, c) {
     alpha: a * named(t, termAt)
   });
   quals.forEach(
-    ([v, at], i) => nameText(v, x, head.bottom + TERM_STACK + i * step, {
+    ([v, at], i) => nameText(v, x, en ? head.bottom + TERM_STACK + i * step : GAP_Y - height / 2 + (i + 1) * step, {
       align: "left",
       valign: "top",
-      size: NOTE,
-      color: P.muted,
+      ...en ? { size: NOTE, color: P.muted } : {},
       alpha: a * named(t, at)
     })
   );
