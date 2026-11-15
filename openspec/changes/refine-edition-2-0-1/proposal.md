@@ -10,6 +10,7 @@ The notes are recorded, each with its observation, repair and reverification lin
 - The picture keeps a clear distance above the caption in 07.4.2 and 06.3 (zh-R19-05), and the link of 01.4.1 comes with its label on its own words (zh-R19-06).
 - The soundtracks are assembled on the engine release that levels each thought within a declared tolerance, judges a short thought's clarity over the frame grid's phases and holds a caption that reads too fast (zh-R19-02, zh-R19-03, EN-R19-02, EN-R19-05).
 - The requirements name the four films and both staged picture documents that each edition publishes.
+- The Chinese edition's sentence ends inside a thought are heard as longer breaks than the commas beside them: the owner decided on 16 November 2026 to raise the voice's floor for 。？！, which the owner had approved on samples (zh-R20-05).
 - The wording of 03.6 in both languages (zh-R19-01, EN-R19-04) and of the English 08.1 (EN-R19-01) changes only if the owner decides so on the exact text; until then the approved text and its declared compression stand.
 
 The films stay 900 seconds, with the same narrator, chapters and argument. The result is edition 2.0.1.
@@ -32,5 +33,5 @@ None.
 
 - `picture/film/scenes` for the scenes the notes name in chapters 1 to 7, and the picture tests that pin them.
 - `pyproject.toml`, `uv.lock` and `content/film.toml` for the engine release and its declared tolerances.
-- `content/release.json` for the new assets; the scripts and casts only if the owner decides a wording.
+- `content/release.json` for the new assets; the scripts and casts only if the owner decides a wording or a voice setting.
 - Both editions are assembled, rendered and reviewed again; release 2.0.0 stays published as it is.
