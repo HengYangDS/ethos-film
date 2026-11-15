@@ -147,8 +147,12 @@ scenes["01"] = function (s, t) {
       ["能不能恢复原样", "can you get back"],
     ]);
   // Chinese says the Agents before the code they change and what makes them interchangeable last. The stage cuts in on
-  // 越来越多, the clause that brings the Agents, with the Agents and the repository; the link between them and its name
-  // 改代码 arrive on those words; the Agents' name, the concept's rendering, stands on 可以互相替换.
+  // 越来越多, the clause's first words, with the Agents and the repository, and the Agents' name, the concept's
+  // rendering, builds in its place: its noun stands from the cut, half a second before its word, and the words that
+  // make the Agents interchangeable join it on 可以互相替换. The link between the Agents and the code and its name
+  // 改代码 arrive on their own words (zh-R19-06). With no name from the cut the stage stood 1.4 s of speech without a
+  // legible one, and cut in on 在替我们, where the Agents are set to work, the earlier stage stood 2.5 s into this
+  // thought's speech, the film's longest hold.
   const [relay, codeAt, inter, ends, pick] = cues(s, [
     ["越来越多", "our code"],
     ["改代码", "our code"],
@@ -386,10 +390,20 @@ scenes["01"] = function (s, t) {
         valign: "top",
         alpha: stageB * named(t, codeAt),
       });
-    nameText(L("可以互相替换的 Agent", "Interchangeable Agents"), xs[1], namesTop, {
-      valign: "top",
-      alpha: stageB * named(t, inter),
-    });
+    // English names the row on its words. Chinese builds the name where it will stand: the noun from the cut, under
+    // the row, and its modifier on its own words, so nothing of the name moves when it is whole.
+    if (en)
+      nameText("Interchangeable Agents", xs[1], namesTop, {
+        valign: "top",
+        alpha: stageB * named(t, inter),
+      });
+    else
+      growName(t, ["可以互相替换的 ", "Agent"], [inter, relay], xs[1], namesTop, {
+        valign: "top",
+        align: "center",
+        build: true,
+        alpha: stageB,
+      });
     // The session frame: solid while the session runs, dashed once it has ended, solid again around the next Agent.
     const ended = ramp(t, ends - 0.15, 0.4),
       moved = glideShare(t, pick + 0.05, xs[1] - xs[0], 0.7),

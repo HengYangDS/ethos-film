@@ -1855,10 +1855,18 @@ scenes["01"] = function(s, t) {
         valign: "top",
         alpha: stageB * named(t, codeAt)
       });
-    nameText(L("可以互相替换的 Agent", "Interchangeable Agents"), xs[1], namesTop, {
-      valign: "top",
-      alpha: stageB * named(t, inter)
-    });
+    if (en)
+      nameText("Interchangeable Agents", xs[1], namesTop, {
+        valign: "top",
+        alpha: stageB * named(t, inter)
+      });
+    else
+      growName(t, ["可以互相替换的 ", "Agent"], [inter, relay], xs[1], namesTop, {
+        valign: "top",
+        align: "center",
+        build: true,
+        alpha: stageB
+      });
     const ended = ramp(t, ends - 0.15, 0.4), moved = glideShare(t, pick + 0.05, xs[1] - xs[0], 0.7), FX = mix(xs[0], xs[1], moved), dashedShare = ended * (1 - ramp(t, pick + 0.45, 0.4));
     box(FX - S, Y3 - S, 2 * S, 2 * S, {
       stroke: P.ink,
@@ -3475,18 +3483,18 @@ function stageTools(t, a, c) {
       alpha: a * named(t, c.reduce)
     });
   else {
-    const lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
+    const until = c.ownTools + 0.05, lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
       valign: "top",
       size: NOTE,
       color: P.muted,
-      alpha: a * named(t, c.reduce)
+      alpha: a * named(t, c.reduce) * (1 - ramp(t, pauseHold(until, 0.4), 0.4))
     }), items = ["total maintenance", "operational risk", "burden on adopters"], ats = [c.upkeep, c.risk, c.burden], half = measure(items[1], NOTE) / 2 + 48;
     items.forEach(
       (v, i) => nameText(v, KX + (i - 1) * half, lead.bottom + pitch, {
         valign: "top",
         align: ["right", "center", "left"][i],
         size: NOTE,
-        alpha: a * listIn(t, ats, i),
+        alpha: a * listIn(t, ats, i, until),
         set: "reductions"
       })
     );
@@ -3517,11 +3525,14 @@ function gapTool(t, a, c) {
     width: 2.5,
     dash: [10, 8]
   });
-  [92, 60, 78].forEach((w, i) => {
-    const at = c.ownTools + 0.05 + 0.12 * i, x2 = left + 26, y = GAP_Y - 18 + 18 * i;
-    line(x2, y, x2 + w * drawnShare({ t, at }, w), y, {
+  const widths = [92, 60, 78], starts = widths.map((w, i) => drawStart(c.ownTools + 0.05 + 0.12 * i, w));
+  for (let i = starts.length - 2; i >= 0; i--)
+    starts[i] = Math.min(starts[i], starts[i + 1] - 0.05);
+  widths.forEach((w, i) => {
+    const x2 = left + 26, y = GAP_Y - 18 + 18 * i;
+    line(x2, y, x2 + w * drawShare(t, starts[i], w), y, {
       color: P.muted,
-      alpha: a * 0.8 * ramp(t, at - 0.05, 0.2),
+      alpha: a * 0.8 * ramp(t, starts[i] - 0.05, 0.2),
       width: 2.5
     });
   });
@@ -5877,7 +5888,7 @@ function checkStage(s, t, c, g) {
   beats(t, PLAN_X, Y, 70, [c.expected, c.again], { alpha: g });
   nameText(L("编译计划", "A plan"), PLAN_X, ROW_NAMES, {
     valign: "top",
-    alpha: g * (1 - ramp(t, c.again - 0.4, 0.25))
+    alpha: g * (1 - ramp(t, c.again - 0.55, 0.4))
   });
   nameText(L("重新编译", "Compiled again"), PLAN_X, ROW_NAMES, {
     valign: "top",

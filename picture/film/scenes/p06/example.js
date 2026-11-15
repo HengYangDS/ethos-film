@@ -196,10 +196,12 @@ export function checkStage(s, t, c, g) {
   secondAgent(t, c, g);
   plan(g);
   beats(t, PLAN_X, Y, 70, [c.expected, c.again], { alpha: g });
-  // The plan's name gives way to "compiled again" on those words, the one leaving before the other arrives.
+  // The plan's name gives way to "compiled again" on those words, the one leaving before the other arrives. It leaves
+  // over 0.4 s, as a name arrives: over 0.25 s its ink fell from 61 levels to under 25, where a mark is no longer seen,
+  // within one frame of the Chinese picture at 30 frames a second, a pop (filmkit 0.22).
   nameText(L("编译计划", "A plan"), PLAN_X, ROW_NAMES, {
     valign: "top",
-    alpha: g * (1 - ramp(t, c.again - 0.4, 0.25)),
+    alpha: g * (1 - ramp(t, c.again - 0.55, 0.4)),
   });
   nameText(L("重新编译", "Compiled again"), PLAN_X, ROW_NAMES, {
     valign: "top",

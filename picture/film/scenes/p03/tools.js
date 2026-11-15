@@ -5,7 +5,7 @@
 
 import { ctx } from "../../canvas.js";
 import { FLOW_EVERY, flowAlong, flowClock, link } from "../../drawing/links.js";
-import { box, drawnShare, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
+import { box, labelSize, line, measure, ring, stroke } from "../../drawing/strokes.js";
 import { kernelIcon, terminalIcon } from "../../drawing/workspace.js";
 import { listIn, named } from "../../naming/lists.js";
 import {
@@ -21,7 +21,7 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { glideShare, voiceTime } from "../../timing/pauses.js";
+import { drawShare, drawStart, glideShare, pauseHold, voiceTime } from "../../timing/pauses.js";
 
 /* 03.6 ETHOS's own code does the kernel's one job: from the cut its code is a panel of lines round the kernel, named as
  * ETHOS's code; on the words that give the kernel its one job the panel draws in to the kernel and its lines go, so
@@ -145,6 +145,10 @@ export function stageTools(t, a, c) {
   // make them a condition, set as one more line, then names each reduction: as one gloss they ran 4.4 times as wide as
   // the name over them (EN-R17-08), so they stand as a list of three on one line under it, each on its own words, the
   // middle one on the axis under the lines above and the others 48 px clear of it either side, at even gaps.
+  // These four English names stand where Chinese holds one, so with the four that name ETHOS's own tool the stage
+  // would show fourteen names at once, two over the twelve a viewer reads (the engine's name load). They qualify the
+  // mature tools in the sentence that says them: the list stands whole until the voice turns to ETHOS's own tools and
+  // leaves as a whole on those words, with the words that lead it, while every mark keeps its name.
   const pitch = labelSize(NOTE) * (LEADING - 1);
   if (!en)
     nameText("减少总体的维护量、运行风险和使用方的负担", KX, toolsName.bottom + TERM_STACK, {
@@ -154,11 +158,12 @@ export function stageTools(t, a, c) {
       alpha: a * named(t, c.reduce),
     });
   else {
-    const lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
+    const until = c.ownTools + 0.05,
+      lead = nameText("shown to reduce", KX, toolsName.bottom + pitch, {
         valign: "top",
         size: NOTE,
         color: P.muted,
-        alpha: a * named(t, c.reduce),
+        alpha: a * named(t, c.reduce) * (1 - ramp(t, pauseHold(until, 0.4), 0.4)),
       }),
       items = ["total maintenance", "operational risk", "burden on adopters"],
       ats = [c.upkeep, c.risk, c.burden],
@@ -168,7 +173,7 @@ export function stageTools(t, a, c) {
         valign: "top",
         align: ["right", "center", "left"][i],
         size: NOTE,
-        alpha: a * listIn(t, ats, i),
+        alpha: a * listIn(t, ats, i, until),
         set: "reductions",
       }),
     );
@@ -215,14 +220,21 @@ function gapTool(t, a, c) {
     width: 2.5,
     dash: [10, 8],
   });
-  // Each line is its own stroke, drawn on at the tip pace from its own start.
-  [92, 60, 78].forEach((w, i) => {
-    const at = c.ownTools + 0.05 + 0.12 * i,
-      x = left + 26,
+  // Each line is its own stroke, drawn on at the tip pace from its own start, one after another. A line whose words end
+  // their thought sets off as much sooner as it needs to be whole by the quiet (drawStart), as the Chinese lines do on
+  // 才自己写, and the lines before it keep at least 0.05 s ahead of it, so they are still written in order. A line's
+  // ink rises as it sets off: keyed to its words instead, the third Chinese line had drawn 33 px on when its ink rose
+  // from under 25 levels to 60 within one frame, a pop (filmkit 0.22).
+  const widths = [92, 60, 78],
+    starts = widths.map((w, i) => drawStart(c.ownTools + 0.05 + 0.12 * i, w));
+  for (let i = starts.length - 2; i >= 0; i--)
+    starts[i] = Math.min(starts[i], starts[i + 1] - 0.05);
+  widths.forEach((w, i) => {
+    const x = left + 26,
       y = GAP_Y - 18 + 18 * i;
-    line(x, y, x + w * drawnShare({ t, at }, w), y, {
+    line(x, y, x + w * drawShare(t, starts[i], w), y, {
       color: P.muted,
-      alpha: a * 0.8 * ramp(t, at - 0.05, 0.2),
+      alpha: a * 0.8 * ramp(t, starts[i] - 0.05, 0.2),
       width: 2.5,
     });
   });
