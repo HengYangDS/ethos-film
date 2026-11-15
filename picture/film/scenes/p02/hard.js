@@ -14,7 +14,7 @@ import { scenes } from "../registry.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { clamp, ease, mix, ramp } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { glideShare, glideTime } from "../../timing/pauses.js";
 import { stageIn, stageOut } from "../../timing/stages.js";
 
 /* The index: a rail of three stations under its heading. While a difficulty is introduced the index stands at the
@@ -24,11 +24,11 @@ import { stageIn, stageOut } from "../../timing/stages.js";
  * numbered ring with its name beneath. The rail runs between the stations, never under a number. The heading never
  * travels across the rings: it rises with the rail as it fades from the centre, and as the index lands it fades in as
  * the docked index's kicker, small and muted over the first station, where the index begins, so it reads as the
- * index's heading rather than as a second name stepped beside the first station's. `kicker` is the kicker's presence,
- * which the scene times so that it fades only while the rail moves slowly and overlaps the heading at the centre in
- * both directions, so the heading never goes unread. `levels` gives each name's ink: the difficulty being told at full
- * ink, the others at the second level. `yielded` is how far the centred heading has given way to the name of the
- * first difficulty told under it. */
+ * index's heading rather than as a second name stepped beside the first station's. The kicker fades only while the
+ * rail moves slowly and overlaps the heading at the centre in both directions, so the heading never goes unread.
+ * `ups` are the times the index rises to tell each difficulty and `downs` the times it comes down to introduce the
+ * next. `levels` gives each name's ink: the difficulty being told at full ink, the others at the second level.
+ * `yielded` is how far the centred heading has given way to the name of the first difficulty told under it. */
 const INDEX_XS = [420, 960, 1500],
   CENTRE_POINT = 12,
   CENTRE_R = 54,
@@ -37,37 +37,58 @@ const INDEX_XS = [420, 960, 1500],
   DOCK_POINT = 6,
   DOCK_R = 16,
   WRAP = 520;
+/* The longest way a mark of the index makes between the centre and the dock: the names beneath the stations rise with
+ * the rail and close up to it as its rings shrink, so the index's glide is timed by their way, not the rail's. */
+const INDEX_WAY = 540 - DOCK_Y + CENTRE_R - DOCK_R + NAME_GAP - DOCK_GAP,
+  KICKER_FROM = 0.6;
 const halfName = (v) => Math.max(...wrapName(v, WRAP).map((line) => measure(line))) / 2;
-/* How far the docked index reaches past its first and last stations: a named station's name or ring, an unnamed
- * station's point, and over the first station the kicker. */
-function dockReach(heading, names, shown) {
-  const past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, halfName(names[i])), shown[i]));
-  return [Math.max(past[0], measure(heading, NOTE) / 2), past[1]];
+/* How far the index stands off the frame's centre while its first `n` stations are named, so that it is balanced on
+ * what it shows: by half the difference of its reaches past its first and last stations. A named station reaches as
+ * far as its name or ring and an unnamed one as its point; over the first station of the docked index stands the
+ * kicker, while the centred index's heading stands over the middle station, inside the rail. */
+function offCentre(heading, names, n, docked) {
+  const [ring, point] = docked ? [DOCK_R, DOCK_POINT] : [CENTRE_R, CENTRE_POINT],
+    [first, last] = [0, 2].map((i) => (i < n ? Math.max(ring, halfName(names[i])) : point));
+  return ((docked ? Math.max(first, measure(heading, NOTE) / 2) : first) - last) / 2;
 }
-/* How far the centred index reaches past its first and last stations: a named station's name or ring, an unnamed
- * station's point; its heading stands over the middle station, inside the rail. */
-const centreReach = (names, shown) =>
-  [0, 2].map((i) => mix(CENTRE_POINT, Math.max(CENTRE_R, halfName(names[i])), shown[i]));
-function hardIndex(t, k, { heading, headAt, names, ats, levels, kicker, yielded = 0 }) {
+function hardIndex(t, { heading, headAt, names, ats, levels, ups, downs, yielded = 0 }) {
+  // The index is balanced on what it shows wherever it rests. The first difficulty is named while the index rests at
+  // the centre, and its name moves the whole index aside as one, gliding from just after its words. Every rise and
+  // descent then goes straight from one place of rest to the next, sideways as it goes: the index comes down to the
+  // place where it stands balanced with the difficulty it comes down to introduce, whose name joins it on the way, and
+  // rises to the place where the docked index is balanced. Each is one glide timed by the whole way its names make,
+  // so no name moves faster than a glide, where a rise timed by the rail's way and a re-centring on the incoming
+  // name's words moved the names by both at once. The kicker shows while the index is docked: it fades in over the
+  // slow end of each rise, from KICKER_FROM of its time, as the heading leaves the centre, and out over the slow start
+  // of each descent, as the heading returns there.
+  const off = (n, docked) => offCentre(heading, names, n, docked);
+  let aside = off(1, false) * glideShare(t, ats[0] + 0.05, off(1, false), 0.7),
+    place = off(1, false),
+    k = 0,
+    kicker = 0;
+  ups.forEach((up, i) => {
+    const way = Math.hypot(INDEX_WAY, off(i + 1, true) - place),
+      rise = glideShare(t, up, way);
+    place = off(i + 1, true);
+    aside = mix(aside, place, rise);
+    k += rise;
+    kicker += ramp(t, up + KICKER_FROM * glideTime(way), 0.45);
+    if (i >= downs.length) return;
+    const back = Math.hypot(INDEX_WAY, off(i + 2, false) - place),
+      fall = glideShare(t, downs[i], back);
+    place = off(i + 2, false);
+    aside = mix(aside, place, fall);
+    k -= fall;
+    kicker -= ramp(t, downs[i] - 0.05, 0.25);
+  });
+  k = clamp(k);
   const Y = mix(540, DOCK_Y, k),
     R = mix(CENTRE_R, DOCK_R, k),
     pointR = mix(CENTRE_POINT, DOCK_POINT, k),
     gap = mix(NAME_GAP, DOCK_GAP, k),
     shown = ats.map((at) => ramp(t, at - 0.15, 0.4)),
-    reach = shown.map((v) => Math.max(pointR * (1 - v), R * v));
-  // Docked, the index is balanced on what it shows: the first station's name hangs past it, the last station is a bare
-  // point until it is named, so the index stands off the frame's centre by half the difference of the two reaches. It
-  // takes that place as it rises and leaves it as it comes down, so it never moves sideways while it is docked. At the
-  // centre it is balanced the same way, heading and all: a name that reaches past the first or last station moves the
-  // whole index as one, gliding from just after the words that name that station.
-  const [before, after] = dockReach(heading, names, shown),
-    [from, to] = centreReach(
-      names,
-      ats.map((at, i) =>
-        glideShare(t, at + 0.05, (Math.max(CENTRE_R, halfName(names[i])) - CENTRE_POINT) / 2, 0.7),
-      ),
-    ),
-    xs = INDEX_XS.map((x) => x + mix((from - to) / 2, (before - after) / 2, k));
+    reach = shown.map((v) => Math.max(pointR * (1 - v), R * v)),
+    xs = INDEX_XS.map((x) => x + aside);
   stroke(
     () =>
       [0, 1].forEach((i) => {
@@ -204,11 +225,11 @@ scenes["02"] = function (s, t) {
     burden: ["新的负担", "a burden of their own"],
   });
   // The index stands at the centre while each difficulty is introduced and at the top while it is shown; it rises and
-  // comes down by the film's structural glide over its 374 px. It rises on the last word that begins at least 0.7 s
-  // before the words of each illustration's first mark, and no earlier than 0.95 s before them, so it is most of the
-  // way up when the stage cuts in on those words and the stage's first name stands on them, while the docked index
-  // never stands alone for long; it comes down just after the cut that ends the last, so it never passes through a
-  // stage's marks.
+  // comes down by the film's structural glide over the way its names make. It rises on the last word that begins at
+  // least 0.7 s before the words of each illustration's first mark, and no earlier than 0.95 s before them, so it is
+  // most of the way up when the stage cuts in on those words and the stage's first name stands on them, while the
+  // docked index never stands alone for long; it comes down just after the cut that ends the last, so it never passes
+  // through a stage's marks.
   const riseFor = (at) => {
     let start = s.words[0].start;
     for (const w of s.words) {
@@ -217,14 +238,8 @@ scenes["02"] = function (s, t) {
     }
     return Math.max(start + 0.05, at - 0.95);
   };
-  const [upP, upE, upB] = [c.pCut, c.eCut, c.bCut].map(riseFor);
-  const move = (at) => glideShare(t, at, 540 - DOCK_Y);
-  const k = move(upP) - move(c.second + 0.2) + move(upE) - move(c.third + 0.2) + move(upB);
-  // The kicker shows while the index is docked: it fades in over the slow end of each rise, as the heading leaves the
-  // centre, and out over the slow start of each descent, as the heading returns there.
-  const docked = (up, down = Infinity) =>
-    ramp(t, up + 0.75, 0.45) * (1 - ramp(t, down - 0.05, 0.25));
-  const kicker = docked(upP, c.second + 0.2) + docked(upE, c.third + 0.2) + docked(upB);
+  const ups = [c.pCut, c.eCut, c.bCut].map(riseFor),
+    downs = [c.second + 0.2, c.third + 0.2];
   // The difficulty being told at full ink, the others at the second level; in the last thought all three step back.
   const told = [
     [c.n1, c.n2 - 0.15],
@@ -239,7 +254,7 @@ scenes["02"] = function (s, t) {
   // the index to rise; the docked index takes the heading back as its kicker. The index stays docked until the second
   // difficulty, so the heading is restored there unseen and the later descents bring it back to the centre as before.
   const yielded = t < c.second ? ramp(t, c.n1 - 0.15, 0.4) : 0;
-  hardIndex(t, clamp(k), {
+  hardIndex(t, {
     heading: L("难处", "Three parts"),
     headAt: c.head,
     names: L(
@@ -248,7 +263,8 @@ scenes["02"] = function (s, t) {
     ),
     ats: [c.n1, c.n2 - 0.15, c.n3name - 0.1],
     levels,
-    kicker,
+    ups,
+    downs,
     yielded,
   });
   // Each stage cuts in on the words of its first mark. The ledgers cut in on the words that name their shelf, more

@@ -16,7 +16,7 @@ import { rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { mix, ramp } from "../../timing/easing.js";
-import { glideShare, glideTime } from "../../timing/pauses.js";
+import { glideShare, glideTime, glideYield } from "../../timing/pauses.js";
 import { STAGE_CUT } from "../../timing/stages.js";
 
 /* Rule one's heading, in the rules' shared place: its glyph is the datum alone, which arrives with the number while
@@ -46,8 +46,9 @@ export function ruleOneHeading(t, c, g) {
 }
 
 /* A model of the right size: three concepts and the two links of their structure, one stroke each, with the meaning
- * held in its top concept. Once the model is explained, a point runs along its structure. */
-function enoughModel(t, x, y, a, flowing) {
+ * held in its top concept. Once the model is explained, a point runs along its structure; `given` is the voice time
+ * its clock has given up to the glide that carries the model (glideYield). */
+function enoughModel(t, x, y, a, flowing, given = 0) {
   const cells = [
     [x - 78, y + 28],
     [x, y - 28],
@@ -78,7 +79,7 @@ function enoughModel(t, x, y, a, flowing) {
   });
   dot(x, y - 28, 6, { color: P.ink, alpha: a });
   if (flowing > 0)
-    flowAlong([links[0][0], links[0][1], links[1][0], links[1][1]], flowClock(t), 6, {
+    flowAlong([links[0][0], links[0][1], links[1][0], links[1][1]], flowClock(t) - given, 6, {
       color: P.ink,
       alpha: a * flowing,
     });
@@ -91,8 +92,10 @@ function enoughModel(t, x, y, a, flowing) {
  * the second's words and back on the third's. From that seat the first alone stands at most 40 px left of the centre
  * under the rule's heading, and the pair at most 40 px right of it. The three spread to their places as the third
  * joins: standing in those places from the first word, the pair would stand 106 px right of the centre in English and
- * 176 px in Chinese for about 3 s. Each model's name centres on it from its first word, its qualifier under it, and
- * the names of the row hang from one line under its tallest model, the grid. */
+ * 176 px in Chinese for about 3 s. The point that runs along the first model's structure runs the way the spread
+ * carries it, so it gives its pace up to the spread's and is never seen faster than a glide (605 px/s in Chinese, 556
+ * in English). Each model's name centres on it from its first word, its qualifier under it, and the names of the row
+ * hang from one line under its tallest model, the grid. */
 const MODEL_PITCH = 450,
   MODEL_LEAD = 196;
 export function modelStage(s, t, c, g) {
@@ -105,7 +108,14 @@ export function modelStage(s, t, c, g) {
     bigAt = c.big + 0.25,
     row = { alpha: g, align: "center" };
   const enough = g * named(t, c.enough);
-  enoughModel(t, xs[1], Y, enough, ramp(t, c.structure, 0.4));
+  enoughModel(
+    t,
+    xs[1],
+    Y,
+    enough,
+    ramp(t, c.structure, 0.4),
+    glideYield(t, c.small + 0.05, MODEL_LEAD, 0.6),
+  );
   termRow(
     t,
     L(["刚好够用"], ["Just enough"]),

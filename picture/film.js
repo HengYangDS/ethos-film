@@ -216,14 +216,22 @@ var voiceTime = (t) => {
   }
   return t - before - down / 2 - (resume - rest) - up / 2;
 };
-var GLIDE_PACE = 450;
+var GLIDE_PEAK = 440;
 var GLIDE_PICKUP = 2400;
 var glideTime = (distance, least = 0.6) => Math.max(
   least,
-  1.5 * Math.abs(distance) / GLIDE_PACE,
+  1.5 * Math.abs(distance) / GLIDE_PEAK,
   Math.sqrt(6 * Math.abs(distance) / GLIDE_PICKUP)
 );
 var glideShare = (t, at, distance, least = 0.6) => ease((voiceTime(t) - voiceTime(at)) / glideTime(distance, least));
+function pacedWay(place, steps = 48) {
+  let way = 0;
+  for (let i = 0; i < steps; i++) {
+    const [x0, y0] = place(ease(i / steps)), [x1, y1] = place(ease((i + 1) / steps));
+    way = Math.max(way, Math.hypot(x1 - x0, y1 - y0) * steps / 1.5);
+  }
+  return way;
+}
 var DRAW_PACE = 820;
 var drawTime = (length, least = 0.4) => Math.max(
   least,
@@ -256,13 +264,39 @@ function glideStart(at, distance, least = 0.6, lead = DRAW_LEAD) {
   }
   return fitting;
 }
-var glideSteps = (t, first, steps, least = 0.7) => {
-  let x = first, aim = first;
-  for (const [at, to] of steps) {
-    x = mix(x, to, glideShare(t, at + 0.05, to - aim, least));
-    aim = to;
+var glideYield = (t, at, distance, least = 0.6) => glideShare(t, at, distance, least) * Math.abs(distance) / GLIDE_PEAK;
+var YIELD_STEPS = 48;
+function crossYield(t, at, distance, least = 0.6) {
+  const time = glideTime(distance, least), parts2 = clamp((voiceTime(t) - voiceTime(at)) / time) * YIELD_STEPS, peak = 6 * Math.abs(distance) / (time * GLIDE_PEAK), rate = (i) => {
+    const u = i / YIELD_STEPS;
+    return 1 - Math.sqrt(Math.max(0, 1 - (peak * u * (1 - u)) ** 2));
+  };
+  let given = 0;
+  for (let i = 0; i < parts2; i++) {
+    const part = Math.min(1, parts2 - i);
+    given += part * rate(i) + (rate(i + 1) - rate(i)) * part * part / 2;
   }
-  return x;
+  return given * time / YIELD_STEPS;
+}
+var yieldingShare = (t, at, distance, least, given) => ease((voiceTime(t) - voiceTime(at) - (given(t) - given(at))) / glideTime(distance, least));
+var RIDE_RAMP = 0.5;
+var glideSteps = (t, first, steps, least = 0.7) => {
+  const v = voiceTime(t), cruise = GLIDE_PEAK * RIDE_RAMP, way = (i) => steps[i][1] - (i ? steps[i - 1][1] : first), startOf = (i) => voiceTime(steps[i][0] + 0.05);
+  let place = first;
+  for (let k = 0; k < steps.length; ) {
+    const origin = k ? steps[k - 1][1] : first, start = startOf(k);
+    let last = k, whole = Math.abs(way(k)), time = glideTime(whole, least);
+    while (last + 1 < steps.length && way(last + 1) * way(k) > 0 && startOf(last + 1) < start + time) {
+      last++;
+      whole = Math.abs(steps[last][1] - origin);
+      time = whole < cruise ? glideTime(whole, least) : whole / GLIDE_PEAK + RIDE_RAMP;
+    }
+    const at = Math.max(0, Math.min(time, v - start));
+    const share = last === k || whole < cruise ? ease(at / time) : (at < RIDE_RAMP ? cruise * covered(at / RIDE_RAMP) : at > time - RIDE_RAMP ? whole - cruise * covered((time - at) / RIDE_RAMP) : cruise / 2 + GLIDE_PEAK * (at - RIDE_RAMP)) / whole;
+    place += (steps[last][1] - origin) * share;
+    k = last + 1;
+  }
+  return place;
 };
 
 // picture/film/framing/camera.js
@@ -2985,20 +3019,31 @@ var DOCK_GAP = 12;
 var DOCK_POINT = 6;
 var DOCK_R = 16;
 var WRAP = 520;
+var INDEX_WAY = 540 - DOCK_Y + CENTRE_R - DOCK_R + NAME_GAP - DOCK_GAP;
+var KICKER_FROM = 0.6;
 var halfName = (v) => Math.max(...wrapName(v, WRAP).map((line2) => measure(line2))) / 2;
-function dockReach(heading, names2, shown) {
-  const past = [0, 2].map((i) => mix(DOCK_POINT, Math.max(DOCK_R, halfName(names2[i])), shown[i]));
-  return [Math.max(past[0], measure(heading, NOTE) / 2), past[1]];
+function offCentre(heading, names2, n, docked) {
+  const [ring2, point] = docked ? [DOCK_R, DOCK_POINT] : [CENTRE_R, CENTRE_POINT], [first, last] = [0, 2].map((i) => i < n ? Math.max(ring2, halfName(names2[i])) : point);
+  return ((docked ? Math.max(first, measure(heading, NOTE) / 2) : first) - last) / 2;
 }
-var centreReach = (names2, shown) => [0, 2].map((i) => mix(CENTRE_POINT, Math.max(CENTRE_R, halfName(names2[i])), shown[i]));
-function hardIndex(t, k, { heading, headAt, names: names2, ats, levels, kicker, yielded = 0 }) {
-  const Y3 = mix(540, DOCK_Y, k), R = mix(CENTRE_R, DOCK_R, k), pointR = mix(CENTRE_POINT, DOCK_POINT, k), gap = mix(NAME_GAP, DOCK_GAP, k), shown = ats.map((at) => ramp(t, at - 0.15, 0.4)), reach = shown.map((v) => Math.max(pointR * (1 - v), R * v));
-  const [before, after] = dockReach(heading, names2, shown), [from, to] = centreReach(
-    names2,
-    ats.map(
-      (at, i) => glideShare(t, at + 0.05, (Math.max(CENTRE_R, halfName(names2[i])) - CENTRE_POINT) / 2, 0.7)
-    )
-  ), xs = INDEX_XS.map((x) => x + mix((from - to) / 2, (before - after) / 2, k));
+function hardIndex(t, { heading, headAt, names: names2, ats, levels, ups, downs, yielded = 0 }) {
+  const off = (n, docked) => offCentre(heading, names2, n, docked);
+  let aside = off(1, false) * glideShare(t, ats[0] + 0.05, off(1, false), 0.7), place = off(1, false), k = 0, kicker = 0;
+  ups.forEach((up, i) => {
+    const way = Math.hypot(INDEX_WAY, off(i + 1, true) - place), rise = glideShare(t, up, way);
+    place = off(i + 1, true);
+    aside = mix(aside, place, rise);
+    k += rise;
+    kicker += ramp(t, up + KICKER_FROM * glideTime(way), 0.45);
+    if (i >= downs.length) return;
+    const back = Math.hypot(INDEX_WAY, off(i + 2, false) - place), fall = glideShare(t, downs[i], back);
+    place = off(i + 2, false);
+    aside = mix(aside, place, fall);
+    k -= fall;
+    kicker -= ramp(t, downs[i] - 0.05, 0.25);
+  });
+  k = clamp(k);
+  const Y3 = mix(540, DOCK_Y, k), R = mix(CENTRE_R, DOCK_R, k), pointR = mix(CENTRE_POINT, DOCK_POINT, k), gap = mix(NAME_GAP, DOCK_GAP, k), shown = ats.map((at) => ramp(t, at - 0.15, 0.4)), reach = shown.map((v) => Math.max(pointR * (1 - v), R * v)), xs = INDEX_XS.map((x) => x + aside);
   stroke(
     () => [0, 1].forEach((i) => {
       ctx.moveTo(xs[i] + reach[i], Y3);
@@ -3135,11 +3180,7 @@ scenes["02"] = function(s, t) {
     }
     return Math.max(start + 0.05, at - 0.95);
   };
-  const [upP, upE, upB] = [c.pCut, c.eCut, c.bCut].map(riseFor);
-  const move = (at) => glideShare(t, at, 540 - DOCK_Y);
-  const k = move(upP) - move(c.second + 0.2) + move(upE) - move(c.third + 0.2) + move(upB);
-  const docked = (up, down = Infinity) => ramp(t, up + 0.75, 0.45) * (1 - ramp(t, down - 0.05, 0.25));
-  const kicker = docked(upP, c.second + 0.2) + docked(upE, c.third + 0.2) + docked(upB);
+  const ups = [c.pCut, c.eCut, c.bCut].map(riseFor), downs = [c.second + 0.2, c.third + 0.2];
   const told = [
     [c.n1, c.n2 - 0.15],
     [c.n2 - 0.15, c.n3 - 0.1],
@@ -3149,7 +3190,7 @@ scenes["02"] = function(s, t) {
     ([from, to]) => ramp(t, from - 0.15, 0.4) * (1 - ramp(t, to - 0.15, 0.4))
   );
   const yielded = t < c.second ? ramp(t, c.n1 - 0.15, 0.4) : 0;
-  hardIndex(t, clamp(k), {
+  hardIndex(t, {
     heading: L("难处", "Three parts"),
     headAt: c.head,
     names: L(
@@ -3158,7 +3199,8 @@ scenes["02"] = function(s, t) {
     ),
     ats: [c.n1, c.n2 - 0.15, c.n3name - 0.1],
     levels,
-    kicker,
+    ups,
+    downs,
     yielded
   });
   const stage = (from, to) => stageIn(t, c[from]) * (to ? stageOut(t, c[to]) : 1);
@@ -3176,6 +3218,10 @@ scenes["02"] = function(s, t) {
 };
 
 // picture/film/scenes/p03/path.js
+var endPoint = (x, y, drawn, alpha) => {
+  const r = 7 * ease((drawn - 0.9) / 0.1);
+  if (r > 0.3) dot(x, y, r, { color: P.ink, alpha });
+};
 function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
   const ends = [x0, ...gaps.flatMap((x) => [x - 28, x + 28]), x1], pieces = [];
   for (let k = 0; k < ends.length; k += 2) pieces.push([ends[k], ends[k + 1]]);
@@ -3240,7 +3286,7 @@ function stageName(s, t, a, c) {
   const drawn = drawShare(t, c.otherPath - 0.2, X1 - X02 - 14, 0.9), reach = mix(X02 + 14, X1, drawn), on = a * ramp(t, c.otherPath - 0.15, 0.4);
   datumMark(X02, Y3, 14, on);
   line(X02 + 14, Y3, reach, Y3, { color: P.ink, alpha: on, width: 3 });
-  dot(reach, Y3, 7, { color: P.ink, alpha: on });
+  endPoint(X1, Y3, drawn, on);
   flowAlong(
     [
       [X02 + 14, Y3],
@@ -3276,11 +3322,14 @@ var PATH_RISE = 90;
 var softMax = (a, b, s = 80) => (a + b + Math.hypot(a - b, s)) / 2;
 function stagePath(t, a, c) {
   if (a <= 0) return;
-  const nameAt = c.reliable, from = c.pCut + 0.18, drawn = drawShare(t, from, PATH_LEN, L(1.8, 2)), on = a * ramp(t, from - 0.4, 0.4), endName = L("靠得住的路", "One reliable path"), party = L(["人", "和可以互相替换的 Agent"], ["People and interchangeable Agents"]), travellers = party.join(""), alone = Math.max(60, measure(party[0])), heading = en ? measure(travellers) : mix(
+  const nameAt = c.reliable, from = c.pCut + 0.18, whole = from + drawTime(PATH_LEN, L(1.8, 2)), drawn = drawShare(t, from, PATH_LEN, L(1.8, 2)), on = a * ramp(t, from - 0.4, 0.4), endName = L("靠得住的路", "One reliable path"), party = L(["人", "和可以互相替换的 Agent"], ["People and interchangeable Agents"]), travellers = party.join(""), alone = Math.max(60, measure(party[0])), heading = en ? measure(travellers) : mix(
     alone,
     measure(travellers),
     glideShare(t, c.agents + 0.05, (measure(travellers) - alone) / 2, 0.7)
-  ), named2 = glideShare(t, nameAt - 0.1, (NAME_GAP + measure(endName)) / 2, 0.6), X02 = 960 - softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2, PY = mix(PATH_Y + PATH_RISE, PATH_Y, glideShare(t, c.three + 0.05, PATH_RISE, 0.7)), X1 = X02 + PATH_LEN, reach = mix(X02, X1, drawn), nameX = Math.max(reach + 7 + NAME_GAP, X02 + 10 + measure(travellers) - measure(endName)), names2 = STATION_NAMES(), xs = railStations(names2, X02 + 240, X1 - 60), sts = [c.st1, c.st2, c.st3];
+  ), room = (NAME_GAP + measure(endName)) / 2, named2 = nameAt - 0.1 < whole ? 1 : glideShare(t, nameAt - 0.1, room, 0.6), startFor = (share) => 960 - softMax(10 + heading, PATH_LEN * share + 7 + 2 * room * named2) / 2, X02 = startFor(drawn), PY = mix(PATH_Y + PATH_RISE, PATH_Y, glideShare(t, c.three + 0.05, PATH_RISE, 0.7)), X1 = X02 + PATH_LEN, reach = mix(X02, X1, drawn), END = startFor(1) + PATH_LEN, nameX = Math.max(
+    END + 7 + NAME_GAP,
+    END - PATH_LEN + 10 + measure(travellers) - measure(endName)
+  ), names2 = STATION_NAMES(), xs = railStations(names2, X02 + 240, X1 - 60), sts = [c.st1, c.st2, c.st3];
   pathLine(
     X02,
     reach,
@@ -3288,7 +3337,7 @@ function stagePath(t, a, c) {
     xs.filter((x, i) => t > sts[i] - 0.15 && x + 28 < reach),
     { alpha: on }
   );
-  dot(reach, PY, 7, { color: P.ink, alpha: on });
+  endPoint(END, PY, drawn, on);
   flowAlong(
     [
       [X02, PY],
@@ -3299,12 +3348,7 @@ function stagePath(t, a, c) {
     {
       // The dots set off once the picture has stopped gliding: a dot running right on a stage gliding left at more than
       // its own pace would slow to a stand on the screen and run back (the English gate's halt at 162.27 s).
-      since: flowClock(
-        Math.max(
-          from + drawTime(PATH_LEN, L(1.8, 2)),
-          nameAt - 0.1 + glideTime((NAME_GAP + measure(endName)) / 2, 0.6)
-        )
-      ),
+      since: flowClock(Math.max(whole, nameAt - 0.1 + glideTime(room, 0.6))),
       // The path grows, so its dots keep one period whatever its length: 1.6 s, 288 px apart, out of step with the
       // stations' pitch of about 390 px, so the dots never all shrink at the stations at once.
       every: 1.6,
@@ -4111,7 +4155,10 @@ function handoffStage(s, t, c, g) {
     [a1, Y1],
     [a2, Y1],
     [a2, Y22]
-  ], p = drawShare(t, drawFrom + drawTime(longest), 470);
+  ], way = lengthOf(path2), setOff = Math.max(
+    drawFrom,
+    Math.min(drawFrom + drawTime(longest), c.single + 0.05 - glideTime(way))
+  ), p = glideShare(t, setOff, way);
   if (p > 0 && p < 1)
     dot(
       ...along(path2, p).point,
@@ -4179,8 +4226,14 @@ function replaceStage(s, t, c, g) {
     c.replace + 0.35,
     Math.hypot(start + cw + 160 - left - (col - qw) / 2, 160),
     0.7
+  ), aside = yieldingShare(
+    t,
+    c.replace + 0.35,
+    left + (col - cw) / 2 - start,
+    0.7,
+    (at) => crossYield(at, c.replace + 0.05, 270, 0.6)
   ), fade = soon(t, c.noOne + 0.05, 1);
-  const ox = mix(start, left + (col - cw) / 2, take), oy = mix(400, 670, step), qx = mix(start + cw + 160, left + (col - qw) / 2, take), qy = mix(560, 400, take);
+  const ox = mix(start, left + (col - cw) / 2, aside), oy = mix(400, 670, step), qx = mix(start + cw + 160, left + (col - qw) / 2, take), qy = mix(560, 400, take);
   link(start + cw, 400, start + cw + 160 + qw / 2, 528, {
     route: "hv",
     alpha: g * (1 - ramp(t, c.replace - 0.15, 0.25)),
@@ -4289,7 +4342,7 @@ function ruleOneHeading(t, c, g) {
   beats(t, h.mx, h.my, 26, [c.keep], { color: P.ink, alpha: g });
   return h.bottom;
 }
-function enoughModel(t, x, y, a, flowing) {
+function enoughModel(t, x, y, a, flowing, given = 0) {
   const cells = [
     [x - 78, y + 28],
     [x, y - 28],
@@ -4319,7 +4372,7 @@ function enoughModel(t, x, y, a, flowing) {
   });
   dot(x, y - 28, 6, { color: P.ink, alpha: a });
   if (flowing > 0)
-    flowAlong([links[0][0], links[0][1], links[1][0], links[1][1]], flowClock(t), 6, {
+    flowAlong([links[0][0], links[0][1], links[1][0], links[1][1]], flowClock(t) - given, 6, {
       color: P.ink,
       alpha: a * flowing
     });
@@ -4330,7 +4383,14 @@ function modelStage(s, t, c, g) {
   ruleOneHeading(t, c, g);
   const s3 = glideShare(t, c.small + 0.05, MODEL_LEAD, 0.6), Y3 = 620, under = rowNameTop([Y3 + 48, Y3 + 75, Y3 + 20]), first = 960 - MODEL_LEAD * (1 - s3), xs = [960 - MODEL_PITCH, first, first + MODEL_PITCH], bigAt = c.big + 0.25, row = { alpha: g, align: "center" };
   const enough = g * named(t, c.enough);
-  enoughModel(t, xs[1], Y3, enough, ramp(t, c.structure, 0.4));
+  enoughModel(
+    t,
+    xs[1],
+    Y3,
+    enough,
+    ramp(t, c.structure, 0.4),
+    glideYield(t, c.small + 0.05, MODEL_LEAD, 0.6)
+  );
   termRow(
     t,
     L(["刚好够用"], ["Just enough"]),
@@ -4841,15 +4901,25 @@ function claimRow(t, ax, ay, px, py, { alpha = 1, flow = null, nameTop = ay + 22
 }
 var CJK = /[\u4e00-\u9fff]/u;
 var latinDrop = (name, neighbour) => CJK.test(neighbour) && !CJK.test(name) ? 0.1 * labelSize(LABEL) : 0;
+var CLAIM_RISE = Math.hypot(150, 386);
 function claimAt(t, c) {
-  const w = claimWidth(), rise = glideShare(t, c.local + 0.05, Math.hypot(150, 386), 0.7), gap = mix(560, 260, rise), ax = 960 - (w + gap) / 2;
-  return { ax, ay: mix(600, 214, rise), px: ax + gap + w / 2, py: mix(420, 214, rise), rise };
+  const w = claimWidth(), rise = glideShare(t, c.local + 0.05, CLAIM_RISE, 0.7), gap = mix(560, 260, rise), ax = 960 - (w + gap) / 2;
+  return {
+    ax,
+    ay: mix(600, 214, rise),
+    px: ax + gap + w / 2,
+    py: mix(420, 214, rise),
+    rise,
+    given: glideYield(t, c.local + 0.05, CLAIM_RISE, 0.7)
+  };
 }
 function apartStage(s, t, c, g) {
-  const { ax, ay, px, py, rise } = claimAt(t, c), under = py + CLAIM_H / 2 + NAME_GAP, rule = L("按 ETHOS 的规则", "By ETHOS's rules");
+  const { ax, ay, px, py, rise, given } = claimAt(t, c), under = py + CLAIM_H / 2 + NAME_GAP, rule = L("按 ETHOS 的规则", "By ETHOS's rules");
   claimRow(t, ax, ay, px, py, {
     alpha: g,
-    flow: flowClock(t),
+    // The report's points travel a way that the rise carries and shortens: they give their pace up to the rise's, so
+    // none is seen faster than a glide as the claim rises (580 px/s in Chinese, 626 in English).
+    flow: flowClock(t) - given,
     // The Agent's name keeps its gap under the Agent while it rises and joins the panel's line as the two come level,
     // on the baseline of the rule's name beside it.
     nameTop: Math.max(ay + 22, mix(ay + 22, py + CLAIM_H / 2, rise)) + NAME_GAP + rise * latinDrop("Agent", rule)
@@ -5768,24 +5838,31 @@ var COMMIT = 10.5;
 var DROP = 60;
 var agentName = () => L("另一个 Agent", "A second Agent");
 var movedName = () => L("往前走了", "Moved on");
+var exampleLeft = () => AX - 22 - NAME_GAP - measure(agentName());
+var buildingShift = () => 960 - (exampleLeft() + HEAD + COMMIT) / 2;
 function exampleShift(t, c) {
-  const left = AX - 22 - NAME_GAP - measure(agentName()), building2 = 960 - (left + HEAD + COMMIT) / 2, checked = 960 - (left + NEW + Math.max(18 + 1.25, measure(movedName()) / 2)) / 2;
+  const building2 = buildingShift(), checked = 960 - (exampleLeft() + NEW + Math.max(18 + 1.25, measure(movedName()) / 2)) / 2;
   return mix(building2, checked, glideShare(t, c.changed + 0.05, building2 - checked, 0.8));
 }
+var contextName = () => L("例子", "The example");
+function contextAt(x, settle, marks = { alpha: 0 }) {
+  const m = pipelineMark(mix(x, 1e3, settle), mix(Y, 222, settle), mix(700, 400, settle), marks), w = measure(contextName());
+  return [mix(m.runX, m.feedX - 34 - w / 2, settle), mix(m.top - NAME_GAP - 15, 222, settle)];
+}
+var contextWay = () => pacedWay((settle) => {
+  const [x, y] = contextAt(1110, settle);
+  return [x, y + DROP * settle];
+});
 function exampleContext(t, c, g, { settle = 1, alone = 1110 } = {}) {
-  const x = mix(mix(alone, 1110, glideShare(t, c.agent + 0.05, 1110 - alone, 0.8)), 1e3, settle), m = pipelineMark(x, mix(Y, 222, settle), mix(700, 400, settle), {
-    alpha: g,
-    flow: flowClock(t)
-  });
-  const name = L("例子", "The example"), w = measure(name);
-  nameText(
-    name,
-    mix(m.runX, m.feedX - 34 - w / 2, settle),
-    mix(m.top - NAME_GAP - 15, 222, settle),
+  const [x, y] = contextAt(
+    mix(alone, 1110, glideShare(t, c.agent + 0.05, 1110 - alone, 0.8)),
+    settle,
     {
-      alpha: g * named(t, c.example)
+      alpha: g,
+      flow: flowClock(t) - glideYield(t, c.agent + 0.05, 1110 - 960 + buildingShift(), 0.8)
     }
   );
+  nameText(contextName(), x, y, { alpha: g * named(t, c.example) });
 }
 function secondAgent(t, c, g) {
   const a = g * ramp(t, c.agent - 0.3, 0.4);
@@ -5814,7 +5891,7 @@ function branch(t, g, { moved = 0, landed = moved, nameAlpha = g, nameTop = ROW_
 }
 var plan = (a) => documentIcon(PLAN_X - 48, Y - 60, 96, 120, { alpha: a, rows: 3 });
 function staleStage(s, t, c, g) {
-  const shift = exampleShift(t, c), settle = glideShare(t, c.remembers + 0.05, 410, 0.8);
+  const shift = exampleShift(t, c), settle = glideShare(t, c.remembers + 0.05, contextWay(), 0.8);
   ctx.save();
   ctx.translate(shift, DROP * settle);
   exampleContext(t, c, g, { settle, alone: 960 - shift });
@@ -7666,10 +7743,13 @@ function modelRevision(s, t, a) {
     DOC_X + DOC2[0] / 2,
     DOC_X + nameWidth(CHANGE) / 2,
     DOC_X + nameWidth(REVISES) / 2
-  ), right3 = Math.max(right2, CHK + 46 + nameWidth(DEP, 280), CHK + nameWidth(COMPILE) / 2), at = (right) => 960 - (left + right) / 2, grownAt = at(right1), formingAt = 960 - Math.max(GW, CELL0 + nameWidth(RECORD) / 2) / 2, seat = grownAt + Math.max(-SEAT, Math.min(SEAT, (formingAt - grownAt) / 2)), GX2 = at(right3) + (at(right2) - at(right3)) * (1 - glideShare(t, checksAt - 0.65, at(right2) - at(right3), 0.8)) + (seat - at(right2)) * (1 - glideShare(t, changeAt - 0.65, seat - at(right2), 0.8));
+  ), right3 = Math.max(right2, CHK + 46 + nameWidth(DEP, 280), CHK + nameWidth(COMPILE) / 2), at = (right) => 960 - (left + right) / 2, grownAt = at(right1), formingAt = 960 - Math.max(GW, CELL0 + nameWidth(RECORD) / 2) / 2, seat = grownAt + Math.max(-SEAT, Math.min(SEAT, (formingAt - grownAt) / 2)), steps = [
+    [changeAt - 0.65, seat - at(right2)],
+    [checksAt - 0.65, at(right2) - at(right3)]
+  ], GX2 = steps.reduce((x, [from, way]) => x - way * glideShare(t, from, way, 0.8), seat);
   ctx.save();
   ctx.translate(GX2, 0);
-  const grow = soon(t, dimAt + 0.05, 0.8), c = a * named(t, changeAt), bd = a * named(t, boundAt), k = a * named(t, checksAt), flow = flowClock(t), above = GY - NAME_GAP, ys = [GY + 22, MID2, GY + GH - 22], below = rowNameTop([GY + GH, ys.at(-1) + 22]);
+  const grow = soon(t, dimAt + 0.05, 0.8), c = a * named(t, changeAt), bd = a * named(t, boundAt), k = a * named(t, checksAt), flow = flowClock(t) - steps.reduce((v, [from, way]) => v + glideYield(t, from, way, 0.8), 0), above = GY - NAME_GAP, ys = [GY + 22, MID2, GY + GH - 22], below = rowNameTop([GY + GH, ys.at(-1) + 22]);
   modelGrid(0, GY, GW, GH, { alpha: a, cell: [3, 1], lit: 1, grow });
   nameText(RECORD, mix(CELL0, CELL, grow), above, {
     valign: "bottom",

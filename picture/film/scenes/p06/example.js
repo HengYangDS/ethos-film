@@ -19,7 +19,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cueFrom } from "../../timing/cues.js";
 import { clamp, ease, mix, ramp } from "../../timing/easing.js";
-import { drawShare, drawStart, glideShare } from "../../timing/pauses.js";
+import { drawShare, drawStart, glideShare, glideYield, pacedWay } from "../../timing/pauses.js";
 import { agents, card, linkSet } from "../p04/marks.js";
 import { planeState } from "../p05/planes.js";
 
@@ -46,33 +46,46 @@ const agentName = () => L("另一个 Agent", "A second Agent"),
  * is the branch while the Agent's view builds, then the branch's real head and what is said of it once someone else
  * may have changed things, through the check at the write, which ends on the ring at that head and its name. The group
  * glides to its second place from just after "may have changed things". */
+const exampleLeft = () => AX - 22 - NAME_GAP - measure(agentName()),
+  buildingShift = () => 960 - (exampleLeft() + HEAD + COMMIT) / 2;
 function exampleShift(t, c) {
-  const left = AX - 22 - NAME_GAP - measure(agentName()),
-    building = 960 - (left + HEAD + COMMIT) / 2,
-    checked = 960 - (left + NEW + Math.max(18 + 1.25, measure(movedName()) / 2)) / 2;
+  const building = buildingShift(),
+    checked = 960 - (exampleLeft() + NEW + Math.max(18 + 1.25, measure(movedName()) / 2)) / 2;
   return mix(building, checked, glideShare(t, c.changed + 0.05, building - checked, 0.8));
 }
 
 /* The example's context, the pipeline of part 04: centred by itself while it is the whole picture, at `alone` in the
  * example's frame; large at the right once the second Agent is introduced, gliding there on the Agent's words; then
- * small at the top as the Agent's view builds, named as the example. */
+ * small at the top as the Agent's view builds, named as the example. Its points run the way that first glide carries
+ * them, from the frame's centre to its place at the right, so their clock gives its pace up to that glide's and none
+ * is seen faster than a glide (632 px/s); the clock keeps what it gave up through the stages that follow, so the
+ * points never jump at a cut. */
+const contextName = () => L("例子", "The example");
+/* The pipeline at `settle` of its way to the top from `x`, drawn with `marks`, and where its name stands: above the
+ * large pipeline, sliding to its left as it settles at the top, over the pipeline as it shrinks away under it. */
+function contextAt(x, settle, marks = { alpha: 0 }) {
+  const m = pipelineMark(mix(x, 1000, settle), mix(Y, 222, settle), mix(700, 400, settle), marks),
+    w = measure(contextName());
+  return [mix(m.runX, m.feedX - 34 - w / 2, settle), mix(m.top - NAME_GAP - 15, 222, settle)];
+}
+/* The way that times the context's settling: its name travels furthest, and fastest early on, where it leaves the
+ * pipeline's top while the pipeline still shrinks under it, so the glide is timed by that stretch (pacedWay). Timed by
+ * about 410 px, the name moved at up to 507 px/s in Chinese and 553 in English. */
+const contextWay = () =>
+  pacedWay((settle) => {
+    const [x, y] = contextAt(1110, settle);
+    return [x, y + DROP * settle];
+  });
 function exampleContext(t, c, g, { settle = 1, alone = 1110 } = {}) {
-  const x = mix(mix(alone, 1110, glideShare(t, c.agent + 0.05, 1110 - alone, 0.8)), 1000, settle),
-    m = pipelineMark(x, mix(Y, 222, settle), mix(700, 400, settle), {
-      alpha: g,
-      flow: flowClock(t),
-    });
-  // The name stands above the large pipeline and slides to its left as it settles at the top.
-  const name = L("例子", "The example"),
-    w = measure(name);
-  nameText(
-    name,
-    mix(m.runX, m.feedX - 34 - w / 2, settle),
-    mix(m.top - NAME_GAP - 15, 222, settle),
+  const [x, y] = contextAt(
+    mix(alone, 1110, glideShare(t, c.agent + 0.05, 1110 - alone, 0.8)),
+    settle,
     {
-      alpha: g * named(t, c.example),
+      alpha: g,
+      flow: flowClock(t) - glideYield(t, c.agent + 0.05, 1110 - 960 + buildingShift(), 0.8),
     },
   );
+  nameText(contextName(), x, y, { alpha: g * named(t, c.example) });
 }
 /* The Agent with its name at its left, arriving on its words. */
 function secondAgent(t, c, g) {
@@ -110,9 +123,9 @@ const plan = (a) => documentIcon(PLAN_X - 48, Y - 60, 96, 120, { alpha: a, rows:
  * someone else may have changed things. The branch arrives before the plan and the gate, so its name hangs one gap
  * under its commits until the plan's words bring the row's taller members, and then joins the row's line. */
 export function staleStage(s, t, c, g) {
-  // The context settles at the top by the film's structural glide; its name travels furthest, about 410 px.
+  // The context settles at the top by the film's structural glide, timed by its name, which travels furthest.
   const shift = exampleShift(t, c),
-    settle = glideShare(t, c.remembers + 0.05, 410, 0.8);
+    settle = glideShare(t, c.remembers + 0.05, contextWay(), 0.8);
   ctx.save();
   ctx.translate(shift, DROP * settle);
   exampleContext(t, c, g, { settle, alone: 960 - shift });

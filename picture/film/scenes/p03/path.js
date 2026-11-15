@@ -15,9 +15,16 @@ import { NAME_GAP, growName, nameText, rejectedName } from "../../naming/names.j
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
 import { P } from "../../palette.js";
 import { L, en } from "../../timeline.js";
-import { mix, ramp } from "../../timing/easing.js";
+import { ease, mix, ramp } from "../../timing/easing.js";
 import { drawShare, drawTime, glideShare, glideTime, voiceTime } from "../../timing/pauses.js";
 
+/* The point at a path's end. It stands where the stroke will end and lands as the stroke arrives, growing to its size
+ * over the last tenth of the drawing as a link's point does: carried on the stroke's tip it moved at the tip's pace,
+ * which only a tip may (768 px/s in 03.1, 744 in the English 03.2). */
+const endPoint = (x, y, drawn, alpha) => {
+  const r = 7 * ease((drawn - 0.9) / 0.1);
+  if (r > 0.3) dot(x, y, r, { color: P.ink, alpha });
+};
 /* A path from x0 to x1 at y, in pieces that leave the rings of the stations at `gaps` clear, so no line runs under a
  * station's glyph; `dash` draws it dashed from `split` on. */
 function pathLine(x0, x1, y, gaps, { alpha = 1, split = Infinity } = {}) {
@@ -106,15 +113,15 @@ export function stageName(s, t, a, c) {
       alpha: open * mix(0.75, 1, lit),
     });
   });
-  // A different path, drawn on its words from the datum, the claim's point, at its start, and named at its end; its end
-  // point leads it out as a stroke drawing on (drawShare), from just before its ink arrives, so the path nears its name
-  // within half a second of standing.
+  // A different path, drawn on its words from the datum, the claim's point, at its start, and named at its end; it
+  // draws out as a stroke drawing on (drawShare), from just before its ink arrives, so the path nears its name within
+  // half a second of standing, and its end point lands as it arrives.
   const drawn = drawShare(t, c.otherPath - 0.2, X1 - X0 - 14, 0.9),
     reach = mix(X0 + 14, X1, drawn),
     on = a * ramp(t, c.otherPath - 0.15, 0.4);
   datumMark(X0, Y, 14, on);
   line(X0 + 14, Y, reach, Y, { color: P.ink, alpha: on, width: 3 });
-  dot(reach, Y, 7, { color: P.ink, alpha: on });
+  endPoint(X1, Y, drawn, on);
   // Once it is drawn, points run along it.
   flowAlong(
     [
@@ -173,11 +180,13 @@ export function stagePath(t, a, c) {
   if (a <= 0) return;
   // The path draws out from under the travellers as the stage opens, at full ink from the cut that brings it, so the
   // picture is never thin while the travellers ink in; they stand on its start, so it is one mark with them, named by
-  // their heading, until its own name stands at its end on its words. Its end, which travels furthest, leads it out as a stroke drawing on (drawShare) over 1.8 s, and over 2 s in
-  // English, whose longer heading its end must pass alone before the picture glides; once the picture glides, the end
-  // and the travellers each move at half the drawing's pace.
+  // their heading, until its own name stands at its end on its words. It draws out as a stroke drawing on (drawShare)
+  // over 1.8 s, and over 2 s in English, whose longer heading its tip must pass alone before the picture glides; once
+  // the picture glides, the tip and the travellers each move at half the drawing's pace. Its end point lands at its
+  // end as the stroke arrives (endPoint).
   const nameAt = c.reliable,
     from = c.pCut + 0.18,
+    whole = from + drawTime(PATH_LEN, L(1.8, 2.0)),
     drawn = drawShare(t, from, PATH_LEN, L(1.8, 2.0)),
     on = a * ramp(t, from - 0.4, 0.4),
     endName = L("靠得住的路", "One reliable path"),
@@ -198,15 +207,25 @@ export function stagePath(t, a, c) {
     // Where the path starts: the picture spans from it to the end of the travellers' heading, which starts 10 px
     // right of it, or to the path's end and, once it is said, the name there, whichever reaches further, and stands
     // centred. The two reaches meet by a soft maximum, so the picture sets off gently as the path passes the heading.
-    named2 = glideShare(t, nameAt - 0.1, (NAME_GAP + measure(endName)) / 2, 0.6),
-    X0 =
-      960 -
-      softMax(10 + heading, PATH_LEN * drawn + 7 + (NAME_GAP + measure(endName)) * named2) / 2,
+    // Once the path's name is said the picture makes room for it, gliding by half its reach. English says it while the
+    // path still draws out and the picture glides with it: there the room is part of what the picture glides to from
+    // the start, one glide at half the tip's pace that ends as the path is whole, where a glide of its own on the
+    // name's words moved the travellers at both paces at once (582 px/s).
+    room = (NAME_GAP + measure(endName)) / 2,
+    named2 = nameAt - 0.1 < whole ? 1 : glideShare(t, nameAt - 0.1, room, 0.6),
+    startFor = (share) => 960 - softMax(10 + heading, PATH_LEN * share + 7 + 2 * room * named2) / 2,
+    X0 = startFor(drawn),
     PY = mix(PATH_Y + PATH_RISE, PATH_Y, glideShare(t, c.three + 0.05, PATH_RISE, 0.7)),
     X1 = X0 + PATH_LEN,
     reach = mix(X0, X1, drawn),
-    // The name stands at the path's end, and never left of the end of the travellers' heading.
-    nameX = Math.max(reach + 7 + NAME_GAP, X0 + 10 + measure(travellers) - measure(endName)),
+    // Where the path ends once it is whole: its end point and its name stand there, the point landing as the stroke
+    // arrives and the name on its words, so neither is carried by the tip or by the picture's glide while the path
+    // draws out. The name never stands left of the end of the travellers' heading.
+    END = startFor(1) + PATH_LEN,
+    nameX = Math.max(
+      END + 7 + NAME_GAP,
+      END - PATH_LEN + 10 + measure(travellers) - measure(endName),
+    ),
     names = STATION_NAMES(),
     xs = railStations(names, X0 + 240, X1 - 60),
     sts = [c.st1, c.st2, c.st3];
@@ -217,7 +236,7 @@ export function stagePath(t, a, c) {
     xs.filter((x, i) => t > sts[i] - 0.15 && x + 28 < reach),
     { alpha: on },
   );
-  dot(reach, PY, 7, { color: P.ink, alpha: on });
+  endPoint(END, PY, drawn, on);
   // Points run along the path from its start once the picture has settled: each stands at its distance from the start,
   // so the path drawing on never moves them. A point leaves by its size before a station that stands on the path and
   // enters again past it.
@@ -231,12 +250,7 @@ export function stagePath(t, a, c) {
     {
       // The dots set off once the picture has stopped gliding: a dot running right on a stage gliding left at more than
       // its own pace would slow to a stand on the screen and run back (the English gate's halt at 162.27 s).
-      since: flowClock(
-        Math.max(
-          from + drawTime(PATH_LEN, L(1.8, 2.0)),
-          nameAt - 0.1 + glideTime((NAME_GAP + measure(endName)) / 2, 0.6),
-        ),
-      ),
+      since: flowClock(Math.max(whole, nameAt - 0.1 + glideTime(room, 0.6))),
       // The path grows, so its dots keep one period whatever its length: 1.6 s, 288 px apart, out of step with the
       // stations' pitch of about 390 px, so the dots never all shrink at the stations at once.
       every: 1.6,

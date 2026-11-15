@@ -12,7 +12,7 @@ import { NAME_GAP, nameText, termRow } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { clamp, mix, ramp } from "../../timing/easing.js";
-import { glideShare } from "../../timing/pauses.js";
+import { glideShare, glideYield } from "../../timing/pauses.js";
 import { agents, card, verdictMark } from "../p04/marks.js";
 import { CLAIM_H, claimPanel, claimWidth } from "../claim.js";
 
@@ -99,14 +99,22 @@ const CJK = /[\u4e00-\u9fff]/u;
 const latinDrop = (name, neighbour) =>
   CJK.test(neighbour) && !CJK.test(name) ? 0.1 * labelSize(LABEL) : 0;
 /* Where the claim stands: the Agent lower left of its panel while it is the whole picture, side by side at the top once
- * its first plane arrives. */
+ * its first plane arrives. The Agent travels furthest, (560 - 260) / 2 px across and 386 px up, so the rise is timed
+ * by its way; `given` is the voice time a flow on the claim gives up to the rise (glideYield). */
+const CLAIM_RISE = Math.hypot(150, 386);
 function claimAt(t, c) {
   const w = claimWidth(),
-    // The Agent travels furthest, (560 - 260) / 2 px across and 386 px up.
-    rise = glideShare(t, c.local + 0.05, Math.hypot(150, 386), 0.7),
+    rise = glideShare(t, c.local + 0.05, CLAIM_RISE, 0.7),
     gap = mix(560, 260, rise),
     ax = 960 - (w + gap) / 2;
-  return { ax, ay: mix(600, 214, rise), px: ax + gap + w / 2, py: mix(420, 214, rise), rise };
+  return {
+    ax,
+    ay: mix(600, 214, rise),
+    px: ax + gap + w / 2,
+    py: mix(420, 214, rise),
+    rise,
+    given: glideYield(t, c.local + 0.05, CLAIM_RISE, 0.7),
+  };
 }
 
 /* 05.1-05.2 The sentence returns, the Agent lower left and its panel upper right so the claim stands as a block, and
@@ -115,12 +123,14 @@ function claimAt(t, c) {
  * hang from one line under the panel, the deeper mark of the two, and the planes build upward in place on their words,
  * each with its state, the local proof at the base. */
 export function apartStage(s, t, c, g) {
-  const { ax, ay, px, py, rise } = claimAt(t, c),
+  const { ax, ay, px, py, rise, given } = claimAt(t, c),
     under = py + CLAIM_H / 2 + NAME_GAP,
     rule = L("按 ETHOS 的规则", "By ETHOS's rules");
   claimRow(t, ax, ay, px, py, {
     alpha: g,
-    flow: flowClock(t),
+    // The report's points travel a way that the rise carries and shortens: they give their pace up to the rise's, so
+    // none is seen faster than a glide as the claim rises (580 px/s in Chinese, 626 in English).
+    flow: flowClock(t) - given,
     // The Agent's name keeps its gap under the Agent while it rises and joins the panel's line as the two come level,
     // on the baseline of the rule's name beside it.
     nameTop:

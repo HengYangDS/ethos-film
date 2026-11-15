@@ -20,7 +20,7 @@ import { P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { cues } from "../../timing/cues.js";
 import { mix, ramp, soon } from "../../timing/easing.js";
-import { drawShare, drawTime, glideShare, glideTime } from "../../timing/pauses.js";
+import { drawShare, drawTime, glideShare, glideTime, glideYield } from "../../timing/pauses.js";
 
 /* 08.9, first: the failed implementation and the model stand apart, a line between them as they are told apart, solid
  * since the film keeps dashes for what is unknown, missing or refused; this time the fault is in the model, which
@@ -148,18 +148,20 @@ export function modelRevision(s, t, a) {
     seat = grownAt + Math.max(-SEAT, Math.min(SEAT, (formingAt - grownAt) / 2)),
     // Each step left by the film's structural glide over its own way, setting off 0.65 s before the words of the part
     // it makes room for, so it has gone most of its way when that part's name appears.
-    GX =
-      at(right3) +
-      (at(right2) - at(right3)) *
-        (1 - glideShare(t, checksAt - 0.65, at(right2) - at(right3), 0.8)) +
-      (seat - at(right2)) * (1 - glideShare(t, changeAt - 0.65, seat - at(right2), 0.8));
+    steps = [
+      [changeAt - 0.65, seat - at(right2)],
+      [checksAt - 0.65, at(right2) - at(right3)],
+    ],
+    GX = steps.reduce((x, [from, way]) => x - way * glideShare(t, from, way, 0.8), seat);
   ctx.save();
   ctx.translate(GX, 0);
   const grow = soon(t, dimAt + 0.05, 0.8),
     c = a * named(t, changeAt),
     bd = a * named(t, boundAt),
     k = a * named(t, checksAt),
-    flow = flowClock(t),
+    // The points on the Change's link run left, the way the stage steps: they give their pace up to the steps', so
+    // none is seen faster than a glide as the stage makes room for the checks (620 px/s).
+    flow = flowClock(t) - steps.reduce((v, [from, way]) => v + glideYield(t, from, way, 0.8), 0),
     above = GY - NAME_GAP,
     // The checks' frames, 44 px tall, span the model's height from its top to its bottom.
     ys = [GY + 22, MID, GY + GH - 22],

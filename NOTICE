@@ -43,7 +43,7 @@ their own licenses, which the licenses above do not cover:
   staged picture document;
 - esbuild 0.28.2, from npm, under the MIT License, which bundles the composition's
   modules under picture/film/ into picture/film.js;
-- Prettier 3.9.10, from npm, under the MIT License, for the Markdown format check;
+- Prettier 3.10.1, from npm, under the MIT License, for the Markdown format check;
 - Chrome Headless Shell 152.0.7977.30, which the supply task installs, under the
   licenses of Chromium and its components;
 - mlx-audio 0.6.4 and MLX 0.32.4 under the MIT License, with the other Python packages

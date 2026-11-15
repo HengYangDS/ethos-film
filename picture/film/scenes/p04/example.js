@@ -22,7 +22,15 @@ import {
 import { LABEL, P } from "../../palette.js";
 import { L } from "../../timeline.js";
 import { ease, mix, ramp, soon } from "../../timing/easing.js";
-import { drawShare, drawStart, drawTime, glideShare, glideTime } from "../../timing/pauses.js";
+import {
+  crossYield,
+  drawShare,
+  drawStart,
+  drawTime,
+  glideShare,
+  glideTime,
+  yieldingShare,
+} from "../../timing/pauses.js";
 import { agents, card, recordRows, valueCell } from "./marks.js";
 
 /* The request in the researcher's words and the line two handoffs leave of it. The Chinese lines drop a particle of the
@@ -209,10 +217,13 @@ export function handoffStage(s, t, c, g) {
     align: "left",
     alpha: g * named(t, c.summaryName),
   });
-  // The request travels from the card through both Agents, smaller after each, until the one line stands: it sets off
-  // once both handoffs have drawn on and travels as a stroke's tip draws, entering and leaving by its size and easing
-  // to its smaller size as it reaches each Agent. It runs ahead of the chain's glide, so by the time the chain gathers
-  // speed the request is well on its way to the second Agent and never stands still against the chain moving under it.
+  // The request travels from the card through both Agents, smaller after each, until the one line stands: a mark that
+  // travels, so it goes by the structural glide over its way, where it went as a stroke's tip draws (652 px/s). It
+  // sets off once both handoffs have drawn on, or as much sooner, while they draw, as it needs to reach the second
+  // Agent by the time the one line leaves it; it enters and leaves by its size and eases to its smaller size as it
+  // reaches each Agent. The chain's glides carry it as it goes: it makes its way down to the first Agent while the
+  // chain rests or has all but settled, and its last stretch, slowing, as the chain sets off again, so the two paces
+  // never add up to more than a glide's.
   const path = [
       [x0 + cw, Y0],
       [a1, Y0],
@@ -220,7 +231,12 @@ export function handoffStage(s, t, c, g) {
       [a2, Y1],
       [a2, Y2],
     ],
-    p = drawShare(t, drawFrom + drawTime(longest), 470);
+    way = lengthOf(path),
+    setOff = Math.max(
+      drawFrom,
+      Math.min(drawFrom + drawTime(longest), c.single + 0.05 - glideTime(way)),
+    ),
+    p = glideShare(t, setOff, way);
   if (p > 0 && p < 1)
     dot(
       ...along(path, p).point,
@@ -309,7 +325,7 @@ export function deleteStage(s, t, c, g) {
 /* 04.3 The summary made reading faster, which is fine; the trouble is that it takes the place of the original words.
  * The original stands upper left and the summary lower right, named at its right from the words that open the
  * thought; on "takes the place" that joins under the summary's name, and the summary moves into the original's place
- * while the original steps down and back, and when no one goes back to it its words fade, leaving its dashed place,
+ * while the original steps down and aside, and when no one goes back to it its words fade, leaving its dashed place,
  * which keeps its name until the stage leaves. Each name travels with its card, and both states stand centred with
  * their names. */
 export function replaceStage(s, t, c, g) {
@@ -329,9 +345,15 @@ export function replaceStage(s, t, c, g) {
       Math.hypot(start + cw + 160 - left - (col - qw) / 2, 160),
       0.7,
     ),
+    // The original steps down at once and aside as the summary rises, so neither card passes over the other. Its move
+    // aside is a glide over its own way, across its step, that gives its pace up to the step's: it gathers pace as the
+    // step slows, so the card and its name never move faster than a glide, where the two moves, the one aside timed by
+    // the summary's way, moved them at up to 469 px/s in Chinese and 547 in English.
+    aside = yieldingShare(t, c.replace + 0.35, left + (col - cw) / 2 - start, 0.7, (at) =>
+      crossYield(at, c.replace + 0.05, 270, 0.6),
+    ),
     fade = soon(t, c.noOne + 0.05, 1);
-  // The original steps down at once and back as the summary rises, so neither card passes over the other.
-  const ox = mix(start, left + (col - cw) / 2, take),
+  const ox = mix(start, left + (col - cw) / 2, aside),
     oy = mix(400, 670, step),
     qx = mix(start + cw + 160, left + (col - qw) / 2, take),
     qy = mix(560, 400, take);
