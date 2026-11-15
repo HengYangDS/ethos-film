@@ -4910,7 +4910,7 @@ function claimRow(t, ax, ay, px, py, { alpha = 1, flow = null, nameTop = ay + 22
 }
 var CJK = /[\u4e00-\u9fff]/u;
 var latinDrop = (name, neighbour) => CJK.test(neighbour) && !CJK.test(name) ? 0.1 * labelSize(LABEL) : 0;
-var CLAIM_RISE = Math.hypot(150, 386);
+var CLAIM_RISE = 1.1 * Math.hypot(150, 386);
 function claimAt(t, c) {
   const w = claimWidth(), rise = glideShare(t, c.local + 0.05, CLAIM_RISE, 0.7), gap = mix(560, 260, rise), ax = 960 - (w + gap) / 2;
   return {

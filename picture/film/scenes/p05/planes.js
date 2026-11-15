@@ -99,9 +99,12 @@ const CJK = /[\u4e00-\u9fff]/u;
 const latinDrop = (name, neighbour) =>
   CJK.test(neighbour) && !CJK.test(name) ? 0.1 * labelSize(LABEL) : 0;
 /* Where the claim stands: the Agent lower left of its panel while it is the whole picture, side by side at the top once
- * its first plane arrives. The Agent travels furthest, (560 - 260) / 2 px across and 386 px up, so the rise is timed
- * by its way; `given` is the voice time a flow on the claim gives up to the rise (glideYield). */
-const CLAIM_RISE = Math.hypot(150, 386);
+ * its first plane arrives. The Agent travels furthest, (560 - 260) / 2 px across and 386 px up, but a point of the
+ * report outruns it where it rounds the bend of its link while the link's upward run shrinks away: timed by the
+ * Agent's way alone, such a point reaches 464 px/s at the phases of the flow's clock that put one there. So the rise
+ * is timed by a way a tenth longer, and no point is seen faster than 423 px/s at any phase; `given` is the voice time
+ * a flow on the claim gives up to the rise (glideYield). */
+const CLAIM_RISE = 1.1 * Math.hypot(150, 386);
 function claimAt(t, c) {
   const w = claimWidth(),
     rise = glideShare(t, c.local + 0.05, CLAIM_RISE, 0.7),
