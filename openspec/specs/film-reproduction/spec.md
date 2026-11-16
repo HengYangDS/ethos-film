@@ -53,7 +53,7 @@ A build SHALL write generated files only under the ignored `build/` directory. I
 
 ### Requirement: A rebuild meets the reproduction standard
 
-A rebuild SHALL be compared layer by layer with the published release. Each edition's soundtrack before encoding and staged picture document SHALL hold the bytes the release manifest records, its captions, transcript and cover SHALL be byte-identical to the published ones, and each film SHALL have the published film's frame count, decoded audio, streams, durations, chapters and tags.
+A rebuild SHALL be compared layer by layer with the published release. Each edition's soundtrack before encoding and its two staged picture documents, with captions and without them, SHALL hold the bytes the release manifest records, its captions, transcript and cover SHALL be byte-identical to the published ones, and each of its four films SHALL have the published film's frame count, decoded audio, streams, durations, chapters and tags.
 
 #### Scenario: A faithful rebuild passes
 
