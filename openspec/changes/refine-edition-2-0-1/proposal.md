@@ -12,6 +12,7 @@ The notes are recorded, each with its observation, repair and reverification lin
 - The requirements name the four films and both staged picture documents that each edition publishes.
 - The Chinese edition's sentence ends inside a thought are heard as longer breaks than the commas beside them: the owner decided on 16 November 2026 to raise the voice's floor for 。？！, which the owner had approved on samples (zh-R20-05).
 - No chapter title travels: the chapter card dissolves where it stands and the running head fades in at its own place (zh-R20-04, EN-R20-05), after the sister film's review judged the shared move a racing mark.
+- A single thought's clarity is judged against the floor less 1.0 dB, with the floor kept for the soundtrack and each segment, as the owner decided on 16 November 2026; the review prompt states it (EN-R20-01).
 - The wording of 03.6 in both languages (zh-R19-01, EN-R19-04) and of the English 08.1 (EN-R19-01) changes only if the owner decides so on the exact text; until then the approved text and its declared compression stand.
 
 The films stay 900 seconds, with the same narrator, chapters and argument. The result is edition 2.0.1.
