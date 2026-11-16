@@ -9,7 +9,6 @@ import { flowAlong, flowClock, link } from "../../drawing/links.js";
 import { dot, line, measure, ring, stroke, text } from "../../drawing/strokes.js";
 import { agent, check, person } from "../../drawing/symbols.js";
 import { kernelIcon, recoverIcon } from "../../drawing/workspace.js";
-import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named, speaking } from "../../naming/lists.js";
 import { NAME_GAP, growName, nameText, rejectedName } from "../../naming/names.js";
 import { railNames, railStations, rowNameTop } from "../../naming/placement.js";
@@ -94,7 +93,7 @@ function station(x, y, i, alpha, glyph = alpha) {
 export function stageName(s, t, a, c) {
   if (a <= 0) return;
   // The chapter opens on the first word: the name and its five initials, one mark of rings, stand together.
-  const g = a * clearOfTitle(s, t, 330),
+  const g = a,
     open = g * ramp(t, c.first - 0.4, 0.4),
     // The pitch leaves the English words 1.7 times their size or more between neighbours: at 200 px "Human-Agent" stood
     // 36 px from "Operational" and "Evidence-grounded" 43 px from "Trust".

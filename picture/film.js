@@ -444,8 +444,14 @@ function along(points, q) {
   return { point: kept.at(-1), kept };
 }
 var drawnShare = (draw, length, extent = 1) => {
-  const least = draw.least ?? 0.4, way = length * extent;
-  return extent * drawShare(draw.t, drawStart(draw.at, way, least, draw.lead), way, least);
+  const least = draw.least ?? 0.4, way = length * extent, share = drawShare(draw.t, drawStart(draw.at, way, least, draw.lead), way, least);
+  layout.draws?.push({
+    scene: layout.scene,
+    at: draw.at,
+    share,
+    pace: 1.5 * Math.abs(way) / drawTime(way, least)
+  });
+  return extent * share;
 };
 function path(points, { upto = 1, draw = null, ...o } = {}) {
   if (points.length < 2) return;
@@ -682,40 +688,31 @@ var opensChapter = (s) => {
   const i = film.segments.indexOf(s);
   return i > 0 && film.segments[i - 1].chapter !== s.chapter;
 };
-var titleY = (s, t) => mix(540, 72, ease(clamp((t - (cardLanding(s) - RISE)) / RISE)));
-var clearOfTitle = (s, t, y = 400) => {
-  if (!opensChapter(s)) return 1;
-  const c = cameraOf(s, t), sy = c.oy + c.k * (y - c.ay);
-  return ease((sy - 45 - titleY(s, t)) / Math.min(240, Math.max(60, sy - 45 - 72)));
-};
-var cardLanding = (s) => s.voice_start + 0.1;
-var RISE = 1.1;
+var CARD_IN = 0.3;
+var CARD_LEAD = 0.1;
+var CARD_OUT = 0.35;
+var CARD_STANDS = 0.6;
+var AHEAD = 0.15;
+var HEAD_INK = 0.72;
+var opening = (s) => opensChapter(s) ? Math.max(
+  s.start,
+  Math.min(s.voice_start - 0.55, Math.max(s.voice_start - 0.75, s.start + CARD_STANDS))
+) : s.start - 0.25;
+var cardLeaves = (s) => opening(s) - AHEAD;
 function chapterCard(s, t) {
-  if (!opensChapter(s) || t >= cardLanding(s)) return;
-  const enter = ramp(t, s.start, 0.3);
-  if (enter <= 0) return;
+  if (!opensChapter(s)) return;
+  const shown = ramp(t, s.start - CARD_LEAD, CARD_IN) * (1 - ramp(t, cardLeaves(s), CARD_OUT));
+  if (shown <= 0) return;
   const chapter = film.chapters.find((c) => c.id === s.chapter), number = chapterNumber(s.chapter);
-  const large = en ? 54 : 60, p = clamp((t - (cardLanding(s) - RISE)) / RISE), q = ease(p), size = mix(large, 24, q);
+  const size = en ? 54 : 60;
   ctx.save();
   ctx.font = font(24, false, `${number}  ${chapter.title}`);
   const prefix = ctx.measureText(`${number}  `).width;
   ctx.restore();
-  const gap = prefix * size / 24, total = gap + measure(chapter.title, size, false, "chapter");
-  const left = mix(960 - total / 2, 96, q), y = mix(540, 72, q), ink = mix(1, 0.72, q) * enter;
-  text(number, left, y, size, {
-    color: blend(P.evidence, P.muted, q),
-    alpha: ink,
-    role: "chapter"
-  });
-  text(chapter.title, left + gap, y, size, {
-    color: blend(P.ink, P.muted, q),
-    alpha: ink,
-    role: "chapter"
-  });
-  line(900, 600, 1020, 600, {
-    color: P.line,
-    alpha: enter * (1 - ramp(t, cardLanding(s) - RISE, 0.35))
-  });
+  const gap = prefix * size / 24, left = 960 - (gap + measure(chapter.title, size, false, "chapter")) / 2;
+  text(number, left, 540, size, { color: P.evidence, alpha: shown, role: "chapter" });
+  text(chapter.title, left + gap, 540, size, { color: P.ink, alpha: shown, role: "chapter" });
+  line(900, 600, 1020, 600, { color: P.line, alpha: shown });
 }
 function illustrative(alpha) {
   if (alpha < 0.015 || measuring) return;
@@ -735,12 +732,12 @@ function illustrative(alpha) {
 }
 function runningHead(s, t) {
   if (t < film.segments[0].voice_start) return;
-  const first = film.segments.find((v) => v.chapter === s.chapter);
-  const a = 0.72 * (first === film.segments[0] ? ramp(t, first.voice_start, 0.6) : t >= cardLanding(first) ? 1 : 0);
+  const first = film.segments.find((v) => v.chapter === s.chapter), next = film.segments[film.segments.indexOf(s) + 1];
+  const enters = first === film.segments[0] ? ramp(t, first.voice_start, 0.6) : ramp(t, cardLeaves(first), CARD_OUT), leaves = next && next.chapter !== s.chapter ? ramp(t, s.end - 0.5, 0.5) : 0;
   const chapter = film.chapters.find((c) => c.id === s.chapter);
   text(`${chapterNumber(s.chapter)}  ${chapter.title}`, 96, 72, 24, {
     color: P.muted,
-    alpha: a,
+    alpha: HEAD_INK * enters * (1 - leaves),
     role: "chapter"
   });
 }
@@ -3272,7 +3269,7 @@ function station(x, y, i, alpha, glyph = alpha) {
 }
 function stageName(s, t, a, c) {
   if (a <= 0) return;
-  const g = a * clearOfTitle(s, t, 330), open = g * ramp(t, c.first - 0.4, 0.4), xs = [530, 745, 960, 1175, 1390], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
+  const g = a, open = g * ramp(t, c.first - 0.4, 0.4), xs = [530, 745, 960, 1175, 1390], LY = 430, LR = 40, Y3 = NAME_PATH_Y(), X02 = (xs[0] + xs[1]) / 2, X1 = (xs[3] + xs[4]) / 2, lights = [c.w1, c.w2, c.w3, c.w4, c.w5];
   nameText("ETHOS", 960, 350, { alpha: g * named(t, c.first - 0.25) });
   stroke(
     () => xs.forEach((x) => {
@@ -4047,7 +4044,7 @@ function verdictMark(kind, x, y, r = 22, { alpha = 1, color = P.ink } = {}) {
 var REQUEST = () => L(["不能多出重复记录", "更正过的数据一定留下"], ["No duplicate records", "Corrections stay"]);
 var QUOTE = () => L("按股票代码和日期去重", "Deduplicate by stock code and date");
 function contractStage(s, t, c, g) {
-  const W = 520, H = 250, x = 960 - W / 2, y = 470 - H / 2, a = g * clearOfTitle(s, t, y);
+  const W = 520, H = 250, x = 960 - W / 2, y = 470 - H / 2, a = g;
   documentIcon(x, y, W, H, { alpha: a, rows: 0 });
   const lit = soon(t, c.rules + 0.05, 0.5);
   stroke(
@@ -5592,7 +5589,7 @@ function viewsParts(c = {}) {
   ];
 }
 function viewsReach(t, c) {
-  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]), names2 = VIEWS(), opening = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT + Math.max(...names2.slice(0, 2).map((v) => measure(v))), seat = L((opening + first[1]) / 2, first[1]);
+  const [first, ...rest] = viewsParts(c).sort((a, b) => a[0] - b[0]), names2 = VIEWS(), opening2 = openingOf(VIEWS_SIZE) + VIEW_RUN + VIEW_TEXT + Math.max(...names2.slice(0, 2).map((v) => measure(v))), seat = L((opening2 + first[1]) / 2, first[1]);
   return reachAt(
     t,
     seat,
@@ -7061,9 +7058,9 @@ function lane(s, t, a) {
   }, shown = (i) => a * named(t, ats[i]), xs = XS(), [x0, x1, x2, x3, x4] = xs;
   ctx.save();
   ctx.translate(stationsShift(), 0);
-  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a * clearOfTitle(s, t, RAIL_Y) });
+  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a });
   railFlow(t, REQ_X + 70, 1680, { alpha: a * soon(t, reqAt + 0.05, 0.4) });
-  requirement(a * clearOfTitle(s, t, RAIL_Y - REQ[1] / 2));
+  requirement(a);
   docMark(x1 - 75, RAIL_Y - 85, 150, 170, { alpha: shown(1), rows: 5 });
   folderIcon(x2 - 36, RAIL_Y - 29, 72, 58, { alpha: shown(2) });
   link(x2 + 44, RAIL_Y, x3 - 40, RAIL_Y, {
@@ -7116,7 +7113,7 @@ function lane(s, t, a) {
     ],
     0.9
   );
-  work(wx, RAIL_Y, a * clearOfTitle(s, t, RAIL_Y));
+  work(wx, RAIL_Y, a);
   ctx.restore();
 }
 var SOURCES2 = () => [
@@ -8033,7 +8030,7 @@ function bound(s, t, a) {
     beganAt + 0.05,
     Math.hypot(960 - (BOUND_X + alone - W / 2 - AGENT_DX), 560 - Y3 - AGENT_DY),
     0.6
-  ), AX2 = mix(960, PX2 - W / 2 - AGENT_DX, aside), AY = mix(560, Y3 + AGENT_DY, aside), under = Y3 + CLAIM_H / 2 + 18, clear = a * clearOfTitle(s, t, Y3 - 60), seen = clear * ramp(t, s.voice_start - 0.3, 0.4), back = clear * ramp(t, beganAt + 0.35, 0.4), way = a * ramp(t, wayAt - 0.15, 0.5), at = a * named(t, sealAt), end = PX2 + BOUND_RUN, rows = BOUND_ROWS, ats = [commitAt, provedAt, openAt], flow = flowClock(t);
+  ), AX2 = mix(960, PX2 - W / 2 - AGENT_DX, aside), AY = mix(560, Y3 + AGENT_DY, aside), under = Y3 + CLAIM_H / 2 + 18, clear = a, seen = clear * ramp(t, s.voice_start - 0.3, 0.4), back = clear * ramp(t, beganAt + 0.35, 0.4), way = a * ramp(t, wayAt - 0.15, 0.5), at = a * named(t, sealAt), end = PX2 + BOUND_RUN, rows = BOUND_ROWS, ats = [commitAt, provedAt, openAt], flow = flowClock(t);
   agent(AX2, AY, { size: 1.5, alpha: seen });
   nameText("Agent", AX2, AY + 33 + NAME_GAP, { valign: "top", alpha: seen });
   link(AX2, AY - 33, PX2 - W / 2 - 6, Y3, {
@@ -8319,7 +8316,7 @@ function drawScene(s, t, fade, words = fade) {
   window.__sceneId = null;
 }
 function drawAt(t) {
-  setDrawing({ layout: { texts: [], scene: null, time: t } });
+  setDrawing({ layout: { texts: [], draws: [], scene: null, time: t } });
   ctx.setTransform(resolution, 0, 0, resolution, 0, 0);
   ctx.globalAlpha = 1;
   ctx.fillStyle = P.ground;
@@ -8339,7 +8336,7 @@ function drawAt(t) {
   let shown = index;
   while (shown > 0 && continues(shown) && t < visualStart(shown)) shown--;
   if (next && continues(index + 1) && t >= visualStart(index + 1)) shown = index + 1;
-  const fadeIn = index === 0 || prev && prev.chapter === s.chapter ? 1 : ramp(t, s.start, 0.6);
+  const fadeIn = index === 0 || prev && prev.chapter === s.chapter ? 1 : ramp(t, opening(s), 0.6);
   const fadeOut = next && next.chapter === s.chapter ? 1 : 1 - ramp(t, s.end - 0.5, 0.5);
   const keep = Math.min(fadeIn, fadeOut);
   const v = film.segments[shown];
@@ -8350,7 +8347,7 @@ function drawAt(t) {
   publish(t);
 }
 function publish(t) {
-  window.__filmLayout = { time: t, texts: layout.texts };
+  window.__filmLayout = { time: t, texts: layout.texts, draws: layout.draws };
 }
 window.renderFrame = (t) => drawAt(t + (film.render_offset || 0));
 window.renderCover = () => {

@@ -4,7 +4,7 @@ import { ctx, layout, measuring, resolution, sceneFade, setDrawing, wordFade } f
 import { contrastOf } from "./drawing/colour.js";
 import { push } from "./framing/camera.js";
 import { caption } from "./framing/captions.js";
-import { chapterCard, opensChapter, runningHead } from "./framing/chapters.js";
+import { chapterCard, opening, opensChapter, runningHead } from "./framing/chapters.js";
 import { measuringContext } from "./framing/measuring.js";
 import { credits, titleSignature } from "./framing/titles.js";
 import { P } from "./palette.js";
@@ -81,7 +81,7 @@ function drawScene(s, t, fade, words = fade) {
   window.__sceneId = null;
 }
 function drawAt(t) {
-  setDrawing({ layout: { texts: [], scene: null, time: t } });
+  setDrawing({ layout: { texts: [], draws: [], scene: null, time: t } });
   ctx.setTransform(resolution, 0, 0, resolution, 0, 0);
   ctx.globalAlpha = 1;
   ctx.fillStyle = P.ground;
@@ -103,8 +103,9 @@ function drawAt(t) {
   let shown = index;
   while (shown > 0 && continues(shown) && t < visualStart(shown)) shown--;
   if (next && continues(index + 1) && t >= visualStart(index + 1)) shown = index + 1;
-  // Chapters fade through the ground: every mark of the scene carries the fade, so checks see what is shown.
-  const fadeIn = index === 0 || (prev && prev.chapter === s.chapter) ? 1 : ramp(t, s.start, 0.6);
+  // Chapters fade through the ground: every mark of the scene carries the fade, so checks see what is shown. A
+  // chapter's first scene begins as its card leaves (opening).
+  const fadeIn = index === 0 || (prev && prev.chapter === s.chapter) ? 1 : ramp(t, opening(s), 0.6);
   const fadeOut = next && next.chapter === s.chapter ? 1 : 1 - ramp(t, s.end - 0.5, 0.5);
   const keep = Math.min(fadeIn, fadeOut);
   const v = film.segments[shown];
@@ -116,7 +117,7 @@ function drawAt(t) {
   publish(t);
 }
 function publish(t) {
-  window.__filmLayout = { time: t, texts: layout.texts };
+  window.__filmLayout = { time: t, texts: layout.texts, draws: layout.draws };
 }
 window.renderFrame = (t) => drawAt(t + (film.render_offset || 0));
 window.renderCover = () => {

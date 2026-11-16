@@ -7,7 +7,7 @@ import { ethosMark, markLengths } from "../../drawing/mark.js";
 import { box, drawnShare, labelSize, line, measure, ring } from "../../drawing/strokes.js";
 import { agent, check, seal } from "../../drawing/symbols.js";
 import { askIcon, commitDot } from "../../drawing/workspace.js";
-import { clearOfTitle, illustrative } from "../../framing/chapters.js";
+import { illustrative } from "../../framing/chapters.js";
 import { listIn, named } from "../../naming/lists.js";
 import { LEADING, NAME_GAP, NOTE, nameText, rejectedName, wrapName } from "../../naming/names.js";
 import { LABEL, P } from "../../palette.js";
@@ -105,7 +105,7 @@ function bound(s, t, a) {
     AY = mix(560, Y + AGENT_DY, aside),
     // The question's top, at its gap under the panel; the seal's name shares its baseline.
     under = Y + CLAIM_H / 2 + 18,
-    clear = a * clearOfTitle(s, t, Y - 60),
+    clear = a,
     // The Agent stands at full ink by the first word; its sentence comes back on the words that bring it back.
     seen = clear * ramp(t, s.voice_start - 0.3, 0.4),
     back = clear * ramp(t, beganAt + 0.35, 0.4),

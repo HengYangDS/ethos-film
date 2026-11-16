@@ -9,7 +9,6 @@ import { along, flowClock, link, linkPoints } from "../../drawing/links.js";
 import { blend } from "../../drawing/colour.js";
 import { dot, drawnShare, labelSize, lengthOf, measure, stroke } from "../../drawing/strokes.js";
 import { check, documentIcon, person } from "../../drawing/symbols.js";
-import { clearOfTitle } from "../../framing/chapters.js";
 import { listIn, named, reachAt } from "../../naming/lists.js";
 import {
   NAME_GAP,
@@ -46,7 +45,7 @@ export function contractStage(s, t, c, g) {
     H = 250,
     x = 960 - W / 2,
     y = 470 - H / 2,
-    a = g * clearOfTitle(s, t, y);
+    a = g;
   documentIcon(x, y, W, H, { alpha: a, rows: 0 });
   const lit = soon(t, c.rules + 0.05, 0.5);
   stroke(

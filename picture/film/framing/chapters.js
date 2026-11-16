@@ -1,13 +1,12 @@
-/* Chapter cards, the running head and the illustrative chip of the head band. From ddwg-film v1.0.0 (c4e8aac), picture/film.js. */
+/* Chapters: the card each chapter opens on, the running head that takes its place, the start of the chapter's first
+ * scene after it and the Illustrative chip of the head band. */
 
 import { ctx, measuring, resolution } from "../canvas.js";
-import { blend } from "../drawing/colour.js";
 import { font, line, measure, text } from "../drawing/strokes.js";
 import { pill } from "../drawing/symbols.js";
-import { cameraOf } from "./camera.js";
 import { P, TYPE } from "../palette.js";
 import { L, en, film } from "../timeline.js";
-import { clamp, ease, mix, ramp } from "../timing/easing.js";
+import { ramp } from "../timing/easing.js";
 
 const chapterOrder = film.chapters.map((c) => c.id);
 const chapterNumber = (id) => String(chapterOrder.indexOf(id) + 1).padStart(2, "0");
@@ -15,60 +14,47 @@ export const opensChapter = (s) => {
   const i = film.segments.indexOf(s);
   return i > 0 && film.segments[i - 1].chapter !== s.chapter;
 };
-
-/* Marks in the rising chapter title's path wait until it has risen above them (a mark at height y appears as the title
- * passes y - 45 and stands, by an eased fade, once the title is up to 240 px higher still, less for a mark so high that
- * the title lands sooner), so the two never meet, no mark arrives at once, and they still stand by the first word. */
-const titleY = (s, t) => mix(540, 72, ease(clamp((t - (cardLanding(s) - RISE)) / RISE)));
-/* How far the rising chapter title has cleared a mark drawn at height y, measured on screen through the scene's
- * camera, so a closer shot keeps clear of the title as well as the scene's own frame. */
-export const clearOfTitle = (s, t, y = 400) => {
-  if (!opensChapter(s)) return 1;
-  const c = cameraOf(s, t),
-    sy = c.oy + c.k * (y - c.ay);
-  return ease((sy - 45 - titleY(s, t)) / Math.min(240, Math.max(60, sy - 45 - 72)));
-};
-
+/* A chapter opens on its card, one centred line that stands still, and its first scene begins as the card leaves: 0.75 s
+ * before the first word, so the scene stands whole on that word, or up to 0.2 s later where the chapter pause is short,
+ * so the card has stood CARD_STANDS seconds and the scene still stands at nine tenths on the word. Within a chapter a
+ * scene begins under the dissolve. The card inks in from CARD_LEAD before its segment, once the previous chapter's last
+ * scene has faded below a tenth, so the two never show together. */
+const CARD_IN = 0.3,
+  CARD_LEAD = 0.1,
+  CARD_OUT = 0.35,
+  CARD_STANDS = 0.6,
+  AHEAD = 0.15,
+  HEAD_INK = 0.72;
+export const opening = (s) =>
+  opensChapter(s)
+    ? Math.max(
+        s.start,
+        Math.min(s.voice_start - 0.55, Math.max(s.voice_start - 0.75, s.start + CARD_STANDS)),
+      )
+    : s.start - 0.25;
+/* The card begins to leave AHEAD of the scene, so the scene's marks are faint while the card still reads. */
+const cardLeaves = (s) => opening(s) - AHEAD;
 /* A chapter opens on one centred line, its number and title, with a short rule beneath, once the previous chapter has
- * faded. The line then rises and shrinks into the running head it becomes over 1.1 s with an ease-in-out, landing just
- * after the first word, so it travels at most about 11 px per frame; the rule fades in place below it, so nothing
- * crosses. */
-const cardLanding = (s) => s.voice_start + 0.1,
-  RISE = 1.1;
+ * faded. Nothing of it travels: the card dissolves where it stands over CARD_OUT seconds while the running head, the
+ * same words, fades in at its own place in the head band (see runningHead). The head stands in the muted colour at 0.72
+ * of full ink. */
 export function chapterCard(s, t) {
-  if (!opensChapter(s) || t >= cardLanding(s)) return;
-  const enter = ramp(t, s.start, 0.3);
-  if (enter <= 0) return;
+  if (!opensChapter(s)) return;
+  const shown = ramp(t, s.start - CARD_LEAD, CARD_IN) * (1 - ramp(t, cardLeaves(s), CARD_OUT));
+  if (shown <= 0) return;
   const chapter = film.chapters.find((c) => c.id === s.chapter),
     number = chapterNumber(s.chapter);
-  const large = en ? 54 : 60,
-    p = clamp((t - (cardLanding(s) - RISE)) / RISE),
-    q = ease(p),
-    size = mix(large, 24, q);
+  const size = en ? 54 : 60;
   // The head's own spacing, scaled with the line: the number, two spaces, then the title.
   ctx.save();
   ctx.font = font(24, false, `${number}  ${chapter.title}`);
   const prefix = ctx.measureText(`${number}  `).width;
   ctx.restore();
   const gap = (prefix * size) / 24,
-    total = gap + measure(chapter.title, size, false, "chapter");
-  const left = mix(960 - total / 2, 96, q),
-    y = mix(540, 72, q),
-    ink = mix(1, 0.72, q) * enter;
-  text(number, left, y, size, {
-    color: blend(P.evidence, P.muted, q),
-    alpha: ink,
-    role: "chapter",
-  });
-  text(chapter.title, left + gap, y, size, {
-    color: blend(P.ink, P.muted, q),
-    alpha: ink,
-    role: "chapter",
-  });
-  line(900, 600, 1020, 600, {
-    color: P.line,
-    alpha: enter * (1 - ramp(t, cardLanding(s) - RISE, 0.35)),
-  });
+    left = 960 - (gap + measure(chapter.title, size, false, "chapter")) / 2;
+  text(number, left, 540, size, { color: P.evidence, alpha: shown, role: "chapter" });
+  text(chapter.title, left + gap, 540, size, { color: P.ink, alpha: shown, role: "chapter" });
+  line(900, 600, 1020, 600, { color: P.line, alpha: shown });
 }
 /* The Illustrative chip of an illustrative case: one fixed slot at the right of the running head, in screen space, so
  * it keeps its place and size from scene to scene. Like the running head it is a marker of the head band rather than a
@@ -92,19 +78,19 @@ export function illustrative(alpha) {
 }
 export function runningHead(s, t) {
   if (t < film.segments[0].voice_start) return;
-  const first = film.segments.find((v) => v.chapter === s.chapter);
-  // The first chapter's head fades in with the voice; later heads are the chapter titles that rose into place.
-  const a =
-    0.72 *
-    (first === film.segments[0]
-      ? ramp(t, first.voice_start, 0.6)
-      : t >= cardLanding(first)
-        ? 1
-        : 0);
+  const first = film.segments.find((v) => v.chapter === s.chapter),
+    next = film.segments[film.segments.indexOf(s) + 1];
+  // The first chapter's head fades in with the voice; a later head fades in as its chapter's card dissolves. A head
+  // leaves with its chapter's last scene, so it never goes within one frame.
+  const enters =
+      first === film.segments[0]
+        ? ramp(t, first.voice_start, 0.6)
+        : ramp(t, cardLeaves(first), CARD_OUT),
+    leaves = next && next.chapter !== s.chapter ? ramp(t, s.end - 0.5, 0.5) : 0;
   const chapter = film.chapters.find((c) => c.id === s.chapter);
   text(`${chapterNumber(s.chapter)}  ${chapter.title}`, 96, 72, 24, {
     color: P.muted,
-    alpha: a,
+    alpha: HEAD_INK * enters * (1 - leaves),
     role: "chapter",
   });
 }

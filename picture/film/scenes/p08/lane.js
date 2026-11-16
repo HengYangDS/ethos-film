@@ -1,5 +1,5 @@
 /* 08.1-08.3 one requirement's life, from the request to the handover: the rail of its journey stands as the chapter
- * title rises, and the request is named at its start; the request is written into a Change and worked in a Work Lane
+ * card leaves, and the request is named at its start; the request is written into a Change and worked in a Work Lane
  * of its own, held on record and checked again before each write; halfway through, one Agent's session ends and the
  * next takes over by reading, in ETHOS's order, fresh facts, the Change and the attestations on record. */
 
@@ -9,7 +9,6 @@ import { dot, labelSize, measure, ring } from "../../drawing/strokes.js";
 import { agent, clock, seal } from "../../drawing/symbols.js";
 import { bubble, folderIcon } from "../../drawing/workspace.js";
 import { writeGate } from "../../drawing/lanes.js";
-import { clearOfTitle } from "../../framing/chapters.js";
 import { lastingReach, listIn, named } from "../../naming/lists.js";
 import { NOTE, nameText, rejectedName, termRow, termRowLayout } from "../../naming/names.js";
 import { railNames } from "../../naming/placement.js";
@@ -56,8 +55,8 @@ function stationsShift() {
 const LEASE_Y = 405;
 
 /* 08.1-08.2. The rail of the journey, the requirement's document at its start and the work the requirement has become
- * appear across the band as the chapter title, which names the requirement's life, rises clear of them, so the picture
- * keeps its balance while the title leaves and stands firm on the first word; on the request's first words its
+ * appear across the band as the chapter card, which names the requirement's life, leaves, so the picture stands
+ * balanced and firm on the first word; on the request's first words its
  * document is named, and a point travels the rail in voice time. The work then travels the rail station by station on
  * the words that name each:
  * into the Change, into its own Work Lane, whose holder and term stand above it on record, up to the gate before a
@@ -90,9 +89,9 @@ export function lane(s, t, a) {
     [x0, x1, x2, x3, x4] = xs;
   ctx.save();
   ctx.translate(stationsShift(), 0);
-  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a * clearOfTitle(s, t, RAIL_Y) });
+  journeyRail(REQ_X + REQ[0] / 2 + 8, 1680, { alpha: a });
   railFlow(t, REQ_X + 70, 1680, { alpha: a * soon(t, reqAt + 0.05, 0.4) });
-  requirement(a * clearOfTitle(s, t, RAIL_Y - REQ[1] / 2));
+  requirement(a);
   docMark(x1 - 75, RAIL_Y - 85, 150, 170, { alpha: shown(1), rows: 5 });
   folderIcon(x2 - 36, RAIL_Y - 29, 72, 58, { alpha: shown(2) });
   // The lane's own track from its folder to its gate, drawn on its words over the rail.
@@ -157,7 +156,7 @@ export function lane(s, t, a) {
     ],
     0.9,
   );
-  work(wx, RAIL_Y, a * clearOfTitle(s, t, RAIL_Y));
+  work(wx, RAIL_Y, a);
   ctx.restore();
 }
 

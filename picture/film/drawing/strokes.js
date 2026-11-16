@@ -3,7 +3,7 @@
 import { ctx, layout, resolution, sceneFade, wordFade } from "../canvas.js";
 import { LABEL, P, TYPE } from "../palette.js";
 import { clamp } from "../timing/easing.js";
-import { drawShare, drawStart } from "../timing/pauses.js";
+import { drawShare, drawStart, drawTime } from "../timing/pauses.js";
 
 /* Drawing primitives. Every painted text registers its box for the geometry check. */
 export function font(size, bold, sample) {
@@ -172,8 +172,17 @@ export function along(points, q) {
  * by at most `lead`, so it is whole by the thought's quiet (drawStart). */
 export const drawnShare = (draw, length, extent = 1) => {
   const least = draw.least ?? 0.4,
-    way = length * extent;
-  return extent * drawShare(draw.t, drawStart(draw.at, way, least, draw.lead), way, least);
+    way = length * extent,
+    share = drawShare(draw.t, drawStart(draw.at, way, least, draw.lead), way, least);
+  // The frame publishes each such stroke's share and its tip's peak pace, so a checker can list one that rests
+  // part-drawn in a quiet or whose tip races.
+  layout.draws?.push({
+    scene: layout.scene,
+    at: draw.at,
+    share,
+    pace: (1.5 * Math.abs(way)) / drawTime(way, least),
+  });
+  return extent * share;
 };
 /* A polyline drawn on from its start: `upto` is the share of its length drawn, so it grows continuously rather than a
  * segment at a time; with `draw` it draws on over that share, paced by its own length (drawnShare). */
