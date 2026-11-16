@@ -17,10 +17,10 @@ export const opensChapter = (s) => {
 /* A chapter opens on its card, one centred line that stands still, and its first scene begins as the card leaves: 0.75 s
  * before the first word, so the scene stands whole on that word, or up to 0.2 s later where the chapter pause is short,
  * so the card has stood CARD_STANDS seconds and the scene still stands at nine tenths on the word. Within a chapter a
- * scene begins under the dissolve. The card inks in from CARD_LEAD before its segment, once the previous chapter's last
- * scene has faded below a tenth, so the two never show together. */
+ * scene begins under the dissolve. The card inks in from CARD_LEAD before its segment, as the previous chapter's last
+ * scene fades out; the two are never both above 0.15 of their ink. */
 const CARD_IN = 0.3,
-  CARD_LEAD = 0.1,
+  CARD_LEAD = 0.2,
   CARD_OUT = 0.35,
   CARD_STANDS = 0.6,
   AHEAD = 0.15,
