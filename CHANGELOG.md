@@ -4,11 +4,38 @@ All notable changes to the ETHOS introduction films and their build are recorded
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-11-16
+
+### Added
+
+- `film:sound` ends each edition with the engine's sound gate, which refuses a soundtrack with a part under its clarity floor or a thought or heard phrase that stops instead of dying away. `film:picture` refuses neighbouring names on one row that stand closer than one and a half times their size, and the film declares its own glide pace, 450 px/s, as a pace limit, so the picture gate refuses a mark that moves faster.
+
 ### Changed
 
-- The repository runs ETHOS 0.2.0-beta.10 instead of 0.2.0-alpha.29, its release declaration names
-  the publication peers only by their Git remotes, and the hosted GitHub job installs Mise 2026.11.8
-  instead of 2026.10.25. The films of 2.0.0 are unchanged.
+- 03.6 says the two conditions of the contract that 2.0.0 left out, as the owner approved on 14 November 2026: the mature tools are kept where they are shown to reduce maintenance, risk and the burden on adopters "without losing required behavior" (「同时不丢该有的功能」), and ETHOS writes its own tools only to fill a demonstrated gap "within a bounded responsibility" (「职责有明确边界」). 03.6 is narrated again in both editions and its picture names both conditions on their words: the Chinese sets the three conditions of ETHOS's own tool as one list in one size and ink, and the English sets the words "shown to reduce" and the three reductions as one name on two lines, which stays with its tools until the stage leaves; nothing else in either narration changes. The Chinese narration has 3,939 Han characters and the English 2,716 words.
+- The runtime is fitted from the thought pauses for the longer 03.6 and, in Chinese, for the longer pauses at sentence ends: the Chinese statement pause averages 1.22 s where it averaged 1.34 s, and the English one 1.61 s where it averaged 1.68 s. Questions and the coda keep their pauses, speech is not stretched, and each soundtrack still lasts exactly 900 seconds at −16.5 LUFS.
+- Each thought stands within 0.35 dB of its part's level in Chinese and 0.4 dB in English, where the tolerances were 0.5 dB and 0.75 dB, so the largest step between adjacent thoughts is 0.75 LU in Chinese and, inside a part, 0.8 LU in English.
+- In the Chinese edition a pause at a sentence end inside a thought lasts at least 0.45 s, where the floor was 0.28 s, as the owner decided on 16 November 2026, so that no sentence end inside a thought is heard shorter than the commas beside it. Review round 21 noted a side effect in four places: the caption of the next sentence, and once the label 观察到的, appears 0.42 to 0.45 s before it is spoken, because the lengthened quiet stands after the aligned start of the next word. It is left to the next edition.
+- 05.2's claim rises over 1.55 s where it rose over 1.41 s, so that a point of the report's flow keeps the film's pace wherever the flow's clock puts it.
+- A shown name travels less while the voice speaks: 01.3's panel is seated from the hand-off, 04.4's first two models stand from their words, 04.5.2's Chinese pair stands from the first card's words, 03.2's path rises half as far, and 06.5.4's names glide a third as far. 07.4.2's lower row and 06.3's mark keep more than 80 px above the caption.
+- 01.4's link and its name 改代码 arrive on their own words, and the Agents' name builds in its place, its noun from the stage's cut and 可以互相替换的 on its own words.
+- Neighbouring names on one row stand at least 1.7 times their size apart: 02's rail and 03.1's five initials take a wider pitch, and the records of 08.3, the gate of 03.3 and the checks of 08.9 stand further apart.
+- No chapter title travels: the chapter card dissolves where it stands and the running head fades in at its own place, where the title flew to the head at about 1,200 to 1,300 px/s; a chapter's first scene begins as the card leaves.
+- Every glide and flow of the scenes keeps the film's glide pace of 450 px/s. The motion audit had recorded 35 Chinese and 37 English stretches over it in 2.0.0, the fastest at 768 px/s, and each is recut at its cause: a glide peaks at 440 px/s on the canvas under the camera's push, 02's index moves as one glide over its names' whole way and the request on its rail rides through stops named sooner than a glide reaches them, the end points of 03's paths stand where the stroke will end, 04.3's card and request move one after the other, and the points that flow on a gliding stage in 04.4, 05.2, 06.1 and 08.9 give their pace up to the glide's.
+- One English cue of 03 takes an authored break where its subject ends, so that it reads under 25 characters per second: "and connecting a system to it" and "does not make that system part of ETHOS's own record." Two cues stay at 25.8 and 25.5 characters per second: each opens its sentence, and no break of the sentence brings its fastest cue under 25.
+- The films are built by `filmkit` 0.22.3 instead of 0.21.2 and rendered with HyperFrames 0.9.46 instead of 0.9.9; GSAP moves to 3.15.1, `puppeteer-core` to 25.17.0, `@puppeteer/browsers` to 3.2.7, `undici` to 7.30.2 and Prettier to 3.10.1. Node, Python, uv and Chrome Headless Shell keep their versions.
+- The repository runs ETHOS 0.2.0-beta.10 instead of 0.2.0-alpha.29, its release declaration names the publication peers only by their Git remotes, and the hosted GitHub job installs Mise 2026.11.8 instead of 2026.10.25.
+- Review round 21 scored the Chinese edition 99.5 and the English edition 99.3, with every one of the twelve dimensions at 96 or more, each of 信, 达 and 雅 passing and no material or minor finding. Its 3 Chinese notes and 6 English notes are listed in the published review records, `ethos-zh-production-review.md` and `ethos-en-production-review.md`. Round 20 had passed a first build with notes only; two of its notes touched patterns the owner had rejected, so that build was not released, and round 21 reviewed the build that repairs them. The review is a model's judgment of the media and their measurements; human listening is a separate acceptance.
+
+### Removed
+
+- The Prettier and Taplo configuration files under `.config/checks/`, which repeated the settings ETHOS ships.
+
+### Fixed
+
+- The English thought 08.1 reads under the clarity floor of 17 dB by the engine's sharper measure, 16.34 dB, as it did in 2.0.0, where the measure of that release did not show it. Thirty-two new recordings of its sentence read 15.0 to 16.4 dB, so the sentence's own sounds set the figure. The owner decided on 16 November 2026 that the floor holds for the soundtrack and for each part and that a single thought is judged against the floor less 1.0 dB; 08.1 stands between the two lines, and the review prompt states the line.
+- In 03.2 the path's line no longer opens within one frame under a station, as it did once in 2.0.0: it gives way from the station's centre as the station's ring arrives, and the station's glyph follows.
+- `NOTICE` names Prettier 3.10.1, the version the lock holds.
 
 ## [2.0.0] - 2026-11-14
 
@@ -62,7 +89,8 @@ All notable changes to the ETHOS introduction films and their build are recorded
 - ETHOS governance, with its portable proof projected into GitHub Actions and GitLab CI.
 - The MIT License for the code and CC BY 4.0 for the films' content, with the third-party notices and the narrator's provenance in `NOTICE`.
 
-[Unreleased]: https://github.com/HengYangDS/ethos-film/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/HengYangDS/ethos-film/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/HengYangDS/ethos-film/releases/tag/v2.0.1
 [2.0.0]: https://github.com/HengYangDS/ethos-film/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/HengYangDS/ethos-film/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/HengYangDS/ethos-film/releases/tag/v1.0.0

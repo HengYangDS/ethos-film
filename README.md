@@ -10,7 +10,7 @@ Author: Yang HENG.
 
 All four films of each edition are published as release assets, together with their captions, transcripts, covers, independent review records and `SHA256SUMS`. [`content/release.json`](content/release.json) records each asset's name, size and SHA-256, the digests of the soundtrack and of the two staged pictures, with captions and without them, that each edition was made from, and those of the film-bound sources: the scripts, narration texts, voice contracts, reference recordings, source manifest, covers, fonts, composition and pages whose exact bytes the build reads. The independent review of the `v2.0.0` films scored the Chinese edition 99.4 and the English edition 99.2 out of 100, with every one of its twelve dimensions at 96 or above, each of its three levels, 信, 达 and 雅, passing and no material or minor finding; the published review records list its notes. That review scores the audio from automated evidence; human listening is a separate acceptance.
 
-The films of `v2.0.0` are the current editions. They replace the films of `v1.0.0` and `v1.0.1`, an earlier film that explains ETHOS v0.2.0-alpha.21; those films stay available as the assets of their releases. A release that changes only how the films are built publishes no films of its own, and its tag names the source that rebuilds them.
+The films of `v2.0.1` are the current editions. They replace the films of `v1.0.0` and `v1.0.1`, an earlier film that explains ETHOS v0.2.0-alpha.21; those films stay available as the assets of their releases. A release that changes only how the films are built publishes no films of its own, and its tag names the source that rebuilds them.
 
 ## Rebuilding the films
 
@@ -47,7 +47,7 @@ The stages also run one at a time: `film:narrate`, `film:sound`, `film:picture`,
 Once a release is published, download its assets into `build/artifacts/release/` and compare; for `v2.0.0`:
 
 ```bash
-gh release download v2.0.0 --repo HengYangDS/ethos-film --dir build/artifacts/release
+gh release download v2.0.1 --repo HengYangDS/ethos-film --dir build/artifacts/release
 ```
 
 ```bash
