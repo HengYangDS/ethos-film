@@ -689,7 +689,7 @@ var opensChapter = (s) => {
   return i > 0 && film.segments[i - 1].chapter !== s.chapter;
 };
 var CARD_IN = 0.3;
-var CARD_LEAD = 0.2;
+var CARD_LEAD = 0.1;
 var CARD_OUT = 0.35;
 var CARD_STANDS = 0.6;
 var AHEAD = 0.15;
