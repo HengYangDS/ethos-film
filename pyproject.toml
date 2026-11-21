@@ -17,6 +17,7 @@ build-backend = "hatchling.build"
 [tool.uv]
 package = false
 prerelease = "disallow"
+exclude-newer = "24 hours"
 
 # The film engine, at the release whose tag the lock pins to its commit. The film needs 0.21.2 or
 # later, which renders each edition's player from the declaration, gates the picture's motion as a
