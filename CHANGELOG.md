@@ -7,7 +7,7 @@ All notable changes to the ETHOS introduction films and their build are recorded
 ### Changed
 
 - The repository runs ETHOS 0.2.0-beta.11 instead of 0.2.0-beta.10, the hosted GitHub job installs
-  Mise 2026.11.11 instead of 2026.11.8, and the hosted jobs keep their CI artifacts for 14 days.
+  Mise 2026.11.14 instead of 2026.11.8, and the hosted jobs keep their CI artifacts for 14 days.
 - Mise, npm and uv take a release only once it is a day old: Mise's `minimum_release_age` is 24
   hours, npm reads `min-release-age=1` from the repository's own `.config/npm/npmrc`, and uv's
   `exclude-newer` is 24 hours. No locked version changes. The films of 2.0.1 are unchanged.
