@@ -35,21 +35,29 @@ relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自�
       read both files back on 28 November 2026 and found each equal to its published digest.
       `mise lock http:ethos` changed only `http:ethos` and holds 0.2.0-beta.12 for the five platform
       entries, with no 0.2.0-beta.11 entry and `lockfile_version = 3`; the `git grep` prints nothing.
-- [ ] 1.3 Install the locked supply with `mise install --locked` and bind the repository to the
+- [x] 1.3 Install the locked supply with `mise install --locked` and bind the repository to the
       0.2.0-beta.12 runtime with the locked console's `hook install`, keeping 0.2.0-beta.11 as the
       rollback. Done when CURRENT names the 0.2.0-beta.12 runtime and ROLLBACK the 0.2.0-beta.11
       runtime, and `ethos status --json` in the lane reports the lane ready with `summary.runtime`
       naming 0.2.0-beta.12.
+      `mise install --locked` found every locked tool installed; the 0.2.0-beta.12 console's
+      `hook install` bound the family. CURRENT names the 0.2.0-beta.12 runtime `3e6b10f2…` and
+      ROLLBACK the 0.2.0-beta.11 runtime `8c663b10…`; at `510db4d`, with this Change named,
+      `ethos status --json` reports the lane ready and `summary.runtime` names 0.2.0-beta.12.
 
 ## 2. CI
 
-- [ ] 2.1 Set `[gitlab.runners.macos]` `review_tags = ["macos-latest", "review"]` and
+- [x] 2.1 Set `[gitlab.runners.macos]` `review_tags = ["macos-latest", "review"]` and
       `protected_tags = ["macos-latest", "protected"]` in `.config/ci/verification.toml`, under the
       comment of design decision 3, and apply exactly the patch that `ethos lane project --json`
       previews, written to a file from the preview's `patch` entry. Done when
       `ethos lane project --check --json` reports both projections conforming, the diff of
       `.gitlab-ci.yml` changes only the two jobs' `tags` lists and the file equals filmkit's
       `.gitlab-ci.yml` at `v0.35.0` byte for byte, and `.github/workflows/ci.yml` is byte-identical.
+      The preview's patch (sha256 `89308eae…`) changed only `.gitlab-ci.yml`; applied at `510db4d`,
+      it replaced the two jobs' single tags with `macos-latest` and `review` or `protected`. The
+      check reports both projections conforming; `.gitlab-ci.yml` equals filmkit's at `v0.35.0`
+      byte for byte, and `.github/workflows/ci.yml` is unchanged.
 
 ## 3. Record and check
 
