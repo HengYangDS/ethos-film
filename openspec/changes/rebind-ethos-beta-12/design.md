@@ -36,7 +36,7 @@ takes three of them; on 29 November it reads as below, each checksum read from `
 checked against the asset's published digest:
 
 ```toml
-# The ETHOS release declaration published with v0.2.0-beta.12, without its two Windows rows.
+# The ETHOS release declaration published with v0.2.0-beta.12: its linux-arm64, linux-x64 and macos-arm64 rows.
 [tools."http:ethos"]
 version = "0.2.0-beta.12"
 
@@ -107,7 +107,7 @@ recorded workaround:
    on 0.2.0-beta.11, before the pin moves, so that each of the two lock diffs shows one thing.
 2. **The pin takes the published rows unchanged.** The three rows that are not Windows go into the
    `[tools."http:ethos"]` table, the form the repository holds, under a comment that names the
-   release and the rows left out, after each checksum is checked against `SHA256SUMS` and the
+   release and the rows it takes, after each checksum is checked against `SHA256SUMS` and the
    published asset digest. The lock keeps `lockfile_version = 3`.
 3. **The tags change in the declaration, and the file by projection.** `[gitlab.runners.macos]`
    takes `review_tags = ["macos-latest", "review"]` and

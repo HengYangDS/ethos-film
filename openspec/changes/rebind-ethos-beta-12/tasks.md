@@ -21,15 +21,20 @@ relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自�
       blank lines, changed no other line and kept `lockfile_version = 3`. After the lane's
       environments were synced from the frozen locks offline (`uv sync --frozen --offline`,
       `npm ci --offline`), `mise run check:dependencies` passes.
-- [ ] 1.2 Replace the 0.2.0-beta.11 declaration with the rows `linux-arm64`, `linux-x64` and
+- [x] 1.2 Replace the 0.2.0-beta.11 declaration with the rows `linux-arm64`, `linux-x64` and
       `macos-arm64` of the declaration published with 0.2.0-beta.12
       (`ethos-0.2.0-beta.12.mise.toml`), each checksum read from the release's `SHA256SUMS` and
       checked against the asset's published digest, under a comment that names the release and the
-      two Windows rows left out; then lock again with native `mise lock`. Done when each row equals
+      rows it takes; then lock again with native `mise lock`. Done when each row equals
       the published row byte for byte, the lock holds 0.2.0-beta.12 for the five platform entries
       for which it held 0.2.0-beta.11 after 1.1, no 0.2.0-beta.11 entry remains, the lock's diff
       changes only `http:ethos`, it keeps `lockfile_version = 3`, and
       `git grep -n -i -w windows -- .config` prints nothing.
+      The three rows equal those of the published declaration (sha256 `094105e2…`) byte for byte,
+      and each checksum equals the release's `SHA256SUMS` (sha256 `7579c21f…`); the films session
+      read both files back on 28 November 2026 and found each equal to its published digest.
+      `mise lock http:ethos` changed only `http:ethos` and holds 0.2.0-beta.12 for the five platform
+      entries, with no 0.2.0-beta.11 entry and `lockfile_version = 3`; the `git grep` prints nothing.
 - [ ] 1.3 Install the locked supply with `mise install --locked` and bind the repository to the
       0.2.0-beta.12 runtime with the locked console's `hook install`, keeping 0.2.0-beta.11 as the
       rollback. Done when CURRENT names the 0.2.0-beta.12 runtime and ROLLBACK the 0.2.0-beta.11
