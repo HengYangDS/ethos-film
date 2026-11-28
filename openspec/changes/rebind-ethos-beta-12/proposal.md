@@ -5,31 +5,32 @@ archives, its Mise lock holds a Windows table for each of its four tools, and it
 their runners by `ci-macos-arm64-review` and `ci-macos-arm64-shell` (read on 28 November 2026).
 
 The ETHOS introduction films stay frozen: by the owner's direction of 17 November 2026 their sources
-change only with a new edition, and the films of 2.0.1 stay as released. On 28 November 2026 at
-16:13 (UTC+8) the owner answered 「1 一起去掉」 (D-85 in the films session's record of the owner's words),
-choosing that each film take three moves together when it moves to 0.2.0-beta.12, in one Change of
-its own, with no edition, no tag and no picture, narration or content changed:
+change only with a new edition, and the films of 2.0.1 stay as released. On 28 November 2026 the
+owner decided that each film take three moves together when it moves to 0.2.0-beta.12, in one Change
+of its own, with no edition, no tag and no picture, narration or content changed (item D-85 of the
+maintainer's record of the owner's words):
 
 - **ETHOS 0.2.0-beta.12.** The owner asked that every governed repository run the latest ETHOS
-  release, as the 0.2.0-beta.11 rebind records. 0.2.0-beta.12 was published on 27 November 2026 at
-  17:19 UTC and upgrades directly from 0.2.0-beta.11: its release binding at the tag records
+  release, as the 0.2.0-beta.11 rebind records. 0.2.0-beta.12 was published on 27 November 2026 and
+  upgrades directly from 0.2.0-beta.11: its release binding at the tag records
   `"0.2.0-beta.11" = "attested-main"` under `[release.upgrade_from]`, and its hosted journey
   upgrades from 0.2.0-beta.11 on macOS arm64, Linux x64 and Linux arm64. It publishes its own Mise
   declaration as the release asset `ethos-0.2.0-beta.12.mise.toml`, one row for each published
   platform: `linux-arm64`, `linux-x64`, `macos-arm64`, `windows-arm64` and `windows-x64`.
-- **No Windows in the Mise supply.** On 25 November 2026 the owner ruled for every repository that
-  ETHOS governs, at 13:45 to the session that onboards repositories to ETHOS (relayed): `「ethos 所有纳管仓库，全面去除对 windows 的支持，从 CI 以及各个方面」`. For these repositories it is read, by that session's answer
-  relayed at 15:09 (not read first-hand), as: take out the `windows-*` rows of the ETHOS pin and the
-  `windows-*` tables of the Mise lock, and keep the Linux ones. filmkit applied the same reading in
-  0.34.1, and 0.2.0-beta.12 itself deprecates Windows.
-- **One runner label.** On 25 November 2026 at 13:54 the owner chose one label on both forges,
-  `macos-latest`, with GitLab adding `review` or `protected` (relayed at 13:55). The repository's
-  GitHub job already runs on `macos-latest`, and filmkit's GitLab jobs carry the label since 0.34.1.
-  The ETHOS session added the new tags to the films' six runners on 28 November 2026 at 16:16 and
-  kept the old ones; the films session read them back at 16:17 (not read here).
+- **No Windows in the Mise supply.** On 25 November 2026 the owner removed Windows support, from CI
+  and in every other respect, from every repository that ETHOS governs; ETHOS's governance relayed
+  the ruling and its reading for these repositories: take out the `windows-*` rows of the ETHOS pin
+  and the `windows-*` tables of the Mise lock, and keep the Linux ones. filmkit applied the same
+  reading in 0.34.1, and 0.2.0-beta.12 itself deprecates Windows.
+- **One runner label.** On 25 November 2026 the owner chose one label on both forges,
+  `macos-latest`, with GitLab adding `review` or `protected` (relayed by ETHOS's governance). The
+  repository's GitHub job already runs on `macos-latest`, and filmkit's GitLab jobs carry the label
+  since 0.34.1. On 28 November 2026 ETHOS's governance added the new tags to the films' six runners
+  and kept the old ones; the maintainer read them back, outside this lane.
 
-The lane runs on 29 November 2026 from 01:27 (UTC+8), once 0.2.0-beta.12 has passed its 24-hour
-release age, and reads the checksums from the release's `SHA256SUMS` then.
+The lane binds the release once it is published and read back, with no release age: on 28 November
+2026 the owner exempted every repository ETHOS governs from the 24-hour hold for ETHOS's own
+releases, while third-party supply keeps it. The checksums are read from the release's `SHA256SUMS`.
 
 What 0.2.0-beta.12 asks of a repository that 0.2.0-beta.11 did not. The entry marks no item
 Breaking.
@@ -119,7 +120,7 @@ Out of scope: the films' content, picture and sound, an edition, a tag or a rele
 the gate providers; the other places that name Windows outside the pin and the Mise lock, which
 filmkit removed in 0.34.1 (155 Windows wheels in `uv.lock` and the template's commented example in
 `openspec/config.yaml`); the Mise floor, the lockfile format and the hosted job's Mise; and the
-runners' registrations, which are the ETHOS session's.
+runners' registrations, which belong to ETHOS's governance.
 
 ## Capabilities
 
@@ -140,6 +141,6 @@ None. The films, their build and their checks behave as before, so `.openspec.ya
 2.0.1 stays as it is. The Change lands on `dev`, `main` follows as its mirror, and it cuts no
 release. The scope put to the owner named the films' two configuration files; the lane changes these
 five because `.gitlab-ci.yml` is generated from `.config/ci/verification.toml`, the lock is written
-by `mise lock`, and the Changelog records every change. Outside the repository, the films session
-tells the ETHOS session when this film's `main` is published, and that session drops the old runner
+by `mise lock`, and the Changelog records every change. Outside the repository, the maintainer tells
+ETHOS's governance when this film's `main` is published, and ETHOS's governance drops the old runner
 tags. `tasks.md` is the sole progress ledger.

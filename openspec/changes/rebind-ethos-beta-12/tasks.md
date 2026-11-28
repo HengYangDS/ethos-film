@@ -5,9 +5,8 @@ of a host ticket, `ethos host run --wait 14400 --root <lane> -- <command>`, queu
 interpreter, `<runtime>/python/bin/python -B -I -m ethos.cli`, and is read by its `summary.runtime`;
 that interpreter never runs without `-B` (design, known open defects). No task changes a film
 source, script, cast, manifest, picture, test or gate. The tasks start once the release is published
-and read back: on 28 November 2026, shortly after 08:00 (UTC+8), the owner exempted every repository
-that ETHOS governs from ETHOS's own 24-hour release age, in words to the session that builds ETHOS,
-relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自身的 24 小时冷却期」`.
+and read back: on 28 November 2026 the owner exempted every repository that ETHOS governs from
+ETHOS's own 24-hour release age (item C-16 of the maintainer's record of the owner's words).
 
 ## 1. Supply
 
@@ -31,7 +30,7 @@ relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自�
       changes only `http:ethos`, it keeps `lockfile_version = 3`, and
       `git grep -n -i -w windows -- .config` prints nothing.
       The three rows equal those of the published declaration (sha256 `094105e2…`) byte for byte,
-      and each checksum equals the release's `SHA256SUMS` (sha256 `7579c21f…`); the films session
+      and each checksum equals the release's `SHA256SUMS` (sha256 `7579c21f…`); the maintainer
       read both files back on 28 November 2026 and found each equal to its published digest.
       `mise lock http:ethos` changed only `http:ethos` and holds 0.2.0-beta.12 for the five platform
       entries, with no 0.2.0-beta.11 entry and `lockfile_version = 3`; the `git grep` prints nothing.
@@ -72,13 +71,19 @@ relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自�
       count of tests is recorded here.
       At `de8e258`, as the child of one host ticket that held 9 s, `mise run check` passes: the
       dependency checks, 27 Node tests, the Markdown check and 13 Python tests.
+- [x] 3.3 Restate the comment over `lockfile_platforms` and this Change's records as the shared rules
+      record a decision: what was decided, its reason, scope and date, and who decided, by role.
+      Done when the comment and this Change name no session and no clock time of the conversation,
+      and cite the owner's words by the item of the maintainer's record.
+      The comment equals filmkit's at `1ea3741`; the proposal, design and tasks name the owner,
+      ETHOS's governance and the maintainer by role, and cite items D-85 and C-16.
 
 ## Workflow follow-up
 
 - Archive this Change and prove the archived head once; each proof notes `gate_provider_legacy_name`
   (design decision 4).
-- Read the six runners' tags again through the ETHOS session, then publish the proposal, wait for
+- Read the six runners' tags again through ETHOS's governance, then publish the proposal, wait for
   both forges' review jobs (the GitLab pipeline as the child of one host ticket until its last guest
-  job ends, host rule 6), land, publish `dev` and `main`, and read the protected jobs back; tell the
-  ETHOS session that this film's `main` is published, so it drops the old tags; then retire the
+  job ends, host rule 6), land, publish `dev` and `main`, and read the protected jobs back; tell
+  ETHOS's governance that this film's `main` is published, so it drops the old tags; then retire the
   lane.

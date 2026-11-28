@@ -32,8 +32,8 @@ in sorted order, and the tag's GitHub workflow calls it with
 `--required linux-x64,linux-arm64,macos-arm64 --optional windows-x64,windows-arm64`. ETHOS's own
 readback of the release (forge metadata, read on 28 November 2026) lists the asset at 1,299 bytes,
 the size that form gives for all five rows, and lists all five archives. The repository's table
-takes three of them; on 29 November it reads as below, each checksum read from `SHA256SUMS` and
-checked against the asset's published digest:
+takes three of them and reads as below, each checksum read from `SHA256SUMS` and checked against the
+asset's published digest:
 
 ```toml
 # The ETHOS release declaration published with v0.2.0-beta.12: its linux-arm64, linux-x64 and macos-arm64 rows.
@@ -92,7 +92,7 @@ recorded workaround:
   nothing else.
 - Moving other supply, raising the Mise floor or changing the lockfile format; no step runs
   `mise lock --upgrade`.
-- Registering, tagging or untagging runners: the ETHOS session's.
+- Registering, tagging or untagging runners, which belong to ETHOS's governance.
 
 ## Decisions
 
@@ -103,8 +103,9 @@ recorded workaround:
    four tools, more than Windows, which the reading of 25 November keeps. (c) declares what the lock
    holds, so `mise lock` removes exactly the four `windows-x64` tables. `[settings]` gains
    `lockfile_platforms = ["linux-arm64", "linux-arm64-musl", "linux-x64", "linux-x64-musl", "macos-arm64"]`
-   with filmkit's comment line, which names the owner and the ETHOS session's reading. The step runs
-   on 0.2.0-beta.11, before the pin moves, so that each of the two lock diffs shows one thing.
+   with filmkit's comment line, which names who chose each platform set, by role, and the date. The
+   step runs on 0.2.0-beta.11, before the pin moves, so that each of the two lock diffs shows one
+   thing.
 2. **The pin takes the published rows unchanged.** The three rows that are not Windows go into the
    `[tools."http:ethos"]` table, the form the repository holds, under a comment that names the
    release and the rows it takes, after each checksum is checked against `SHA256SUMS` and the
@@ -147,11 +148,11 @@ recorded workaround:
   of the proposal decide, and they are read before landing.
 - [GitLab-hosted CI is not qualified by this beta] → The proposal's GitLab review job, run on the
   new tags on this host's guest under a host ticket, qualifies it for this repository.
-- [The proposal is pushed before the runners carry the new tags, and its job waits] → The ETHOS
-  session added them on 28 November at 16:16 and the films session read them back at 16:17; the lane
-  reads them again before the push.
+- [The proposal is pushed before the runners carry the new tags, and its job waits] → ETHOS's
+  governance added them on 28 November and the maintainer read them back; the lane reads them again
+  before the push.
 - [A pipeline of a commit before this Change, such as the tag `v2.0.1`, selects the old tags] → Once
-  the ETHOS session drops them, such a pipeline finds no runner; they are dropped only after this
+  ETHOS's governance drops them, such a pipeline finds no runner; they are dropped only after this
   film's `main` is published, and a re-run of an older pipeline then needs them back.
 - [A rollback after the bind is not qualified by 0.2.0-beta.12's journey] → A rollback restores the
   0.2.0-beta.11 declaration and lock in a new Change and runs the full proof before it lands.
