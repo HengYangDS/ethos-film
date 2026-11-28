@@ -61,11 +61,13 @@ relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自�
 
 ## 3. Record and check
 
-- [ ] 3.1 In the Changelog's `Unreleased` section, name ETHOS 0.2.0-beta.12 instead of 0.2.0-beta.11
+- [x] 3.1 In the Changelog's `Unreleased` section, name ETHOS 0.2.0-beta.12 instead of 0.2.0-beta.11
       in the line that records the ETHOS release; under `Changed`, add that the GitLab jobs select
       their runners by `macos-latest` with `review` or `protected`; under `Removed`, add that
       ETHOS's Windows archives leave the pin and the four Windows tables leave the Mise lock, the
       Linux ones kept (design decision 6). Done when `npm run format:markdown:check` passes.
+      The `Unreleased` line names 0.2.0-beta.12 instead of 0.2.0-beta.10; `Changed` gains the runner
+      label and a new `Removed` section the Windows supply. `npm run format:markdown:check` passes.
 - [ ] 3.2 Run the repository's check on the lane head. Done when `mise run check` passes, and the
       count of tests is recorded here.
 

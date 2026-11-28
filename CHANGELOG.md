@@ -6,11 +6,21 @@ All notable changes to the ETHOS introduction films and their build are recorded
 
 ### Changed
 
-- The repository runs ETHOS 0.2.0-beta.11 instead of 0.2.0-beta.10, the hosted GitHub job installs
+- The repository runs ETHOS 0.2.0-beta.12 instead of 0.2.0-beta.10, the hosted GitHub job installs
   Mise 2026.11.14 instead of 2026.11.8, and the hosted jobs keep their CI artifacts for 14 days.
 - Mise, npm and uv take a release only once it is a day old: Mise's `minimum_release_age` is 24
   hours, npm reads `min-release-age=1` from the repository's own `.config/npm/npmrc`, and uv's
   `exclude-newer` is 24 hours. No locked version changes. The films of 2.0.1 are unchanged.
+- The GitLab jobs select their runners by `macos-latest` with `review` or `protected`, the one label
+  the owner chose for both forges on 25 November 2026, where they selected `ci-macos-arm64-review`
+  and `ci-macos-arm64-shell`. The CI files stay generated from `.config/ci/`, and GitHub's comes out
+  unchanged.
+
+### Removed
+
+- Windows from the Mise supply: ETHOS's pin loses its `windows-arm64` and `windows-x64` archives,
+  and the Mise lock loses the `windows-x64` table of each of its four tools (ETHOS, Node, Python and
+  uv). Its Linux tables stay.
 
 ## [2.0.1] - 2026-11-16
 
