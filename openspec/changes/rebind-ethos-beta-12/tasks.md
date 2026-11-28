@@ -3,18 +3,24 @@ Every command named here is light, except the repository's check where a measure
 of a host ticket, `ethos host run --wait 14400 --root <lane> -- <command>`, queued under host rules
 2, 8 and 9. Until task 1.3 binds the release, an ETHOS preview runs with the new runtime's
 interpreter, `<runtime>/python/bin/python -B -I -m ethos.cli`, and is read by its `summary.runtime`;
-that interpreter never runs without `-B` (design, known open defects). No task starts before 29
-November 2026 at 01:27 (UTC+8), and no task changes a film source, script, cast, manifest, picture,
-test or gate.
+that interpreter never runs without `-B` (design, known open defects). No task changes a film
+source, script, cast, manifest, picture, test or gate. The tasks start once the release is published
+and read back: on 28 November 2026, shortly after 08:00 (UTC+8), the owner exempted every repository
+that ETHOS governs from ETHOS's own 24-hour release age, in words to the session that builds ETHOS,
+relayed to this one: `「而且所有 ethos 纳管仓库应该豁免 ethos 自身的 24 小时冷却期」`.
 
 ## 1. Supply
 
-- [ ] 1.1 Delete the `windows-arm64` and `windows-x64` rows of the 0.2.0-beta.11 pin, add
+- [x] 1.1 Delete the `windows-arm64` and `windows-x64` rows of the 0.2.0-beta.11 pin, add
       `lockfile_platforms = ["linux-arm64", "linux-arm64-musl", "linux-x64", "linux-x64-musl", "macos-arm64"]`
       under `[settings]` in `.config/mise/config.toml` with one comment line (design decision 1),
       and lock again with native `mise lock`. Done when the lock's diff deletes exactly the four
       `platforms.windows-x64` tables of ETHOS, Node, Python and uv and changes no other line, and
       `mise run check:dependencies` passes.
+      `mise lock` removed the four `platforms.windows-x64` tables, 19 lines with their separating
+      blank lines, changed no other line and kept `lockfile_version = 3`. After the lane's
+      environments were synced from the frozen locks offline (`uv sync --frozen --offline`,
+      `npm ci --offline`), `mise run check:dependencies` passes.
 - [ ] 1.2 Replace the 0.2.0-beta.11 declaration with the rows `linux-arm64`, `linux-x64` and
       `macos-arm64` of the declaration published with 0.2.0-beta.12
       (`ethos-0.2.0-beta.12.mise.toml`), each checksum read from the release's `SHA256SUMS` and
